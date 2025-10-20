@@ -1,0 +1,10 @@
+.idea
+.vscode
+.fleet
+.DS_Store
+Thumbs.db
+vendor
+composer.phar
+composer.lock
+phpunit.xml
+*.cache

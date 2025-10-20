@@ -1,0 +1,32 @@
+{
+    "name": "frostealth/kronika",
+    "description": "DateTime value objects such as Date, Time, LocalDateTime, etc.",
+    "license": "MIT",
+    "type": "library",
+    "keywords": ["datetime", "date", "time", "value-object", "value-objects", "vo"],
+    "homepage": "https://github.com/frostealth/kronika",
+    "authors": [
+        {
+            "name": "Ivan Kudinov",
+            "email": "i@frostealth.ru"
+        }
+    ],
+    "require": {
+        "php": "^8.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kronika\\": "src/Kronika/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-0.x": "0.x-dev"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
