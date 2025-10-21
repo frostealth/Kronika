@@ -156,6 +156,21 @@ final readonly class Duration
         return self::of(minutes: $this->inMinutes(mode: $mode));
     }
 
+    public function dropToHours(): self
+    {
+        return $this->sub($this->roundToDays());
+    }
+
+    public function dropToMinutes(): self
+    {
+        return $this->sub($this->roundToHours());
+    }
+
+    public function dropToSeconds(): self
+    {
+        return $this->sub($this->roundToMinutes());
+    }
+
     public function toDateInterval(): \DateInterval
     {
         return new \DateInterval("P{$this->days()}DT{$this->hours()}H{$this->minutes()}M{$this->seconds()}S");

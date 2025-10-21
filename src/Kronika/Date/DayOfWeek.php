@@ -10,10 +10,10 @@ use Kronika\Duration;
 use Kronika\LocalDateTime;
 
 /**
- * @psalm-type DayOfWeekValue=value-of<DayOfWeek>
- * @psalm-type DayOfWeekNativeValue=int<0,6>
- * @psalm-type DayOfWeekName='Monday'|'Tuesday'|'Wednesday'|'Thursday'|'Friday'|'Saturday'|'Sunday'
- * @implements DateUnit<DayOfWeekValue>
+ * @psalm-type TDayOfWeek=value-of<DayOfWeek>
+ * @psalm-type TDayOfWeekNative=int<0,6>
+ * @psalm-type TDayOfWeekName='Monday'|'Tuesday'|'Wednesday'|'Thursday'|'Friday'|'Saturday'|'Sunday'
+ * @implements DateUnit<TDayOfWeek>
  */
 enum DayOfWeek: int implements DateUnit
 {
@@ -25,7 +25,7 @@ enum DayOfWeek: int implements DateUnit
     case Saturday = 6;
     case Sunday = 7;
 
-    /** @psalm-param DayOfWeekValue|DayOfWeekName|DayOfWeekNativeValue $value */
+    /** @psalm-param TDayOfWeek|TDayOfWeekName|TDayOfWeekNative $value */
     public static function of(string|int|self $value): self
     {
         if ($value instanceof self) {
@@ -54,7 +54,7 @@ enum DayOfWeek: int implements DateUnit
      *
      * @param iso $iso
      *
-     * @psalm-return iso is not false ? DayOfWeekValue : DayOfWeekNativeValue
+     * @psalm-return iso is not false ? TDayOfWeek : TDayOfWeekNative
      */
     #[\Override]
     public function number(bool $iso = true): int
@@ -66,7 +66,7 @@ enum DayOfWeek: int implements DateUnit
         return $this->value;
     }
 
-    /** @psalm-return DayOfWeekName */
+    /** @psalm-return TDayOfWeekName */
     public function name(): string
     {
         return $this->name;
@@ -110,6 +110,7 @@ enum DayOfWeek: int implements DateUnit
         return Duration::of(days: \abs($this->number() - $other->number()));
     }
 
+    /** @internal */
     #[\Override]
     public function withinDate(Date $date): Date
     {
@@ -120,6 +121,7 @@ enum DayOfWeek: int implements DateUnit
         return $date->add($this->diff($date->dayOfWeek()));
     }
 
+    /** @internal */
     #[\Override]
     public function withinDateTime(LocalDateTime $dateTime): LocalDateTime
     {

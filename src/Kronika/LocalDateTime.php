@@ -14,12 +14,6 @@ use Kronika\Time\Second;
 
 final readonly class LocalDateTime implements DateTime
 {
-    private function __construct(
-        private Date $date,
-        private Time $time,
-    ) {
-    }
-
     public static function of(Date $date, Time $time): self
     {
         return new self(date: $date, time: $time);
@@ -50,6 +44,12 @@ final readonly class LocalDateTime implements DateTime
     public static function ofInstant(Instant $instant): self
     {
         return self::of(Date::fromInstant($instant), Time::ofInstant($instant));
+    }
+
+    private function __construct(
+        private Date $date,
+        private Time $time,
+    ) {
     }
 
     #[\Override]
@@ -194,13 +194,13 @@ final readonly class LocalDateTime implements DateTime
     #[\Override]
     public function toNative(?\DateTimeZone $timezone = null): \DateTimeImmutable
     {
-        return \DateTimeImmutable::createFromFormat('Y-m-d\TH:i:s', (string)$this, $timezone);
+        return \DateTimeImmutable::createFromFormat('Y-m-d\TH:i:s.u', (string)$this, $timezone);
     }
 
     #[\Override]
     public function toNativeMutable(?\DateTimeZone $timezone = null): \DateTime
     {
-        return \DateTime::createFromFormat('Y-m-d\TH:i:s', (string)$this, $timezone);
+        return \DateTime::createFromFormat('Y-m-d\TH:i:s.u', (string)$this, $timezone);
     }
 
     #[\Override]

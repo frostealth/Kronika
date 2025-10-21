@@ -15,9 +15,9 @@ final readonly class Comparison
      * @psalm-param T $first
      * @psalm-param T $second
      */
-    public static function compare(mixed $first, mixed $seconds): self
+    public static function compare(mixed $first, mixed $second): self
     {
-        return new self($first <=> $seconds);
+        return new self($first <=> $second);
     }
 
     /**

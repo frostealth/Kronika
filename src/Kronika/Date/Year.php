@@ -9,21 +9,21 @@ use Kronika\Date;
 use Kronika\Duration;
 
 /**
- * @psalm-type YearValue=int<0,9999>
- * @implements DateUnit<YearValue>
+ * @psalm-type TYear=int<-99999,99999>
+ * @implements DateUnit<TYear>
  */
 final readonly class Year implements DateUnit
 {
-    /** @use DateUnitTrait<YearValue> */
+    /** @use DateUnitTrait<TYear> */
     use DateUnitTrait;
 
-    /** @psalm-param YearValue $value */
+    /** @psalm-param TYear $value */
     public static function of(int|self $value): self
     {
-        return $value instanceof self ? $value : new self($value);
+        return $value instanceof self ? $value : self::weak(value: $value);
     }
 
-    /** @return non-negative-int */
+    /** @return int<365>|int<366> */
     public function length(): int
     {
         return $this->isLeap() ? 366 : 365;
@@ -80,6 +80,7 @@ final readonly class Year implements DateUnit
     }
 
     /** @return non-empty-string */
+    #[\Override]
     public function __toString(): string
     {
         return \sprintf('%04d', $this->number());
@@ -91,6 +92,7 @@ final readonly class Year implements DateUnit
         return ['year' => (string) $this];
     }
 
+    /** @internal */
     #[\Override]
     public function withinDate(Date $date): Date
     {
@@ -104,12 +106,12 @@ final readonly class Year implements DateUnit
     #[\Override]
     protected static function minValue(): int
     {
-        return 0;
+        return -99999;
     }
 
     #[\Override]
     protected static function maxValue(): int
     {
-        return 9999;
+        return 99999;
     }
 }

@@ -12,6 +12,9 @@ use Kronika\Time\Hour;
 use Kronika\Time\Minute;
 use Kronika\Time\Second;
 
+/**
+ * @psalm-import-type TMicrosecond from Second
+ */
 final class ZonedDateTime extends \DateTimeImmutable implements DateTime
 {
     public static function of(Date $date, Time $time, \DateTimeZone $timezone): self
@@ -43,14 +46,14 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         return self::ofLocal(LocalDateTime::ofDateTime($dateTime), $dateTime->getTimezone());
     }
 
-    public static function ofTimestamp(int $timestamp): self
+    public static function ofTimestamp(float|int $timestamp): self
     {
-        return self::ofInstant(Instant::of($timestamp), new \DateTimeZone('utc'));
+        return self::ofInstant(Instant::ofValue($timestamp), new \DateTimeZone('utc'));
     }
 
     public static function ofInstant(Instant $instant, \DateTimeZone $timezone): self
     {
-        return LocalDateTime::ofInstant($instant)->atTimezone($timezone);
+        return self::ofLocal(LocalDateTime::ofInstant($instant), $timezone);
     }
 
     /**
@@ -83,7 +86,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         private readonly LocalDateTime $local,
         \DateTimeZone $timezone,
     ){
-        parent::__construct((string)$local, $timezone);
+        parent::__construct(\sprintf('%s %s', $local->date(), $local->time()), $timezone);
     }
 
     #[\Override]
@@ -140,14 +143,25 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         return $this->time()->second();
     }
 
-    public function timestamp(): int
+    /** @return TMicrosecond */
+    public function microsecond(): int
     {
-        return parent::getTimestamp();
+        return $this->second()->microsecond();
     }
 
     public function timezone(): \DateTimeZone
     {
         return $this->getTimezone();
+    }
+
+    public function timestamp(): float
+    {
+        return (float) \sprintf('%d.%d', parent::getTimestamp(), $this->microsecond());
+    }
+
+    public function shiftTimezone(\DateTimeZone $toTimezone): static
+    {
+        return self::ofDateTime(parent::setTimezone($toTimezone));
     }
 
     /**
@@ -162,11 +176,6 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         }
 
         return self::ofLocal($this->local->with($unit), $this->timezone());
-    }
-
-    public function shiftTimezone(\DateTimeZone $toTimezone): static
-    {
-        return self::ofDateTime(parent::setTimezone($toTimezone));
     }
 
     #[\Override]
@@ -232,7 +241,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
 
     public function compareTo(\DateTimeInterface $other): Comparison
     {
-        return Comparison::compare($this->timestamp(), $other->getTimestamp());
+        return Comparison::compare($this->timestamp(), self::ofDateTime($other)->timestamp());
     }
 
     public function toLocalDateTime(): LocalDateTime
@@ -276,25 +285,28 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         return $this->format(\DateTimeInterface::ATOM);
     }
 
+    /** @alias {@see self::ofDateTime()} */
     #[\Override]
     public static function createFromMutable(\DateTime $object): static
     {
         return self::ofDateTime($object);
     }
 
+    /** @alias {@see self::ofDateTime()} */
     #[\Override]
     public static function createFromInterface(\DateTimeInterface $object): static
     {
         return self::ofDateTime($object);
     }
 
+    /** @alias {@see self::ofTimestamp()} */
     #[\Override]
     public static function createFromTimestamp(float|int $timestamp): static
     {
-        // @todo: microsecond
         return self::ofTimestamp($timestamp);
     }
 
+    /** @alias {@see self::ofFormat()} */
     #[\Override]
     public static function createFromFormat(string $format, string $datetime, ?\DateTimeZone $timezone = null): static
     {
@@ -321,13 +333,6 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         return $this->with(Time::of($hour, $minute, $second));
     }
 
-    /** @alias {@see self::timestamp()} */
-    #[\Override]
-    public function getTimestamp(): int
-    {
-        return $this->timestamp();
-    }
-
     /** @alias {@see self::ofTimestamp()} */
     #[\Override]
     public function setTimestamp(int $timestamp): static
@@ -342,17 +347,17 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         return $this->shiftTimezone($timezone);
     }
 
+    /** @alias {@see self::microsecond()} */
     #[\Override]
     public function getMicrosecond(): int
     {
-        // @todo
-        return 0;
+        return $this->microsecond();
     }
 
+    /** @alias {@see self::with()} */
     #[\Override]
     public function setMicrosecond(int $microsecond): static
     {
-        // @todo
-        return parent::setMicrosecond($microsecond);
+        return $this->with(Second::of($this->second()->second(), $microsecond));
     }
 }

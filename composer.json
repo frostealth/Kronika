@@ -14,10 +14,19 @@
     "require": {
         "php": "^8.4"
     },
+    "require-dev": {
+        "ext-bcmath": "*",
+        "ext-gmp": "*",
+        "vimeo/psalm": "^6.13"
+    },
     "autoload": {
         "psr-4": {
             "Kronika\\": "src/Kronika/"
-        }
+        },
+        "files": [
+            "src/Kronika/functions.php",
+            "src/Kronika/Utils/functions.php"
+        ]
     },
     "extra": {
         "branch-alias": {

@@ -9,30 +9,26 @@ use Kronika\Date\DayOfMonth;
 use Kronika\Date\DayOfWeek;
 use Kronika\Date\Month;
 use Kronika\Date\Year;
+use Kronika\Utils\WeakRefsTrait;
 
 /**
- * @psalm-import-type YearValue from Year
- * @psalm-import-type MonthValue from Month
- * @psalm-import-type DayOfMonthValue from DayOfMonth
+ * @psalm-import-type TYear from Year
+ * @psalm-import-type TMonth from Month
+ * @psalm-import-type TDayOfMonth from DayOfMonth
  */
 final readonly class Date implements Unit
 {
-    private function __construct(
-        private Year       $year,
-        private Month      $month,
-        private DayOfMonth $day,
-    ){
-        \assert($month->containsDay($day, $year));
-    }
+    /** @use WeakRefsTrait<self,Year|TYear|Month|TMonth|DayOfMonth|TDayOfMonth> */
+    use WeakRefsTrait;
 
     /**
-     * @psalm-param Year|YearValue             $year
-     * @psalm-param Month|MonthValue           $month
-     * @psalm-param DayOfMonth|DayOfMonthValue $day
+     * @psalm-param Year|TYear             $year
+     * @psalm-param Month|TMonth           $month
+     * @psalm-param DayOfMonth|TDayOfMonth $day
      */
     public static function of(Year|int $year, Month|int $month, DayOfMonth|int $day): self
     {
-        return new self(Year::of($year), Month::of($month), DayOfMonth::of($day));
+        return self::weak(year: Year::of($year), month: Month::of($month), day: DayOfMonth::of($day));
     }
 
     public static function fromDateTime(DateTime|\DateTimeInterface $dateTime): self
@@ -41,7 +37,7 @@ final readonly class Date implements Unit
             return $dateTime->date();
         }
 
-        [$year, $month, $day] = \explode('-', $dateTime->format('Y-m-d'));
+        [$year, $month, $day] = \sscanf($dateTime->format('Y-m-d'), '%d-%d-%d');
 
         return self::of((int) $year, (int) $month, (int) $day);
     }
@@ -51,9 +47,9 @@ final readonly class Date implements Unit
         return self::fromDateTime(\DateTimeImmutable::createFromFormat($format, $date));
     }
 
-    public static function fromTimestamp(int $timestamp): self
+    public static function fromTimestamp(float|int $timestamp): self
     {
-        return self::fromInstant(Instant::of($timestamp));
+        return self::fromInstant(Instant::of((int) $timestamp));
     }
 
     public static function fromInstant(Instant $instant): self
@@ -67,6 +63,14 @@ final readonly class Date implements Unit
         ['year' => $year, 'mon' => $month, 'mday' => $day] = \getdate($instant->second());
 
         return $references[$instant] = self::of($year, $month, $day);
+    }
+
+    private function __construct(
+        private Year       $year,
+        private Month      $month,
+        private DayOfMonth $day,
+    ){
+        \assert($month->containsDay($day, $year));
     }
 
     public function year(): Year
@@ -95,7 +99,7 @@ final readonly class Date implements Unit
             return self::fromDateTime(LocalDateTime::midnightOf($this)->add($duration));
         }
 
-        return self::fromInstant($this->instant()->add($duration));
+        return self::fromInstant($this->instant()->add($duration->roundToDays()));
     }
 
     public function sub(Duration|\DateInterval $duration): self
@@ -104,7 +108,7 @@ final readonly class Date implements Unit
             return self::fromDateTime(LocalDateTime::endOfDayOf($this)->sub($duration));
         }
 
-        return self::fromInstant($this->instant()->sub($duration));
+        return self::fromInstant($this->instant()->sub($duration->roundToDays()));
     }
 
     public function dayOfWeek(): DayOfWeek
@@ -192,6 +196,7 @@ final readonly class Date implements Unit
         return ['date' => (string) $this];
     }
 
+    /** @internal */
     #[\Override]
     public function withinDateTime(LocalDateTime $dateTime): LocalDateTime
     {

@@ -160,6 +160,8 @@ $dateTime = $date->at($time)->atTimezone($timezone);
 $dateTime = ZonedDateTime::ofLocal(LocalDateTime::of($date, $time), $timezone);
 // or
 $dateTime = ZonedDateTime::utcOf($date, $time);
+// or with current time and specified time-zone
+$dateTime = now($timezone);
 // or using "\DateTimeInterface"
 $dateTime = ZonedDateTime::ofDateTime(new \DateTimeImmutable('2025-12-31 12:00:00 UTC'));
 

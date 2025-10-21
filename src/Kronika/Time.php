@@ -8,64 +8,47 @@ use Kronika\Time\Hour;
 use Kronika\Time\Minute;
 use Kronika\Time\Second;
 use Kronika\Time\TimeUnit;
+use Kronika\Utils\WeakRefsTrait;
 
 /**
- * @psalm-import-type HourValue from Hour
- * @psalm-import-type MinuteValue from Minute
- * @psalm-import-type SecondValue from Second
+ * @psalm-import-type THour from Hour
+ * @psalm-import-type TMinute from Minute
+ * @psalm-import-type TSecond from Second
  */
 final readonly class Time implements Unit
 {
-    private function __construct(
-        private Hour $hour,
-        private Minute $minute,
-        private Second $second,
-    ){
+    /** @use WeakRefsTrait<self,Hour|THour|Minute|TMinute|Second|TSecond> */
+    use WeakRefsTrait;
+
+    /**
+     * @psalm-param Hour|THour     $hour
+     * @psalm-param Minute|TMinute $minute
+     * @psalm-param Second|TSecond $second
+     */
+    public static function of(Hour|int $hour, Minute|int $minute, Second|int $second = 0): self
+    {
+        return self::weak(hour: Hour::of($hour), minute: Minute::of($minute), second: Second::of($second));
     }
 
     public static function midnight(): self
     {
-        static $instance;
+        static $instance = self::of(Hour::zero(), Minute::zero(), Second::zero());
 
-        return $instance ??= new self(Hour::zero(), Minute::zero(), Second::zero());
+        return $instance;
     }
 
     public static function noon(): self
     {
-        static $instance;
+        static $instance = self::of(Hour::of(12), Minute::zero(), Second::zero());
 
-        return $instance ??= new self(Hour::of(12), Minute::zero(), Second::zero());
+        return $instance;
     }
 
     public static function endOfDay(): self
     {
-        static $instance;
+        static $instance = self::of(Hour::last(), Minute::last(), Second::last());
 
-        return $instance ??= new self(Hour::last(), Minute::last(), Second::last());
-    }
-
-    /**
-     * @psalm-param Hour|HourValue     $hour
-     * @psalm-param Minute|MinuteValue $minute
-     * @psalm-param Second|SecondValue $second
-     */
-    public static function of(Hour|int $hour, Minute|int $minute, Second|int $second = 0): self
-    {
-        $hour = Hour::of($hour);
-        $minute = Minute::of($minute);
-        $second = Second::of($second);
-
-        if ($hour->isZero() && $minute->isZero() && $second->isZero()) {
-            return self::midnight();
-        }
-        if ($hour->is(12) && $minute->isZero() && $second->isZero()) {
-            return self::noon();
-        }
-        if ($hour->isLast() && $minute->isLast() && $second->isLast()) {
-            return self::endOfDay();
-        }
-
-        return new self(hour: $hour, minute: $minute, second: $second);
+        return $instance;
     }
 
     public static function ofDateTime(\DateTimeInterface $dateTime): self
@@ -74,14 +57,14 @@ final readonly class Time implements Unit
             return $dateTime->time();
         }
 
-        [$hour, $minute, $second] = \explode(':', $dateTime->format('H:i:s'));
+        [$hour, $minute, $second, $micro] = \sscanf($dateTime->format('H:i:s.u'), '%d:%d:%d.%d');
 
-        return self::of((int) $hour, (int) $minute, (int) $second);
+        return self::of($hour, $minute, Second::of($second, $micro));
     }
 
-    public static function ofTimestamp(int $timestamp): self
+    public static function ofTimestamp(float|int $timestamp): self
     {
-        return self::ofInstant(Instant::of($timestamp));
+        return self::ofInstant(Instant::ofValue($timestamp));
     }
 
     public static function ofInstant(Instant $instant): self
@@ -94,7 +77,7 @@ final readonly class Time implements Unit
 
         ['hours' => $hour, 'minutes' => $minute, 'seconds' => $second] = \getdate($instant->second());
 
-        return $references[$instant] = self::of($hour, $minute, $second);
+        return $references[$instant] = self::of($hour, $minute, Second::of($second, $instant->microsecond()));
     }
 
     /**
@@ -106,6 +89,13 @@ final readonly class Time implements Unit
     public static function ofFormat(string $time, string $format = 'H:i:s'): self
     {
         return self::ofDateTime(\DateTimeImmutable::createFromFormat($format, $time));
+    }
+
+    private function __construct(
+        private Hour $hour,
+        private Minute $minute,
+        private Second $second,
+    ){
     }
 
     public function hour(): Hour
@@ -133,9 +123,8 @@ final readonly class Time implements Unit
         if ($duration instanceof \DateInterval) {
             $duration = Duration::of(hours: $duration->h, minutes: $duration->i, seconds: $duration->s);
         }
-        $duration = $duration->sub($duration->roundToDays());  // @todo: move into "Duration"
 
-        return self::ofInstant($this->instant()->add($duration));
+        return self::ofInstant($this->instant()->add($duration->dropToHours()));
     }
 
     public function sub(Duration|\DateInterval $duration): self
@@ -143,9 +132,8 @@ final readonly class Time implements Unit
         if ($duration instanceof \DateInterval) {
             $duration = Duration::of(hours: $duration->h, minutes: $duration->i, seconds: $duration->s);
         }
-        $duration = $duration->sub($duration->roundToDays());
 
-        return self::ofInstant($this->instant()->sub($duration));
+        return self::ofInstant($this->instant()->sub($duration->dropToHours()));
     }
 
     public function diff(self $other): Duration
@@ -204,22 +192,6 @@ final readonly class Time implements Unit
     }
 
     /**
-     * Форматирование даты.
-     *
-     * Шаблон соответствует {@see \DateTimeInterface::format()},
-     * но поддерживаются только часы, минуты и секунды.
-     *
-     * В строке format распознаются следующие символы:
-     * – A - AM/PM ("до полудня"/"после полудня") в верхнем регистре.
-     * – a - am/pm ("до полудня"/"после полудня") в нижнем регистре.
-     * – B - Swatch internet time (формат времени компании Swatch: число от 000 до 999).
-     * – G - Часы в 24-часовом формате без ведущего нуля (от 0 до 23).
-     * – g - Часы в 12-часовом формате без ведущего нуля (от 1 до 12).
-     * – H - Часы в 24-часовом формате с ведущим нулем (от 00 до 23).
-     * – h - Часы в 12-часовом формате с ведущим нулем (от 01 до 12).
-     * – i - Минуты с ведущим нулем (от 00 до 59).
-     * – s - Секунды с ведущим нулем (от 00 до 59).
-     *
      * @param non-empty-string $format
      *
      * @return non-empty-string
@@ -234,29 +206,28 @@ final readonly class Time implements Unit
 
     public function instant(): Instant
     {
-        return Instant::of(($this->hour()->value() * 3600) + ($this->minute()->value() * 60) + $this->second()->value());
-    }
-
-    #[\Override]
-    public function withinDateTime(LocalDateTime $dateTime): LocalDateTime
-    {
-        return $this->at($dateTime->date());
+        return Instant::of(
+            second:($this->hour()->value() * 3600) + ($this->minute()->value() * 60) + $this->second()->second(),
+            micro: $this->second()->microsecond(),
+        );
     }
 
     /** @return non-empty-string */
     public function __toString(): string
     {
-        return \sprintf(
-            '%02d:%02d:%02d',
-            $this->hour()->value(),
-            $this->minute()->value(),
-            $this->second()->value(),
-        );
+        return \sprintf('%s:%s:%s', $this->hour(), $this->minute(), $this->second());
     }
 
     /** @internal */
     public function __debugInfo(): array
     {
         return ['time' => (string) $this];
+    }
+
+    /** @internal */
+    #[\Override]
+    public function withinDateTime(LocalDateTime $dateTime): LocalDateTime
+    {
+        return $this->at($dateTime->date());
     }
 }

@@ -10,9 +10,9 @@ use Kronika\Duration;
 use Kronika\LocalDateTime;
 
 /**
- * @psalm-type MonthValue=value-of<Month>
- * @psalm-type MonthName='January'|'February'|'March'|'April'|'May'|'June'|'July'|'August'|'September'|'October'|'November'|'December'
- * @implements DateUnit<MonthValue>
+ * @psalm-type TMonth=value-of<Month>
+ * @psalm-type TMonthName='January'|'February'|'March'|'April'|'May'|'June'|'July'|'August'|'September'|'October'|'November'|'December'
+ * @implements DateUnit<TMonth>
  */
 enum Month: int implements DateUnit
 {
@@ -29,7 +29,7 @@ enum Month: int implements DateUnit
     case November = 11;
     case December = 12;
 
-    /** @psalm-param MonthValue $value */
+    /** @psalm-param TMonth $value */
     public static function of(int|self $value): self
     {
         return $value instanceof self ? $value : self::from($value);
@@ -66,7 +66,7 @@ enum Month: int implements DateUnit
         return $this->value;
     }
 
-    /** @psalm-return MonthName */
+    /** @psalm-return TMonthName */
     public function name(): string
     {
         return $this->name;
@@ -129,6 +129,7 @@ enum Month: int implements DateUnit
         return $day;
     }
 
+    /** @internal */
     #[\Override]
     public function withinDate(Date $date): Date
     {
@@ -139,6 +140,7 @@ enum Month: int implements DateUnit
         );
     }
 
+    /** @internal */
     #[\Override]
     public function withinDateTime(LocalDateTime $dateTime): LocalDateTime
     {

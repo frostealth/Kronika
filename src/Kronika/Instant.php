@@ -4,22 +4,44 @@ declare(strict_types=1);
 
 namespace Kronika;
 
+use Kronika\Utils\Math\Math;
+use function Kronika\Utils\math;
+
 /**
  * The number of seconds counted from epoch of
  * "1970-01-01 00:00:00" in local time excluding the timezone.
  *
  * This is not the unix timestamp due to the representation of local time without a timezone.
+ *
+ * @psalm-type TMicrosecond=int<0,999999>
  */
 final readonly class Instant
 {
-    private function __construct(
-        private int $second,
-    ){
+    /** @psalm-param TMicrosecond $micro */
+    public static function of(int $second, int $micro = 0): self
+    {
+        return new self($second, $micro);
     }
 
-    public static function of(int $second): self
+    /** @param numeric $value */
+    public static function ofValue(float|int|string $value): self
     {
-        return new self($second);
+        if (\is_int($value)) {
+            return self::of($value);
+        }
+
+        \assert(\is_numeric($value));
+        [$second, $micro] = \sscanf((string) $value, '%d.%06d');
+
+        return self::of($second, $micro ?? 0);
+    }
+
+    /** @psalm-param TMicrosecond $microsecond */
+    private function __construct(
+        private int $second,
+        private int $microsecond,
+    ){
+        \assert($microsecond >= 0 && $microsecond < 1_000_000);
     }
 
     public function atTimezone(\DateTimeZone $timezone): ZonedDateTime
@@ -33,7 +55,7 @@ final readonly class Instant
             return $this;
         }
 
-        return self::of($this->second() + $duration->inSeconds());
+        return self::of(...$this->math()->add($duration->inSeconds())->parts());
     }
 
     public function sub(Duration $duration): self
@@ -42,20 +64,21 @@ final readonly class Instant
             return $this;
         }
 
-        return self::of($this->second() - $duration->inSeconds());
+        return self::of(...$this->math()->sub($duration->inSeconds())->parts());
     }
 
     public function until(self $end): Duration
     {
-        $start = $this->second();
-        $end = $end->second();
+        if ($this->compareTo($end)->lessOrEqual()) {
+            return Duration::zero();
+        }
 
-        return $end > $start ? Duration::of(seconds: $end - $start) : Duration::zero();
+        return $this->diff($end);
     }
 
     public function diff(self $other): Duration  // @todo: or "between()"?
     {
-        return Duration::of(seconds: \abs($other->second() - $this->second()));
+        return Duration::of(seconds: \abs($other->math()->sub($this->second, $this->microsecond)->integer()));
     }
 
     public function isBefore(self $other): bool
@@ -75,20 +98,53 @@ final readonly class Instant
 
     public function compareTo(self $other): Comparison
     {
-        return Comparison::compare($this->second, $other->second);
+        return Comparison::compare($this->value(), $other->value());
     }
 
     public function merge(self ...$others): self
     {
-        return self::of(\array_reduce(
-            $others,
-            static fn(int $carry, self $other): int => $carry + $other->second(),
-            $this->second(),
-        ));
+        $result = \array_reduce($others, static fn(Math $carry, self $other): Math => $carry->add(
+            $other->second,
+            $other->microsecond,
+        ), $this->math());
+
+        return self::of(...$result->parts());
     }
 
     public function second(): int
     {
         return $this->second;
+    }
+
+    public function microsecond(): int
+    {
+        return $this->microsecond;
+    }
+
+    /** @return numeric-string */
+    private function value(): string
+    {
+        if ($this->microsecond === 0) {
+            return (string) $this->second;
+        }
+
+        return \sprintf('%d.%06d', $this->second, $this->microsecond);
+    }
+
+    private function math(): Math
+    {
+        return math($this->second, $this->microsecond, precision: 6);
+    }
+
+    /** @return non-empty-string */
+    public function __toString(): string
+    {
+        return $this->value();
+    }
+
+    /** @internal */
+    public function __debugInfo(): array
+    {
+        return ['second' => (float) $this->value()];
     }
 }

@@ -8,18 +8,18 @@ use Kronika\Comparison;
 use Kronika\Date;
 
 /**
- * @psalm-type DayOfMonthValue=int<1,31>
- * @implements DateUnit<DayOfMonthValue>
+ * @psalm-type TDayOfMonth=int<1,31>
+ * @implements DateUnit<TDayOfMonth>
  */
 final readonly class DayOfMonth implements DateUnit
 {
-    /** @use DateUnitTrait<DayOfMonthValue> */
+    /** @use DateUnitTrait<TDayOfMonth> */
     use DateUnitTrait;
 
-    /** @psalm-param DayOfMonthValue $value */
+    /** @psalm-param TDayOfMonth $value */
     public static function of(int|self $value): self
     {
-        return $value instanceof self ? $value : new self($value);
+        return $value instanceof self ? $value : self::weak(value: $value);
     }
 
     public function isBefore(self $other): bool
@@ -54,6 +54,7 @@ final readonly class DayOfMonth implements DateUnit
         return ['dayOfMonth' => (string) $this];
     }
 
+    /** @internal */
     #[\Override]
     public function withinDate(Date $date): Date
     {

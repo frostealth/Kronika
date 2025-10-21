@@ -8,15 +8,15 @@ use Kronika\Date;
 use Kronika\Unit;
 
 /**
- * @template DateUnitValue of int
+ * @template TDateUnit of int
  * @internal
  */
 interface DateUnit extends Unit
 {
-    /** @return DateUnitValue */
+    /** @return TDateUnit */
     public function number(): int;
 
-    /** @param DateUnitValue $number */
+    /** @param TDateUnit $number */
     public function is(int $number): bool;
 
     /** @internal */
