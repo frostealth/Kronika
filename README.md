@@ -13,7 +13,7 @@ composer require frostealth/kronika
 |-----------|----------|-------------------|-------------|
 | 0.x-dev   | latest   | [0.x][branch-0.x] | ^8.4        |
 
-[branch-0.x]: https://github.com/frostealth/kronika/three/0.x
+[branch-0.x]: https://github.com/frostealth/kronika/tree/0.x
 
 ## Usage
 
