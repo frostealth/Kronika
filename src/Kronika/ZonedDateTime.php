@@ -329,13 +329,6 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         return self::ofDateTime($object);
     }
 
-    /** @alias {@see self::ofTimestamp()} */
-    #[\Override]
-    public static function createFromTimestamp(float|int $timestamp): static
-    {
-        return self::ofTimestamp($timestamp);
-    }
-
     /** @alias {@see self::ofFormat()} */
     #[\Override]
     public static function createFromFormat(string $format, string $datetime, ?\DateTimeZone $timezone = null): static
@@ -375,19 +368,5 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     public function setTimezone(\DateTimeZone $timezone): static
     {
         return $this->shiftTimezone($timezone);
-    }
-
-    /** @alias {@see self::microsecond()} */
-    #[\Override]
-    public function getMicrosecond(): int
-    {
-        return $this->microsecond();
-    }
-
-    /** @alias {@see self::with()} */
-    #[\Override]
-    public function setMicrosecond(int $microsecond): static
-    {
-        return $this->with(Second::of($this->second()->second(), $microsecond));
     }
 }

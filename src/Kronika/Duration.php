@@ -15,8 +15,18 @@ namespace Kronika;
 
 use Kronika\Utils\Comparison;
 
+/**
+ * @psalm-type RoundingMode=self::ROUND_*
+ */
 final readonly class Duration
 {
+    final public const int ROUND_FLOOR = 0;
+    final public const int ROUND_HALF_AWAY_FROM_ZERO = \PHP_ROUND_HALF_UP;
+    final public const int ROUND_HALF_TOWARDS_ZERO = \PHP_ROUND_HALF_DOWN;
+    final public const int ROUND_HALF_EVEN = \PHP_ROUND_HALF_EVEN;
+    final public const int ROUND_HALF_ODD = \PHP_ROUND_HALF_ODD;
+    final public const int ROUND_CEIL = 5;
+
     public static function zero(): self
     {
         /** @var null|self $instance */
@@ -81,22 +91,34 @@ final readonly class Duration
         return $this->inSeconds() - ($this->inMinutes() * 60);
     }
 
-    /** @return non-negative-int */
-    public function inDays(\RoundingMode $mode = \RoundingMode::TowardsZero): int
+    /**
+     * @psalm-param RoundingMode $mode
+     *
+     * @return non-negative-int
+     */
+    public function inDays(int $mode = self::ROUND_FLOOR): int
     {
-        return (int)\round($this->inHours(mode: $mode) / 24, mode: $mode);
+        return $this->round($this->inHours(mode: $mode) / 24, mode: $mode);
     }
 
-    /** @return non-negative-int */
-    public function inHours(\RoundingMode $mode = \RoundingMode::TowardsZero): int
+    /**
+     * @psalm-param RoundingMode $mode
+     *
+     * @return non-negative-int
+     */
+    public function inHours(int $mode = self::ROUND_FLOOR): int
     {
-        return (int)\round($this->inMinutes(mode: $mode) / 60, mode: $mode);
+        return $this->round($this->inMinutes(mode: $mode) / 60, mode: $mode);
     }
 
-    /** @return non-negative-int */
-    public function inMinutes(\RoundingMode $mode = \RoundingMode::TowardsZero): int
+    /**
+     * @psalm-param RoundingMode $mode
+     *
+     * @return non-negative-int
+     */
+    public function inMinutes(int $mode = self::ROUND_FLOOR): int
     {
-        return (int)\round($this->inSeconds() / 60, mode: $mode);
+        return $this->round($this->inSeconds() / 60, mode: $mode);
     }
 
     /** @return non-negative-int */
@@ -137,17 +159,20 @@ final readonly class Duration
         return 0 < $seconds ? self::of(seconds: $seconds) : self::zero();
     }
 
-    public function roundToDays(\RoundingMode $mode = \RoundingMode::TowardsZero): self
+    /** @psalm-param RoundingMode $mode */
+    public function roundToDays(int $mode = self::ROUND_FLOOR): self
     {
         return self::of(days: $this->inDays(mode: $mode));
     }
 
-    public function roundToHours(\RoundingMode $mode = \RoundingMode::TowardsZero): self
+    /** @psalm-param RoundingMode $mode */
+    public function roundToHours(int $mode = self::ROUND_FLOOR): self
     {
         return self::of(hours: $this->inHours(mode: $mode));
     }
 
-    public function roundToMinutes(\RoundingMode $mode = \RoundingMode::TowardsZero): self
+    /** @psalm-param RoundingMode $mode */
+    public function roundToMinutes(int $mode = self::ROUND_FLOOR): self
     {
         return self::of(minutes: $this->inMinutes(mode: $mode));
     }
@@ -210,6 +235,22 @@ final readonly class Duration
     public function toDateInterval(): \DateInterval
     {
         return new \DateInterval("P{$this->days()}DT{$this->hours()}H{$this->minutes()}M{$this->seconds()}S");
+    }
+
+    /**
+     * @psalm-param RoundingMode $mode
+     *
+     * @return non-negative-int
+     */
+    private function round(float|int $number, int $mode): int
+    {
+        $number = match ($mode) {
+            self::ROUND_FLOOR => \floor($number),
+            self::ROUND_CEIL => \ceil($number),
+            default => \round($number, mode: $mode),
+        };
+
+        return (int)\abs($number);
     }
 
     /** @return non-empty-string */
