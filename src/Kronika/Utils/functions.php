@@ -13,8 +13,6 @@ declare(strict_types=1);
 
 namespace Kronika\Utils;
 
-use Kronika\Utils\Math\Math;
-
 if (! \function_exists('math')) {
     /**
      * @param non-negative-int $fraction
@@ -25,13 +23,13 @@ if (! \function_exists('math')) {
     function math(int $integer, int $fraction, int $precision): Math
     {
         if (extension_loaded('bcmath')) {
-            return \Kronika\Utils\Math\BcMath::of($integer, $fraction, $precision);
+            return Math\BcMath::of($integer, $fraction, $precision);
         }
         if (extension_loaded('gmp')) {
-            return \Kronika\Utils\Math\GmpMath::of($integer, $fraction, $precision);
+            return Math\GmpMath::of($integer, $fraction, $precision);
         }
 
-        return \Kronika\Utils\Math\NativeMath::of($integer, $fraction, $precision);
+        return Math\NativeMath::of($integer, $fraction, $precision);
     }
 }
 

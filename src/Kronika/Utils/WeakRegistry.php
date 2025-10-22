@@ -64,6 +64,19 @@ final class WeakRegistry
                 if (\is_string($value)) {
                     return $value;
                 }
+                if (\is_numeric($value)) {
+                    return (string) $value;
+                }
+                if (\is_null($value)) {
+                    return 'null';
+                }
+                if (\is_bool($value)) {
+                    return $value ? 'true' : 'false';
+                }
+                if (! \is_object($value)) {
+                    return \var_export($value, true);
+                }
+
                 if ($value instanceof \Stringable) {
                     return (string) $value;
                 }
@@ -73,22 +86,20 @@ final class WeakRegistry
                 if ($value instanceof \UnitEnum) {
                     return $value->name;
                 }
-                if (\is_object($value)) {
-                    if (\method_exists($value, 'value')) {
-                        return (string) $value->value();
-                    }
-                    if (\method_exists($value, 'number')) {
-                        return (string) $value->number();
-                    }
-
-                    return \var_export($value, true);
+                if (\method_exists($value, 'value')) {
+                    return (string) $value->value();
+                }
+                if (\method_exists($value, 'number')) {
+                    return (string) $value->number();
                 }
 
-                return (string) $value;
+                return \var_export($value, true);
             };
 
-            return \sprintf('[%s](%s)', $key, $prepareValue($value));
+            return \sprintf('[%s:%s]', $key, $prepareValue($value));
         };
+
+        \ksort($args);
 
         return \implode('||', \array_map($hash, \array_keys($args), \array_values($args)));
     }

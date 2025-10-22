@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Kronika;
 
 use Kronika\Utils\Comparison;
-use Kronika\Utils\Math\Math;
+use Kronika\Utils\Math;
 use function Kronika\Utils\math;
 
 /**

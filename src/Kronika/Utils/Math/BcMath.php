@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Kronika\Utils\Math;
 
+use Kronika\Utils\Math;
+
 /**
  * @psalm-import-type TFraction from Math
  * @psalm-import-type TPrecision from Math
