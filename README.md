@@ -21,6 +21,10 @@ composer require frostealth/kronika
 - [Time](#time)
 - [LocalDateTime](#localdatetime)
 - [ZonedDateTime](#zoneddatetime)
+- Extensions:
+  - [JMS Serializer][extension-jms-serializer]
+
+[extension-jms-serializer]: src/Kronika/Extension/JmsSerializer/README.md
 
 ### Date
 `Kronika\Date` represents a date without specifying a time.
