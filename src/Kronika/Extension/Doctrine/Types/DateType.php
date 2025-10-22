@@ -45,12 +45,8 @@ final class DateType extends Type
 
         try {
             \assert(\is_string($value));
-            $datetime = \DateTimeImmutable::createFromFormat($platform->getDateFormatString(), $value);
-            if ($datetime !== false) {
-                return Date::fromDateTime($datetime);
-            }
 
-            return Date::fromDateTime(new \DateTimeImmutable($value));
+            return Date::ofFormat(format: $platform->getDateFormatString(), date: $value);
         } catch (\Throwable $e) {
             throw ValueNotConvertible::new($value, $this->getName(), previous: $e);
         }

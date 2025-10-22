@@ -91,12 +91,10 @@ final readonly class Time implements Unit
     }
 
     /**
-     * @param non-empty-string $time
      * @param non-empty-string $format
-     *
-     * @return self
+     * @param non-empty-string $time
      */
-    public static function ofFormat(string $time, string $format = 'H:i:s'): self
+    public static function ofFormat(string $format, string $time): self
     {
         return self::ofDateTime(\DateTimeImmutable::createFromFormat($format, $time));
     }

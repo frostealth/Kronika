@@ -48,12 +48,12 @@ final readonly class LocalDateTime implements DateTime
             return $dateTime->toLocalDateTime();
         }
 
-        return self::of(Date::fromDateTime($dateTime), Time::ofDateTime($dateTime));
+        return self::of(Date::ofDateTime($dateTime), Time::ofDateTime($dateTime));
     }
 
     public static function ofInstant(Instant $instant): self
     {
-        return self::of(Date::fromInstant($instant), Time::ofInstant($instant));
+        return self::of(Date::ofInstant($instant), Time::ofInstant($instant));
     }
 
     private function __construct(

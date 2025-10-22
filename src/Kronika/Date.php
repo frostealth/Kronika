@@ -41,7 +41,7 @@ final readonly class Date implements Unit
         return self::weak(year: Year::of($year), month: Month::of($month), day: DayOfMonth::of($day));
     }
 
-    public static function fromDateTime(DateTime|\DateTimeInterface $dateTime): self
+    public static function ofDateTime(DateTime|\DateTimeInterface $dateTime): self
     {
         if ($dateTime instanceof DateTime) {
             return $dateTime->date();
@@ -52,17 +52,12 @@ final readonly class Date implements Unit
         return self::of($year, $month, $day);
     }
 
-    public static function parse(string $date, string $format = 'Y-m-d'): self
+    public static function ofTimestamp(float|int $timestamp): self
     {
-        return self::fromDateTime(\DateTimeImmutable::createFromFormat($format, $date));
+        return self::ofInstant(Instant::ofValue($timestamp));
     }
 
-    public static function fromTimestamp(float|int $timestamp): self
-    {
-        return self::fromInstant(Instant::of((int) $timestamp));
-    }
-
-    public static function fromInstant(Instant $instant): self
+    public static function ofInstant(Instant $instant): self
     {
         /** @var \WeakMap<Instant, self> $references */
         static $references = new \WeakMap();
@@ -73,6 +68,15 @@ final readonly class Date implements Unit
         ['year' => $year, 'mon' => $month, 'mday' => $day] = \getdate($instant->second());
 
         return $references[$instant] = self::of($year, $month, $day);
+    }
+
+    /**
+     * @param non-empty-string $format
+     * @param non-empty-string $date
+     */
+    public static function ofFormat(string $format, string $date): self
+    {
+        return self::ofDateTime(\DateTimeImmutable::createFromFormat($format, $date));
     }
 
     private function __construct(
@@ -106,19 +110,19 @@ final readonly class Date implements Unit
     public function add(Duration|\DateInterval $duration): self
     {
         if ($duration instanceof \DateInterval) {
-            return self::fromDateTime(LocalDateTime::midnightOf($this)->add($duration));
+            return self::ofDateTime(LocalDateTime::midnightOf($this)->add($duration));
         }
 
-        return self::fromInstant($this->instant()->add($duration->roundToDays()));
+        return self::ofInstant($this->instant()->add($duration->roundToDays()));
     }
 
     public function sub(Duration|\DateInterval $duration): self
     {
         if ($duration instanceof \DateInterval) {
-            return self::fromDateTime(LocalDateTime::endOfDayOf($this)->sub($duration));
+            return self::ofDateTime(LocalDateTime::endOfDayOf($this)->sub($duration));
         }
 
-        return self::fromInstant($this->instant()->sub($duration->roundToDays()));
+        return self::ofInstant($this->instant()->sub($duration->roundToDays()));
     }
 
     public function dayOfWeek(): DayOfWeek

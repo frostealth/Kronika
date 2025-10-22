@@ -70,6 +70,15 @@ final readonly class Instant
         return $this->microsecond;
     }
 
+    public function value(): float
+    {
+        if ($this->microsecond === 0) {
+            return (float) $this->second;
+        }
+
+        return (float) \sprintf('%d.%06d', $this->second, $this->microsecond);
+    }
+
     public function add(Duration $duration): self
     {
         if ($duration->isZero()) {
@@ -153,25 +162,15 @@ final readonly class Instant
         return math($this->second, $this->microsecond, precision: 6);
     }
 
-    /** @return numeric-string */
-    public function value(): string
-    {
-        if ($this->microsecond === 0) {
-            return (string) $this->second;
-        }
-
-        return \sprintf('%d.%06d', $this->second, $this->microsecond);
-    }
-
     /** @return non-empty-string */
     public function __toString(): string
     {
-        return $this->value();
+        return (string) $this->value();
     }
 
     /** @internal */
     public function __debugInfo(): array
     {
-        return ['second' => (float) $this->value()];
+        return ['second' => $this->value()];
     }
 }

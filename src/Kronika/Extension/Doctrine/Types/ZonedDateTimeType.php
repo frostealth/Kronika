@@ -45,12 +45,8 @@ final class ZonedDateTimeType extends Type
 
         try {
             \assert(\is_string($value));
-            $datetime = \DateTimeImmutable::createFromFormat($platform->getDateTimeTzFormatString(), $value);
-            if ($datetime !== false) {
-                return ZonedDateTime::ofDateTime($datetime);
-            }
 
-            return ZonedDateTime::ofDateTime(new \DateTimeImmutable($value));
+            return ZonedDateTime::ofFormat($platform->getDateTimeTzFormatString(), $value);
         } catch (\Throwable $e) {
             throw ValueNotConvertible::new($value, $this->getName(), previous: $e);
         }
