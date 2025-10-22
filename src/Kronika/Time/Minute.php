@@ -2,11 +2,20 @@
 
 declare(strict_types=1);
 
+/**
+ * This file is part of the Kronika package.
+ *
+ * (c) Ivan Kudinov <i@ikudinov.pro>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Kronika\Time;
 
-use Kronika\Comparison;
 use Kronika\LocalDateTime;
 use Kronika\Time;
+use Kronika\Utils\Comparison;
 use Kronika\Utils\WeakRefsTrait;
 
 /**
@@ -45,6 +54,12 @@ final readonly class Minute implements TimeUnit
         \assert($value >= 0 && $value < 60);
     }
 
+    /** @return TMinute */
+    public function value(): int
+    {
+        return $this->value;
+    }
+
     #[\Override]
     public function isZero(): bool
     {
@@ -63,15 +78,14 @@ final readonly class Minute implements TimeUnit
         return $this->value() === $value;
     }
 
-    /** @return TMinute */
-    public function value(): int
-    {
-        return $this->value;
-    }
-
     public function isBefore(self $other): bool
     {
         return $this->compareTo($other)->less();
+    }
+
+    public function isBeforeOrEqual(self $other): bool
+    {
+        return $this->compareTo($other)->lessOrEqual();
     }
 
     public function isEqualTo(self $other): bool
@@ -79,9 +93,19 @@ final readonly class Minute implements TimeUnit
         return $this->compareTo($other)->equal();
     }
 
+    public function isNotEqualTo(self $other): bool
+    {
+        return ! $this->isEqualTo($other);
+    }
+
     public function isAfter(self $other): bool
     {
         return $this->compareTo($other)->greater();
+    }
+
+    public function isAfterOrEqual(self $other): bool
+    {
+        return $this->compareTo($other)->greaterOrEqual();
     }
 
     public function compareTo(self $other): Comparison

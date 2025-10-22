@@ -2,27 +2,36 @@
 
 declare(strict_types=1);
 
-namespace Kronika;
+/**
+ * This file is part of the Kronika package.
+ *
+ * (c) Ivan Kudinov <i@ikudinov.pro>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Kronika\Utils;
 
 /**
  * @psalm-type Result=int<-1,1>
+ *
+ * @internal
  */
 final readonly class Comparison
 {
     /**
      * @template T
      *
-     * @psalm-param T $first
-     * @psalm-param T $second
+     * @param T $first
+     * @param T $second
      */
     public static function compare(mixed $first, mixed $second): self
     {
         return new self($first <=> $second);
     }
 
-    /**
-     * @psalm-param Result $result
-     */
+    /** @param Result $result */
     public function __construct(
         private int $result,
     ) {
@@ -59,9 +68,7 @@ final readonly class Comparison
         return $this->less() || $this->equal();
     }
 
-    /**
-     * @psalm-return Result
-     */
+    /** @return Result */
     public function value(): int
     {
         return $this->result;

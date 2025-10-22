@@ -2,6 +2,15 @@
 
 declare(strict_types=1);
 
+/**
+ * This file is part of the Kronika package.
+ *
+ * (c) Ivan Kudinov <i@ikudinov.pro>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Kronika\Utils;
 
 /**
@@ -65,7 +74,14 @@ final class WeakRegistry
                     return $value->name;
                 }
                 if (\is_object($value)) {
-                    return \method_exists($value, 'value') ? $value->value() : \var_export($value, true);
+                    if (\method_exists($value, 'value')) {
+                        return (string) $value->value();
+                    }
+                    if (\method_exists($value, 'number')) {
+                        return (string) $value->number();
+                    }
+
+                    return \var_export($value, true);
                 }
 
                 return (string) $value;

@@ -2,35 +2,36 @@
 
 declare(strict_types=1);
 
+/**
+ * This file is part of the Kronika package.
+ *
+ * (c) Ivan Kudinov <i@ikudinov.pro>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Kronika\Utils;
 
-use Kronika\Utils\Math\BcMath;
-use Kronika\Utils\Math\GmpMath;
 use Kronika\Utils\Math\Math;
-use Kronika\Utils\Math\NativeMath;
 
 if (! \function_exists('math')) {
     /**
-     * @psalm-param int<1,1000000000> $precision
-     * @psalm-param 'auto'|'bcmath'|'gmp'|'native' $mode
+     * @param non-negative-int $fraction
+     * @param int<1,15> $precision
      *
      * @internal
      */
-    function math(int $integer, int $fraction, int $precision, string $mode = 'auto'): Math
+    function math(int $integer, int $fraction, int $precision): Math
     {
-        if ($mode === 'auto') {
-            $mode = match (true) {
-                \extension_loaded('bcmath') => 'bcmath',
-                \extension_loaded('gmp') => 'gmp',
-                default => 'native',
-            };
+        if (extension_loaded('bcmath')) {
+            return \Kronika\Utils\Math\BcMath::of($integer, $fraction, $precision);
+        }
+        if (extension_loaded('gmp')) {
+            return \Kronika\Utils\Math\GmpMath::of($integer, $fraction, $precision);
         }
 
-        return match ($mode) {
-            'bcmath' => BcMath::of($integer, $fraction, $precision),
-            'gmp' => GmpMath::of($integer, $fraction, $precision),
-            'native' => NativeMath::of($integer, $fraction, $precision),
-        };
+        return \Kronika\Utils\Math\NativeMath::of($integer, $fraction, $precision);
     }
 }
 

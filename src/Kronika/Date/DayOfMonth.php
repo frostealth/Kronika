@@ -2,10 +2,19 @@
 
 declare(strict_types=1);
 
+/**
+ * This file is part of the Kronika package.
+ *
+ * (c) Ivan Kudinov <i@ikudinov.pro>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Kronika\Date;
 
-use Kronika\Comparison;
 use Kronika\Date;
+use Kronika\Utils\Comparison;
 
 /**
  * @psalm-type TDayOfMonth=int<1,31>
@@ -27,14 +36,29 @@ final readonly class DayOfMonth implements DateUnit
         return $this->compareTo($other)->less();
     }
 
+    public function isBeforeOrEqual(self $other): bool
+    {
+        return $this->compareTo($other)->lessOrEqual();
+    }
+
     public function isEqualTo(self $other): bool
     {
         return $this->compareTo($other)->equal();
     }
 
+    public function isNotEqualTo(self $other): bool
+    {
+        return ! $this->isEqualTo($other);
+    }
+
     public function isAfter(self $other): bool
     {
         return $this->compareTo($other)->greater();
+    }
+
+    public function isAfterOrEqual(self $other): bool
+    {
+        return $this->compareTo($other)->greaterOrEqual();
     }
 
     public function compareTo(self $other): Comparison

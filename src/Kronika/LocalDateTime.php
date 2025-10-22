@@ -2,6 +2,15 @@
 
 declare(strict_types=1);
 
+/**
+ * This file is part of the Kronika package.
+ *
+ * (c) Ivan Kudinov <i@ikudinov.pro>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Kronika;
 
 use Kronika\Date\DayOfMonth;
@@ -11,6 +20,7 @@ use Kronika\Date\Year;
 use Kronika\Time\Hour;
 use Kronika\Time\Minute;
 use Kronika\Time\Second;
+use Kronika\Utils\Comparison;
 
 final readonly class LocalDateTime implements DateTime
 {
@@ -112,6 +122,11 @@ final readonly class LocalDateTime implements DateTime
         return $unit->withinDateTime($this);
     }
 
+    public function atTimezone(\DateTimeZone $timezone): ZonedDateTime
+    {
+        return ZonedDateTime::ofLocal($this, $timezone);
+    }
+
     #[\Override]
     public function add(Duration|\DateInterval $interval): static
     {
@@ -147,9 +162,19 @@ final readonly class LocalDateTime implements DateTime
         return $this->compareTo($other)->less();
     }
 
+    public function isBeforeOrEqual(self $other): bool
+    {
+        return $this->compareTo($other)->lessOrEqual();
+    }
+
     public function isEqualTo(self $other): bool
     {
         return $this->compareTo($other)->equal();
+    }
+
+    public function isNotEqualTo(self $other): bool
+    {
+        return ! $this->isEqualTo($other);
     }
 
     public function isAfter(self $other): bool
@@ -157,14 +182,14 @@ final readonly class LocalDateTime implements DateTime
         return $this->compareTo($other)->greater();
     }
 
+    public function isAfterOrEqual(self $other): bool
+    {
+        return $this->compareTo($other)->greaterOrEqual();
+    }
+
     public function compareTo(self $other): Comparison
     {
         return $this->instant()->compareTo($other->instant());
-    }
-
-    public function atTimezone(\DateTimeZone $timezone): ZonedDateTime
-    {
-        return ZonedDateTime::ofLocal($this, $timezone);
     }
 
     #[\Override]

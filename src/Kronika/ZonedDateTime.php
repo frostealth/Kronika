@@ -2,6 +2,15 @@
 
 declare(strict_types=1);
 
+/**
+ * This file is part of the Kronika package.
+ *
+ * (c) Ivan Kudinov <i@ikudinov.pro>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Kronika;
 
 use Kronika\Date\DayOfMonth;
@@ -11,6 +20,7 @@ use Kronika\Date\Year;
 use Kronika\Time\Hour;
 use Kronika\Time\Minute;
 use Kronika\Time\Second;
+use Kronika\Utils\Comparison;
 
 /**
  * @psalm-import-type TMicrosecond from Second
@@ -156,12 +166,17 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
 
     public function timestamp(): float
     {
-        return (float) \sprintf('%d.%d', parent::getTimestamp(), $this->microsecond());
+        return (float) \sprintf('%d.%06d', parent::getTimestamp(), $this->microsecond());
     }
 
     public function shiftTimezone(\DateTimeZone $toTimezone): static
     {
         return self::ofDateTime(parent::setTimezone($toTimezone));
+    }
+
+    public function resetMicrosecond(): self
+    {
+        return $this->with($this->second()->resetMicro());
     }
 
     /**
@@ -229,14 +244,29 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         return $this->compareTo($other)->less();
     }
 
+    public function isBeforeOrEqual(self $other): bool
+    {
+        return $this->compareTo($other)->lessOrEqual();
+    }
+
     public function isEqualTo(self $other): bool
     {
         return $this->compareTo($other)->equal();
     }
 
+    public function isNotEqualTo(self $other): bool
+    {
+        return ! $this->isEqualTo($other);
+    }
+
     public function isAfter(self $other): bool
     {
         return $this->compareTo($other)->greater();
+    }
+
+    public function isAfterOrEqual(self $other): bool
+    {
+        return $this->compareTo($other)->greaterOrEqual();
     }
 
     public function compareTo(\DateTimeInterface $other): Comparison
@@ -330,7 +360,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     #[\Override]
     public function setTime(int $hour, int $minute, int $second = 0, int $microsecond = 0): static
     {
-        return $this->with(Time::of($hour, $minute, $second));
+        return $this->with(Time::of($hour, $minute, Second::of($second, $microsecond)));
     }
 
     /** @alias {@see self::ofTimestamp()} */

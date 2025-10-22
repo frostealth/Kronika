@@ -2,8 +2,18 @@
 
 declare(strict_types=1);
 
+/**
+ * This file is part of the Kronika package.
+ *
+ * (c) Ivan Kudinov <i@ikudinov.pro>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Kronika;
 
+use Kronika\Utils\Comparison;
 use Kronika\Utils\Math\Math;
 use function Kronika\Utils\math;
 
@@ -17,7 +27,7 @@ use function Kronika\Utils\math;
  */
 final readonly class Instant
 {
-    /** @psalm-param TMicrosecond $micro */
+    /** @param TMicrosecond $micro */
     public static function of(int $second, int $micro = 0): self
     {
         return new self($second, $micro);
@@ -36,7 +46,7 @@ final readonly class Instant
         return self::of($second, $micro ?? 0);
     }
 
-    /** @psalm-param TMicrosecond $microsecond */
+    /** @param TMicrosecond $microsecond */
     private function __construct(
         private int $second,
         private int $microsecond,
@@ -47,6 +57,17 @@ final readonly class Instant
     public function atTimezone(\DateTimeZone $timezone): ZonedDateTime
     {
         return ZonedDateTime::ofInstant($this, $timezone);
+    }
+
+    public function second(): int
+    {
+        return $this->second;
+    }
+
+    /** @return TMicrosecond */
+    public function microsecond(): int
+    {
+        return $this->microsecond;
     }
 
     public function add(Duration $duration): self
@@ -86,9 +107,19 @@ final readonly class Instant
         return $this->compareTo($other)->less();
     }
 
+    public function isBeforeOrEqual(self $other): bool
+    {
+        return $this->compareTo($other)->lessOrEqual();
+    }
+
     public function isEqualTo(self $other): bool
     {
         return $this->compareTo($other)->equal();
+    }
+
+    public function isNotEqualTo(self $other): bool
+    {
+        return ! $this->isEqualTo($other);
     }
 
     public function isAfter(self $other): bool
@@ -96,11 +127,17 @@ final readonly class Instant
         return $this->compareTo($other)->greater();
     }
 
+    public function isAfterOrEqual(self $other): bool
+    {
+        return $this->compareTo($other)->greaterOrEqual();
+    }
+
     public function compareTo(self $other): Comparison
     {
         return Comparison::compare($this->value(), $other->value());
     }
 
+    /** @internal */
     public function merge(self ...$others): self
     {
         $result = \array_reduce($others, static fn(Math $carry, self $other): Math => $carry->add(
@@ -111,14 +148,9 @@ final readonly class Instant
         return self::of(...$result->parts());
     }
 
-    public function second(): int
+    private function math(): Math
     {
-        return $this->second;
-    }
-
-    public function microsecond(): int
-    {
-        return $this->microsecond;
+        return math($this->second, $this->microsecond, precision: 6);
     }
 
     /** @return numeric-string */
@@ -129,11 +161,6 @@ final readonly class Instant
         }
 
         return \sprintf('%d.%06d', $this->second, $this->microsecond);
-    }
-
-    private function math(): Math
-    {
-        return math($this->second, $this->microsecond, precision: 6);
     }
 
     /** @return non-empty-string */

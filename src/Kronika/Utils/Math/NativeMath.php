@@ -2,14 +2,30 @@
 
 declare(strict_types=1);
 
+/**
+ * This file is part of the Kronika package.
+ *
+ * (c) Ivan Kudinov <i@ikudinov.pro>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Kronika\Utils\Math;
 
 /**
+ * @psalm-import-type TFraction from Math
+ * @psalm-import-type TPrecision from Math
+ * @psalm-type TDelimiter=non-negative-int
+ *
  * @psalm-internal Kronika\Utils
  * @internal
  */
 final class NativeMath implements Math
 {
+    /**
+     * @param TPrecision $precision
+     */
     public static function of(int $integer, int $fraction, int $precision): self
     {
         $delimiter = 10 ** $precision;
@@ -19,7 +35,8 @@ final class NativeMath implements Math
     }
 
     /**
-     * @param non-negative-int $delimiter
+     * @param TFraction $fraction
+     * @param TDelimiter $delimiter
      */
     private function __construct(
         private int $integer,
@@ -74,9 +91,9 @@ final class NativeMath implements Math
     }
 
     /**
-     * @param non-negative-int $delimiter
+     * @param TDelimiter $delimiter
      *
-     * @return array{int, int}
+     * @return list<int, TFraction>
      */
     private static function prepare(int $integer, int $fraction, int $delimiter): array
     {

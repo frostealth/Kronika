@@ -2,7 +2,18 @@
 
 declare(strict_types=1);
 
+/**
+ * This file is part of the Kronika package.
+ *
+ * (c) Ivan Kudinov <i@ikudinov.pro>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Kronika;
+
+use Kronika\Utils\Comparison;
 
 final readonly class Duration
 {
@@ -47,30 +58,6 @@ final readonly class Duration
     }
 
     /** @return non-negative-int */
-    public function inDays(\RoundingMode $mode = \RoundingMode::TowardsZero): int
-    {
-        return (int)\round($this->inHours(mode: $mode) / 24, mode: $mode);
-    }
-
-    /** @return non-negative-int */
-    public function inHours(\RoundingMode $mode = \RoundingMode::TowardsZero): int
-    {
-        return (int)\round($this->inMinutes(mode: $mode) / 60, mode: $mode);
-    }
-
-    /** @return non-negative-int */
-    public function inMinutes(\RoundingMode $mode = \RoundingMode::TowardsZero): int
-    {
-        return (int)\round($this->inSeconds() / 60, mode: $mode);
-    }
-
-    /** @return non-negative-int */
-    public function inSeconds(): int
-    {
-        return $this->seconds;
-    }
-
-    /** @return non-negative-int */
     public function days(): int
     {
         return $this->inDays();
@@ -92,6 +79,30 @@ final readonly class Duration
     public function seconds(): int
     {
         return $this->inSeconds() - ($this->inMinutes() * 60);
+    }
+
+    /** @return non-negative-int */
+    public function inDays(\RoundingMode $mode = \RoundingMode::TowardsZero): int
+    {
+        return (int)\round($this->inHours(mode: $mode) / 24, mode: $mode);
+    }
+
+    /** @return non-negative-int */
+    public function inHours(\RoundingMode $mode = \RoundingMode::TowardsZero): int
+    {
+        return (int)\round($this->inMinutes(mode: $mode) / 60, mode: $mode);
+    }
+
+    /** @return non-negative-int */
+    public function inMinutes(\RoundingMode $mode = \RoundingMode::TowardsZero): int
+    {
+        return (int)\round($this->inSeconds() / 60, mode: $mode);
+    }
+
+    /** @return non-negative-int */
+    public function inSeconds(): int
+    {
+        return $this->seconds;
     }
 
     /**
@@ -126,21 +137,6 @@ final readonly class Duration
         return 0 < $seconds ? self::of(seconds: $seconds) : self::zero();
     }
 
-    public function isZero(): bool
-    {
-        return $this->isEqualTo(self::zero());
-    }
-
-    public function isEqualTo(self $other): bool
-    {
-        return $this->compareTo($other)->equal();
-    }
-
-    public function compareTo(self $other): Comparison
-    {
-        return Comparison::compare($this->seconds, $other->seconds);
-    }
-
     public function roundToDays(\RoundingMode $mode = \RoundingMode::TowardsZero): self
     {
         return self::of(days: $this->inDays(mode: $mode));
@@ -169,6 +165,46 @@ final readonly class Duration
     public function dropToSeconds(): self
     {
         return $this->sub($this->roundToMinutes());
+    }
+
+    public function isZero(): bool
+    {
+        return $this->isEqualTo(self::zero());
+    }
+
+    public function isBefore(self $other): bool
+    {
+        return $this->compareTo($other)->less();
+    }
+
+    public function isBeforeOrEqual(self $other): bool
+    {
+        return $this->compareTo($other)->lessOrEqual();
+    }
+
+    public function isEqualTo(self $other): bool
+    {
+        return $this->compareTo($other)->equal();
+    }
+
+    public function isNotEqualTo(self $other): bool
+    {
+        return ! $this->isEqualTo($other);
+    }
+
+    public function isAfter(self $other): bool
+    {
+        return $this->compareTo($other)->greater();
+    }
+
+    public function isAfterOrEqual(self $other): bool
+    {
+        return $this->compareTo($other)->greaterOrEqual();
+    }
+
+    public function compareTo(self $other): Comparison
+    {
+        return Comparison::compare($this->seconds, $other->seconds);
     }
 
     public function toDateInterval(): \DateInterval

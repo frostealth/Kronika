@@ -1,12 +1,29 @@
 # Kronika
-
 The library provides date-time value objects such as "Date", "Time", "LocalDateTime", etc.
+
+## Installation
+The recommended way to install Kronika is through
+[Composer](https://getcomposer.org/).
+```shell
+composer require frostealth/kronika
+```
+
+## Version Guidance
+| Version   | Status   | Branch            | PHP Version |
+|-----------|----------|-------------------|-------------|
+| 0.x-dev   | latest   | [0.x][branch-0.x] | ^8.4        |
+
+[branch-0.x]: https://github.com/frostealth/kronika/three/0.x
 
 ## Usage
 
-### Date
+- [Date](#date)
+- [Time](#time)
+- [LocalDateTime](#localdatetime)
+- [ZonedDateTime](#zoneddatetime)
 
-"Kronika\Date" represents a date without specifying a time.
+### Date
+`Kronika\Date` represents a date without specifying a time.
 
 ```php
 // creating the "Date" instance
@@ -15,12 +32,12 @@ $date = Date::of(year: 2025, month: 12, day:31);
 $date = Date::ofDateTime(new \DateTimeImmutable('2025-12-31'));
 
 // formatting the "Date"
-echo $date->format('Y-m-d');  // '2025-12-31'
+echo $date->format('Y-m-d');        // '2025-12-31'
 echo $date->format('l, F jS, Y.');  // 'Wednesday, December 31st, 2025.'
 
-$year = $date->year();  // Year::of(2025)
-$month = $date->month();  // Month::of(12)
-$day = $date->day();  // DayOfMonth::of(31)
+$year      = $date->year();       // Year::of(2025)
+$month     = $date->month();      // Month::of(12)
+$day       = $date->day();        // DayOfMonth::of(31)
 $dayOfWeek = $date->dayOfWeek();  // DayOfWeek::of(3)
 
 // changing the year, month, day, weekday
@@ -47,14 +64,13 @@ echo $date->format('l, F jS, Y.');  // 'Saturday, January 3rd, 2026.'
 
 // getting the duration from one date to another
 $duration = $date->until(Date::of(year: 2026, month: 1, day: 5));
-echo $duration->days();  // 2
-echo $duration->hours();  // 0
+echo $duration->days();     // 2
+echo $duration->hours();    // 0
 echo $duration->minutes();  // 0
 ```
 
 ### Time
-
-"Kronika\Time" represents a time without specifying a date.
+`Kronika\Time` represents a time without specifying a date.
 
 ```php
 // creating the "Time" instance
@@ -63,9 +79,10 @@ $time = Time::of(hour: 9, minutes: 10, seconds:30);
 $time = Time::ofDateTime(new \DateTimeImmutable('09:10:30'));
 
 // formatting the "Time"
-echo $time->format('H:i:s');  // '09:10:30'
+echo $time->format('H:i:s');    // '09:10:30'
+echo $time->format('H:i:s.u');  // '09:10:30.000000'
 
-$hour = $time->hour();  // Hour::of(9)
+$hour   = $time->hour();    // Hour::of(9)
 $minute = $time->minute();  // Minute::of(10)
 $second = $time->second();  // Second::of(30)
 
@@ -86,123 +103,132 @@ echo $time->format('H:i:s');  // '12:00:00'
 
 // getting the duration from one time to another
 $duration = $time->until(Time::of(hour: 18, minute: 30, second: 30));
-echo $duration->hours();  // 6
-echo $duration->minutes();  // 30
-echo $duration->second();  // 30
+echo $duration->hours();      // 6
+echo $duration->minutes();    // 30
+echo $duration->second();     // 30
 echo $duration->inMinutes();  // 390
 ```
 
 ### LocalDateTime
-
-"Kronika\LocalDateTime" represents a local date-time without a time-zone.
+`Kronika\LocalDateTime` represents a local date-time without a time-zone.
 
 ```php
 // creating the "LocalDateTime" instance
-$date = Date::of(year: 2025, month: 12, day: 31);
-$time = Time::noon();
-$dateTime = LocalDateTime::of($date, $time);
+$date     = Date::of(year: 2025, month: 12, day: 31);
+$time     = Time::noon();
+$datetime = LocalDateTime::of($date, $time);
 // or
-$dateTime = $date->at($time);
+$datetime = $date->at($time);
 // or using "\DateTimeInterface"
-$dateTime = LocalDateTime::ofDateTime(new \DateTimeImmutable('2025-12-31 12:00:00'));
+$datetime = LocalDateTime::ofDateTime(new \DateTimeImmutable('2025-12-31 12:00:00'));
 
 // formatting the "LocalDateTime"
-echo $dateTime->format('Y-m-d H:i:s');  // '2025-12-31 12:00:00'
+echo $datetime->format('Y-m-d H:i:s');  // '2025-12-31 12:00:00'
 
-$year = $dateTime->year();  // Year::of(2025)
-$month = $dateTime->month();  // Month::of(12)
-$day = $dateTime->day();  // DayOfMonth::of(31)
-$hour = $dateTime->hour();  // Hour::of(12)
-$minute = $dateTime->minute();  // Minute::zero()
-$second = $dateTime->second();  // Second::zero()
-$date = $dateTime->date();  // Date::of(2025, 12, 31)
-$time = $dateTime->time();  // Time::of(12, 0, 0)
+$year   = $datetime->year();    // Year::of(2025)
+$month  = $datetime->month();   // Month::of(12)
+$day    = $datetime->day();     // DayOfMonth::of(31)
+$hour   = $datetime->hour();    // Hour::of(12)
+$minute = $datetime->minute();  // Minute::zero()
+$second = $datetime->second();  // Second::zero()
+$date   = $datetime->date();    // Date::of(2025, 12, 31)
+$time   = $datetime->time();    // Time::of(12, 0, 0)
 
 // changing the year, month, day, hour, minute and second is similar to "Date" and "Time"
-$dateTime = $dateTime->with(Hour::of(18))->with(Minute::of(30));
-echo $dateTime->format('Y-m-d H:i:s');  // '2025-12-31 18:30:00'
+$datetime = $datetime->with(Hour::of(18))->with(Minute::of(30));
+echo $datetime->format('Y-m-d H:i:s');  // '2025-12-31 18:30:00'
 
-// adding and subtracting an amount of days, hours, minutes and seconds are similar to "Date" and "Time"
-$dateTime = $dateTime->add(Duration::of(hours: 6, minutes: 30, seconds: 30));
-echo $dateTime->format('Y-m-d H:i:s');  // '2026-01-01 01:00:30'
+// adding and subtracting an amount of days, hours,
+// minutes and seconds are similar to "Date" and "Time"
+$datetime = $datetime->add(Duration::of(hours: 6, minutes: 30, seconds: 30));
+echo $datetime->format('Y-m-d H:i:s');  // '2026-01-01 01:00:30'
 
-$dateTime = $dateTime->sub(Duration::of(hours: 12, minutes: 60, seconds: 30));
-echo $dateTime->format('Y-m-d H:i:s');  // '2025-12-31 12:00:00'
+$datetime = $datetime->sub(Duration::of(hours: 12, minutes: 60, seconds: 30));
+echo $datetime->format('Y-m-d H:i:s');  // '2025-12-31 12:00:00'
 
 // getting the duration from one "LocalDateTime" to another
-$duration = $dateTime->until(LocalDateTime::midnightOf(Date::of(year: 2026, month: 1, day: 14)));
-echo $duration->days();  // 13
-echo $duration->hours();  // 12
+$duration = $datetime->until(
+    LocalDateTime::midnightOf(Date::of(year: 2026, month: 1, day: 14)),
+);
+echo $duration->days();     // 13
+echo $duration->hours();    // 12
 echo $duration->minutes();  // 0
-echo $duration->second();  // 0
+echo $duration->second();   // 0
 echo $duration->inHours();  // 324
 
 // getting the "\DateTimeImmutable" and "\DateTime"
-$immutable = $dateTime->toNative(new \DateTimeZone('UTC'));  // "\DateTimeImmutable"
-$mutable = $dateTime->toNativeMutable(new \DateTimeZone('UTC'));  // "\DateTime"
+$immutable = $datetime->toNative(new \DateTimeZone('UTC'));         // "\DateTimeImmutable"
+$mutable   = $datetime->toNativeMutable(new \DateTimeZone('UTC'));  // "\DateTime"
 ```
 
 ### ZonedDateTime
+`Kronika\ZonedDateTime` represents a date-time with a time-zone.
+This class extends the native `\DateTimeImmutable`.
 
-"Kronika\ZonedDateTime" represents a date-time with a time-zone.
-This class extends the native "\DateTimeImmutable".
-The API of "Kronika\ZonedDateTime" is similar to "Kronika\LocalDateTime".
+The API of `Kronika\ZonedDateTime` is similar to `Kronika\LocalDateTime`.
 
 ```php
 // creating the "ZonedDateTime" instance
-$date = Date::of(year: 2025, month: 12, day: 31);
-$time = Time::noon();
+$date     = Date::of(year: 2025, month: 12, day: 31);
+$time     = Time::noon();
 $timezone = new \DateTimeZone('UTC')
-$dateTime = ZonedDateTime::of($date, $time, $timezone);
+$datetime = ZonedDateTime::of($date, $time, $timezone);
 // or
-$dateTime = $date->at($time)->atTimezone($timezone);
+$datetime = $date->at($time)->atTimezone($timezone);
 // or
-$dateTime = ZonedDateTime::ofLocal(LocalDateTime::of($date, $time), $timezone);
+$datetime = ZonedDateTime::ofLocal(LocalDateTime::of($date, $time), $timezone);
 // or
-$dateTime = ZonedDateTime::utcOf($date, $time);
+$datetime = LocalDateTime::of($date, $time)->atTimezone($timezone);
+// or
+$datetime = ZonedDateTime::utcOf($date, $time);
 // or with current time and specified time-zone
-$dateTime = now($timezone);
+$datetime = now($timezone);
 // or using "\DateTimeInterface"
-$dateTime = ZonedDateTime::ofDateTime(new \DateTimeImmutable('2025-12-31 12:00:00 UTC'));
+$datetime = ZonedDateTime::ofDateTime(new \DateTimeImmutable('2025-12-31 12:00:00 UTC'));
 
 // formatting the "ZonedDateTime"
-echo $dateTime->format(\DateTimeInterface::ATOM);  // '2025-12-31T12:00:00+00:00'
+echo $datetime->format(\DateTimeInterface::ATOM);  // '2025-12-31T12:00:00+00:00'
 
-$year = $dateTime->year();  // Year::of(2025)
-$month = $dateTime->month();  // Month::of(12)
-$day = $dateTime->day();  // DayOfMonth::of(31)
-$hour = $dateTime->hour();  // Hour::of(12)
-$minute = $dateTime->minute();  // Minute::zero()
-$second = $dateTime->second();  // Second::zero()
-$date = $dateTime->date();  // Date::of(2025, 12, 31)
-$time = $dateTime->time();  // Time::of(12, 0, 0)
-$timezone = $dateTime->timezone();  // \DateTimeZone('UTC')
-$timestamp = $dateTime->timestamp();  // int(1767182400)
+$year      = $datetime->year();       // Year::of(2025)
+$month     = $datetime->month();      // Month::of(12)
+$day       = $datetime->day();        // DayOfMonth::of(31)
+$hour      = $datetime->hour();       // Hour::of(12)
+$minute    = $datetime->minute();     // Minute::zero()
+$second    = $datetime->second();     // Second::zero()
+$date      = $datetime->date();       // Date::of(2025, 12, 31)
+$time      = $datetime->time();       // Time::of(12, 0, 0)
+$timezone  = $datetime->timezone();   // \DateTimeZone('UTC')
+$timestamp = $datetime->timestamp();  // float(1767182400.001234)
 
 // changing the year, month, day, hour, minute and second is similar to "LocalDateTime"
-$dateTime = $dateTime->with(Hour::of(18))->with(Minute::of(30));
-echo $dateTime->format(\DateTimeInterface::ATOM);  // '2025-12-31T18:30:00+00:00'
+$datetime = $datetime->with(Hour::of(18))->with(Minute::of(30));
+echo $datetime->format(\DateTimeInterface::ATOM);  // '2025-12-31T18:30:00+00:00'
+// changing the time-zone doesn't shift the time,
+// to shift the time use "shiftTimezone()" method
+echo $datetime->with(new \DateTimeZone('+01:00'))
+              ->format(\DateTimeInterface::ATOM);  // '2025-12-31T18:30:00+01:00
 
-// adding and subtracting an amount of days, hours, minutes and seconds are similar to "LocalDateTime"
-$dateTime = $dateTime->add(Duration::of(hours: 6, minutes: 30, seconds: 30));
-echo $dateTime->format(\DateTimeInterface::ATOM);  // '2026-01-01T01:00:30+00:00'
+// adding and subtracting an amount of days, hours, minutes
+// and seconds are similar to "LocalDateTime"
+$datetime = $datetime->add(Duration::of(hours: 6, minutes: 30, seconds: 30));
+echo $datetime->format(\DateTimeInterface::ATOM);  // '2026-01-01T01:00:30+00:00'
 
-$dateTime = $dateTime->sub(Duration::of(hours: 12, minutes: 60, seconds: 30));
-echo $dateTime->format(\DateTimeInterface::ATOM);  // '2025-12-31T12:00:00+00:00'
+$datetime = $datetime->sub(Duration::of(hours: 12, minutes: 60, seconds: 30));
+echo $datetime->format(\DateTimeInterface::ATOM);  // '2025-12-31T12:00:00+00:00'
 
 // shifting the timezone
-$dateTime = $dateTime->shiftTimezone(new \DateTimeZone('+01:00'));
-echo $dateTime->format(\DateTimeInterface::ATOM);  // '2025-12-31T13:00:00+01:00'
+$datetime = $datetime->shiftTimezone(new \DateTimeZone('+01:00'));
+echo $datetime->format(\DateTimeInterface::ATOM);  // '2025-12-31T13:00:00+01:00'
 
 // getting the duration from one "ZonedDateTime" to another
-$duration = $dateTime->until(new \DateTime('2026-01-14T12:30:15+00:00'));
-$days = $duration->days();  // 14
-$hours = $duration->hours();  // 0
-$minutes = $duration->minutes();  // 30
-$seconds = $duration->second();  // 15
-$inHours = $duration->inHours();  // 336
+$duration = $datetime->until(new \DateTime('2026-01-14T12:30:15+00:00'));
+$days     = $duration->days();     // 14
+$hours    = $duration->hours();    // 0
+$minutes  = $duration->minutes();  // 30
+$seconds  = $duration->second();   // 15
+$inHours  = $duration->inHours();  // 336
 
 // getting the "\DateTimeImmutable" and "\DateTime"
-$immutable = $dateTime->toNative();  // "\DateTimeImmutable"
-$mutable = $dateTime->toNativeMutable();  // "\DateTime"
+$immutable = $datetime->toNative();         // "\DateTimeImmutable"
+$mutable   = $datetime->toNativeMutable();  // "\DateTime"
 ```

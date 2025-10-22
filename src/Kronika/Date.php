@@ -2,6 +2,15 @@
 
 declare(strict_types=1);
 
+/**
+ * This file is part of the Kronika package.
+ *
+ * (c) Ivan Kudinov <i@ikudinov.pro>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Kronika;
 
 use Kronika\Date\DateUnit;
@@ -9,6 +18,7 @@ use Kronika\Date\DayOfMonth;
 use Kronika\Date\DayOfWeek;
 use Kronika\Date\Month;
 use Kronika\Date\Year;
+use Kronika\Utils\Comparison;
 use Kronika\Utils\WeakRefsTrait;
 
 /**
@@ -39,7 +49,7 @@ final readonly class Date implements Unit
 
         [$year, $month, $day] = \sscanf($dateTime->format('Y-m-d'), '%d-%d-%d');
 
-        return self::of((int) $year, (int) $month, (int) $day);
+        return self::of($year, $month, $day);
     }
 
     public static function parse(string $date, string $format = 'Y-m-d'): self
@@ -129,26 +139,6 @@ final readonly class Date implements Unit
         );
     }
 
-    public function isBefore(self $other): bool
-    {
-        return $this->compareTo($other)->less();
-    }
-
-    public function isEqualTo(self $other): bool
-    {
-        return $this->compareTo($other)->equal();
-    }
-
-    public function isAfter(self $other): bool
-    {
-        return $this->compareTo($other)->greater();
-    }
-
-    public function compareTo(self $other): Comparison
-    {
-        return $this->instant()->compareTo($other->instant());
-    }
-
     public function until(self $end): Duration
     {
         return $this->instant()->until($end->instant());
@@ -177,6 +167,41 @@ final readonly class Date implements Unit
     public function toEndOfMonth(): self
     {
         return $this->with($this->month()->lastDay($this->year()));
+    }
+
+    public function isBefore(self $other): bool
+    {
+        return $this->compareTo($other)->less();
+    }
+
+    public function isBeforeOrEqual(self $other): bool
+    {
+        return $this->compareTo($other)->lessOrEqual();
+    }
+
+    public function isEqualTo(self $other): bool
+    {
+        return $this->compareTo($other)->equal();
+    }
+
+    public function isNotEqualTo(self $other): bool
+    {
+        return ! $this->isEqualTo($other);
+    }
+
+    public function isAfter(self $other): bool
+    {
+        return $this->compareTo($other)->greater();
+    }
+
+    public function isAfterOrEqual(self $other): bool
+    {
+        return $this->compareTo($other)->greaterOrEqual();
+    }
+
+    public function compareTo(self $other): Comparison
+    {
+        return $this->instant()->compareTo($other->instant());
     }
 
     public function instant(): Instant

@@ -2,11 +2,20 @@
 
 declare(strict_types=1);
 
+/**
+ * This file is part of the Kronika package.
+ *
+ * (c) Ivan Kudinov <i@ikudinov.pro>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Kronika\Date;
 
-use Kronika\Comparison;
 use Kronika\Date;
 use Kronika\Duration;
+use Kronika\Utils\Comparison;
 
 /**
  * @psalm-type TYear=int<-99999,99999>
@@ -23,10 +32,25 @@ final readonly class Year implements DateUnit
         return $value instanceof self ? $value : self::weak(value: $value);
     }
 
+    public function next(): self
+    {
+        return new self($this->number() + 1);
+    }
+
+    public function previous(): self
+    {
+        return new self($this->number() - 1);
+    }
+
     /** @return int<365>|int<366> */
     public function length(): int
     {
         return $this->isLeap() ? 366 : 365;
+    }
+
+    public function duration(): Duration
+    {
+        return Duration::of(days: $this->length());
     }
 
     public function isLeap(): bool
@@ -49,9 +73,19 @@ final readonly class Year implements DateUnit
         return $this->compareTo($other)->less();
     }
 
+    public function isBeforeOrEqual(self $other): bool
+    {
+        return $this->compareTo($other)->lessOrEqual();
+    }
+
     public function isEqualTo(self $other): bool
     {
         return $this->compareTo($other)->equal();
+    }
+
+    public function isNotEqualTo(self $other): bool
+    {
+        return ! $this->isEqualTo($other);
     }
 
     public function isAfter(self $other): bool
@@ -59,24 +93,14 @@ final readonly class Year implements DateUnit
         return $this->compareTo($other)->greater();
     }
 
+    public function isAfterOrEqual(self $other): bool
+    {
+        return $this->compareTo($other)->greaterOrEqual();
+    }
+
     public function compareTo(self $other): Comparison
     {
         return Comparison::compare($this->number(), $other->number());
-    }
-
-    public function next(): self
-    {
-        return new self($this->number() + 1);
-    }
-
-    public function previous(): self
-    {
-        return new self($this->number() - 1);
-    }
-
-    public function duration(): Duration
-    {
-        return Duration::of(days: $this->length());
     }
 
     /** @return non-empty-string */

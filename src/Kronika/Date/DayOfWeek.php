@@ -2,12 +2,21 @@
 
 declare(strict_types=1);
 
+/**
+ * This file is part of the Kronika package.
+ *
+ * (c) Ivan Kudinov <i@ikudinov.pro>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Kronika\Date;
 
-use Kronika\Comparison;
 use Kronika\Date;
 use Kronika\Duration;
 use Kronika\LocalDateTime;
+use Kronika\Utils\Comparison;
 
 /**
  * @psalm-type TDayOfWeek=value-of<DayOfWeek>
@@ -72,21 +81,6 @@ enum DayOfWeek: int implements DateUnit
         return $this->name;
     }
 
-    public function isBefore(self $other): bool
-    {
-        return $this->compareTo($other)->less();
-    }
-
-    public function isAfter(self $other): bool
-    {
-        return $this->compareTo($other)->greater();
-    }
-
-    public function compareTo(self $other): Comparison
-    {
-        return Comparison::compare($this->value, $other->value);
-    }
-
     public function next(): self
     {
         if ($this === self::Sunday) {
@@ -103,6 +97,41 @@ enum DayOfWeek: int implements DateUnit
         }
 
         return self::of($this->number() - 1);
+    }
+
+    public function isBefore(self $other): bool
+    {
+        return $this->compareTo($other)->less();
+    }
+
+    public function isBeforeOrEqual(self $other): bool
+    {
+        return $this->compareTo($other)->lessOrEqual();
+    }
+
+    public function isEqualTo(self $other): bool
+    {
+        return $this->compareTo($other)->equal();
+    }
+
+    public function isNotEqualTo(self $other): bool
+    {
+        return ! $this->isEqualTo($other);
+    }
+
+    public function isAfter(self $other): bool
+    {
+        return $this->compareTo($other)->greater();
+    }
+
+    public function isAfterOrEqual(self $other): bool
+    {
+        return $this->compareTo($other)->greaterOrEqual();
+    }
+
+    public function compareTo(self $other): Comparison
+    {
+        return Comparison::compare($this->value, $other->value);
     }
 
     private function diff(self $other): Duration

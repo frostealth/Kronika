@@ -2,14 +2,30 @@
 
 declare(strict_types=1);
 
+/**
+ * This file is part of the Kronika package.
+ *
+ * (c) Ivan Kudinov <i@ikudinov.pro>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Kronika\Utils\Math;
 
 /**
+ * @psalm-import-type TFraction from Math
+ * @psalm-import-type TPrecision from Math
+ *
  * @psalm-internal Kronika\Utils
  * @internal
  */
 final class GmpMath implements Math
 {
+    /**
+     * @param TFraction $fraction
+     * @param TPrecision $precision
+     */
     public static function of(int $integer, int $fraction, int $precision): self
     {
         return new self(self::prepare($integer, $fraction, $precision), $precision);
@@ -17,6 +33,7 @@ final class GmpMath implements Math
 
     private readonly \GMP $delimiter;
 
+    /** @param TPrecision $precision */
     private function __construct(
         private \GMP $number,
         private readonly int $precision,
@@ -61,6 +78,10 @@ final class GmpMath implements Math
         );
     }
 
+    /**
+     * @param TFraction $fraction
+     * @param TPrecision $precision
+     */
     private static function prepare(int $integer, int $fraction, int $precision): \GMP
     {
         return new \GMP(\sprintf("%d%0{$precision}d", $integer, $fraction));
