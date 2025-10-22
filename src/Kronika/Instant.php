@@ -154,7 +154,7 @@ final readonly class Instant
     }
 
     /** @return numeric-string */
-    private function value(): string
+    public function value(): string
     {
         if ($this->microsecond === 0) {
             return (string) $this->second;

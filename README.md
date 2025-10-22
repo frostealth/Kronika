@@ -22,8 +22,10 @@ composer require frostealth/kronika
 - [LocalDateTime](#localdatetime)
 - [ZonedDateTime](#zoneddatetime)
 - Extensions:
+  - [Doctrine][extension-doctrine]
   - [JMS Serializer][extension-jms-serializer]
 
+[extension-doctrine]: src/Kronika/Extension/Doctrine/README.md
 [extension-jms-serializer]: src/Kronika/Extension/JmsSerializer/README.md
 
 ### Date

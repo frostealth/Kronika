@@ -17,6 +17,7 @@
     "require-dev": {
         "ext-bcmath": "*",
         "ext-gmp": "*",
+        "doctrine/dbal": "^4.3",
         "jms/serializer": "^3.32",
         "vimeo/psalm": "^6.13"
     },
