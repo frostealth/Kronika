@@ -7,23 +7,10 @@ with [Doctrine](https://www.doctrine-project.org/).
 <?php
 // in bootstrapping code
 
-use Doctrine\DBAL\Types\Type;
-use Kronika\Extension\Doctrine\Types as Kronika;
+use Kronika\Extension\Doctrine\Types as KronikaTypes;
 
 // Register the types
-Type::addType(Kronika\DateType::NAME, Kronika\DateType::class);
-Type::addType(Kronika\Date\YearType::NAME, Kronika\Date\YearType::class);
-Type::addType(Kronika\Date\MonthType::NAME, Kronika\Date\MonthType::class);
-Type::addType(Kronika\Date\DayOfWeekType::NAME, Kronika\Date\DayOfWeekType::class);
-Type::addType(Kronika\Date\DayOfMonthType::NAME, Kronika\Date\DayOfMonthType::class);
-Type::addType(Kronika\TimeType::NAME, Kronika\TimeType::class);
-Type::addType(Kronika\Time\HourType::NAME, Kronika\Time\HourType::class);
-Type::addType(Kronika\Time\MinuteType::NAME, Kronika\Time\MinuteType::class);
-Type::addType(Kronika\Time\SecondType::NAME, Kronika\Time\SecondType::class);
-Type::addType(Kronika\DurationType::NAME, Kronika\DurationType::class);
-Type::addType(Kronika\InstantType::NAME, Kronika\InstantType::class);
-Type::addType(Kronika\LocalDateTimeType::NAME, Kronika\LocalDateTimeType::class);
-Type::addType(Kronika\ZonedDateTimeType::NAME, Kronika\ZonedDateTimeType::class);
+KronikaTypes::register();
 ```
 Or 
 ```yaml
@@ -34,8 +21,8 @@ doctrine:
       kronika.date: Kronika\Extension\Doctrine\Types\DateType
       kronika.year: Kronika\Extension\Doctrine\Types\Date\YearType
       kronika.month: Kronika\Extension\Doctrine\Types\Date\MonthType
-      kronika.day-of-week: Kronika\Extension\Doctrine\Types\Date\DayOfWeekType
       kronika.day-of-month: Kronika\Extension\Doctrine\Types\Date\DayOfMonthType
+      kronika.day-of-week: Kronika\Extension\Doctrine\Types\Date\DayOfWeekType
       kronika.time: Kronika\Extension\Doctrine\Types\TimeType
       kronika.hour: Kronika\Extension\Doctrine\Types\Time\HourType
       kronika.minute: Kronika\Extension\Doctrine\Types\Time\MinuteType
