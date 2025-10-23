@@ -19,7 +19,8 @@
         "ext-gmp": "*",
         "doctrine/dbal": "^4.3",
         "jms/serializer": "^3.32",
-        "vimeo/psalm": "^6.13"
+        "vimeo/psalm": "^6.13",
+        "yiisoft/yii2": "^2.0"
     },
     "autoload": {
         "psr-4": {
@@ -37,7 +38,10 @@
         }
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "yiisoft/yii2-composer": false
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true
