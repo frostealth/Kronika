@@ -26,9 +26,11 @@ composer require frostealth/kronika
 - Extensions:
   - [Doctrine][extension-doctrine]
   - [JMS Serializer][extension-jms-serializer]
+  - [Yii2][extension-yii2]
 
 [extension-doctrine]: src/Kronika/Extension/Doctrine/README.md
 [extension-jms-serializer]: src/Kronika/Extension/JmsSerializer/README.md
+[extension-yii2]: src/Kronika/Extension/Yii2/README.md
 
 ### Date
 `Kronika\Date` represents a date without specifying a time.
