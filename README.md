@@ -9,11 +9,13 @@ composer require frostealth/kronika
 ```
 
 ## Version Guidance
-| Version   | Status   | Branch            | PHP Version |
-|-----------|----------|-------------------|-------------|
-| 0.x-dev   | latest   | [0.x][branch-0.x] | ^8.4        |
+| Version | Status   | Branch            | PHP Version |
+|---------|----------|-------------------|-------------|
+| 0.2-dev | latest   | [0.x][branch-0.x] | ^8.4        |
+| 0.1     | support  | [0.1][branch-0.1] | >=8.3,<8.5  |
 
 [branch-0.x]: https://github.com/frostealth/kronika/tree/0.x
+[branch-0.1]: https://github.com/frostealth/kronika/tree/0.1
 
 ## Usage
 

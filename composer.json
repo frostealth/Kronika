@@ -32,7 +32,8 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-0.x": "0.x-dev"
+            "dev-0.x": "0.2-dev",
+            "dev-0.1": "0.1-dev"
         }
     },
     "config": {
