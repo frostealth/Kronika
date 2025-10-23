@@ -438,7 +438,7 @@ final readonly class KronikaSubscribingHandler implements SubscribingHandlerInte
         }
 
         return $visitor->visitString(\sprintf(
-            '%04d-%02d-%02d\T%02d:%02d:%02d.%06d',
+            '%04d-%02d-%02dT%02d:%02d:%02d.%06d',
             $datetime->year()->number(),
             $datetime->month()->number(),
             $datetime->day()->number(),
@@ -456,7 +456,7 @@ final readonly class KronikaSubscribingHandler implements SubscribingHandlerInte
             return $visitor->visitNull($value, $type);
         }
 
-        [$year, $month, $day, $hour, $minute, $second, $micro] = \sscanf($value, '%4d-%2d-%2d\T%2d:%2d:%2d.%6d');
+        [$year, $month, $day, $hour, $minute, $second, $micro] = \sscanf($value, '%4d-%2d-%2dT%2d:%2d:%2d.%6d');
 
         return LocalDateTime::of(
             date: Date::of(year: (int) $year, month: (int) $month, day: (int) $day),
