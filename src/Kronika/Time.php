@@ -216,9 +216,9 @@ final readonly class Time implements Unit
      */
     public function format(string $format): string
     {
-        return \DateTimeImmutable::createFromTimestamp($this->instant()->second())->format(
+        return (new \DateTimeImmutable((string) $this))->format(
             // @todo: the escaping doesn't work
-            \preg_replace('/([^AaBGgHis])/', '\\\\$1', $format),
+            \preg_replace('/([^AaBGgHisu])/', '\\\\$1', $format),
         );
     }
 
