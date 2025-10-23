@@ -55,17 +55,14 @@ final readonly class Year implements DateUnit
 
     public function isLeap(): bool
     {
-        if (0 !== $this->number() % 4) {
+        if ($this->number() % 4 !== 0) {
             return false;
         }
-        if (0 !== $this->number() % 100) {
-            return false;
-        }
-        if (0 !== $this->number() % 400) {
-            return false;
+        if ($this->number() % 100 !== 0) {
+            return true;
         }
 
-        return true;
+        return $this->number() % 400 === 0;
     }
 
     public function isBefore(self $other): bool
