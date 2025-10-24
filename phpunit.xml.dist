@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<phpunit
+    bootstrap="vendor/autoload.php"
+    colors="true"
+    stopOnFailure="false"
+    cacheDirectory=".phpunit.cache"
+>
+    <testsuites>
+        <testsuite name="Kronika">
+            <directory>tests/Kronika</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

@@ -19,6 +19,7 @@
         "ext-gmp": "*",
         "doctrine/dbal": "^4.3",
         "jms/serializer": "^3.32",
+        "phpunit/phpunit": "^12.4",
         "vimeo/psalm": "^6.13",
         "yiisoft/yii2": "^2.0"
     },
@@ -30,6 +31,11 @@
             "src/Kronika/functions.php",
             "src/Kronika/Utils/functions.php"
         ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Kronika\\Tests\\": "tests/Kronika"
+        }
     },
     "extra": {
         "branch-alias": {
