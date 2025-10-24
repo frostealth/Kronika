@@ -39,6 +39,20 @@ final class Foo extends ActiveRecord
     }
 }
 ```
+Database column type for:
+- `Date`            -> string
+- `Date\Year`       -> integer (unsigned tiny int)
+- `Date\Month`      -> integer (unsigned tiny int)
+- `Date\DayOfMonth` -> integer (unsigned tiny int)
+- `Date\DayOfWeek`  -> integer (unsigned tiny int)
+- `Time`            -> string
+- `Time\Hour`       -> integer (unsigned tiny int)
+- `Time\Minute`     -> integer (unsigned tiny int)
+- `Time\Second`     -> float (unsigned tiny float)
+- `Duration`        -> integer (unsigned int)
+- `Instant`         -> float
+- `LocalDateTime`   -> string (datetime without time-zone)
+- `ZonedDateTime`   -> string (datetime with time-zone)
 
 ## Usage
 ```php
