@@ -190,7 +190,7 @@ final class KronikaBehavior extends Behavior
 
             $oldAttribute = $this->owner->getOldAttribute($attributeName);
             if (null !== $oldAttribute && $this->owner->canSetOldAttribute($attributeName)) {
-                $this->owner->setOldAttribute($attributeName, $this->toObject($oldAttribute, $attribute));
+                $this->owner->setOldAttribute($attributeName, $this->toObject($attributeName, $oldAttribute));
             }
         }
     }
