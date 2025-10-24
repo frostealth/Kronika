@@ -10,9 +10,6 @@
 >
     <projectFiles>
         <directory name="src" />
-        <ignoreFiles>
-            <directory name="vendor" />
-        </ignoreFiles>
     </projectFiles>
     <issueHandlers>
         <MethodSignatureMismatch>
@@ -27,7 +24,7 @@
         </MissingImmutableAnnotation>
         <UndefinedDocblockClass>
             <errorLevel type="suppress">
-                <file name="src/Kronika/Utils/WeakRefsTrait.php"/>
+                <file name="src/Utils/WeakRefsTrait.php"/>
             </errorLevel>
         </UndefinedDocblockClass>
     </issueHandlers>

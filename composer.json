@@ -25,16 +25,20 @@
     },
     "autoload": {
         "psr-4": {
-            "Kronika\\": "src/Kronika/"
+            "Kronika\\": "src/Kronika/",
+            "Kronika\\Extension\\": "src/Extension/",
+            "Kronika\\Utils\\": "src/Utils/"
         },
         "files": [
             "src/Kronika/functions.php",
-            "src/Kronika/Utils/functions.php"
+            "src/Utils/functions.php"
         ]
     },
     "autoload-dev": {
         "psr-4": {
-            "Kronika\\Tests\\": "tests/Kronika"
+            "Kronika\\Tests\\": "tests/Kronika",
+            "Kronika\\Extension\\Tests\\": "tests/Extension",
+            "Kronika\\Utils\\Tests\\": "tests/Utils"
         }
     },
     "extra": {

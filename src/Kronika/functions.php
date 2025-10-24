@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Kronika;
 
-if (! \function_exists('now')) {
+if (! \function_exists('\\Kronika\\now')) {
     function now(?\DateTimeZone $timezone = null): ZonedDateTime
     {
         return ZonedDateTime::ofDateTime(new \DateTimeImmutable(timezone: $timezone));
