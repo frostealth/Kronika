@@ -3,3 +3,4 @@
 .gitignore export-ignore
 /psalm.xml export-ignore
 /tests export-ignore
+/phpunit.xml.dist export-ignore
