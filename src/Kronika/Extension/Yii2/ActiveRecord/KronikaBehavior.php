@@ -167,7 +167,7 @@ final class KronikaBehavior extends Behavior
 
     private function castAttributesToDatabaseValues(): void
     {
-        foreach (\array_keys($this->attributes) as $attributeName) {
+        foreach ($this->attributeNames() as $attributeName) {
             $attribute = $this->owner->getAttribute($attributeName);
             if (\is_object($attribute)) {
                 $this->owner->setAttribute($attributeName, $this->toDatabaseValue($attribute));
@@ -182,7 +182,7 @@ final class KronikaBehavior extends Behavior
 
     private function castAttributesToObjects(): void
     {
-        foreach ($this->attributes as $attributeName => $enumClass) {
+        foreach ($this->attributeNames() as $attributeName) {
             $attribute = $this->owner->getAttribute($attributeName);
             if (null !== $attribute) {
                 $this->owner->setAttribute($attributeName, $this->toObject($attributeName, $attribute));
@@ -264,5 +264,13 @@ final class KronikaBehavior extends Behavior
         }
 
         throw new \RuntimeException("Unknown attribute: [$attributeName]");
+    }
+
+    /** @return iterable<TAttributeName> */
+    private function attributeNames(): iterable
+    {
+        foreach ($this->attributes as $names) {
+            yield from $names;
+        }
     }
 }
