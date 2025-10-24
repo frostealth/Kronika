@@ -9,5 +9,11 @@
         <testsuite name="Kronika">
             <directory>tests/Kronika</directory>
         </testsuite>
+        <testsuite name="Kronika\Extension">
+            <directory>tests/Extension</directory>
+        </testsuite>
+        <testsuite name="Kronika\Utils">
+            <directory>tests/Utils</directory>
+        </testsuite>
     </testsuites>
 </phpunit>

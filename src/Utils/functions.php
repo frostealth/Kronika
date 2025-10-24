@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Kronika\Utils;
 
-if (! \function_exists('math')) {
+if (! \function_exists('\\Kronika\\Utils\\math')) {
     /**
      * @param non-negative-int $fraction
      * @param int<1,15> $precision
@@ -33,7 +33,7 @@ if (! \function_exists('math')) {
     }
 }
 
-if (! \function_exists('weak')) {
+if (! \function_exists('\\Kronika\\Utils\\weak')) {
     /**
      * @template TType of object
      * @template TArgs
@@ -52,7 +52,7 @@ if (! \function_exists('weak')) {
     }
 }
 
-if (! \function_exists('weak_clean_up')) {
+if (! \function_exists('\\Kronika\\Utils\\weak_clean_up')) {
     /**
      * @internal
      */
@@ -62,7 +62,7 @@ if (! \function_exists('weak_clean_up')) {
     }
 }
 
-if (! \function_exists('weak_registry')) {
+if (! \function_exists('\\Kronika\\Utils\\weak_registry')) {
     /**
      * @psalm-internal Kronika\Utils
      * @internal
