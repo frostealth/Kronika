@@ -18,15 +18,15 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          tools: composer@v2
+          tools: composer:v2
 
       - name: Validate Composer
         run: composer validate --strict
 
       - name: Get Composer Cache Directory
         id: composer-cache
-        run: |
-          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+        shell: bash
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache Composer
         uses: actions/cache@v4
@@ -39,8 +39,6 @@ jobs:
         run: composer install --dev --prefer-dist --no-progress
 
       - name: Run ${{ matrix.test-suit }} Tests
-        uses: php-actions/phpunit@v4
-        with:
-          php_version: ${{ matrix.php }}
-          configuration: phpunit.xml.dist
-          testsuite: ${{ matrix.test-suite }}
+        run: php -d memory_limit=-1 vendor/bin/phpunit --testsuite ${{ matrix.test-suite }}
+        env:
+          PHP_VERSION: ${{ matrix.php }}
