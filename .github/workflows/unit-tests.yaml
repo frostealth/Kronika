@@ -1,4 +1,4 @@
-name: Tests
+name: Unit Tests
 
 on: [push, pull_request]
 
@@ -10,7 +10,8 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  unittest:
+    name: build (${{ matrix.os }}, php${{ matrix.php }})
     runs-on: ${{ matrix.os }}-latest
     strategy:
       fail-fast: false
@@ -45,19 +46,14 @@ jobs:
       - name: Install Composer
         run: composer install --dev --prefer-dist --no-progress --no-interaction
 
-  kronika:
-    needs: build
-    runs-on: ${{ needs.build.os }}-latest
-    steps:
       - name: Run "Kronika\Utils" Unit Tests
+        if: ${{ success() }}
         run: php -d memory_limit=-1 -d zend.assertions=1 vendor/bin/phpunit --testsuite 'Kronika\Utils'
 
       - name: Run "Kronika" Unit Tests
+        if: ${{ success() }}
         run: php -d memory_limit=-1 -d zend.assertions=1 vendor/bin/phpunit --testsuite 'Kronika'
 
-  extensions:
-    needs: [build, kronika]
-    runs-on: ${{ needs.build.os }}-latest
-    steps:
       - name: Run "Kronika\Extension" Unit Tests
+        if: ${{ success() }}
         run: php -d memory_limit=-1 -d zend.assertions=1 vendor/bin/phpunit --testsuite 'Kronika\Extension'
