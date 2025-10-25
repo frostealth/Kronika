@@ -33,8 +33,8 @@ final class LocalDateTimeTest extends TestCase
     {
         $datetime = LocalDateTime::of(date: $date, time: $time);
 
-        $this->assertEquals($date, $datetime->date());
-        $this->assertEquals($time, $datetime->time());
+        $this->assertSame($date, $datetime->date());
+        $this->assertSame($time, $datetime->time());
     }
 
     public function testToString(): void
