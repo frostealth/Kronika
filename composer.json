@@ -54,5 +54,11 @@
         }
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "scripts": {
+        "psalm": "./vendor/bin/psalm",
+        "phpunit-kronika": "./vendor/bin/phpunit --testsuite 'Kronika\\Utils','Kronika'",
+        "phpunit-extension": "./vendor/bin/phpunit --testsuite 'Kronika\\Extension'",
+        "test": ["@psalm", "@phpunit-kronika", "@phpunit-extension"]
+    }
 }
