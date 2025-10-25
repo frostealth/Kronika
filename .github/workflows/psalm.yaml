@@ -11,6 +11,7 @@ permissions:
 
 jobs:
   psalm:
+    name: psalm (php${{ matrix.php }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false

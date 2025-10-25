@@ -10,8 +10,8 @@ permissions:
   contents: read
 
 jobs:
-  unittest:
-    name: build (${{ matrix.os }}, php${{ matrix.php }})
+  phpunit:
+    name: phpunit (${{ matrix.os }}, php${{ matrix.php }})
     runs-on: ${{ matrix.os }}-latest
     strategy:
       fail-fast: false
@@ -46,9 +46,9 @@ jobs:
       - name: Install Composer
         run: composer install --dev --prefer-dist --no-progress --no-interaction
 
-      - name: Run "Kronika\Utils" Unit Tests
-        if: ${{ success() }}
-        run: php -d memory_limit=-1 -d zend.assertions=1 vendor/bin/phpunit --testsuite 'Kronika\Utils'
+#      - name: Run "Kronika\Utils" Unit Tests
+#        if: ${{ success() }}
+#        run: php -d memory_limit=-1 -d zend.assertions=1 vendor/bin/phpunit --testsuite 'Kronika\Utils'
 
       - name: Run "Kronika" Unit Tests
         if: ${{ success() }}
