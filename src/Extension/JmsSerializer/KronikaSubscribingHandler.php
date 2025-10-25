@@ -18,6 +18,7 @@ use JMS\Serializer\Handler\SubscribingHandlerInterface;
 use JMS\Serializer\Visitor\DeserializationVisitorInterface;
 use JMS\Serializer\Visitor\SerializationVisitorInterface;
 use Kronika\Date;
+use Kronika\Date\DayOfWeek;
 use Kronika\Duration;
 use Kronika\Instant;
 use Kronika\LocalDateTime;
@@ -59,6 +60,18 @@ final readonly class KronikaSubscribingHandler implements SubscribingHandlerInte
                 'format' => $format,
             ];
             $methods[] = [
+                'type' => Date\Month::class,
+                'method' => 'serializeMonth',
+                'direction' => GraphNavigatorInterface::DIRECTION_SERIALIZATION,
+                'format' => $format,
+            ];
+            $methods[] = [
+                'type' => Date\Month::class,
+                'method' => 'deserializeMonth',
+                'direction' => GraphNavigatorInterface::DIRECTION_DESERIALIZATION,
+                'format' => $format,
+            ];
+            $methods[] = [
                 'type' => 'KronikaMonth',
                 'method' => 'serializeMonth',
                 'direction' => GraphNavigatorInterface::DIRECTION_SERIALIZATION,
@@ -67,6 +80,18 @@ final readonly class KronikaSubscribingHandler implements SubscribingHandlerInte
             $methods[] = [
                 'type' => 'KronikaMonth',
                 'method' => 'deserializeMonth',
+                'direction' => GraphNavigatorInterface::DIRECTION_DESERIALIZATION,
+                'format' => $format,
+            ];
+            $methods[] = [
+                'type' => DayOfWeek::class,
+                'method' => 'serializeDayOfWeek',
+                'direction' => GraphNavigatorInterface::DIRECTION_SERIALIZATION,
+                'format' => $format,
+            ];
+            $methods[] = [
+                'type' => DayOfWeek::class,
+                'method' => 'deserializeDayOfWeek',
                 'direction' => GraphNavigatorInterface::DIRECTION_DESERIALIZATION,
                 'format' => $format,
             ];
