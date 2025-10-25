@@ -11,8 +11,6 @@ jobs:
         os: [ubuntu, macos, windows]
         php: [8.4]
         test-suite: ['Kronika\Utils', 'Kronika', 'Kronika\Extension']
-        include:
-          - php: 8.5
     steps:
       - uses: actions/checkout@v4
 
@@ -44,5 +42,5 @@ jobs:
         uses: php-actions/phpunit@v4
         with:
           php_version: ${{ matrix.php }}
-          configuration: 'psalm.xml'
+          configuration: phpunit.xml.dist
           testsuite: ${{ matrix.test-suite }}
