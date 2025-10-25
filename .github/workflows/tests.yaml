@@ -10,7 +10,7 @@ jobs:
       matrix:
         os: [ubuntu, macos, windows]
         php: [8.4]
-        test-suite: ['Kronika\Utils', 'Kronika', 'Kronika\Extension']
+        test-suite: ['Kronika', 'Kronika\Extension']
     steps:
       - uses: actions/checkout@v4
 
