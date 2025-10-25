@@ -9,10 +9,10 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu, macos, windows]
-        php: ['8.4']
-        test-suit: ['Kronika\Utils', 'Kronika', 'Kronika\Extension']
+        php: [8.4]
+        test-suite: ['Kronika\Utils', 'Kronika', 'Kronika\Extension']
         include:
-          - php: '8.5'
+          - php: 8.5
     steps:
       - uses: actions/checkout@v4
 
@@ -25,9 +25,15 @@ jobs:
       - name: Validate Composer
         run: composer validate --strict
 
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
       - name: Cache Composer
         uses: actions/cache@v4
         with:
+          path: ${{ steps.composer-cache.outputs.dir }}
           key: "php-${{ matrix.php }}-${{ matrix.os }}-${{ hashFiles('composer.json') }}"
           restore-keys: "php-${{ matrix.php }}-${{ matrix.os }}-${{ hashFiles('composer.json') }}"
 
@@ -39,4 +45,4 @@ jobs:
         with:
           php_version: ${{ matrix.php }}
           configuration: 'psalm.xml'
-          testsuit: ${{ matrix.test-suit }}
+          testsuite: ${{ matrix.test-suite }}
