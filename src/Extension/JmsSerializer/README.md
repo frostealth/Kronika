@@ -54,7 +54,3 @@ $serializer = JMS\Serializer\SerializerBuilder::create()
     ->build()
 ;
 ```
-Enabling enum support is not required, but then need to use
-the alternative types for `Kronika\Date\Month` and `Kronika\Date\DayOfWeek`:
-- `#[Type('KronikaMonth')]` instead of `#[Type(Month::class)]`
-- `#[Type('KronikaDayOfWeek')]` instead of `#[Type(DayOfWeek::class)]`.

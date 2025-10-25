@@ -34,12 +34,12 @@ final readonly class Year implements DateUnit
 
     public function next(): self
     {
-        return new self($this->number() + 1);
+        return self::of($this->number() + 1);
     }
 
     public function previous(): self
     {
-        return new self($this->number() - 1);
+        return self::of($this->number() - 1);
     }
 
     /** @return int<365>|int<366> */
