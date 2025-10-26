@@ -44,7 +44,7 @@ jobs:
           restore-keys: "php-${{ matrix.php }}-${{ matrix.os }}-${{ hashFiles('composer.json') }}"
 
       - name: Install Composer
-        run: composer install --dev --prefer-dist --no-progress --no-interaction
+        run: composer install --prefer-dist --no-progress --no-interaction
 
 #      - name: Run "Kronika\Utils" Unit Tests
 #        if: ${{ success() }}

@@ -44,7 +44,7 @@ jobs:
           restore-keys: "php-${{ matrix.php }}-ubuntu-${{ hashFiles('composer.json') }}"
 
       - name: Install Composer
-        run: composer install --dev --prefer-dist --no-progress --no-interaction
+        run: composer install --prefer-dist --no-progress --no-interaction
 
       - name: Run Psalm
         run: php -d memory_limit=-1 -d zend.assertions=1 vendor/bin/psalm --output-format=github --no-progress
