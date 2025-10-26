@@ -13,12 +13,12 @@ declare(strict_types=1);
 
 namespace Kronika;
 
-use Kronika\Utils\Comparison;
+use Kronika\Utils\Compared;
 use Kronika\Utils\Math;
 use function Kronika\Utils\math;
 
 /**
- * The number of seconds counted from epoch of
+ * Represents the number of seconds counted from epoch of
  * "1970-01-01 00:00:00" in local time excluding the timezone.
  *
  * This is not the unix timestamp due to the representation of local time without a timezone.
@@ -41,7 +41,7 @@ final readonly class Instant
         }
 
         \assert(\is_numeric($value));
-        [$second, $micro] = \sscanf((string) $value, '%d.%06d');
+        [$second, $micro] = \sscanf((string)$value, '%d.%06d');
 
         return self::of($second, $micro ?? 0);
     }
@@ -73,10 +73,10 @@ final readonly class Instant
     public function value(): float
     {
         if ($this->microsecond === 0) {
-            return (float) $this->second;
+            return (float)$this->second;
         }
 
-        return (float) \sprintf('%d.%06d', $this->second, $this->microsecond);
+        return (float)\sprintf('%d.%06d', $this->second, $this->microsecond);
     }
 
     public function add(Duration $duration): self
@@ -131,19 +131,19 @@ final readonly class Instant
         return ! $this->isEqualTo($other);
     }
 
-    public function isAfter(self $other): bool
-    {
-        return $this->compareTo($other)->greater();
-    }
-
     public function isAfterOrEqual(self $other): bool
     {
         return $this->compareTo($other)->greaterOrEqual();
     }
 
-    public function compareTo(self $other): Comparison
+    public function isAfter(self $other): bool
     {
-        return Comparison::compare($this->value(), $other->value());
+        return $this->compareTo($other)->greater();
+    }
+
+    public function compareTo(self $other): Compared
+    {
+        return Compared::compare($this->value(), $other->value());
     }
 
     /** @internal */
@@ -165,7 +165,7 @@ final readonly class Instant
     /** @return non-empty-string */
     public function __toString(): string
     {
-        return (string) $this->value();
+        return (string)$this->value();
     }
 
     /** @internal */

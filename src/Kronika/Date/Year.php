@@ -15,7 +15,7 @@ namespace Kronika\Date;
 
 use Kronika\Date;
 use Kronika\Duration;
-use Kronika\Utils\Comparison;
+use Kronika\Utils\Compared;
 
 /**
  * @psalm-type TYear=int<-99999,99999>
@@ -95,9 +95,9 @@ final readonly class Year implements DateUnit
         return $this->compareTo($other)->greaterOrEqual();
     }
 
-    public function compareTo(self $other): Comparison
+    public function compareTo(self $other): Compared
     {
-        return Comparison::compare($this->number(), $other->number());
+        return Compared::compare($this->number(), $other->number());
     }
 
     /** @return non-empty-string */

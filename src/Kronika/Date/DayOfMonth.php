@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Kronika\Date;
 
 use Kronika\Date;
-use Kronika\Utils\Comparison;
+use Kronika\Utils\Compared;
 
 /**
  * @psalm-type TDayOfMonth=int<1,31>
@@ -61,9 +61,9 @@ final readonly class DayOfMonth implements DateUnit
         return $this->compareTo($other)->greaterOrEqual();
     }
 
-    public function compareTo(self $other): Comparison
+    public function compareTo(self $other): Compared
     {
-        return Comparison::compare($this->number(), $other->number());
+        return Compared::compare($this->number(), $other->number());
     }
 
     /** @return non-empty-string */

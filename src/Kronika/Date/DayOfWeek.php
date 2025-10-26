@@ -16,7 +16,7 @@ namespace Kronika\Date;
 use Kronika\Date;
 use Kronika\Duration;
 use Kronika\LocalDateTime;
-use Kronika\Utils\Comparison;
+use Kronika\Utils\Compared;
 
 /**
  * @psalm-type TDayOfWeek=value-of<DayOfWeek>
@@ -129,9 +129,9 @@ enum DayOfWeek: int implements DateUnit
         return $this->compareTo($other)->greaterOrEqual();
     }
 
-    public function compareTo(self $other): Comparison
+    public function compareTo(self $other): Compared
     {
-        return Comparison::compare($this->value, $other->value);
+        return Compared::compare($this->value, $other->value);
     }
 
     private function diff(self $other): Duration

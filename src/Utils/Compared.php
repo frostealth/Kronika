@@ -16,7 +16,7 @@ namespace Kronika\Utils;
 /**
  * @psalm-type Result=int<-1,1>
  */
-final readonly class Comparison
+final readonly class Compared
 {
     /**
      * @template T
@@ -38,6 +38,16 @@ final readonly class Comparison
         \assert(-1 <= $result && $result <= 1);
     }
 
+    public function less(): bool
+    {
+        return -1 === $this->result;
+    }
+
+    public function lessOrEqual(): bool
+    {
+        return $this->less() || $this->equal();
+    }
+
     public function equal(): bool
     {
         return 0 === $this->result;
@@ -48,24 +58,14 @@ final readonly class Comparison
         return ! $this->equal();
     }
 
-    public function greater(): bool
-    {
-        return 1 === $this->result;
-    }
-
     public function greaterOrEqual(): bool
     {
         return $this->greater() || $this->equal();
     }
 
-    public function less(): bool
+    public function greater(): bool
     {
-        return -1 === $this->result;
-    }
-
-    public function lessOrEqual(): bool
-    {
-        return $this->less() || $this->equal();
+        return 1 === $this->result;
     }
 
     /** @return Result */

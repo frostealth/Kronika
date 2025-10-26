@@ -104,17 +104,11 @@ $time = $time->with(Minute::of(30))->with(Second::zero());
 echo $time->format('H:i:s');  // '12:30:00'
 
 // comparison
-echo $time->isEqualTo($time);                           // true
-echo $time->with(Second::of(30, micro: 1)->isEqualTo(   // false
-    $time->with(Second::of(30, micro: 999999)),
-    Precision::Micro,
-);
-echo $time->with(Second::of(30, micro: 1)->isEqualTo(   // true
-    $time->with(Second::of(30, micro: 999999)),
-    Precision::Second,
-);
-echo $time>with(Second::of(30, micro: 1)->isEqualTo(    // true
-    $time->with(Second::of(59, micro: 999999)),
+$other = $time->with(Second::of(0, micro: 999999));
+echo $time->isEqualTo($other);                     // false
+echo $time->isEqualTo($other, Precision::Second);  // true
+echo $time->isEqualTo(                             // true
+    $other->with(Second::of(59)),
     Precision::Minute,
 );
 
