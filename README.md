@@ -38,7 +38,7 @@ composer require frostealth/kronika
 ```php
 // creating the "Date" instance
 $date = Date::of(year: 2025, month: 12, day:31);
-// or using "\DateTimeInterface"
+// or from "\DateTimeInterface"
 $date = Date::ofDateTime(new \DateTimeImmutable('2025-12-31'));
 
 // formatting the "Date"
@@ -85,7 +85,7 @@ echo $duration->minutes();  // 0
 ```php
 // creating the "Time" instance
 $time = Time::of(hour: 9, minutes: 10, seconds:30);
-// or using "\DateTimeInterface"
+// or from "\DateTimeInterface"
 $time = Time::ofDateTime(new \DateTimeImmutable('09:10:30'));
 
 // formatting the "Time"
@@ -102,6 +102,21 @@ echo $time->format('H:i:s');  // '12:10:30'
 
 $time = $time->with(Minute::of(30))->with(Second::zero());
 echo $time->format('H:i:s');  // '12:30:00'
+
+// comparison
+echo $time->isEqualTo($time);                           // true
+echo $time->with(Second::of(30, micro: 1)->isEqualTo(   // false
+    $time->with(Second::of(30, micro: 999999)),
+    Precision::Micro,
+);
+echo $time->with(Second::of(30, micro: 1)->isEqualTo(   // true
+    $time->with(Second::of(30, micro: 999999)),
+    Precision::Second,
+);
+echo $time>with(Second::of(30, micro: 1)->isEqualTo(    // true
+    $time->with(Second::of(59, micro: 999999)),
+    Precision::Minute,
+);
 
 // adding an amount of hours, minutes, seconds
 $time = $time->add(Duration::of(hours: 3, minutes: 30, seconds: 30));
@@ -125,11 +140,11 @@ echo $duration->inMinutes();  // 390
 ```php
 // creating the "LocalDateTime" instance
 $date     = Date::of(year: 2025, month: 12, day: 31);
-$time     = Time::noon();
+$time     = Time::midday();
 $datetime = LocalDateTime::of($date, $time);
 // or
 $datetime = $date->at($time);
-// or using "\DateTimeInterface"
+// or from "\DateTimeInterface"
 $datetime = LocalDateTime::ofDateTime(new \DateTimeImmutable('2025-12-31 12:00:00'));
 
 // formatting the "LocalDateTime"
@@ -180,7 +195,7 @@ The API of `Kronika\ZonedDateTime` is similar to `Kronika\LocalDateTime`.
 ```php
 // creating the "ZonedDateTime" instance
 $date     = Date::of(year: 2025, month: 12, day: 31);
-$time     = Time::noon();
+$time     = Time::midday();
 $timezone = new \DateTimeZone('UTC')
 $datetime = ZonedDateTime::of($date, $time, $timezone);
 // or
@@ -193,7 +208,7 @@ $datetime = LocalDateTime::of($date, $time)->atTimezone($timezone);
 $datetime = ZonedDateTime::utcOf($date, $time);
 // or with current time and specified time-zone
 $datetime = now($timezone);
-// or using "\DateTimeInterface"
+// or from "\DateTimeInterface"
 $datetime = ZonedDateTime::ofDateTime(new \DateTimeImmutable('2025-12-31 12:00:00 UTC'));
 
 // formatting the "ZonedDateTime"

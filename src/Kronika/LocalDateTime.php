@@ -22,8 +22,14 @@ use Kronika\Time\Minute;
 use Kronika\Time\Second;
 use Kronika\Utils\Comparison;
 
+/**
+ * Represents a local date-time without a time-zone.
+ */
 final readonly class LocalDateTime implements DateTime
 {
+    /**
+     * Obtains an instance of LocalDateTime from a date and time.
+     */
     public static function of(Date $date, Time $time): self
     {
         return new self(date: $date, time: $time);
@@ -34,11 +40,19 @@ final readonly class LocalDateTime implements DateTime
         return self::of($date, Time::midnight());
     }
 
+    public static function middayOf(Date $date): self
+    {
+        return self::of($date, Time::midday());
+    }
+
     public static function endOfDayOf(Date $date): self
     {
         return self::of($date, Time::endOfDay());
     }
 
+    /**
+     * Obtains an instance of LocalDateTime from a date-time with a time-zone.
+     */
     public static function ofDateTime(DateTime|\DateTimeInterface $dateTime): self
     {
         if ($dateTime instanceof self) {
@@ -51,6 +65,9 @@ final readonly class LocalDateTime implements DateTime
         return self::of(Date::ofDateTime($dateTime), Time::ofDateTime($dateTime));
     }
 
+    /**
+     * Obtain an instance of LocalDateTime from a "Kronika\Instant".
+     */
     public static function ofInstant(Instant $instant): self
     {
         return self::of(Date::ofInstant($instant), Time::ofInstant($instant));
@@ -128,6 +145,18 @@ final readonly class LocalDateTime implements DateTime
     }
 
     #[\Override]
+    public function resetMicro(): static
+    {
+        return $this->with($this->second()->resetMicro());
+    }
+
+    #[\Override]
+    public function resetSecond(): static
+    {
+        return $this->with(Second::zero());
+    }
+
+    #[\Override]
     public function add(Duration|\DateInterval $interval): static
     {
         if ($interval instanceof \DateInterval) {
@@ -150,46 +179,55 @@ final readonly class LocalDateTime implements DateTime
     #[\Override]
     public function until(DateTime $end): Duration
     {
-        if ($end instanceof ZonedDateTime) {
-            return $this->atTimezone($end->timezone())->until($end);
-        }
-
-        return $this->instant()->until($end->instant());
+        return $this->instant()->until(self::ofDateTime($end)->instant());
     }
 
-    public function isBefore(self $other): bool
+    #[\Override]
+    public function isBefore(DateTime $other, Precision $precision = Precision::Micro): bool
     {
-        return $this->compareTo($other)->less();
+        return $this->compareTo($other, $precision)->less();
     }
 
-    public function isBeforeOrEqual(self $other): bool
+    #[\Override]
+    public function isBeforeOrEqual(DateTime $other, Precision $precision = Precision::Micro): bool
     {
-        return $this->compareTo($other)->lessOrEqual();
+        return $this->compareTo($other, $precision)->lessOrEqual();
     }
 
-    public function isEqualTo(self $other): bool
+    #[\Override]
+    public function isEqualTo(DateTime $other, Precision $precision = Precision::Micro): bool
     {
-        return $this->compareTo($other)->equal();
+        return $this->compareTo($other, $precision)->equal();
     }
 
-    public function isNotEqualTo(self $other): bool
+    #[\Override]
+    public function isNotEqualTo(DateTime $other, Precision $precision = Precision::Micro): bool
     {
-        return ! $this->isEqualTo($other);
+        return ! $this->isEqualTo($other, $precision);
     }
 
-    public function isAfter(self $other): bool
+    #[\Override]
+    public function isAfterOrEqual(DateTime $other, Precision $precision = Precision::Micro): bool
     {
-        return $this->compareTo($other)->greater();
+        return $this->compareTo($other, $precision)->greaterOrEqual();
     }
 
-    public function isAfterOrEqual(self $other): bool
+    #[\Override]
+    public function isAfter(DateTime $other, Precision $precision = Precision::Micro): bool
     {
-        return $this->compareTo($other)->greaterOrEqual();
+        return $this->compareTo($other, $precision)->greater();
     }
 
-    public function compareTo(self $other): Comparison
+    #[\Override]
+    public function compareTo(DateTime $other, Precision $precision = Precision::Micro): Comparison
     {
-        return $this->instant()->compareTo($other->instant());
+        $other = self::ofDateTime($other);
+
+        return match($precision) {
+            Precision::Micro => $this->instant()->compareTo($other->instant()),
+            Precision::Second => $this->resetMicro()->compareTo($other->resetMicro()),
+            Precision::Minute => $this->resetSecond()->compareTo($other->resetSecond()),
+        };
     }
 
     #[\Override]
@@ -198,19 +236,21 @@ final readonly class LocalDateTime implements DateTime
         return $this->toNative()->format($format);
     }
 
-    #[\Override]
-    public function modify(string $modifier): static
+    /**
+     * @param non-empty-string $modifier
+     *
+     * @throws \DateMalformedStringException
+     */
+    public function modify(string $modifier): self
     {
         return self::ofDateTime($this->toNative()->modify($modifier));
     }
 
-    #[\Override]
     public function toStartOfMonth(): static
     {
         return $this->with($this->date()->toStartOfMonth());
     }
 
-    #[\Override]
     public function toEndOfMonth(): static
     {
         return $this->with($this->date()->toEndOfMonth());

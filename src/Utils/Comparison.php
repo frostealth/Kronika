@@ -15,8 +15,6 @@ namespace Kronika\Utils;
 
 /**
  * @psalm-type Result=int<-1,1>
- *
- * @internal
  */
 final readonly class Comparison
 {
@@ -25,6 +23,8 @@ final readonly class Comparison
      *
      * @param T $first
      * @param T $second
+     *
+     * @internal
      */
     public static function compare(mixed $first, mixed $second): self
     {
@@ -32,10 +32,10 @@ final readonly class Comparison
     }
 
     /** @param Result $result */
-    public function __construct(
+    private function __construct(
         private int $result,
     ) {
-        \assert(-1 <= $result && 1 >= $result);
+        \assert(-1 <= $result && $result <= 1);
     }
 
     public function equal(): bool

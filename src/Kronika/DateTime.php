@@ -20,6 +20,7 @@ use Kronika\Date\Year;
 use Kronika\Time\Hour;
 use Kronika\Time\Minute;
 use Kronika\Time\Second;
+use Kronika\Utils\Comparison;
 
 interface DateTime
 {
@@ -43,11 +44,29 @@ interface DateTime
 
     public function with(Unit $unit): static;
 
+    public function resetMicro(): static;
+
+    public function resetSecond(): static;
+
     public function add(Duration $interval): static;
 
     public function sub(Duration $interval): static;
 
     public function until(self $end): Duration;
+
+    public function isBefore(DateTime $other, Precision $precision = Precision::Micro): bool;
+
+    public function isBeforeOrEqual(DateTime $other, Precision $precision = Precision::Micro): bool;
+
+    public function isEqualTo(DateTime $other, Precision $precision = Precision::Micro): bool;
+
+    public function isNotEqualTo(DateTime $other, Precision $precision = Precision::Micro): bool;
+
+    public function isAfterOrEqual(DateTime $other, Precision $precision = Precision::Micro): bool;
+
+    public function isAfter(DateTime $other, Precision $precision = Precision::Micro): bool;
+
+    public function compareTo(DateTime $other, Precision $precision = Precision::Micro): Comparison;
 
     /**
      * @param non-empty-string $format
@@ -55,13 +74,6 @@ interface DateTime
      * @return non-empty-string
      */
     public function format(string $format): string;
-
-    /** @param non-empty-string $modifier */
-    public function modify(string $modifier): static;
-
-    public function toStartOfMonth(): static;
-
-    public function toEndOfMonth(): static;
 
     public function toNative(): \DateTimeImmutable;
 

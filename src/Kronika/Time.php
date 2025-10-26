@@ -21,6 +21,8 @@ use Kronika\Utils\Comparison;
 use Kronika\Utils\WeakRefsTrait;
 
 /**
+ * Represents a time.
+ *
  * @psalm-import-type THour from Hour
  * @psalm-import-type TMinute from Minute
  * @psalm-import-type TSecond from Second
@@ -31,6 +33,17 @@ final readonly class Time implements Unit
     use WeakRefsTrait;
 
     /**
+     * Obtains an instance of Time from an hour, minute and second.
+     *
+     * @example
+     * ```
+     * // 10:30:45
+     * $time = Time::of(hour: 10, minute: 30, second: 45);
+     *
+     * // 11:45.55.000999
+     * $time = Time::of(hour: 11, minute: 45, second: Second::of(55, 999));
+     * ```
+     *
      * @psalm-param Hour|THour     $hour
      * @psalm-param Minute|TMinute $minute
      * @psalm-param Second|TSecond $second
@@ -40,6 +53,9 @@ final readonly class Time implements Unit
         return self::weak(hour: Hour::of($hour), minute: Minute::of($minute), second: Second::of($second));
     }
 
+    /**
+     * Obtains an instance of Time at the start of the day ("00:00:00.000000").
+     */
     public static function midnight(): self
     {
         static $instance = self::of(Hour::zero(), Minute::zero(), Second::zero());
@@ -47,13 +63,19 @@ final readonly class Time implements Unit
         return $instance;
     }
 
-    public static function noon(): self
+    /**
+     * Obtains an instance of Time at the middle of the day ("12:00:00.000000").
+     */
+    public static function midday(): self
     {
         static $instance = self::of(Hour::of(12), Minute::zero(), Second::zero());
 
         return $instance;
     }
 
+    /**
+     * Obtains an instance of Time at the end of the day ("23:59:59.999999").
+     */
     public static function endOfDay(): self
     {
         static $instance = self::of(Hour::last(), Minute::last(), Second::last());
@@ -61,7 +83,10 @@ final readonly class Time implements Unit
         return $instance;
     }
 
-    public static function ofDateTime(\DateTimeInterface $dateTime): self
+    /**
+     * Obtain an instance of Time from a date-time.
+     */
+    public static function ofDateTime(DateTime|\DateTimeInterface $dateTime): self
     {
         if ($dateTime instanceof DateTime) {
             return $dateTime->time();
@@ -72,11 +97,17 @@ final readonly class Time implements Unit
         return self::of($hour, $minute, Second::of($second, $micro));
     }
 
+    /**
+     * Obtain an instance of Time from a timestamp.
+     */
     public static function ofTimestamp(float|int $timestamp): self
     {
         return self::ofInstant(Instant::ofValue($timestamp));
     }
 
+    /**
+     * Obtain an instance of Time from a "Kronika\Instant".
+     */
     public static function ofInstant(Instant $instant): self
     {
         /** @var \WeakMap<Instant, self> $references */
@@ -91,6 +122,8 @@ final readonly class Time implements Unit
     }
 
     /**
+     * Obtain an instance of Time from a format.
+     *
      * @param non-empty-string $format
      * @param non-empty-string $time
      */
@@ -131,6 +164,16 @@ final readonly class Time implements Unit
         return $date->at($this);
     }
 
+    public function resetMicro(): self
+    {
+        return $this->with($this->second()->resetMicro());
+    }
+
+    public function resetSecond(): self
+    {
+        return $this->with(Second::zero());
+    }
+
     public function add(Duration|\DateInterval $duration): self
     {
         if ($duration instanceof \DateInterval) {
@@ -159,54 +202,58 @@ final readonly class Time implements Unit
         return $this->instant()->diff($other->instant());
     }
 
-    public function isMidnight(): bool
+    public function isMidnight(Precision $precision = Precision::Micro): bool
     {
-        return $this->isEqualTo(self::midnight());
+        return $this->isEqualTo(self::midnight(), $precision);
     }
 
-    public function isNoon(): bool
+    public function isMidday(Precision $precision = Precision::Micro): bool
     {
-        return $this->isEqualTo(self::noon());
+        return $this->isEqualTo(self::midday(), $precision);
     }
 
-    public function isEndOfDay(): bool
+    public function isEndOfDay(Precision $precision = Precision::Micro): bool
     {
-        return $this->isEqualTo(self::endOfDay());
+        return $this->isEqualTo(self::endOfDay(), $precision);
     }
 
-    public function isBefore(self $other): bool
+    public function isBefore(self $other, Precision $precision = Precision::Micro): bool
     {
-        return $this->compareTo($other)->less();
+        return $this->compareTo($other, $precision)->less();
     }
 
-    public function isBeforeOrEqual(self $other): bool
+    public function isBeforeOrEqual(self $other, Precision $precision = Precision::Micro): bool
     {
-        return $this->compareTo($other)->lessOrEqual();
+        return $this->compareTo($other, $precision)->lessOrEqual();
     }
 
-    public function isEqualTo(self $other): bool
+    public function isEqualTo(self $other, Precision $precision = Precision::Micro): bool
     {
-        return $this->compareTo($other)->equal();
+        return $this->compareTo($other, $precision)->equal();
     }
 
-    public function isNotEqualTo(self $other): bool
+    public function isNotEqualTo(self $other, Precision $precision = Precision::Micro): bool
     {
-        return ! $this->isEqualTo($other);
+        return ! $this->isEqualTo($other, $precision);
     }
 
-    public function isAfter(self $other): bool
+    public function isAfter(self $other, Precision $precision = Precision::Micro): bool
     {
-        return $this->compareTo($other)->greater();
+        return $this->compareTo($other, $precision)->greater();
     }
 
-    public function isAfterOrEqual(self $other): bool
+    public function isAfterOrEqual(self $other, Precision $precision = Precision::Micro): bool
     {
-        return $this->compareTo($other)->greaterOrEqual();
+        return $this->compareTo($other, $precision)->greaterOrEqual();
     }
 
-    public function compareTo(self $other): Comparison
+    public function compareTo(self $other, Precision $precision = Precision::Micro): Comparison
     {
-        return $this->instant()->compareTo($other->instant());
+        return match ($precision) {
+            Precision::Micro => $this->instant()->compareTo($other->instant()),
+            Precision::Second => $this->resetMicro()->compareTo($other->resetMicro()),
+            Precision::Minute => $this->resetSecond()->compareTo($other->resetSecond()),
+        };
     }
 
     /**
