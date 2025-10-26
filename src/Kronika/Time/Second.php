@@ -110,7 +110,7 @@ final readonly class Second implements TimeUnit
         }
         \assert(\is_numeric($value));
 
-        [$second, $micro] = \sscanf((string) $value, '%d.%6d');
+        [$second, $micro] = \sscanf((string)$value, '%d.%6d');
 
         return $this->second === $second && $this->microsecond === $micro;
     }
@@ -147,7 +147,7 @@ final readonly class Second implements TimeUnit
 
     public function compareTo(self $other): Comparison
     {
-        return Comparison::compare((string) $this, (string) $other);
+        return Comparison::compare((string)$this, (string)$other);
     }
 
     /** @return non-empty-string */
@@ -159,7 +159,7 @@ final readonly class Second implements TimeUnit
     /** @internal */
     public function __debugInfo(): array
     {
-        return ['second' => (string) $this];
+        return ['second' => (string)$this];
     }
 
     /** @internal */

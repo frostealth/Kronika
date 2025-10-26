@@ -15,6 +15,7 @@ namespace Kronika\Tests;
 
 use Kronika\Date;
 use Kronika\LocalDateTime;
+use Kronika\Precision;
 use Kronika\Time;
 use Kronika\ZonedDateTime;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -23,6 +24,10 @@ use PHPUnit\Framework\TestCase;
 
 final class TimeTest extends TestCase
 {
+    private const int LESS = -1;
+    private const int EQUAL = 0;
+    private const int GREATER = 1;
+
     public static function ofProvider(): array
     {
         return [
@@ -55,7 +60,7 @@ final class TimeTest extends TestCase
     {
         return [
             [Time::midnight(), Time\Hour::last(), Time::of(hour: 23, minute: 0)],
-            [Time::noon(), Time\Hour::zero(), Time::of(hour: 0, minute: 0)],
+            [Time::midday(), Time\Hour::zero(), Time::of(hour: 0, minute: 0)],
             [Time::endOfDay(), Time\Hour::of(20), Time::of(hour: 20, minute: 59, second: Time\Second::of(59, 999_999))],
             [Time::of(hour: 14, minute: 30, second: 45), Time\Hour::of(21), Time::of(hour: 21, minute: 30, second: 45)],
             [Time::of(hour: 14, minute: 30, second: 45), Time\Minute::of(21), Time::of(hour: 14, minute: 21, second: 45)],
@@ -138,5 +143,175 @@ final class TimeTest extends TestCase
         $time = Time::of(hour: 17, minute: 5, second: Time\Second::of(second: 39, micro: 4582));
 
         $this->assertEquals('17:05:39.004582', (string) $time);
+    }
+
+    public static function comparisonProvider(): array
+    {
+        return [
+            // Precision::Micro
+            'Micro.Micro.Equal' => [
+                Time::of(Time\Hour::of(12), Time\Minute::of(15), Time\Second::of(45, 4545)),
+                Time::of(Time\Hour::of(12), Time\Minute::of(15), Time\Second::of(45, 4545)),
+                Precision::Micro,
+                self::EQUAL,
+            ],
+            'Micro.Micro.Less' => [
+                Time::of(Time\Hour::of(12), Time\Minute::of(15), Time\Second::of(45, 4545)),
+                Time::of(Time\Hour::of(12), Time\Minute::of(15), Time\Second::of(45, 5555)),
+                Precision::Micro,
+                self::LESS,
+            ],
+            'Micro.Micro.Greater' => [
+                Time::of(Time\Hour::of(12), Time\Minute::of(15), Time\Second::of(45, 5555)),
+                Time::of(Time\Hour::of(12), Time\Minute::of(15), Time\Second::of(45, 4545)),
+                Precision::Micro,
+                self::GREATER,
+            ],
+            'Micro.Second.Less' => [
+                Time::of(Time\Hour::of(12), Time\Minute::of(15), Time\Second::of(45, 4545)),
+                Time::of(Time\Hour::of(12), Time\Minute::of(15), Time\Second::of(50, 4545)),
+                Precision::Micro,
+                self::LESS,
+            ],
+            'Micro.Second.Greater' => [
+                Time::of(Time\Hour::of(12), Time\Minute::of(15), Time\Second::of(50, 4545)),
+                Time::of(Time\Hour::of(12), Time\Minute::of(15), Time\Second::of(45, 4545)),
+                Precision::Micro,
+                self::GREATER,
+            ],
+            'Micro.Minute.Less' => [
+                Time::of(Time\Hour::of(12), Time\Minute::of(15), Time\Second::of(45, 4545)),
+                Time::of(Time\Hour::of(12), Time\Minute::of(20), Time\Second::of(45, 4545)),
+                Precision::Micro,
+                self::LESS,
+            ],
+            'Micro.Minute.Greater' => [
+                Time::of(Time\Hour::of(12), Time\Minute::of(20), Time\Second::of(45, 4545)),
+                Time::of(Time\Hour::of(12), Time\Minute::of(15), Time\Second::of(45, 4545)),
+                Precision::Micro,
+                self::GREATER,
+            ],
+            'Micro.Hour.Less' => [
+                Time::of(Time\Hour::of(12), Time\Minute::of(15), Time\Second::of(45, 4545)),
+                Time::of(Time\Hour::of(20), Time\Minute::of(15), Time\Second::of(45, 4545)),
+                Precision::Micro,
+                self::LESS,
+            ],
+            'Micro.Hour.Greater' => [
+                Time::of(Time\Hour::of(20), Time\Minute::of(15), Time\Second::of(45, 4545)),
+                Time::of(Time\Hour::of(12), Time\Minute::of(15), Time\Second::of(45, 4545)),
+                Precision::Micro,
+                self::GREATER,
+            ],
+
+            // Precision::Second
+            'Second.Micro.Less' => [
+                Time::of(Time\Hour::of(12), Time\Minute::of(15), Time\Second::of(45, 4545)),
+                Time::of(Time\Hour::of(12), Time\Minute::of(15), Time\Second::of(45, 5555)),
+                Precision::Second,
+                self::EQUAL,
+            ],
+            'Second.Micro.Greater' => [
+                Time::of(Time\Hour::of(12), Time\Minute::of(15), Time\Second::of(45, 5555)),
+                Time::of(Time\Hour::of(12), Time\Minute::of(15), Time\Second::of(45, 4545)),
+                Precision::Second,
+                self::EQUAL,
+            ],
+            'Second.Second.Less' => [
+                Time::of(Time\Hour::of(12), Time\Minute::of(15), Time\Second::of(45, 4545)),
+                Time::of(Time\Hour::of(12), Time\Minute::of(15), Time\Second::of(50, 4545)),
+                Precision::Second,
+                self::LESS,
+            ],
+            'Second.Second.Greater' => [
+                Time::of(Time\Hour::of(12), Time\Minute::of(15), Time\Second::of(50, 4545)),
+                Time::of(Time\Hour::of(12), Time\Minute::of(15), Time\Second::of(45, 4545)),
+                Precision::Second,
+                self::GREATER,
+            ],
+            'Second.Minute.Less' => [
+                Time::of(Time\Hour::of(12), Time\Minute::of(15), Time\Second::of(45, 4545)),
+                Time::of(Time\Hour::of(12), Time\Minute::of(20), Time\Second::of(45, 4545)),
+                Precision::Second,
+                self::LESS,
+            ],
+            'Second.Minute.Greater' => [
+                Time::of(Time\Hour::of(12), Time\Minute::of(20), Time\Second::of(45, 4545)),
+                Time::of(Time\Hour::of(12), Time\Minute::of(15), Time\Second::of(45, 4545)),
+                Precision::Second,
+                self::GREATER,
+            ],
+            'Second.Hour.Less' => [
+                Time::of(Time\Hour::of(12), Time\Minute::of(15), Time\Second::of(45, 4545)),
+                Time::of(Time\Hour::of(20), Time\Minute::of(15), Time\Second::of(45, 4545)),
+                Precision::Second,
+                self::LESS,
+            ],
+            'Second.Hour.Greater' => [
+                Time::of(Time\Hour::of(20), Time\Minute::of(15), Time\Second::of(45, 4545)),
+                Time::of(Time\Hour::of(12), Time\Minute::of(15), Time\Second::of(45, 4545)),
+                Precision::Second,
+                self::GREATER,
+            ],
+
+            // Precision::Minute
+            'Minute.Second.Less' => [
+                Time::of(Time\Hour::of(12), Time\Minute::of(15), Time\Second::of(45, 4545)),
+                Time::of(Time\Hour::of(12), Time\Minute::of(15), Time\Second::of(50, 5555)),
+                Precision::Minute,
+                self::EQUAL,
+            ],
+            'Minute.Second.Greater' => [
+                Time::of(Time\Hour::of(12), Time\Minute::of(15), Time\Second::of(50, 5555)),
+                Time::of(Time\Hour::of(12), Time\Minute::of(15), Time\Second::of(45, 4545)),
+                Precision::Minute,
+                self::EQUAL,
+            ],
+            'Minute.Minute.Less' => [
+                Time::of(Time\Hour::of(12), Time\Minute::of(15), Time\Second::of(50, 5555)),
+                Time::of(Time\Hour::of(12), Time\Minute::of(20), Time\Second::of(45, 4545)),
+                Precision::Minute,
+                self::LESS,
+            ],
+            'Minute.Minute.Greater' => [
+                Time::of(Time\Hour::of(12), Time\Minute::of(20), Time\Second::of(45, 4545)),
+                Time::of(Time\Hour::of(12), Time\Minute::of(15), Time\Second::of(50, 5555)),
+                Precision::Minute,
+                self::GREATER,
+            ],
+            'Minute.Hour.Less' => [
+                Time::of(Time\Hour::of(12), Time\Minute::of(15), Time\Second::of(50, 5555)),
+                Time::of(Time\Hour::of(20), Time\Minute::of(15), Time\Second::of(45, 4545)),
+                Precision::Minute,
+                self::LESS,
+            ],
+            'Minute.Hour.Greater' => [
+                Time::of(Time\Hour::of(20), Time\Minute::of(15), Time\Second::of(45, 4545)),
+                Time::of(Time\Hour::of(12), Time\Minute::of(15), Time\Second::of(50, 5555)),
+                Precision::Minute,
+                self::GREATER,
+            ],
+        ];
+    }
+
+    #[Depends('testBasic')]
+    #[DataProvider('comparisonProvider')]
+    public function testComparison(Time $a, Time $b, Precision $precision, int $expected): void
+    {
+        $this->assertTrue($a->isEqualTo($a));
+        $this->assertFalse($a->isNotEqualTo($a));
+        $this->assertFalse($a->isBefore($a));
+        $this->assertFalse($a->isAfter($a));
+        $this->assertTrue($a->isBeforeOrEqual($a));
+        $this->assertTrue($a->isAfterOrEqual($a));
+
+        $comparison = $a->compareTo($b, $precision);
+        $this->assertEquals($expected, $comparison->value());
+        $this->assertEquals($comparison->less(), $a->isBefore($b, $precision));
+        $this->assertEquals($comparison->greater(), $a->isAfter($b, $precision));
+        $this->assertEquals($comparison->equal(), $a->isEqualTo($b, $precision));
+        $this->assertEquals($comparison->notEqual(), $a->isNotEqualTo($b, $precision));
+        $this->assertEquals($comparison->lessOrEqual(), $a->isBeforeOrEqual($b, $precision));
+        $this->assertEquals($comparison->greaterOrEqual(), $a->isAfterOrEqual($b, $precision));
     }
 }

@@ -21,6 +21,7 @@ use Kronika\Unit;
 use Kronika\ZonedDateTime;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Depends;
+use PHPUnit\Framework\Attributes\DependsExternal;
 use PHPUnit\Framework\TestCase;
 
 final class ZonedDateTimeTest extends TestCase
@@ -28,13 +29,15 @@ final class ZonedDateTimeTest extends TestCase
     public static function ofProvider(): array
     {
         return [
-            [Date::of(2025, 3, 24), Time::noon(), new \DateTimeZone('-02:30')],
+            [Date::of(2025, 3, 24), Time::midday(), new \DateTimeZone('-02:30')],
             [Date::of(1950, 2, 28), Time::endOfDay(), new \DateTimeZone('-05:00')],
             [Date::of(3000, 12, 10), Time::midnight(), new \DateTimeZone('-05:00')],
             [Date::of(500, 1, 15), Time::of(9, 45, 24), new \DateTimeZone('+05:00')],
         ];
     }
 
+    #[DependsExternal(DateTest::class, 'testBasic')]
+    #[DependsExternal(TimeTest::class, 'testBasic')]
     #[DataProvider('ofProvider')]
     public function testBasic(Date $date, Time $time, \DateTimeZone $timezone): void
     {

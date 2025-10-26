@@ -17,6 +17,8 @@ use Kronika\Date;
 use Kronika\LocalDateTime;
 use Kronika\Time;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Depends;
+use PHPUnit\Framework\Attributes\DependsExternal;
 use PHPUnit\Framework\TestCase;
 
 final class LocalDateTimeTest extends TestCase
@@ -24,10 +26,12 @@ final class LocalDateTimeTest extends TestCase
     public static function ofProvider(): array
     {
         return [
-            [Date::of(2025, 3, 24), Time::noon()],
+            [Date::of(2025, 3, 24), Time::midday()],
         ];
     }
 
+    #[DependsExternal(DateTest::class, 'testBasic')]
+    #[DependsExternal(TimeTest::class, 'testBasic')]
     #[DataProvider('ofProvider')]
     public function testBasic(Date $date, Time $time): void
     {
@@ -37,6 +41,7 @@ final class LocalDateTimeTest extends TestCase
         $this->assertSame($time, $datetime->time());
     }
 
+    #[Depends('testBasic')]
     public function testToString(): void
     {
         $datetime = LocalDateTime::of(Date::of(2025, 3, 24), Time::endOfDay());

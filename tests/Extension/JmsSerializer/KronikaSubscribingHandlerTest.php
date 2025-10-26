@@ -76,7 +76,7 @@ final class KronikaSubscribingHandlerTest extends TestCase
             duration: Duration::of(days: 1, hours: 2, minutes: 25, seconds: 99),
             instant: Instant::of(123456789, 54321),
             localDateTime: LocalDateTime::of(Date::of(1985, 10, 31), Time::midnight()),
-            zonedDateTime: ZonedDateTime::of(Date::of(1990, 9, 5), Time::noon(), new \DateTimeZone('+01:00')),
+            zonedDateTime: ZonedDateTime::of(Date::of(1990, 9, 5), Time::midday(), new \DateTimeZone('+01:00')),
             nativeDateTime: new \DateTimeImmutable('2000-05-24 11:30:30'),
         );
     }
