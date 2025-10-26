@@ -15,7 +15,7 @@ namespace Kronika\Time;
 
 use Kronika\LocalDateTime;
 use Kronika\Time;
-use Kronika\Utils\Comparison;
+use Kronika\Utils\Compared;
 use Kronika\Utils\WeakRefsTrait;
 
 /**
@@ -145,9 +145,9 @@ final readonly class Second implements TimeUnit
         return $this->compareTo($other)->greaterOrEqual();
     }
 
-    public function compareTo(self $other): Comparison
+    public function compareTo(self $other): Compared
     {
-        return Comparison::compare((string)$this, (string)$other);
+        return Compared::compare((string)$this, (string)$other);
     }
 
     /** @return non-empty-string */

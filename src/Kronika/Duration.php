@@ -13,8 +13,11 @@ declare(strict_types=1);
 
 namespace Kronika;
 
-use Kronika\Utils\Comparison;
+use Kronika\Utils\Compared;
 
+/**
+ * Represents a duration/interval.
+ */
 final readonly class Duration
 {
     public static function zero(): self
@@ -192,19 +195,19 @@ final readonly class Duration
         return ! $this->isEqualTo($other);
     }
 
-    public function isAfter(self $other): bool
-    {
-        return $this->compareTo($other)->greater();
-    }
-
     public function isAfterOrEqual(self $other): bool
     {
         return $this->compareTo($other)->greaterOrEqual();
     }
 
-    public function compareTo(self $other): Comparison
+    public function isAfter(self $other): bool
     {
-        return Comparison::compare($this->seconds, $other->seconds);
+        return $this->compareTo($other)->greater();
+    }
+
+    public function compareTo(self $other): Compared
+    {
+        return Compared::compare($this->seconds, $other->seconds);
     }
 
     public function toDateInterval(): \DateInterval
@@ -215,7 +218,13 @@ final readonly class Duration
     /** @return non-empty-string */
     public function __toString(): string
     {
-        return \sprintf('%02d days, %02d hours, %02d minutes, %02d seconds', $this->days(), $this->hours(), $this->minutes(), $this->seconds());
+        return \sprintf(
+            '%02d days, %02d hours, %02d minutes, %02d seconds',
+            $this->days(),
+            $this->hours(),
+            $this->minutes(),
+            $this->seconds(),
+        );
     }
 
     /** @internal */

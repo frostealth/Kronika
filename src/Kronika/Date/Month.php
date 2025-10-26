@@ -16,7 +16,7 @@ namespace Kronika\Date;
 use Kronika\Date;
 use Kronika\Duration;
 use Kronika\LocalDateTime;
-use Kronika\Utils\Comparison;
+use Kronika\Utils\Compared;
 
 /**
  * @psalm-type TMonth=value-of<Month>
@@ -139,9 +139,9 @@ enum Month: int implements DateUnit
         return $this->compareTo($other)->greaterOrEqual();
     }
 
-    public function compareTo(self $other): Comparison
+    public function compareTo(self $other): Compared
     {
-        return Comparison::compare($this->number(), $other->number());
+        return Compared::compare($this->number(), $other->number());
     }
 
     /** @internal */

@@ -20,7 +20,7 @@ use Kronika\Date\Year;
 use Kronika\Time\Hour;
 use Kronika\Time\Minute;
 use Kronika\Time\Second;
-use Kronika\Utils\Comparison;
+use Kronika\Utils\Compared;
 
 /**
  * Represents a local date-time without a time-zone.
@@ -29,22 +29,61 @@ final readonly class LocalDateTime implements DateTime
 {
     /**
      * Obtains an instance of LocalDateTime from a date and time.
+     *
+     * @example
+     * ```
+     * // 2025-12-31 12:15:30
+     * $datetime = LocalDateTime::of(Date::of(2025, 12, 31), Time::of(12, 15, 30));
+     *
+     * // 2026-01-01 12:15:30.999999
+     * $datetime = LocalDateTime::of(
+     *     date: Date::of(2025, Month::December, 31),
+     *     time: Time::of(12, 15, Second::of(30, 999999)),
+     * );
+     * ```
      */
     public static function of(Date $date, Time $time): self
     {
         return new self(date: $date, time: $time);
     }
 
+    /**
+     * Obtains an instance of LocalDateTime from a given date and midnight time.
+     *
+     * @example
+     * ```
+     * // 2025-12-31 00:00:00
+     * $datetime = LocalDateTime::midnightOf(Date::of(2025, 12, 31));
+     * ```
+     */
     public static function midnightOf(Date $date): self
     {
         return self::of($date, Time::midnight());
     }
 
+    /**
+     * Obtains an instance of LocalDateTime from a given date and midday/noon time.
+     *
+     * @example
+     * ```
+     * // 2025-12-31 12:00:00
+     * $datetime = LocalDateTime::middayOf(Date::of(2025, 12, 31));
+     * ```
+     */
     public static function middayOf(Date $date): self
     {
         return self::of($date, Time::midday());
     }
 
+    /**
+     * Obtains an instance of LocalDateTime from a given date and time of the end of the day.
+     *
+     * @example
+     * ```
+     * // 2025-12-31 23:59:59.999999
+     * $datetime = LocalDateTime::endOfDayOf(Date::of(2025, 12, 31));
+     * ```
+     */
     public static function endOfDayOf(Date $date): self
     {
         return self::of($date, Time::endOfDay());
@@ -139,6 +178,15 @@ final readonly class LocalDateTime implements DateTime
         return $unit->withinDateTime($this);
     }
 
+    /**
+     * Returns an instance of ZonedDateTime from this date-time and a given time-zone.
+     *
+     * @example
+     * ```
+     * // 2025-12-31 12:15:30
+     * $this->atTimezone(new \DateTimeZone('UTC'));  // 2025-12-31 12:15:30 UTC
+     * ```
+     */
     public function atTimezone(\DateTimeZone $timezone): ZonedDateTime
     {
         return ZonedDateTime::ofLocal($this, $timezone);
@@ -219,7 +267,7 @@ final readonly class LocalDateTime implements DateTime
     }
 
     #[\Override]
-    public function compareTo(DateTime $other, Precision $precision = Precision::Micro): Comparison
+    public function compareTo(DateTime $other, Precision $precision = Precision::Micro): Compared
     {
         $other = self::ofDateTime($other);
 
@@ -246,11 +294,32 @@ final readonly class LocalDateTime implements DateTime
         return self::ofDateTime($this->toNative()->modify($modifier));
     }
 
+    /**
+     * Returns an instance of LocalDateTime with the first day of the month.
+     *
+     * @example
+     * ```
+     * // 2025-12-31 12:15:30
+     * $this->toStartOfMonth();  // 2025-12-01 12:15:30
+     * ```
+     */
     public function toStartOfMonth(): static
     {
         return $this->with($this->date()->toStartOfMonth());
     }
 
+    /**
+     * Returns an instance of LocalDateTime with the last day of the month.
+     *
+     * @example
+     * ```
+     * // 2025-02-01 12:15:30
+     * $this->toEndOfMonth();  // 2025-02-28 12:15:30
+     *
+     * // 2024-02-01 12:15:30 – leap year
+     * $this->toEndOfMonth();  // 2025-02-29 12:15:30
+     * ```
+     */
     public function toEndOfMonth(): static
     {
         return $this->with($this->date()->toEndOfMonth());
@@ -284,8 +353,8 @@ final readonly class LocalDateTime implements DateTime
     public function __debugInfo(): array
     {
         return [
-            'date' => (string) $this->date,
-            'time' => (string) $this->time,
+            'date' => (string)$this->date,
+            'time' => (string)$this->time,
         ];
     }
 }

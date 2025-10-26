@@ -20,7 +20,7 @@ use Kronika\Date\Year;
 use Kronika\Time\Hour;
 use Kronika\Time\Minute;
 use Kronika\Time\Second;
-use Kronika\Utils\Comparison;
+use Kronika\Utils\Compared;
 
 /**
  * Represents a date-time with a time-zone.
@@ -31,12 +31,41 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
 {
     /**
      * Obtains an instance of ZonedDateTime from a date, time and time-zone.
+     *
+     * @example
+     * ```
+     * // 2025-12-31 12:15:30 +01:00
+     * $datetime = ZonedDateTime::of(
+     *     date: Date::of(2025, 12, 31),
+     *     time: Time::of(12, 15, 30),
+     *     timezone: new \DateTimeZone('+01:00'),
+     * );
+     *
+     * // 2025-12-31 12:15:30.999999 +02:00
+     * $datetime = ZonedDateTime::of(
+     *     date: Date::of(2025, 12, 31),
+     *     time: Time::of(12, 15, Second::of(30, 999999)),
+     *     timezone: new \DateTimeZone("+02:00"),
+     * );
+     * ```
      */
     public static function of(Date $date, Time $time, \DateTimeZone $timezone): self
     {
         return self::ofLocal(LocalDateTime::of($date, $time), $timezone);
     }
 
+    /**
+     * Obtains an instance of ZonedDateTime from a date and time with UTC time-zone.
+     *
+     * @example
+     * ```
+     * // 2025-12-31 12:15:30 UTC
+     * $datetime = ZonedDateTime::utcOf(
+     *     date: Date::of(2025, 12, 31),
+     *     time: Time::of(12, 15, 30),
+     * );
+     * ```
+     */
     public static function utcOf(Date $date, Time $time): self
     {
         return self::of($date, $time, new \DateTimeZone('utc'));
@@ -44,12 +73,30 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
 
     /**
      * Obtains an instance of ZonedDateTime from a local date-time and time-zone.
+     *
+     * @example
+     * ```
+     * // 2025-12-31 12:15:30 +01:00
+     * $datetime = ZonedDateTime::of(
+     *     LocalDateTime::of(Date::of(2025, 12, 31), Time::of(12, 15, 30)),
+     *     new \DateTimeZone('+01:00'),
+     * );
+     * ```
      */
     public static function ofLocal(LocalDateTime $local, \DateTimeZone $timezone): self
     {
         return new self($local, $timezone);
     }
 
+    /**
+     * Obtains an instance of LocalDateTime from a given date and time-zone with midnight time.
+     *
+     * @example
+     * ```
+     * // 2025-12-31 00:00:00 +01:00
+     * $datetime = ZonedDateTime::midnightOf(Date::of(2025, 12, 31), new \DateTimeZone('+01:00'));
+     * ```
+     */
     public static function midnightOf(Date $date, \DateTimeZone $timezone): self
     {
         return self::ofLocal(LocalDateTime::midnightOf($date), $timezone);
@@ -84,6 +131,8 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     /**
+     * Obtain an instance of ZonedDateTime from a format.
+     *
      * @param non-empty-string $format
      * @param non-empty-string $datetime
      *
@@ -100,6 +149,8 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     /**
+     * Obtains an instance of ZonedDateTime from a given date-time string with time-zome.
+     *
      * @param non-empty-string $datetime
      *
      * @throws \DateMalformedStringException
@@ -170,30 +221,54 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         return $this->time()->second();
     }
 
-    /** @return TMicrosecond */
+    /**
+     * Returns a microsecond from this date-time.
+     *
+     * @return TMicrosecond
+     */
     public function microsecond(): int
     {
         return $this->second()->microsecond();
     }
 
+    /**
+     * Returns an instance of \DateTimeZone from this date-time.
+     */
     public function timezone(): \DateTimeZone
     {
         return $this->getTimezone();
     }
 
+    /**
+     * Returns a timestamp from this date-time.
+     */
     public function timestamp(): float
     {
         return (float)\sprintf('%d.%06d', parent::getTimestamp(), $this->microsecond());
     }
 
+    /**
+     * Shifts this date-time to a given time-zone.
+     *
+     * @example
+     * ```
+     * // 2025-12-31 12:15:30 +01:00
+     * $this->shiftTimezone(new \DateTimeZone('+02:30'));  // 2025-12-31 13:45:30 +02:30
+     * ```
+     */
     public function shiftTimezone(\DateTimeZone $toTimezone): static
     {
-        return self::ofDateTime(parent::setTimezone($toTimezone));
+        return $this->isInTimezone($toTimezone) ? $this : self::ofDateTime(parent::setTimezone($toTimezone));
     }
 
     /**
-     * Change Date, Time, timezone or date/time units
-     * (Year, Month, DayOfMonth, DayOfWeek, Hour, Minute, Second).
+     * {@inheritDoc}
+     *
+     * @example
+     * ```
+     * // 2025-12-31 12:15:30 +01:00
+     * $this->with(new \DateTimeZone('+02:30'));  // 2025-12-31 12:15:30 +02:30
+     * ```
      */
     #[\Override]
     public function with(Unit|\DateTimeZone $unit): static
@@ -260,7 +335,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
 
     public function isInTimezone(\DateTimeZone $timezone): bool
     {
-        return Comparison::compare($this->timezone(), $timezone)->equal();
+        return $this->timezone()->getName() === $timezone->getName();
     }
 
     #[\Override]
@@ -300,27 +375,57 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     #[\Override]
-    public function compareTo(DateTime|\DateTimeInterface $other, Precision $precision = Precision::Micro): Comparison
+    public function compareTo(DateTime|\DateTimeInterface $other, Precision $precision = Precision::Micro): Compared
     {
         $other = $other instanceof LocalDateTime ? $other->atTimezone($this->timezone()) : self::ofDateTime($other);
 
         return match($precision) {
-            Precision::Micro => Comparison::compare($this->timestamp(), $other->timestamp()),
+            Precision::Micro => Compared::compare($this->timestamp(), $other->timestamp()),
             Precision::Second => $this->resetMicro()->compareTo($other->resetMicro()),
             Precision::Minute => $this->resetSecond()->compareTo($other->resetSecond()),
         };
     }
 
+    /**
+     * Returns an instance of LocalDateTime from this date-time.
+     *
+     * @example
+     * ```
+     * // 2025-12-31 12:15:30 +01:00
+     * $this->toLocalDateTime();  // 2025-12-31 12:15:30
+     * ```
+     */
     public function toLocalDateTime(): LocalDateTime
     {
         return $this->local;
     }
 
+    /**
+     * Returns an instance of ZonedDateTime with the first day of the month.
+     *
+     * @example
+     * ```
+     * // 2025-12-31 12:15:30 +01:00
+     * $this->toStartOfMonth();  // 2025-12-01 12:15:30 +01:00
+     * ```
+     */
     public function toStartOfMonth(): static
     {
         return $this->with($this->date()->toStartOfMonth());
     }
 
+    /**
+     * Returns an instance of ZonedDateTime with the last day of the month.
+     *
+     * @example
+     * ```
+     * // 2025-02-01 12:15:30 +01:00
+     * $this->toEndOfMonth();  // 2025-02-28 12:15:30 +01:00
+     *
+     * // 2024-02-01 – leap year
+     * $this->toEndOfMonth();  // 2025-02-29 12:15:30 +01:00
+     * ```
+     */
     public function toEndOfMonth(): static
     {
         return $this->with($this->date()->toEndOfMonth());
