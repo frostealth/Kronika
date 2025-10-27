@@ -1,0 +1,340 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * This file is part of the Kronika package.
+ *
+ * (c) Ivan Kudinov <i@ikudinov.pro>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Kronika\Tests;
+
+use Kronika\Duration;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Depends;
+use PHPUnit\Framework\TestCase;
+
+final class DurationTest extends TestCase
+{
+    private const int LESS = -1;
+    private const int EQUAL = 0;
+    private const int GREATER = 1;
+
+    public static function basicProvider(): array
+    {
+        return [
+            'Seconds:Zero' => [['seconds' => 0], ['seconds' => 0]],
+            'Seconds:30' => [['seconds' => 30], ['seconds' => 30]],
+            'Seconds:60' => [['seconds' => 60], ['minutes' => 1]],
+            'Seconds:90' => [['seconds' => 90], ['minutes' => 1, 'seconds' => 30]],
+            'Seconds:7979' => [['seconds' => 7979], ['hours' => 2, 'minutes' => 12, 'seconds' => 59]],
+            'Seconds:345599' => [['seconds' => 345599], ['days' => 3, 'hours' => 23, 'minutes' => 59, 'seconds' => 59]],
+            'Seconds:2764799' => [['seconds' => 2764799], ['days' => 31, 'hours' => 23, 'minutes' => 59, 'seconds' => 59]],
+            'Seconds:31622399' => [['seconds' => 31622399], ['days' => 365, 'hours' => 23, 'minutes' => 59, 'seconds' => 59]],
+            'Seconds:63158399' => [['seconds' => 63158399], ['days' => 730, 'hours' => 23, 'minutes' => 59, 'seconds' => 59]],
+            'Minutes:25' => [['minutes' => 25], ['minutes' => 25]],
+            'Minutes:59' => [['minutes' => 59], ['minutes' => 59]],
+            'Minutes:60' => [['minutes' => 60], ['hours' => 1]],
+            'Minutes:75' => [['minutes' => 75], ['hours' => 1, 'minutes' => 15]],
+            'Minutes:1439' => [['minutes' => 1439], ['hours' => 23, 'minutes' => 59]],
+            'Minutes:1440' => [['minutes' => 1440], ['days' => 1]],
+            'Minutes:2190' => [['minutes' => 2190], ['days' => 1, 'hours' => 12, 'minutes' => 30]],
+            'Minutes:47490' => [['minutes' => 47490], ['days' => 32, 'hours' => 23, 'minutes' => 30]],
+            'Minutes:527760' => [['minutes' => 527760], ['days' => 366, 'hours' => 12]],
+            'Hours:1' => [['hours' => 1], ['hours' => 1]],
+            'Hours:12' => [['hours' => 12], ['hours' => 12]],
+            'Hours:23' => [['hours' => 23], ['hours' => 23]],
+            'Hours:24' => [['hours' => 24], ['days' => 1]],
+            'Hours:25' => [['hours' => 25], ['days' => 1, 'hours' => 1]],
+            'Hours:336' => [['hours' => 336], ['days' => 14]],
+            'Hours:337' => [['hours' => 337], ['days' => 14, 'hours' => 1]],
+            'Hours:359' => [['hours' => 359], ['days' => 14, 'hours' => 23]],
+            'Hours:2091' => [['hours' => 2091], ['days' => 87, 'hours' => 3]],
+            'Hours:11483' => [['hours' => 11483], ['days' => 478, 'hours' => 11]],
+            'Hours:36011' => [['hours' => 36011], ['days' => 1500, 'hours' => 11]],
+            'Hours:12.Minutes:30' => [['hours' => 12, 'minutes' => 30], ['hours' => 12, 'minutes' => 30]],
+            'Hours:23.Seconds:105' => [['hours' => 23, 'seconds' => 105], ['hours' => 23, 'minutes' => 1, 'seconds' => 45]],
+            'Hours:23.Minutes:59.Seconds:59' => [
+                ['hours' => 23, 'minutes' => 59, 'seconds' => 59],
+                ['hours' => 23, 'minutes' => 59, 'seconds' => 59],
+            ],
+            'Hours:23.Minutes:59.Seconds:60' => [['hours' => 23, 'minutes' => 59, 'seconds' => 60], ['days' => 1]],
+            'Days:1' => [['days' => 1], ['days' => 1]],
+            'Days:5' => [['days' => 5], ['days' => 5]],
+            'Days:7' => [['days' => 7], ['days' => 7]],
+            'Days:14' => [['days' => 14], ['days' => 14]],
+            'Days:30' => [['days' => 30], ['days' => 30]],
+            'Days:31' => [['days' => 31], ['days' => 31]],
+            'Days:60' => [['days' => 60], ['days' => 60]],
+            'Days:201' => [['days' => 201], ['days' => 201]],
+            'Days:365' => [['days' => 365], ['days' => 365]],
+            'Days:724' => [['days' => 724], ['days' => 724]],
+            'Days:2575' => [['days' => 2575], ['days' => 2575]],
+            'Days:3.Hours:0.Minutes:59.Seconds:59' => [
+                ['days' => 3, 'minutes' => 59, 'seconds' => 59],
+                ['days' => 3, 'minutes' => 59, 'seconds' => 59],
+            ],
+            'Days:3.Hours:23.Minutes:59.Seconds:59' => [
+                ['days' => 3, 'hours' => 23, 'minutes' => 59, 'seconds' => 59],
+                ['days' => 3, 'hours' => 23, 'minutes' => 59, 'seconds' => 59],
+            ],
+            'Days:31.Hours:12.Minutes:30.Seconds:30' => [
+                ['days' => 31, 'hours' => 12, 'minutes' => 30, 'seconds' => 30],
+                ['days' => 31, 'hours' => 12, 'minutes' => 30, 'seconds' => 30],
+            ],
+            'Days:364.Hours:12.Minutes:30' => [
+                ['days' => 364, 'hours' => 12, 'minutes' => 30],
+                ['days' => 364, 'hours' => 12, 'minutes' => 30],
+            ],
+            'Days:364.Hours:23.Minutes:59.Seconds:60' => [
+                ['days' => 364, 'hours' => 23, 'minutes' => 59, 'seconds' => 60],
+                ['days' => 365],
+            ],
+            'Days:364.Hours:23.Minutes:59.Seconds:61' => [
+                ['days' => 364, 'hours' => 23, 'minutes' => 59, 'seconds' => 61],
+                ['days' => 365, 'seconds' => 1],
+            ],
+        ];
+    }
+
+    /**
+     * @param array{days?: int, hours?: int, minutes?: int, seconds?: int} $args
+     * @param array{days?: int, hours?: int, minutes?: int, seconds?: int} $expected
+     */
+    #[DataProvider('basicProvider')]
+    public function testBasic(array $args, array $expected): void
+    {
+        $duration = Duration::of(...$args);
+
+        $this->assertEquals($expected['days'] ?? 0, $duration->days());
+        $this->assertEquals($expected['hours'] ?? 0, $duration->hours());
+        $this->assertEquals($expected['minutes'] ?? 0, $duration->minutes());
+        $this->assertEquals($expected['seconds'] ?? 0, $duration->seconds());
+        $this->assertEquals(\array_sum($args) === 0, $duration->isZero());
+        $this->assertSame(Duration::of(...$args), $duration);
+        $this->assertNotSame(Duration::of(
+            ...[...$args, 'seconds' => ($args['seconds'] ?? 0) + 1]),
+            $duration,
+        );
+    }
+
+    /**
+     * @param array{days?: int, hours?: int, minutes?: int, seconds?: int} $args
+     * @param array{days?: int, hours?: int, minutes?: int, seconds?: int} $expected
+     */
+    #[DataProvider('basicProvider')]
+    public function testRoundMethods(array $args, array $expected): void
+    {
+        $duration = Duration::of(...$args);
+
+        $inDays = $expected['days'] ?? 0;
+        $inHours = ($expected['hours'] ?? 0) + $inDays * 24;
+        $inMinutes = ($expected['minutes'] ?? 0) + $inHours * 60;
+        $inSeconds = ($expected['seconds'] ?? 0) + $inMinutes * 60;
+
+        $this->assertEquals($inDays, $duration->inDays());
+        $this->assertEquals($inHours, $duration->inHours());
+        $this->assertEquals($inMinutes, $duration->inMinutes());
+        $this->assertEquals($inSeconds, $duration->inSeconds());
+
+        $actual = $duration->dropToHours();
+        $this->assertEquals(0, $actual->days());
+        $this->assertEquals($expected['hours'] ?? 0, $actual->hours());
+        $this->assertEquals($expected['minutes'] ?? 0, $actual->minutes());
+        $this->assertEquals($expected['seconds'] ?? 0, $actual->seconds());
+
+        $actual = $duration->dropToMinutes();
+        $this->assertEquals(0, $actual->days());
+        $this->assertEquals(0, $actual->hours());
+        $this->assertEquals($expected['minutes'] ?? 0, $actual->minutes());
+        $this->assertEquals($expected['seconds'] ?? 0, $actual->seconds());
+
+        $actual = $duration->dropToSeconds();
+        $this->assertEquals(0, $actual->days());
+        $this->assertEquals(0, $actual->hours());
+        $this->assertEquals(0, $actual->minutes());
+        $this->assertEquals($expected['seconds'] ?? 0, $actual->seconds());
+    }
+
+    public static function addProvider(): array
+    {
+        return [
+            [
+                Duration::zero(), Duration::zero(), Duration::zero(),
+                ['seconds' => 0],
+            ],
+            [
+                Duration::zero(), Duration::zero(), Duration::of(seconds: 14),
+                ['seconds' => 14],
+            ],
+            [
+                Duration::zero(), Duration::of(seconds: 45), Duration::of(seconds: 14),
+                ['seconds' => 59],
+            ],
+            [
+                Duration::of(seconds: 45), Duration::of(seconds: 10), Duration::of(seconds: 5),
+                ['minutes' => 1],
+            ],
+            [
+                Duration::of(seconds: 45), Duration::of(seconds: 10), Duration::of(seconds: 10),
+                ['minutes' => 1, 'seconds' => 5],
+            ],
+            [
+                Duration::of(minutes: 59, seconds: 45), Duration::of(seconds: 10), Duration::of(seconds: 4),
+                ['minutes' => 59, 'seconds' => 59],
+            ],
+            [
+                Duration::of(minutes: 59, seconds: 45), Duration::of(seconds: 10), Duration::of(seconds: 5),
+                ['hours' => 1],
+            ],
+            [
+                Duration::of(minutes: 59, seconds: 45), Duration::of(hours: 1, seconds: 10), Duration::of(seconds: 4),
+                ['hours' => 1, 'minutes' => 59, 'seconds' => 59],
+            ],
+            [
+                Duration::of(minutes: 59, seconds: 45), Duration::of(hours: 1, seconds: 10), Duration::of(seconds: 5),
+                ['hours' => 2],
+            ],
+            [
+                Duration::of(minutes: 59, seconds: 45), Duration::of(hours: 1, seconds: 10), Duration::of(seconds: 6),
+                ['hours' => 2, 'seconds' => 1],
+            ],
+            [
+                Duration::of(minutes: 59, seconds: 45), Duration::of(hours: 1, seconds: 30), Duration::of(seconds: 77),
+                ['hours' => 2, 'minutes' => 1, 'seconds' => 32],
+            ],
+            [
+                Duration::of(minutes: 59, seconds: 45),
+                Duration::of(hours: 23, seconds: 30),
+                Duration::of(days: 29, seconds: 77),
+                ['days' => 30, 'hours' => 0, 'minutes' => 1, 'seconds' => 32],
+            ],
+        ];
+    }
+
+    /**
+     * @param array{days?: int, hours?: int, minutes?: int, seconds?: int} $expected
+     */
+    #[Depends('testBasic')]
+    #[DataProvider('addProvider')]
+    public function testAdd(Duration $a, Duration $b, Duration $c, array $expected): void
+    {
+        $actual = $a->add($b, $c);
+
+        $this->assertEquals($expected['days'] ?? 0, $actual->days());
+        $this->assertEquals($expected['hours'] ?? 0, $actual->hours());
+        $this->assertEquals($expected['minutes'] ?? 0, $actual->minutes());
+        $this->assertEquals($expected['seconds'] ?? 0, $actual->seconds());
+    }
+
+    public static function subProvider(): array
+    {
+        return [
+            [
+                Duration::zero(), Duration::zero(), Duration::zero(),
+                ['seconds' => 0],
+            ],
+            [
+                Duration::zero(), Duration::zero(), Duration::of(seconds: 14),
+                ['seconds' => 0],
+            ],
+            [
+                Duration::of(seconds: 14), Duration::of(seconds: 45), Duration::zero(),
+                ['seconds' => 0],
+            ],
+            [
+                Duration::of(seconds: 45), Duration::of(seconds: 10), Duration::of(seconds: 5),
+                ['seconds' => 30],
+            ],
+            [
+                Duration::of(minutes: 1, seconds: 10), Duration::of(seconds: 10), Duration::of(seconds: 5),
+                ['seconds' => 55],
+            ],
+            [
+                Duration::of(hours: 1, minutes: 1, seconds: 45),
+                Duration::of(seconds: 30),
+                Duration::of(minutes: 1, seconds: 20),
+                ['minutes' => 59, 'seconds' => 55],
+            ],
+            [
+                Duration::of(days: 29, seconds: 75),
+                Duration::of(minutes: 59, seconds: 45),
+                Duration::of(hours: 23, seconds: 30),
+                ['days' => 28, 'hours' => 0, 'minutes' => 1],
+            ],
+        ];
+    }
+
+    /**
+     * @param array{days?: int, hours?: int, minutes?: int, seconds?: int} $expected
+     */
+    #[Depends('testBasic')]
+    #[DataProvider('subProvider')]
+    public function testSub(Duration $a, Duration $b, Duration $c, array $expected): void
+    {
+        $actual = $a->sub($b, $c);
+
+        $this->assertEquals($expected['days'] ?? 0, $actual->days());
+        $this->assertEquals($expected['hours'] ?? 0, $actual->hours());
+        $this->assertEquals($expected['minutes'] ?? 0, $actual->minutes());
+        $this->assertEquals($expected['seconds'] ?? 0, $actual->seconds());
+    }
+
+    /**
+     * @param array{days?: int, hours?: int, minutes?: int, seconds?: int} $args
+     * @param array{days?: int, hours?: int, minutes?: int, seconds?: int} $expected
+     */
+    #[Depends('testBasic')]
+    #[Depends('testRoundMethods')]
+    #[DataProvider('basicProvider')]
+    public function testDropMethods(array $args, array $expected): void
+    {
+        $duration = Duration::of(...$args);
+
+        $actual = $duration->dropToHours();
+        $this->assertEquals(0, $actual->days());
+        $this->assertEquals($expected['hours'] ?? 0, $actual->hours());
+        $this->assertEquals($expected['minutes'] ?? 0, $actual->minutes());
+        $this->assertEquals($expected['seconds'] ?? 0, $actual->seconds());
+
+        $actual = $duration->dropToMinutes();
+        $this->assertEquals(0, $actual->days());
+        $this->assertEquals(0, $actual->hours());
+        $this->assertEquals($expected['minutes'] ?? 0, $actual->minutes());
+        $this->assertEquals($expected['seconds'] ?? 0, $actual->seconds());
+
+        $actual = $duration->dropToSeconds();
+        $this->assertEquals(0, $actual->days());
+        $this->assertEquals(0, $actual->hours());
+        $this->assertEquals(0, $actual->minutes());
+        $this->assertEquals($expected['seconds'] ?? 0, $actual->seconds());
+    }
+
+    public static function comparisonProvider(): array
+    {
+        return [
+            [Duration::zero(), Duration::zero(), self::EQUAL],
+            [Duration::zero(), Duration::of(seconds: 1), self::LESS],
+            [Duration::of(seconds: 1), Duration::zero(), self::GREATER],
+        ];
+    }
+
+    #[Depends('testBasic')]
+    #[DataProvider('comparisonProvider')]
+    public function testComparison(Duration $a, Duration $b, int $expected): void
+    {
+        $compared = $a->compareTo($b);
+
+        $this->assertEquals($expected, $compared->value());
+        $this->assertEquals($compared->less(), $a->isLessThan($b));
+        $this->assertEquals($compared->lessOrEqual(), $a->isLessThanOrEqualTo($b));
+        $this->assertEquals($compared->equal(), $a->isEqualTo($b));
+        $this->assertEquals($compared->notEqual(), $a->isNotEqualTo($b));
+        $this->assertEquals($compared->greaterOrEqual(), $a->isGreaterThanOrEqualTo($b));
+        $this->assertEquals($compared->greater(), $a->isGreaterThan($b));
+    }
+}

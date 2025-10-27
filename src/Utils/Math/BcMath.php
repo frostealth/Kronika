@@ -80,6 +80,8 @@ final class BcMath implements Math
     /**
      * @param TFraction $fraction
      * @param TPrecision $precision
+     *
+     * @return numeric-string
      */
     private static function prepare(int $integer, int $fraction, int $precision): string
     {

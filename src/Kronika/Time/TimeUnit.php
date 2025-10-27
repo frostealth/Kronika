@@ -17,16 +17,28 @@ use Kronika\Time;
 use Kronika\Unit;
 
 /**
+ * Represents a unit of time.
+ *
  * @template TTimeUnit of int
  * @internal
  */
 interface TimeUnit extends Unit
 {
+    /**
+     * Checks if this time unit represents zero.
+     */
     public function isZero(): bool;
 
+    /**
+     * Checks if this time unit represents the last value of the unit.
+     */
     public function isLast(): bool;
 
-    /** @param TTimeUnit $value */
+    /**
+     * Checks if this time unit's value is equal to a given one.
+     *
+     * @param TTimeUnit $value
+     */
     public function is(int $value): bool;
 
     /** @internal */

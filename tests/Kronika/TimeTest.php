@@ -16,10 +16,15 @@ namespace Kronika\Tests;
 use Kronika\Date;
 use Kronika\LocalDateTime;
 use Kronika\Precision;
+use Kronika\Tests\Time\HourTest;
+use Kronika\Tests\Time\MinuteTest;
+use Kronika\Tests\Time\SecondTest;
 use Kronika\Time;
 use Kronika\ZonedDateTime;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Depends;
+use PHPUnit\Framework\Attributes\DependsExternal;
+use PHPUnit\Framework\Attributes\DependsOnClass;
 use PHPUnit\Framework\TestCase;
 
 final class TimeTest extends TestCase
@@ -41,6 +46,9 @@ final class TimeTest extends TestCase
         ];
     }
 
+    #[DependsOnClass(HourTest::class)]
+    #[DependsOnClass(MinuteTest::class)]
+    #[DependsOnClass(SecondTest::class)]
     #[DataProvider('ofProvider')]
     public function testBasic(Time\Hour $hour, Time\Minute $minute, Time\Second $second): void
     {
@@ -49,7 +57,7 @@ final class TimeTest extends TestCase
         $this->assertEquals($hour, $time->hour());
         $this->assertEquals($minute, $time->minute());
         $this->assertEquals($second, $time->second());
-        $this->assertEquals($time, Time::of(hour: $hour->value(), minute: $minute->value(), second: $second));
+        $this->assertSame($time, Time::of(hour: $hour->value(), minute: $minute->value(), second: $second));
         $this->assertEquals(
             $time->with($time->second()->resetMicro()),
             Time::of(hour: $hour->value(), minute: $minute->value(), second: $second->second()),
@@ -91,6 +99,7 @@ final class TimeTest extends TestCase
         ];
     }
 
+    #[Depends('testBasic')]
     #[DataProvider('formatProvider')]
     public function testFormat(Time $time, string $format, string $expected): void
     {
@@ -138,6 +147,7 @@ final class TimeTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
+    #[Depends('testBasic')]
     public function testToString(): void
     {
         $time = Time::of(hour: 17, minute: 5, second: Time\Second::of(second: 39, micro: 4582));
@@ -302,8 +312,8 @@ final class TimeTest extends TestCase
         $this->assertFalse($a->isNotEqualTo($a));
         $this->assertFalse($a->isBefore($a));
         $this->assertFalse($a->isAfter($a));
-        $this->assertTrue($a->isBeforeOrEqual($a));
-        $this->assertTrue($a->isAfterOrEqual($a));
+        $this->assertTrue($a->isBeforeOrEqualTo($a));
+        $this->assertTrue($a->isAfterOrEqualTo($a));
 
         $comparison = $a->compareTo($b, $precision);
         $this->assertEquals($expected, $comparison->value());
@@ -311,7 +321,7 @@ final class TimeTest extends TestCase
         $this->assertEquals($comparison->greater(), $a->isAfter($b, $precision));
         $this->assertEquals($comparison->equal(), $a->isEqualTo($b, $precision));
         $this->assertEquals($comparison->notEqual(), $a->isNotEqualTo($b, $precision));
-        $this->assertEquals($comparison->lessOrEqual(), $a->isBeforeOrEqual($b, $precision));
-        $this->assertEquals($comparison->greaterOrEqual(), $a->isAfterOrEqual($b, $precision));
+        $this->assertEquals($comparison->lessOrEqual(), $a->isBeforeOrEqualTo($b, $precision));
+        $this->assertEquals($comparison->greaterOrEqual(), $a->isAfterOrEqualTo($b, $precision));
     }
 }

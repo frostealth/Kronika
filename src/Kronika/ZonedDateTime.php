@@ -21,6 +21,7 @@ use Kronika\Time\Hour;
 use Kronika\Time\Minute;
 use Kronika\Time\Second;
 use Kronika\Utils\Compared;
+use Kronika\Utils\WeakRefsTrait;
 
 /**
  * Represents a date-time with a time-zone.
@@ -29,6 +30,9 @@ use Kronika\Utils\Compared;
  */
 final class ZonedDateTime extends \DateTimeImmutable implements DateTime
 {
+    /** @use WeakRefsTrait<static, LocalDateTime|\DateTimeZone> */
+    use WeakRefsTrait;
+
     /**
      * Obtains an instance of ZonedDateTime from a date, time and time-zone.
      *
@@ -54,7 +58,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     /**
-     * Obtains an instance of ZonedDateTime from a date and time with UTC time-zone.
+     * Obtains an instance of ZonedDateTime from a date and time in UTC time-zone.
      *
      * ```
      * // 2025-12-31 12:15:30 UTC
@@ -82,7 +86,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      */
     public static function ofLocal(LocalDateTime $local, \DateTimeZone $timezone): self
     {
-        return new self($local, $timezone);
+        return self::weak(local: $local, timezone: $timezone);
     }
 
     /**
@@ -99,7 +103,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     /**
-     * Obtains an instance of ZonedDateTime from a date-time with a time-zone.
+     * Obtains an instance of ZonedDateTime from a date-time with time-zone.
      */
     public static function ofDateTime(\DateTimeInterface $dateTime): self
     {
@@ -145,7 +149,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     /**
-     * Obtains an instance of ZonedDateTime from a given date-time string with time-zome.
+     * Obtains an instance of ZonedDateTime from a given date-time string and time-zome.
      *
      * @param non-empty-string $datetime
      *
@@ -339,7 +343,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     #[\Override]
-    public function isBeforeOrEqual(DateTime|\DateTimeInterface $other, Precision $precision = Precision::Micro): bool
+    public function isBeforeOrEqualTo(DateTime|\DateTimeInterface $other, Precision $precision = Precision::Micro): bool
     {
         return $this->compareTo($other, $precision)->lessOrEqual();
     }
@@ -357,7 +361,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     #[\Override]
-    public function isAfterOrEqual(DateTime|\DateTimeInterface $other, Precision $precision = Precision::Micro): bool
+    public function isAfterOrEqualTo(DateTime|\DateTimeInterface $other, Precision $precision = Precision::Micro): bool
     {
         return $this->compareTo($other, $precision)->greaterOrEqual();
     }

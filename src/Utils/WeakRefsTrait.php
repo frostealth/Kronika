@@ -28,7 +28,7 @@ trait WeakRefsTrait
      */
     final protected static function weak(?callable $factory = null, mixed ...$args): static
     {
-        $factory ??= static fn (...$args): static => new static(...$args);
+        $factory ??= static fn (mixed ...$args): object => new static(...$args);
 
         return weak(static::class, $factory, ...$args);
     }

@@ -11,13 +11,18 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Kronika;
+namespace Kronika\Tests;
 
-use Kronika\Tests\LocalDateTimeTest;
-use Kronika\Tests\ZonedDateTimeTest;
+use Kronika\Date;
+use Kronika\DateTime;
+use Kronika\LocalDateTime;
+use Kronika\Precision;
+use Kronika\Time;
 use Kronika\Time\Second;
+use Kronika\ZonedDateTime;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\DependsExternal;
+use PHPUnit\Framework\Attributes\DependsOnClass;
 use PHPUnit\Framework\TestCase;
 
 final class DateTimeTest extends TestCase
@@ -795,26 +800,27 @@ final class DateTimeTest extends TestCase
         ];
     }
 
+    #[DependsOnClass(DurationTest::class)]
     #[DependsExternal(LocalDateTimeTest::class, 'testBasic')]
     #[DependsExternal(ZonedDateTimeTest::class, 'testBasic')]
     #[DataProvider('comparisonProvider')]
     public function testComparison(DateTime $a, DateTime|\DateTimeInterface $b, Precision $precision, int $expected): void
     {
         $this->assertFalse($a->isBefore($a, $precision));
-        $this->assertTrue($a->isBeforeOrEqual($a, $precision));
+        $this->assertTrue($a->isBeforeOrEqualTo($a, $precision));
         $this->assertTrue($a->isEqualTo($a, $precision));
         $this->assertFalse($a->isNotEqualTo($a, $precision));
-        $this->assertTrue($a->isAfterOrEqual($a, $precision));
+        $this->assertTrue($a->isAfterOrEqualTo($a, $precision));
         $this->assertFalse($a->isAfter($a, $precision));
 
         $comparison = $a->compareTo($b, $precision);
         $this->assertEquals($expected, $comparison->value());
         $this->assertEquals($comparison->less(), $a->isBefore($b, $precision));
-        $this->assertEquals($comparison->lessOrEqual(), $a->isBeforeOrEqual($b, $precision));
+        $this->assertEquals($comparison->lessOrEqual(), $a->isBeforeOrEqualTo($b, $precision));
         $this->assertEquals($comparison->greater(), $a->isAfter($b, $precision));
         $this->assertEquals($comparison->equal(), $a->isEqualTo($b, $precision));
         $this->assertEquals($comparison->notEqual(), $a->isNotEqualTo($b, $precision));
-        $this->assertEquals($comparison->greaterOrEqual(), $a->isAfterOrEqual($b, $precision));
+        $this->assertEquals($comparison->greaterOrEqual(), $a->isAfterOrEqualTo($b, $precision));
         $this->assertEquals($comparison->notEqual(), $a->isNotEqualTo($b, $precision));
     }
 

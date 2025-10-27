@@ -99,17 +99,10 @@ final class KronikaSubscribingHandlerTest extends TestCase
         $this->assertSame($this->entry->minute, $unserialized->minute);
         $this->assertSame($this->entry->second, $unserialized->second);
 
-        $this->assertNotSame($this->entry->duration, $unserialized->duration);
-        $this->assertEquals($this->entry->duration, $unserialized->duration);
-
-        $this->assertNotSame($this->entry->instant, $unserialized->instant);
-        $this->assertEquals($this->entry->instant, $unserialized->instant);
-
-        $this->assertNotSame($this->entry->localDateTime, $unserialized->localDateTime);
-        $this->assertEquals($this->entry->localDateTime, $unserialized->localDateTime);
-
-        $this->assertNotSame($this->entry->zonedDateTime, $unserialized->zonedDateTime);
-        $this->assertEquals($this->entry->zonedDateTime, $unserialized->zonedDateTime);
+        $this->assertSame($this->entry->duration, $unserialized->duration);
+        $this->assertSame($this->entry->instant, $unserialized->instant);
+        $this->assertSame($this->entry->localDateTime, $unserialized->localDateTime);
+        $this->assertSame($this->entry->zonedDateTime, $unserialized->zonedDateTime);
 
         $this->assertEquals($this->entry->nativeDateTime, $unserialized->nativeDateTime);
     }

@@ -32,6 +32,6 @@ interface Math
     /** @return TFraction $fraction */
     public function fraction(): int;
 
-    /** @return list<int, TFraction> */
+    /** @return list{int, TFraction} */
     public function parts(): array;
 }

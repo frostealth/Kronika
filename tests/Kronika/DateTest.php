@@ -49,7 +49,8 @@ final class DateTest extends TestCase
         $this->assertEquals($month, $date->month());
         $this->assertEquals($day, $date->day());
         $this->assertEquals($dayOfWeek, $date->dayOfWeek());
-        $this->assertEquals($date, Date::of(year: $year->number(), month: $month->number(), day: $day->number()));
+        $this->assertSame($date, Date::of(year: $year->number(), month: $month->number(), day: $day->number()));
+        $this->assertNotSame($date, Date::of(year: $year->number() + 1, month: $month->number(), day: $day->number()));
     }
 
     public static function startAndEndOfMonthProvider(): array

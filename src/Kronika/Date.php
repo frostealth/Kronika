@@ -30,7 +30,7 @@ use Kronika\Utils\WeakRefsTrait;
  */
 final readonly class Date implements Unit
 {
-    /** @use WeakRefsTrait<self,Year|TYear|Month|TMonth|DayOfMonth|TDayOfMonth> */
+    /** @use WeakRefsTrait<static,Year|TYear|Month|TMonth|DayOfMonth|TDayOfMonth> */
     use WeakRefsTrait;
 
     /**
@@ -230,7 +230,7 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Returns an instance of Duration from this date to another.
+     * Returns an instance of Duration from this date to another one.
      *
      * ```
      * // 2025-12-31 vs 2026-01-02
@@ -303,7 +303,7 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Checks if this date is before another.
+     * Checks if this date is before another one.
      *
      * ```
      * // 2025-12-30 vs 2025-12-31
@@ -319,26 +319,26 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Checks if this date is before or equal to another.
+     * Checks if this date is before or equal to another one.
      *
      * ```
      * // 2025-12-30 vs 2025-12-30
-     * $this->isBeforeOrEqual($other);  // true
+     * $this->isBeforeOrEqualTo($other);  // true
      *
      * // 2025-12-30 vs 2025-12-31
-     * $this->isBeforeOrEqual($other);  // true
+     * $this->isBeforeOrEqualTo($other);  // true
      *
      * // 2025-12-31 vs 2025-12-30
-     * $this->isBeforeOrEqual($other);  // false
+     * $this->isBeforeOrEqualTo($other);  // false
      * ```
      */
-    public function isBeforeOrEqual(self $other): bool
+    public function isBeforeOrEqualTo(self $other): bool
     {
         return $this->compareTo($other)->lessOrEqual();
     }
 
     /**
-     * Checks if this date is equal to another.
+     * Checks if this date is equal to another one.
      *
      * ```
      * // 2025-12-30 vs 2025-12-30
@@ -354,7 +354,7 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Checks if this date is not equal to another.
+     * Checks if this date is not equal to another one.
      *
      * ```
      * // 2025-12-30 vs 2025-12-31
@@ -370,23 +370,23 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Checks if this date is after or equal to another.
+     * Checks if this date is after or equal to another one.
      *
      * ```
      * // 2025-12-30 vs 2025-12-30
-     * $this->isAfterOrEqual($other);  // true
+     * $this->isAfterOrEqualTo($other);  // true
      *
      * // 2025-12-30 vs 2025-12-31
-     * $this->isAfterOrEqual($other);  // false
+     * $this->isAfterOrEqualTo($other);  // false
      * ```
      */
-    public function isAfterOrEqual(self $other): bool
+    public function isAfterOrEqualTo(self $other): bool
     {
         return $this->compareTo($other)->greaterOrEqual();
     }
 
     /**
-     * Checks if this date is after another.
+     * Checks if this date is after another one.
      *
      * ```
      * // 2025-12-31 vs 2025-12-30
@@ -402,7 +402,7 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Compares this date with another.
+     * Compares this date to another one.
      *
      * ```
      * // 12025-12-30 vs 2025-12-31

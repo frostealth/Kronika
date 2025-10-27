@@ -95,7 +95,7 @@ final class NativeMath implements Math
     /**
      * @param TDelimiter $delimiter
      *
-     * @return list<int, TFraction>
+     * @return array{int, TFraction}
      */
     private static function prepare(int $integer, int $fraction, int $delimiter): array
     {

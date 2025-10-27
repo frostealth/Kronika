@@ -19,20 +19,37 @@ use Kronika\Utils\Compared;
 use Kronika\Utils\WeakRefsTrait;
 
 /**
+ * Represents a minute of the hour.
+ *
  * @psalm-type TMinute=int<0,59>
  * @implements TimeUnit<TMinute>
  */
 final readonly class Minute implements TimeUnit
 {
-    /** @use WeakRefsTrait<self,TMinute> */
+    /** @use WeakRefsTrait<static,TMinute> */
     use WeakRefsTrait;
 
-    /** @param TMinute|self $value */
+    /**
+     * Obtains an instance of Minute from a value.
+     *
+     * ```
+     * $minute = Minute::of(30);
+     * ```
+     *
+     * @param TMinute|self $value
+     */
     public static function of(int|self $value): self
     {
         return $value instanceof self ? $value : static::weak(value: $value);
     }
 
+    /**
+     * Obtains an instance of Minute at 0.
+     *
+     * ```
+     * Minute::zero()->value();  // 0
+     * ```
+     */
     public static function zero(): self
     {
         static $instance = self::of(0);
@@ -40,6 +57,13 @@ final readonly class Minute implements TimeUnit
         return $instance;
     }
 
+    /**
+     * Obtains an instance of Minute at the end of the hour.
+     *
+     * ```
+     * Minute::last()->value();  // 23
+     * ```
+     */
     public static function last(): self
     {
         static $instance = self::of(59);
@@ -54,60 +78,143 @@ final readonly class Minute implements TimeUnit
         \assert($value >= 0 && $value < 60);
     }
 
-    /** @return TMinute */
+    /**
+     * Returns the value of this minute.
+     *
+     * @return TMinute
+     */
     public function value(): int
     {
         return $this->value;
     }
 
+    /**
+     * Checks if this minute is equal to 0.
+     */
     #[\Override]
     public function isZero(): bool
     {
         return $this->isEqualTo(self::zero());
     }
 
+    /**
+     * Check if this minute is equal to 59.
+     */
     #[\Override]
     public function isLast(): bool
     {
         return $this->isEqualTo(self::last());
     }
 
+    /**
+     * Checks if this minute's value is equal to a given one.
+     */
     #[\Override]
     public function is(int $value): bool
     {
         return $this->value() === $value;
     }
 
+    /**
+     * Checks if this minute is before another one.
+     *
+     * ```
+     * // 30
+     * $this->isBefore(Minute::of(30));  // false
+     * $this->isBefore(Minute::zero());  // false
+     * $this->isBefore(Minute::of(50));  // true
+     * ```
+     */
     public function isBefore(self $other): bool
     {
         return $this->compareTo($other)->less();
     }
 
-    public function isBeforeOrEqual(self $other): bool
+    /**
+     * Checks if this minute is before or equal to another one.
+     *
+     * ```
+     * // 30
+     * $this->isBeforeOrEqualTo(Minute::of(30));  // true
+     * $this->isBeforeOrEqualTo(Minute::zero());  // false
+     * $this->isBeforeOrEqualTo(Minute::of(50));  // true
+     * ```
+     */
+    public function isBeforeOrEqualTo(self $other): bool
     {
         return $this->compareTo($other)->lessOrEqual();
     }
 
+    /**
+     * Checks if this minute is equal to another one.
+     *
+     * ```
+     * // 30
+     * $this->isEqualTo(Minute::of(30));   // true
+     * $this->isEqualTo(Minute::zero());  // false
+     * $this->isEqualTo(Minute::of(50));  // false
+     * ```
+     */
     public function isEqualTo(self $other): bool
     {
         return $this->compareTo($other)->equal();
     }
 
+    /**
+     * Checks if this minute is not equal to another one.
+     *
+     * ```
+     * // 30
+     * $this->isNotEqualTo(Minute::of(30);   // false
+     * $this->isNotEqualTo(Minute::zero());  // true
+     * $this->isNotEqualTo(Minute::of(50));  // true
+     * ```
+     */
     public function isNotEqualTo(self $other): bool
     {
         return ! $this->isEqualTo($other);
     }
 
+    /**
+     * Checks if this minute is after or equal to another one.
+     *
+     * ```
+     * // 30
+     * $this->isAfterOrEqualTo(Minute::of(30));  // true
+     * $this->isAfterOrEqualTo(Minute::zero());  // true
+     * $this->isAfterOrEqualTo(Minute::of(50));  // false
+     * ```
+     */
+    public function isAfterOrEqualTo(self $other): bool
+    {
+        return $this->compareTo($other)->greaterOrEqual();
+    }
+
+    /**
+     * Checks if this minute is after another one.
+     *
+     * ```
+     * // 30
+     * $this->isAfter(Minute::of(30));  // false
+     * $this->isAfter(Minute::zero());  // true
+     * $this->isAfter(Minute::of(50));  // false
+     * ```
+     */
     public function isAfter(self $other): bool
     {
         return $this->compareTo($other)->greater();
     }
 
-    public function isAfterOrEqual(self $other): bool
-    {
-        return $this->compareTo($other)->greaterOrEqual();
-    }
-
+    /**
+     * Compares this minute to another one.
+     *
+     * ```
+     * // 30 vs 0
+     * $this->compareTo($other)->less();    // false
+     * $this->compareTo($other)->equal();   // false
+     * $this->compareTo($other)->greater(); // true
+     * ```
+     */
     public function compareTo(self $other): Compared
     {
         return Compared::compare($this->value(), $other->value());

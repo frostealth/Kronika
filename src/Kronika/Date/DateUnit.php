@@ -17,15 +17,25 @@ use Kronika\Date;
 use Kronika\Unit;
 
 /**
+ * Represents a unit of day (date).
+ *
  * @template TDateUnit of int
  * @internal
  */
 interface DateUnit extends Unit
 {
-    /** @return TDateUnit */
+    /**
+     * Returns the number of this date unit.
+     *
+     * @return TDateUnit
+     */
     public function number(): int;
 
-    /** @param TDateUnit $number */
+    /**
+     * Checks if this date unit's number is equal to a given one.
+     *
+     * @param TDateUnit $number
+     */
     public function is(int $number): bool;
 
     /** @internal */
