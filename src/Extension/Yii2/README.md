@@ -53,6 +53,7 @@ Database column type for:
 - `Instant`         -> float
 - `LocalDateTime`   -> string (datetime without time-zone)
 - `ZonedDateTime`   -> string (datetime with time-zone)
+- `\DateTimeZone`   -> string
 
 ## Usage
 ```php
