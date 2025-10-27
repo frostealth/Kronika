@@ -30,7 +30,6 @@ final readonly class LocalDateTime implements DateTime
     /**
      * Obtains an instance of LocalDateTime from a date and time.
      *
-     * @example
      * ```
      * // 2025-12-31 12:15:30
      * $datetime = LocalDateTime::of(Date::of(2025, 12, 31), Time::of(12, 15, 30));
@@ -50,7 +49,6 @@ final readonly class LocalDateTime implements DateTime
     /**
      * Obtains an instance of LocalDateTime from a given date and midnight time.
      *
-     * @example
      * ```
      * // 2025-12-31 00:00:00
      * $datetime = LocalDateTime::midnightOf(Date::of(2025, 12, 31));
@@ -64,7 +62,6 @@ final readonly class LocalDateTime implements DateTime
     /**
      * Obtains an instance of LocalDateTime from a given date and midday/noon time.
      *
-     * @example
      * ```
      * // 2025-12-31 12:00:00
      * $datetime = LocalDateTime::middayOf(Date::of(2025, 12, 31));
@@ -78,7 +75,6 @@ final readonly class LocalDateTime implements DateTime
     /**
      * Obtains an instance of LocalDateTime from a given date and time of the end of the day.
      *
-     * @example
      * ```
      * // 2025-12-31 23:59:59.999999
      * $datetime = LocalDateTime::endOfDayOf(Date::of(2025, 12, 31));
@@ -181,7 +177,6 @@ final readonly class LocalDateTime implements DateTime
     /**
      * Returns an instance of ZonedDateTime from this date-time and a given time-zone.
      *
-     * @example
      * ```
      * // 2025-12-31 12:15:30
      * $this->atTimezone(new \DateTimeZone('UTC'));  // 2025-12-31 12:15:30 UTC
@@ -297,7 +292,6 @@ final readonly class LocalDateTime implements DateTime
     /**
      * Returns an instance of LocalDateTime with the first day of the month.
      *
-     * @example
      * ```
      * // 2025-12-31 12:15:30
      * $this->toStartOfMonth();  // 2025-12-01 12:15:30
@@ -311,7 +305,6 @@ final readonly class LocalDateTime implements DateTime
     /**
      * Returns an instance of LocalDateTime with the last day of the month.
      *
-     * @example
      * ```
      * // 2025-02-01 12:15:30
      * $this->toEndOfMonth();  // 2025-02-28 12:15:30

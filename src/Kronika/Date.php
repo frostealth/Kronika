@@ -36,7 +36,6 @@ final readonly class Date implements Unit
     /**
      * Obtains an instance of Date from a year, month and day of the month.
      *
-     * @example
      * ```
      * // 2025-12-31
      * $date = Date::of(year: 2025, month: 12, day: 31);
@@ -147,7 +146,6 @@ final readonly class Date implements Unit
      * If the day of the month of the resulting date is greater than
      * the length of the month, then the last day of the month will be set.
      *
-     * @example
      * ```
      * // 2025-11-29
      * $this->with(Year::of(1990));         // 1990-11-29
@@ -167,7 +165,6 @@ final readonly class Date implements Unit
     /**
      * Returns an instance of LocalDateTime with this date and a given time.
      *
-     * @example
      * ```
      * // 2025-12-31
      * $this->at(Time::of(12, 15, 30));  // 2025-12-31 12:15:30
@@ -181,7 +178,6 @@ final readonly class Date implements Unit
     /**
      * Adds an amount of days, hours, minutes and seconds to this date.
      *
-     * @example
      * ```
      * // 2025-12-31 + 2 days
      * $this->add(Duration::of(days: 2));  // 2026-01-12
@@ -203,7 +199,6 @@ final readonly class Date implements Unit
     /**
      * Subtracts an amount of days, hours, minutes and seconds to this date.
      *
-     * @example
      * ```
      * // 2025-12-31 - 2 days
      * $this->sub(Duration::of(days: 2));  // 2025-12-29
@@ -237,7 +232,6 @@ final readonly class Date implements Unit
     /**
      * Returns an instance of Duration from this date to another.
      *
-     * @example
      * ```
      * // 2025-12-31 vs 2026-01-02
      * $duration = $this->until($other);
@@ -256,7 +250,6 @@ final readonly class Date implements Unit
     /**
      * Returns an instance of LocalDateTime with this date and midnight time.
      *
-     * @example
      * ```
      * // 2025-12-31
      * $this->atMidnight();  // 2025-12-31 00:00:00.000000
@@ -270,7 +263,6 @@ final readonly class Date implements Unit
     /**
      * Returns an instance of LocalDateTime with this date and time of the end of the day.
      *
-     * @example
      * ```
      * // 2025-12-31
      * $this->atEndOfDay();  // 2025-12-31 23:59:59.999999
@@ -284,7 +276,6 @@ final readonly class Date implements Unit
     /**
      * Returns an instance of Date with the first day of the month.
      *
-     * @example
      * ```
      * // 2025-12-31
      * $this->toStartOfMonth();  // 2025-12-01
@@ -298,7 +289,6 @@ final readonly class Date implements Unit
     /**
      * Returns an instance of Date with the last day of the month.
      *
-     * @example
      * ```
      * // 2025-02-01
      * $this->toEndOfMonth();  // 2025-02-28
@@ -315,7 +305,6 @@ final readonly class Date implements Unit
     /**
      * Checks if this date is before another.
      *
-     * @example
      * ```
      * // 2025-12-30 vs 2025-12-31
      * $this->isBefore($other);  // true
@@ -332,7 +321,6 @@ final readonly class Date implements Unit
     /**
      * Checks if this date is before or equal to another.
      *
-     * @example
      * ```
      * // 2025-12-30 vs 2025-12-30
      * $this->isBeforeOrEqual($other);  // true
@@ -352,7 +340,6 @@ final readonly class Date implements Unit
     /**
      * Checks if this date is equal to another.
      *
-     * @example
      * ```
      * // 2025-12-30 vs 2025-12-30
      * $this->isEqualTo($other);  // true
@@ -369,7 +356,6 @@ final readonly class Date implements Unit
     /**
      * Checks if this date is not equal to another.
      *
-     * @example
      * ```
      * // 2025-12-30 vs 2025-12-31
      * $this->isNotEqualTo($other);  // true
@@ -386,7 +372,6 @@ final readonly class Date implements Unit
     /**
      * Checks if this date is after or equal to another.
      *
-     * @example
      * ```
      * // 2025-12-30 vs 2025-12-30
      * $this->isAfterOrEqual($other);  // true
@@ -403,7 +388,6 @@ final readonly class Date implements Unit
     /**
      * Checks if this date is after another.
      *
-     * @example
      * ```
      * // 2025-12-31 vs 2025-12-30
      * $this->isAfter($other);  // true
@@ -420,7 +404,6 @@ final readonly class Date implements Unit
     /**
      * Compares this date with another.
      *
-     * @example
      * ```
      * // 12025-12-30 vs 2025-12-31
      * $this->compareTo($other)->equal();  // false

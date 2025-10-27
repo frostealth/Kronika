@@ -35,7 +35,6 @@ final readonly class Time implements Unit
     /**
      * Obtains an instance of Time from an hour, minute and second.
      *
-     * @example
      * ```
      * // 10:30:45
      * $time = Time::of(hour: 10, minute: 30, second: 45);
@@ -167,7 +166,6 @@ final readonly class Time implements Unit
     /**
      * Returns an instance of Time with a given time unit.
      *
-     * @example
      * ```
      * // 12:15:30
      * $this->with(Minute::of(30));  // 12:30:30
@@ -183,7 +181,6 @@ final readonly class Time implements Unit
     /**
      * Returns an instance of LocalDateTime with a given date and this time.
      *
-     * @example
      * ```
      * // 12:15:30
      * $this->at(Date::of(2025, 12, 31));  // 2025-12-31 12:15:30
@@ -197,7 +194,6 @@ final readonly class Time implements Unit
     /**
      * Resets a microsecond to 0.
      *
-     * @example
      * ```
      * // 10:15:30.999999
      * $time->resetMicro();  // 10:15:30.000000
@@ -211,7 +207,6 @@ final readonly class Time implements Unit
     /**
      * Resets a second and microsecond to 0.
      *
-     * @example
      * ```
      * // 10:15:30.999999
      * $time->resetSecond();  // 10:15:00.000000
@@ -225,7 +220,6 @@ final readonly class Time implements Unit
     /**
      * Adds an amount of hours, minutes and seconds to this time.
      *
-     * @example
      * ```
      * // 10:15:30 + 2 hours and 45 minutes
      * $this->add(Duration::of(hours: 2, minutes: 45));  // 13:00:30
@@ -246,7 +240,6 @@ final readonly class Time implements Unit
     /**
      * Subtracts an amount of hours, minutes and seconds from this time.
      *
-     * @example
      * ```
      * // 10:15:30 - 2 hours and 45 minutes
      * $this->sub(Duration::of(hours: 2, minutes: 45));  // 07:30:30
@@ -267,7 +260,6 @@ final readonly class Time implements Unit
     /**
      * Returns an instance of Duration from this time to another.
      *
-     * @example
      * ```
      * // 10:15:30 vs 23:59:59
      * $duration = $this->until($other);
@@ -290,7 +282,6 @@ final readonly class Time implements Unit
     /**
      * Returns an instance of Duration between this time and another.
      *
-     * @example
      * ```
      * // 10:15:30 vs 23:59:59
      * $duration = $this->diff($other);
@@ -313,7 +304,6 @@ final readonly class Time implements Unit
     /**
      * Checks if this time is midnight.
      *
-     * @example
      * ```
      * // 00:00:00.000000
      * $time->isMidnight();  // true
@@ -335,7 +325,6 @@ final readonly class Time implements Unit
     /**
      * Checks if this time is midday/noon.
      *
-     * @example
      * ```
      * // 12:00:00.000000
      * $time->isMidday();  // true
@@ -357,7 +346,6 @@ final readonly class Time implements Unit
     /**
      * Checks if this time is the end of the day.
      *
-     * @example
      * ```
      * // 23:59:59.999999
      * $time->isEndOfDay();  // true
@@ -379,7 +367,6 @@ final readonly class Time implements Unit
     /**
      * Checks if this time is before another.
      *
-     * @example
      * ```
      * // 10:15:30.000000 vs 10:15:30.999999
      * $this->isBefore($other);  // true
@@ -398,7 +385,6 @@ final readonly class Time implements Unit
     /**
      * Checks if this time is before or equal to another.
      *
-     * @example
      * ```
      * // 10:15:30.000000 vs 10:15:30.000000
      * $this->isBeforeOrEqual($other);  // true
@@ -420,7 +406,6 @@ final readonly class Time implements Unit
     /**
      * Checks if this time is equal to another.
      *
-     * @example
      * ```
      * // 10:15:30.000000 vs 10:15:30.000000
      * $this->isEqualTo($other);  // true
@@ -442,7 +427,6 @@ final readonly class Time implements Unit
     /**
      * Checks if this time is not equal to another.
      *
-     * @example
      * ```
      * // 10:15:30.000000 vs 10:15:30.999999
      * $this->isNotEqualTo($other);  // true
@@ -461,7 +445,6 @@ final readonly class Time implements Unit
     /**
      * Checks if this time is after or equal to another.
      *
-     * @example
      * ```
      * // 10:15:30.000000 vs 10:15:30.000000
      * $this->isAfterOrEqual($other);  // true
@@ -483,7 +466,6 @@ final readonly class Time implements Unit
     /**
      * Checks if this time is after another.
      *
-     * @example
      * ```
      * // 10:15:30.999999 vs 10:15:30.000000
      * $this->isAfter($other);  // true
@@ -502,7 +484,6 @@ final readonly class Time implements Unit
     /**
      * Compares this time with another.
      *
-     * @example
      * ```
      * // 12:15:30.000000 vs 12:15:30.999999
      * $this->compareTo($other)->equal();  // false
