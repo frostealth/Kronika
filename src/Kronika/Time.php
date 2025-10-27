@@ -29,7 +29,7 @@ use Kronika\Utils\WeakRefsTrait;
  */
 final readonly class Time implements Unit
 {
-    /** @use WeakRefsTrait<self,Hour|THour|Minute|TMinute|Second|TSecond> */
+    /** @use WeakRefsTrait<static,Hour|THour|Minute|TMinute|Second|TSecond> */
     use WeakRefsTrait;
 
     /**
@@ -258,7 +258,7 @@ final readonly class Time implements Unit
     }
 
     /**
-     * Returns an instance of Duration from this time to another.
+     * Returns an instance of Duration from this time to another one.
      *
      * ```
      * // 10:15:30 vs 23:59:59
@@ -280,7 +280,7 @@ final readonly class Time implements Unit
     }
 
     /**
-     * Returns an instance of Duration between this time and another.
+     * Returns an instance of Duration between this time and another one.
      *
      * ```
      * // 10:15:30 vs 23:59:59
@@ -365,7 +365,7 @@ final readonly class Time implements Unit
     }
 
     /**
-     * Checks if this time is before another.
+     * Checks if this time is before another one.
      *
      * ```
      * // 10:15:30.000000 vs 10:15:30.999999
@@ -383,28 +383,28 @@ final readonly class Time implements Unit
     }
 
     /**
-     * Checks if this time is before or equal to another.
+     * Checks if this time is before or equal to another one.
      *
      * ```
      * // 10:15:30.000000 vs 10:15:30.000000
-     * $this->isBeforeOrEqual($other);  // true
+     * $this->isBeforeOrEqualTo($other);  // true
      *
      * // 10:15:30.999999 vs 10:15:30.000000
-     * $this->isBeforeOrEqual($other);  // false
-     * $this->isBeforeOrEqual($other, Precision::Second);  // true
+     * $this->isBeforeOrEqualTo($other);  // false
+     * $this->isBeforeOrEqualTo($other, Precision::Second);  // true
      *
      * // 10:15:59.999999 vs 10:15:00.000000
-     * $this->isBeforeOrEqual($other, Precision::Second);  // false
-     * $this->isBeforeOrEqual($other, Precision::Minute);  // true
+     * $this->isBeforeOrEqualTo($other, Precision::Second);  // false
+     * $this->isBeforeOrEqualTo($other, Precision::Minute);  // true
      * ```
      */
-    public function isBeforeOrEqual(self $other, Precision $precision = Precision::Micro): bool
+    public function isBeforeOrEqualTo(self $other, Precision $precision = Precision::Micro): bool
     {
         return $this->compareTo($other, $precision)->lessOrEqual();
     }
 
     /**
-     * Checks if this time is equal to another.
+     * Checks if this time is equal to another one.
      *
      * ```
      * // 10:15:30.000000 vs 10:15:30.000000
@@ -425,7 +425,7 @@ final readonly class Time implements Unit
     }
 
     /**
-     * Checks if this time is not equal to another.
+     * Checks if this time is not equal to another one.
      *
      * ```
      * // 10:15:30.000000 vs 10:15:30.999999
@@ -443,28 +443,28 @@ final readonly class Time implements Unit
     }
 
     /**
-     * Checks if this time is after or equal to another.
+     * Checks if this time is after or equal to another one.
      *
      * ```
      * // 10:15:30.000000 vs 10:15:30.000000
-     * $this->isAfterOrEqual($other);  // true
+     * $this->isAfterOrEqualTo($other);  // true
      *
      * // 10:15:30.000000 vs 10:15:30.999999
-     * $this->isAfterOrEqual($other);  // false
-     * $this->isAfterOrEqual($other, Precision::Second);  // true
+     * $this->isAfterOrEqualTo($other);  // false
+     * $this->isAfterOrEqualTo($other, Precision::Second);  // true
      *
      * // 10:15:30.000000 vs 10:15:59.999999
-     * $this->isAfterOrEqual($other, Precision::Second);  // false
-     * $this->isAfterOrEqual($other, Precision::Minute);  // true
+     * $this->isAfterOrEqualTo($other, Precision::Second);  // false
+     * $this->isAfterOrEqualTo($other, Precision::Minute);  // true
      * ```
      */
-    public function isAfterOrEqual(self $other, Precision $precision = Precision::Micro): bool
+    public function isAfterOrEqualTo(self $other, Precision $precision = Precision::Micro): bool
     {
         return $this->compareTo($other, $precision)->greaterOrEqual();
     }
 
     /**
-     * Checks if this time is after another.
+     * Checks if this time is after another one.
      *
      * ```
      * // 10:15:30.999999 vs 10:15:30.000000
@@ -482,7 +482,7 @@ final readonly class Time implements Unit
     }
 
     /**
-     * Compares this time with another.
+     * Compares this time to another one.
      *
      * ```
      * // 12:15:30.000000 vs 12:15:30.999999

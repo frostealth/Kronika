@@ -15,6 +15,7 @@ namespace Kronika;
 
 use Kronika\Utils\Compared;
 use Kronika\Utils\Math;
+use Kronika\Utils\WeakRefsTrait;
 use function Kronika\Utils\math;
 
 /**
@@ -27,13 +28,34 @@ use function Kronika\Utils\math;
  */
 final readonly class Instant
 {
-    /** @param TMicrosecond $micro */
+    /** @use WeakRefsTrait<static, int> */
+    use WeakRefsTrait;
+
+    /**
+     * Obtains an instance of Instant from a second and microsecond.
+     *
+     * ```
+     * // 1767161730.004545
+     * $instant = Instant::of(1767161730, 4545);
+     * ```
+     *
+     * @param TMicrosecond $micro
+     */
     public static function of(int $second, int $micro = 0): self
     {
-        return new self($second, $micro);
+        return self::weak(second: $second, microsecond: $micro);
     }
 
-    /** @param numeric $value */
+    /**
+     * Obtains an instance of Instant from a value of a second with microsecond.
+     *
+     * ```
+     * // 1767161730.004545
+     * $instant = Instant::ofValue('1767161730.004545');
+     * ```
+     *
+     * @param numeric $value
+     */
     public static function ofValue(float|int|string $value): self
     {
         if (\is_int($value)) {
@@ -54,22 +76,44 @@ final readonly class Instant
         \assert($microsecond >= 0 && $microsecond < 1_000_000);
     }
 
+    /**
+     * Returns an instance of ZonedDateTime from this instant and a given time-zone.
+     *
+     * ```
+     * // 1767161730.004545
+     * $this->atTimezone(new \DateTimeZone('+01:00'));  // 2025-12-31 12:15:30.004545 +01:00
+     * ```
+     */
     public function atTimezone(\DateTimeZone $timezone): ZonedDateTime
     {
         return ZonedDateTime::ofInstant($this, $timezone);
     }
 
+    /**
+     * Returns the second counted from "1970-01-01 00:00:00".
+     */
     public function second(): int
     {
         return $this->second;
     }
 
-    /** @return TMicrosecond */
+    /**
+     * Returns the microsecond.
+     *
+     * @return TMicrosecond
+     */
     public function microsecond(): int
     {
         return $this->microsecond;
     }
 
+    /**
+     * Returns the second with microsecond.
+     *
+     * ```
+     * Instant::of(1767161730, 4545)->value();  // 1767161730.004545
+     * ```
+     */
     public function value(): float
     {
         if ($this->microsecond === 0) {
@@ -79,6 +123,14 @@ final readonly class Instant
         return (float)\sprintf('%d.%06d', $this->second, $this->microsecond);
     }
 
+    /**
+     * Adds an amount of days, hours, minutes and seconds to this instant.
+     *
+     * ```
+     * // 1767161730.004545 + 2 days and 45 minutes
+     * $this->add(Duration::of(days: 2, minutes: 45));  // 1767337230.004545
+     * ```
+     */
     public function add(Duration $duration): self
     {
         if ($duration->isZero()) {
@@ -88,6 +140,14 @@ final readonly class Instant
         return self::of(...$this->math()->add($duration->inSeconds())->parts());
     }
 
+    /**
+     * Subtracts an amount of days, hours, minutes and seconds to this instant.
+     *
+     * ```
+     * // 1767161730.004545 - 2 days and 45 minutes
+     * $this->add(Duration::of(days: 2, minutes: 45));  // 1766979030.004545
+     * ```
+     */
     public function sub(Duration $duration): self
     {
         if ($duration->isZero()) {
@@ -97,6 +157,26 @@ final readonly class Instant
         return self::of(...$this->math()->sub($duration->inSeconds())->parts());
     }
 
+    /**
+     * Returns an amount of days, hours, minutes and seconds from this instant to another one.
+     *
+     * ```
+     * // 1767161730.004545 vs 1767337230.004545
+     * $duration = $this->until($other);
+     * $duration->days();    // 2
+     * $duration->hours();   // 0
+     * $duration->minutes(); // 45
+     * $duration->seconds(); // 0
+     * ```
+     * ```
+     * // 1767161730.004545 vs 1766979030.004545
+     * $duration = $this->until($other);
+     * $duration->days();    // 0
+     * $duration->hours();   // 0
+     * $duration->minutes(); // 0
+     * $duration->seconds(); // 0
+     * ```
+     */
     public function until(self $end): Duration
     {
         if ($this->compareTo($end)->lessOrEqual()) {
@@ -106,41 +186,149 @@ final readonly class Instant
         return $this->diff($end);
     }
 
-    public function diff(self $other): Duration  // @todo: or "between()"?
+    /**
+     * Returns an amount of days, hours, minutes and seconds between this instant and another one.
+     *
+     * ```
+     * // 1767161730.004545 vs 1767337230.004545
+     * $duration = $this->until($other);
+     * $duration->days();    // 2
+     * $duration->hours();   // 0
+     * $duration->minutes(); // 45
+     * $duration->seconds(); // 0
+     * ```
+     * ```
+     * // 1767161730.004545 vs 1766979030.004545
+     * $duration = $this->until($other);
+     * $duration->days();    // 2
+     * $duration->hours();   // 0
+     * $duration->minutes(); // 45
+     * $duration->seconds(); // 0
+     * ```
+     */
+    public function diff(self $other): Duration
     {
         return Duration::of(seconds: \abs($other->math()->sub($this->second, $this->microsecond)->integer()));
     }
 
+    /**
+     * Checks if this instant is before another one.
+     *
+     * ```
+     * // 1767161730.004545 vs 1767161730.004545
+     * $this->isBefore($other);  // false
+     *
+     * // 1767161730.004545 vs 1767337230.004545
+     * $this->isBefore($other);  // true
+     *
+     * // 1767161730.004545 vs 1766979030.004545
+     * $this->isBefore($other);  // false
+     * ```
+     */
     public function isBefore(self $other): bool
     {
         return $this->compareTo($other)->less();
     }
 
-    public function isBeforeOrEqual(self $other): bool
+    /**
+     * Checks if this instant is before or equal to another one.
+     *
+     * ```
+     * // 1767161730.004545 vs 1767161730.004545
+     * $this->isBeforeOrEqualTo($other);  // true
+     *
+     * // 1767161730.004545 vs 1767337230.004545
+     * $this->isBeforeOrEqualTo($other);  // true
+     *
+     * // 1767161730.004545 vs 1766979030.004545
+     * $this->isBeforeOrEqualTo($other);  // false
+     * ```
+     */
+    public function isBeforeOrEqualTo(self $other): bool
     {
         return $this->compareTo($other)->lessOrEqual();
     }
 
+    /**
+     * Checks if this instant is equal to another one.
+     *
+     * ```
+     * // 1767161730.004545 vs 1767161730.004545
+     * $this->isEqualTo($other);  // true
+     *
+     * // 1767161730.004545 vs 1767337230.004545
+     * $this->isEqualTo($other);  // false
+     * ```
+     */
     public function isEqualTo(self $other): bool
     {
         return $this->compareTo($other)->equal();
     }
 
+    /**
+     * Checks if this instant is not equal to another one.
+     *
+     * ```
+     * // 1767161730.004545 vs 1767161730.004545
+     * $this->isNotEqualTo($other);  // false
+     *
+     * // 1767161730.004545 vs 1767337230.004545
+     * $this->isNotEqualTo($other);  // true
+     * ```
+     */
     public function isNotEqualTo(self $other): bool
     {
         return ! $this->isEqualTo($other);
     }
 
-    public function isAfterOrEqual(self $other): bool
+    /**
+     * Checks if this instant is after or equal to another one.
+     *
+     * ```
+     * // 1767161730.004545 vs 1767161730.004545
+     * $this->isAfterOrEqualTo($other);  // true
+     *
+     * // 1767161730.004545 vs 1767337230.004545
+     * $this->isAfterOrEqualTo($other);  // false
+     *
+     * // 1767161730.004545 vs 1766979030.004545
+     * $this->isAfterOrEqualTo($other);  // true
+     * ```
+     */
+    public function isAfterOrEqualTo(self $other): bool
     {
         return $this->compareTo($other)->greaterOrEqual();
     }
 
+    /**
+     * Checks if this instant is after another one.
+     *
+     * ```
+     * // 1767161730.004545 vs 1767161730.004545
+     * $this->isAfter($other);  // false
+     *
+     * // 1767161730.004545 vs 1767337230.004545
+     * $this->isAfter($other);  // false
+     *
+     * // 1767161730.004545 vs 1766979030.004545
+     * $this->isAfter($other);  // true
+     * ```
+     */
     public function isAfter(self $other): bool
     {
         return $this->compareTo($other)->greater();
     }
 
+    /**
+     * Compares this instant to another one.
+     *
+     * ```
+     * // 1767161730.004545 vs 1767337230.004545
+     * $this->compareTo($other)->less();     // true
+     * $this->compareTo($other)->equal();    // false
+     * $this->compareTo($other)->greater();  // false
+     * ```
+     */
     public function compareTo(self $other): Compared
     {
         return Compared::compare($this->value(), $other->value());

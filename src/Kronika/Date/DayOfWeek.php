@@ -19,6 +19,8 @@ use Kronika\LocalDateTime;
 use Kronika\Utils\Compared;
 
 /**
+ * Represents a day of week.
+ *
  * @psalm-type TDayOfWeek=value-of<DayOfWeek>
  * @psalm-type TDayOfWeekNative=int<0,6>
  * @psalm-type TDayOfWeekName='Monday'|'Tuesday'|'Wednesday'|'Thursday'|'Friday'|'Saturday'|'Sunday'
@@ -34,8 +36,25 @@ enum DayOfWeek: int implements DateUnit
     case Saturday = 6;
     case Sunday = 7;
 
-    /** @psalm-param TDayOfWeek|TDayOfWeekName|TDayOfWeekNative $value */
-    public static function of(string|int|self $value): self
+    /**
+     * Obtains an instance of DayOfWeek from a number or name.
+     *
+     * ```
+     * // Monday
+     * $dayOfWeek = DayOfWeek::Monday;
+     * $dayOfWeek = DayOfWeek::of(1);
+     * $dayOfWeek = DayOfWeek::of('monday');
+     * ```
+     * ```
+     * // Sunday
+     * $dayOfWeek = DayOfWeek::Sunday;
+     * $dayOfWeek = DayOfWeek::of(7);
+     * $dayOfWeek = DayOfWeek::of(0);
+     * ```
+     *
+     * @psalm-param TDayOfWeek|TDayOfWeekName|TDayOfWeekNative|self $value
+     */
+    public static function of(int|string|self $value): self
     {
         if ($value instanceof self) {
             return $value;
@@ -50,6 +69,9 @@ enum DayOfWeek: int implements DateUnit
         return self::from($value);
     }
 
+    /**
+     * Checks if the number of this day of week is equal to a given one.
+     */
     #[\Override]
     public function is(self|int $number): bool
     {
@@ -59,6 +81,13 @@ enum DayOfWeek: int implements DateUnit
     }
 
     /**
+     * Returns the number of this day of week.
+     *
+     * ```
+     * DayOfWeek::Sunday->number();           // 7
+     * DayOfWeek::Sunday->number(iso: false); // 0
+     * ```
+     *
      * @template iso of bool
      *
      * @param iso $iso
@@ -75,12 +104,27 @@ enum DayOfWeek: int implements DateUnit
         return $this->value;
     }
 
-    /** @psalm-return TDayOfWeekName */
+    /**
+     * Returns the name of this day of week.
+     *
+     * ```
+     * DayOfWeek::Wednesday->name();  // Wednesday
+     * ```
+     *
+     * @return TDayOfWeekName
+     */
     public function name(): string
     {
         return $this->name;
     }
 
+    /**
+     * Returns the next day of week.
+     *
+     * ```
+     * DayOfWeek::Monday->next();  // Tuesday
+     * ```
+     */
     public function next(): self
     {
         if ($this === self::Sunday) {
@@ -90,6 +134,13 @@ enum DayOfWeek: int implements DateUnit
         return self::of($this->number() + 1);
     }
 
+    /**
+     * Returns the previous day of week.
+     *
+     * ```
+     * DayOfWeek::Monday->previous();  // Sunday
+     * ```
+     */
     public function previous(): self
     {
         if ($this === self::Monday) {
@@ -99,41 +150,120 @@ enum DayOfWeek: int implements DateUnit
         return self::of($this->number() - 1);
     }
 
+    /**
+     * Checks if this day of week is before another one.
+     *
+     * ```
+     * // Wednesday
+     * $this->isBefore(DayOfWeek::Wednesday);  // false
+     * $this->isBefore(DayOfWeek::Monday);     // false
+     * $this->isBefore(DayOfWeek::Friday);     // true
+     * ```
+     */
     public function isBefore(self $other): bool
     {
         return $this->compareTo($other)->less();
     }
 
-    public function isBeforeOrEqual(self $other): bool
+    /**
+     * Checks if this day of week is before or equal to another one.
+     *
+     * ```
+     * // Wednesday
+     * $this->isBeforeOrEqualTo(DayOfWeek::Wednesday);  // true
+     * $this->isBeforeOrEqualTo(DayOfWeek::Monday);     // false
+     * $this->isBeforeOrEqualTo(DayOfWeek::Friday);     // true
+     * ```
+     */
+    public function isBeforeOrEqualTo(self $other): bool
     {
         return $this->compareTo($other)->lessOrEqual();
     }
 
+    /**
+     * Checks if this day of week is equal to another one.
+     *
+     * ```
+     * // Wednesday
+     * $this->isEqualTo(DayOfWeek::Wednesday);  // true
+     * $this->isEqualTo(DayOfWeek::Monday);     // false
+     * $this->isEqualTo(DayOfWeek::Friday);     // false
+     * ```
+     */
     public function isEqualTo(self $other): bool
     {
         return $this->compareTo($other)->equal();
     }
 
+    /**
+     * Checks if this day of week is not equal to another one.
+     *
+     * ```
+     * // Wednesday
+     * $this->isNotEqualTo(DayOfWeek::Wednesday);  // false
+     * $this->isNotEqualTo(DayOfWeek::Monday);     // true
+     * $this->isNotEqualTo(DayOfWeek::Friday);     // true
+     * ```
+     */
     public function isNotEqualTo(self $other): bool
     {
         return ! $this->isEqualTo($other);
     }
 
+    /**
+     * Checks if this day of week is after or equal to another one.
+     *
+     * ```
+     * // Wednesday
+     * $this->isAfterOrEqualTo(DayOfWeek::Wednesday);  // true
+     * $this->isAfterOrEqualTo(DayOfWeek::Monday);     // true
+     * $this->isAfterOrEqualTo(DayOfWeek::Friday);     // false
+     * ```
+     */
+    public function isAfterOrEqualTo(self $other): bool
+    {
+        return $this->compareTo($other)->greaterOrEqual();
+    }
+
+    /**
+     * Checks if this day of week is after another one.
+     *
+     * ```
+     * // Wednesday
+     * $this->isAfter(DayOfWeek::Wednesday);  // false
+     * $this->isAfter(DayOfWeek::Monday);     // true
+     * $this->isAfter(DayOfWeek::Friday);     // false
+     * ```
+     */
     public function isAfter(self $other): bool
     {
         return $this->compareTo($other)->greater();
     }
 
-    public function isAfterOrEqual(self $other): bool
-    {
-        return $this->compareTo($other)->greaterOrEqual();
-    }
-
+    /**
+     * Compares this day of week to another one.
+     *
+     * ```
+     * // Wednesday vs Friday
+     * $this->compareTo($other)->less();    // true
+     * $this->compareTo($other)->equal();   // false
+     * $this->compareTo($other)->greater(); // false
+     * ```
+     */
     public function compareTo(self $other): Compared
     {
         return Compared::compare($this->value, $other->value);
     }
 
+    /**
+     * Returns an amount of days between this day of week and another one.
+     *
+     * ```
+     * // Wednesday
+     * $this->diff(DayOfWeek::Friday);  // Duration::of(days: 2)
+     * $this->diff(DayOfWeek::Tuesday); // Duration::of(days: 1)
+     * ```
+     */
     private function diff(self $other): Duration
     {
         return Duration::of(days: \abs($this->number() - $other->number()));

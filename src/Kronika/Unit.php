@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace Kronika;
 
 /**
+ * Represents a unit of date-time.
+ *
  * @internal
  */
 interface Unit

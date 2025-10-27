@@ -39,6 +39,7 @@ final class LocalDateTimeTest extends TestCase
 
         $this->assertSame($date, $datetime->date());
         $this->assertSame($time, $datetime->time());
+        $this->assertSame(LocalDateTime::of($date, $time), $datetime);
     }
 
     #[Depends('testBasic')]

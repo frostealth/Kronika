@@ -123,8 +123,8 @@ final class MinuteTest extends TestCase
         $this->assertFalse($a->isNotEqualTo($a));
         $this->assertFalse($a->isBefore($a));
         $this->assertFalse($a->isAfter($a));
-        $this->assertTrue($a->isBeforeOrEqual($a));
-        $this->assertTrue($a->isAfterOrEqual($a));
+        $this->assertTrue($a->isBeforeOrEqualTo($a));
+        $this->assertTrue($a->isAfterOrEqualTo($a));
 
         $comparison = $a->compareTo($b);
         $this->assertEquals($expected, $comparison->value());
@@ -132,7 +132,7 @@ final class MinuteTest extends TestCase
         $this->assertEquals($comparison->greater(), $a->isAfter($b));
         $this->assertEquals($comparison->equal(), $a->isEqualTo($b));
         $this->assertEquals($comparison->notEqual(), $a->isNotEqualTo($b));
-        $this->assertEquals($comparison->lessOrEqual(), $a->isBeforeOrEqual($b));
-        $this->assertEquals($comparison->greaterOrEqual(), $a->isAfterOrEqual($b));
+        $this->assertEquals($comparison->lessOrEqual(), $a->isBeforeOrEqualTo($b));
+        $this->assertEquals($comparison->greaterOrEqual(), $a->isAfterOrEqualTo($b));
     }
 }

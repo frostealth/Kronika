@@ -21,12 +21,16 @@ use Kronika\Time\Hour;
 use Kronika\Time\Minute;
 use Kronika\Time\Second;
 use Kronika\Utils\Compared;
+use Kronika\Utils\WeakRefsTrait;
 
 /**
  * Represents a local date-time without a time-zone.
  */
 final readonly class LocalDateTime implements DateTime
 {
+    /** @use WeakRefsTrait<static, Date|Time> */
+    use WeakRefsTrait;
+
     /**
      * Obtains an instance of LocalDateTime from a date and time.
      *
@@ -43,7 +47,7 @@ final readonly class LocalDateTime implements DateTime
      */
     public static function of(Date $date, Time $time): self
     {
-        return new self(date: $date, time: $time);
+        return self::weak(date: $date, time: $time);
     }
 
     /**
@@ -232,7 +236,7 @@ final readonly class LocalDateTime implements DateTime
     }
 
     #[\Override]
-    public function isBeforeOrEqual(DateTime $other, Precision $precision = Precision::Micro): bool
+    public function isBeforeOrEqualTo(DateTime $other, Precision $precision = Precision::Micro): bool
     {
         return $this->compareTo($other, $precision)->lessOrEqual();
     }
@@ -250,7 +254,7 @@ final readonly class LocalDateTime implements DateTime
     }
 
     #[\Override]
-    public function isAfterOrEqual(DateTime $other, Precision $precision = Precision::Micro): bool
+    public function isAfterOrEqualTo(DateTime $other, Precision $precision = Precision::Micro): bool
     {
         return $this->compareTo($other, $precision)->greaterOrEqual();
     }

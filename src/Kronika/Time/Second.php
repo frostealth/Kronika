@@ -19,16 +19,28 @@ use Kronika\Utils\Compared;
 use Kronika\Utils\WeakRefsTrait;
 
 /**
+ * Represents a second with a microsecond of the minute.
+ *
  * @psalm-type TSecond=int<0,59>
  * @psalm-type TMicrosecond=int<0,999999>
  * @implements TimeUnit<TSecond>
  */
 final readonly class Second implements TimeUnit
 {
-    /** @use WeakRefsTrait<self,TSecond|TMicrosecond> */
+    /** @use WeakRefsTrait<static,TSecond|TMicrosecond> */
     use WeakRefsTrait;
 
     /**
+     * Obtains an instance of Second from given values (second and microsecond).
+     *
+     * ```
+     * // 45 second and 0 microsecond
+     * $second = Second::of(45);
+     *
+     * // 45 second and 999999 microsecond
+     * $second = Second::of(45, 999999);
+     * ```
+     *
      * @param TSecond|self $second
      * @param TMicrosecond|null $micro
      */
@@ -41,6 +53,16 @@ final readonly class Second implements TimeUnit
         return self::weak(second: $second, microsecond: $micro ?? 0);
     }
 
+    /**
+     * Obtains an instance of Second at 0.000000.
+     *
+     * ```
+     * $second = Second::zero();
+     * $second->value();        // 0.000000
+     * $second->second();       // 0
+     * $second->microsecond();  // 0
+     * ```
+     */
     public static function zero(): self
     {
         static $instance = self::of(second: 0, micro: 0);
@@ -48,6 +70,16 @@ final readonly class Second implements TimeUnit
         return $instance;
     }
 
+    /**
+     * Obtains an instance of Second at the end of the minute.
+     *
+     * ```
+     * $second = Second::lase();
+     * $second->value();        // 59.999999
+     * $second->second();       // 59
+     * $second->microsecond();  // 999999
+     * ```
+     */
     public static function last(): self
     {
         static $instance = self::of(second: 59, micro: 999_999);
@@ -67,41 +99,70 @@ final readonly class Second implements TimeUnit
         \assert($microsecond >= 0 && $microsecond < 1_000_000);
     }
 
-    /** @psalm-return TSecond */
+    /**
+     * Returns the integer part of this second.
+     *
+     * @psalm-return TSecond
+     */
     public function second(): int
     {
         return $this->second;
     }
 
-    /** @psalm-return TMicrosecond */
+    /**
+     * Returns the microsecond of this second.
+     *
+     * @psalm-return TMicrosecond
+     */
     public function microsecond(): int
     {
         return $this->microsecond;
     }
 
+    /**
+     * Returns the value of this second.
+     */
     public function value(): float
     {
         return (float)(string)$this;
     }
 
+    /**
+     * Resets a microsecond to 0.
+     *
+     * ```
+     * // 45.004545
+     * $this->resetMicro();  // 45.000000
+     * ```
+     */
     public function resetMicro(): self
     {
         return self::of($this->second(), micro: 0);
     }
 
+    /**
+     * Checks if this second is equal to 0.000000.
+     */
     #[\Override]
     public function isZero(): bool
     {
         return $this->isEqualTo(self::zero());
     }
 
+    /**
+     * Check if this second is equal to 59.999999.
+     */
     #[\Override]
     public function isLast(): bool
     {
         return $this->isEqualTo(self::last());
     }
 
-    /** @param TSecond|numeric $value */
+    /**
+     * Checks if this second's value equal to a given one.
+     *
+     * @param TSecond|numeric $value
+     */
     #[\Override]
     public function is(int|string|float $value): bool
     {
@@ -115,36 +176,106 @@ final readonly class Second implements TimeUnit
         return $this->second === $second && $this->microsecond === $micro;
     }
 
+    /**
+     * Checks if this second is before another one.
+     *
+     * ```
+     * // 45.004545
+     * $this->isBefore(Second::of(45, 4545));  // false
+     * $this->isBefore(Second::zero());        // false
+     * $this->isBefore(Second::of(50));        // true
+     * ```
+     */
     public function isBefore(self $other): bool
     {
         return $this->compareTo($other)->less();
     }
 
-    public function isBeforeOrEqual(self $other): bool
+    /**
+     * Checks if this second is before or equal to another one.
+     *
+     * ```
+     * // 45.004545
+     * $this->isBeforeOrEqualTo(Second::of(45, 4545));  // true
+     * $this->isBeforeOrEqualTo(Second::zero());        // false
+     * $this->isBeforeOrEqualTo(Second::of(50));        // true
+     * ```
+     */
+    public function isBeforeOrEqualTo(self $other): bool
     {
         return $this->compareTo($other)->lessOrEqual();
     }
 
+    /**
+     * Checks if this second is equal to another one.
+     *
+     * ```
+     * // 45.004545
+     * $this->isEqualTo(Second::of(45, 4545));  // true
+     * $this->isEqualTo(Second::zero());        // false
+     * $this->isEqualTo(Second::of(50));        // false
+     * ```
+     */
     public function isEqualTo(self $other): bool
     {
         return $this->compareTo($other)->equal();
     }
 
+    /**
+     * Checks if this second is not equal to another one.
+     *
+     * ```
+     * // 45.004545
+     * $this->isNotEqualTo(Second::of(45, 4545));  // false
+     * $this->isNotEqualTo(Second::zero());        // true
+     * $this->isNotEqualTo(Second::of(50));        // true
+     * ```
+     */
     public function isNotEqualTo(self $other): bool
     {
         return ! $this->isEqualTo($other);
     }
 
+    /**
+     * Checks if this second is after or equal to another one.
+     *
+     * ```
+     * // 45.004545
+     * $this->isAfterOrEqualTo(Second::of(45, 4545));  // true
+     * $this->isAfterOrEqualTo(Second::zero());        // true
+     * $this->isAfterOrEqualTo(Second::of(50));        // false
+     * ```
+     */
+    public function isAfterOrEqualTo(self $other): bool
+    {
+        return $this->compareTo($other)->greaterOrEqual();
+    }
+
+    /**
+     * Checks if this second is after another one.
+     *
+     * ```
+     * // 45.004545
+     * $this->isAfter(Second::of(45, 4545));  // false
+     * $this->isAfter(Second::zero());        // true
+     * $this->isAfter(Second::of(50));        // false
+     * ```
+     */
     public function isAfter(self $other): bool
     {
         return $this->compareTo($other)->greater();
     }
 
-    public function isAfterOrEqual(self $other): bool
-    {
-        return $this->compareTo($other)->greaterOrEqual();
-    }
-
+    /**
+     * Compares this second to another one.
+     *
+     * ```
+     * // 45.004545 vs 45.000000
+     * $this->compareTo($other)->less();    // false
+     * $this->compareTo($other)->equal();   // false
+     * $this->compareTo($other)->greater(); // true
+     * ```
+     */
     public function compareTo(self $other): Compared
     {
         return Compared::compare((string)$this, (string)$other);

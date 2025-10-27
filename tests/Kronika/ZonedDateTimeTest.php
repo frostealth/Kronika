@@ -22,6 +22,7 @@ use Kronika\ZonedDateTime;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\Attributes\DependsExternal;
+use PHPUnit\Framework\Attributes\DependsOnClass;
 use PHPUnit\Framework\TestCase;
 
 final class ZonedDateTimeTest extends TestCase
@@ -38,6 +39,7 @@ final class ZonedDateTimeTest extends TestCase
 
     #[DependsExternal(DateTest::class, 'testBasic')]
     #[DependsExternal(TimeTest::class, 'testBasic')]
+    #[DependsOnClass(LocalDateTimeTest::class)]
     #[DataProvider('ofProvider')]
     public function testBasic(Date $date, Time $time, \DateTimeZone $timezone): void
     {
@@ -64,6 +66,7 @@ final class ZonedDateTimeTest extends TestCase
             $time->second()->second(),
             $time->second()->microsecond(),
         ), $datetime->format('Y-m-d\TH:i:s.u'));
+        $this->assertSame(ZonedDateTime::of($date, $time, $timezone), $datetime);
     }
 
     public static function withProvider(): array
@@ -121,6 +124,7 @@ final class ZonedDateTimeTest extends TestCase
         }
     }
 
+    #[Depends('testBasic')]
     public function testToLocalDateTime(): void
     {
         $local = LocalDateTime::of(Date::of(2025, 3, 24), Time::of(14, 8, 47));

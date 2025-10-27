@@ -14,14 +14,19 @@ declare(strict_types=1);
 namespace Kronika;
 
 use Kronika\Utils\Compared;
+use Kronika\Utils\WeakRefsTrait;
 
 /**
- * Represents a duration/interval.
+ * Represents a duration/interval in days, hours, minutes and seconds.
+ * A duration cannot be negative.
  *
  * @psalm-type RoundingMode=self::ROUND_*
  */
 final readonly class Duration
 {
+    /** @use WeakRefsTrait<static, non-negative-int> */
+    use WeakRefsTrait;
+
     final public const int ROUND_FLOOR = 0;
     final public const int ROUND_HALF_AWAY_FROM_ZERO = \PHP_ROUND_HALF_UP;
     final public const int ROUND_HALF_TOWARDS_ZERO = \PHP_ROUND_HALF_DOWN;
@@ -29,15 +34,15 @@ final readonly class Duration
     final public const int ROUND_HALF_ODD = \PHP_ROUND_HALF_ODD;
     final public const int ROUND_CEIL = 5;
 
-    public static function zero(): self
-    {
-        /** @var null|self $instance */
-        static $instance;
-
-        return $instance ??= new self(seconds: 0);
-    }
-
     /**
+     * Obtains an instance of Duration from days, hours, minutes and seconds.
+     *
+     * ```
+     * // 1 day, 30 minutes, 45 seconds
+     * $duration = Duration::of(days: 1, minutes: 30, seconds: 45);
+     * $duration = Duration::of(hours: 24, minutes: 28, seconds: 165);
+     * ```
+     *
      * @param non-negative-int $days
      * @param non-negative-int $hours
      * @param non-negative-int $minutes
@@ -50,9 +55,39 @@ final readonly class Duration
         $minutes += $hours * 60;
         $seconds += $minutes * 60;
 
-        return 0 === $seconds ? self::zero() : new self(seconds: $seconds);
+        return self::weak(seconds: $seconds);
     }
 
+    /**
+     * Obtains an instance of Duration equaled to zero.
+     *
+     * ```
+     * $duration = Duration::zero();
+     * $duration->days();     // 0
+     * $duration->hours();    // 0
+     * $duration->minutes();  // 0
+     * $duration->seconds();  // 0
+     * ```
+     */
+    public static function zero(): self
+    {
+        static $instance = null;
+
+        return $instance ??= self::of(seconds: 0);
+    }
+
+    /**
+     * Obtains an instance of Duration between given date-times.
+     *
+     * ```
+     * // 2025-12-31 12:15:30 vs 2026-01-01 00:00:00
+     * $duration = Duration::between($from, $to);
+     * $duration->days();     // 0
+     * $duration->hours();    // 11
+     * $duration->minutes();  // 44
+     * $duration->seconds();  // 30
+     * ```
+     */
     public static function between(\DateTimeInterface $from, \DateTimeInterface $to): self
     {
         if ($from >= $to) {
@@ -66,34 +101,78 @@ final readonly class Duration
     private function __construct(
         private int $seconds,
     ) {
-        \assert(0 <= $seconds, 'Duration cannot be negative');
+        \assert($seconds >= 0, 'Duration cannot be negative');
     }
 
-    /** @return non-negative-int */
+    /**
+     * Returns days of this duration.
+     *
+     * ```
+     * // 2 days, 26 hours, 65 minutes, 100 seconds
+     * $this->days();  // 3
+     * ```
+     *
+     * @return non-negative-int
+     */
     public function days(): int
     {
         return $this->inDays();
     }
 
-    /** @return int<0,23> */
+    /**
+     * Returns hours of this duration.
+     *
+     * ```
+     * // 2 days, 26 hours, 65 minutes, 100 seconds
+     * $this->hours();  // 3
+     * ```
+     *
+     * @return int<0,23>
+     */
     public function hours(): int
     {
         return $this->inHours() - ($this->inDays() * 24);
     }
 
-    /** @return int<0,59> */
+    /**
+     * Returns minutes of this duration.
+     *
+     * ```
+     * // 2 days, 26 hours, 65 minutes, 100 seconds
+     * $this->minutes();  // 6
+     * ```
+     *
+     * @return int<0,59>
+     */
     public function minutes(): int
     {
         return $this->inMinutes() - ($this->inHours() * 60);
     }
 
-    /** @return int<0,59> */
+    /**
+     * Returns seconds of this duration.
+     *
+     * ```
+     * // 2 days, 26 hours, 65 minutes, 100 seconds
+     * $this->seconds();  // 40
+     * ```
+     *
+     * @return int<0,59>
+     */
     public function seconds(): int
     {
         return $this->inSeconds() - ($this->inMinutes() * 60);
     }
 
     /**
+     * Returns a rounded amount of days in this duration.
+     *
+     * ```
+     * // 2 days, 12 hours, 30 minutes, 45 second
+     * $this->inDays();  // 2
+     * $this->inDays(Duration::ROUND_HALF_AWAY_FROM_ZERO);  // 3
+     * ```
+     *
      * @psalm-param RoundingMode $mode
      *
      * @return non-negative-int
@@ -104,6 +183,14 @@ final readonly class Duration
     }
 
     /**
+     * Returns a rounded amount of hours in this duration.
+     *
+     * ```
+     * // 2 days, 12 hours, 30 minutes, 45 second
+     * $this->inHours();  // 60
+     * $this->inHours(Duration::ROUND_HALF_AWAY_FROM_ZERO);  // 61
+     * ```
+     *
      * @psalm-param RoundingMode $mode
      *
      * @return non-negative-int
@@ -114,6 +201,14 @@ final readonly class Duration
     }
 
     /**
+     * Returns a rounded amount of minutes in this duration.
+     *
+     * ```
+     * // 2 days, 12 hours, 30 minutes, 45 second
+     * $this->inMinutes();  // 3630
+     * $this->inMinutes(Duration::ROUND_HALF_AWAY_FROM_ZERO);  // 3631
+     * ```
+     *
      * @psalm-param RoundingMode $mode
      *
      * @return non-negative-int
@@ -123,7 +218,18 @@ final readonly class Duration
         return $this->round($this->inSeconds() / 60, mode: $mode);
     }
 
-    /** @return non-negative-int */
+    /**
+     * Returns an amount of seconds in this duration.
+     *
+     * ```
+     * // 2 days, 12 hours, 30 minutes, 45 second
+     * $this->inSeconds();  // 217845
+     * ```
+     *
+     * @psalm-param RoundingMode $mode
+     *
+     * @return non-negative-int
+     */
     public function inSeconds(): int
     {
         return $this->seconds;
@@ -141,6 +247,21 @@ final readonly class Duration
         );
     }
 
+    /**
+     * Adds other durations to this one.
+     *
+     * ```
+     * // 2 days, 12 hours, 30 minutes, 45 second
+     * $duration = $this->add(
+     *     Duration::of(days: 1),
+     *     Duration::of(hours: 3),
+     * );
+     * $duration->days();     // 3
+     * $duration->hours();    // 15
+     * $duration->minutes();  // 30
+     * $duration->seconds();  // 45
+     * ```
+     */
     public function add(self ...$others): self
     {
         return self::of(seconds: \array_reduce(
@@ -150,6 +271,21 @@ final readonly class Duration
         ));
     }
 
+    /**
+     * Subtracts other durations to this one.
+     *
+     * ```
+     * // 2 days, 12 hours, 30 minutes, 45 second
+     * $duration = $this->sub(
+     *     Duration::of(days: 1),
+     *     Duration::of(hours: 3),
+     * );
+     * $duration->days();     // 1
+     * $duration->hours();    // 9
+     * $duration->minutes();  // 30
+     * $duration->seconds();  // 45
+     * ```
+     */
     public function sub(self ...$others): self
     {
         $seconds = \array_reduce(
@@ -161,79 +297,218 @@ final readonly class Duration
         return 0 < $seconds ? self::of(seconds: $seconds) : self::zero();
     }
 
-    /** @psalm-param RoundingMode $mode */
+    /**
+     * Returns an instance of Duration with rounded amount of days in this duration.
+     *
+     * @see self::inDays()
+     *
+     * @psalm-param RoundingMode $mode
+     */
     public function roundToDays(int $mode = self::ROUND_FLOOR): self
     {
         return self::of(days: $this->inDays(mode: $mode));
     }
 
-    /** @psalm-param RoundingMode $mode */
+    /**
+     * Returns an instance of Duration with rounded amount of hours in this duration.
+     *
+     * @see self::inHours()
+     *
+     * @psalm-param RoundingMode $mode
+     */
     public function roundToHours(int $mode = self::ROUND_FLOOR): self
     {
         return self::of(hours: $this->inHours(mode: $mode));
     }
 
-    /** @psalm-param RoundingMode $mode */
+    /**
+     * Returns an instance of Duration with rounded amount of minutes in this duration.
+     *
+     * @see self::inMinutes()
+     *
+     * @psalm-param RoundingMode $mode
+     */
     public function roundToMinutes(int $mode = self::ROUND_FLOOR): self
     {
         return self::of(minutes: $this->inMinutes(mode: $mode));
     }
 
+    /**
+     * Returns a duration with dropped (truncated) days.
+     *
+     * ```
+     * // 2 days, 12 hours, 30 minutes, 45 second
+     * $duration = $this->dropToHours();
+     * $duration->days();     // 0
+     * $duration->hours();    // 12
+     * $duration->minutes();  // 30
+     * $duration->seconds();  // 45
+     * ```
+     */
     public function dropToHours(): self
     {
         return $this->sub($this->roundToDays());
     }
 
+    /**
+     * Returns a duration with dropped (truncated) days and hours.
+     *
+     * ```
+     * // 2 days, 12 hours, 30 minutes, 45 second
+     * $duration = $this->dropToMinutes();
+     * $duration->days();     // 0
+     * $duration->hours();    // 0
+     * $duration->minutes();  // 30
+     * $duration->seconds();  // 45
+     * ```
+     */
     public function dropToMinutes(): self
     {
         return $this->sub($this->roundToHours());
     }
 
+    /**
+     * Returns a duration with dropped (truncated) days, hours and minutes.
+     *
+     * ```
+     * // 2 days, 12 hours, 30 minutes, 45 second
+     * $duration = $this->dropToSeconds();
+     * $duration->days();     // 0
+     * $duration->hours();    // 0
+     * $duration->minutes();  // 0
+     * $duration->seconds();  // 45
+     * ```
+     */
     public function dropToSeconds(): self
     {
         return $this->sub($this->roundToMinutes());
     }
 
+    /**
+     * Checks if this duration equals to zero.
+     *
+     * ```
+     * Duration::zero()->isZero();  // true
+     * ```
+     */
     public function isZero(): bool
     {
         return $this->isEqualTo(self::zero());
     }
 
-    public function isBefore(self $other): bool
+    /**
+     * Checks if this duration is less than another one.
+     *
+     * ```
+     * // 2 days
+     * $this->isLessThan(Duration::of(days: 2));  // false
+     * $this->isLessThan(Duration::zero());       // false
+     * $this->isLessThan(Duration::of(days: 3));  // true
+     * ```
+     */
+    public function isLessThan(self $other): bool
     {
         return $this->compareTo($other)->less();
     }
 
-    public function isBeforeOrEqual(self $other): bool
+    /**
+     * Checks if this duration is less than or equal to another one.
+     *
+     * ```
+     * // 2 days
+     * $this->isLessThanOrEqualTo(Duration::of(days: 2));  // true
+     * $this->isLessThanOrEqualTo(Duration::zero());       // false
+     * $this->isLessThanOrEqualTo(Duration::of(days: 3));  // true
+     * ```
+     */
+    public function isLessThanOrEqualTo(self $other): bool
     {
         return $this->compareTo($other)->lessOrEqual();
     }
 
+    /**
+     * Checks if this duration is equal to another one.
+     *
+     * ```
+     * // 2 days
+     * $this->isEqualTo(Duration::of(days: 2));  // true
+     * $this->isEqualTo(Duration::zero());       // false
+     * $this->isEqualTo(Duration::of(days: 3));  // false
+     * ```
+     */
     public function isEqualTo(self $other): bool
     {
         return $this->compareTo($other)->equal();
     }
 
+    /**
+     * Checks if this duration is not equal to another one.
+     *
+     * ```
+     * // 2 days
+     * $this->isNotEqualTo(Duration::of(days: 2));  // false
+     * $this->isNotEqualTo(Duration::zero());       // true
+     * $this->isNotEqualTo(Duration::of(days: 3));  // true
+     * ```
+     */
     public function isNotEqualTo(self $other): bool
     {
         return ! $this->isEqualTo($other);
     }
 
-    public function isAfterOrEqual(self $other): bool
+    /**
+     * Checks if this duration is greater than or equal to another one.
+     *
+     * ```
+     * // 2 days
+     * $this->isGreaterThanOrEqualTo(Duration::of(days: 2));  // false
+     * $this->isGreaterThanOrEqualTo(Duration::zero());       // true
+     * $this->isGreaterThanOrEqualTo(Duration::of(days: 3));  // false
+     * ```
+     */
+    public function isGreaterThanOrEqualTo(self $other): bool
     {
         return $this->compareTo($other)->greaterOrEqual();
     }
 
-    public function isAfter(self $other): bool
+    /**
+     * Checks if this duration is greater than another one.
+     *
+     * ```
+     * // 2 days
+     * $this->isGreaterThan(Duration::of(days: 2));  // false
+     * $this->isGreaterThan(Duration::zero());       // true
+     * $this->isGreaterThan(Duration::of(days: 3));  // false
+     * ```
+     */
+    public function isGreaterThan(self $other): bool
     {
         return $this->compareTo($other)->greater();
     }
 
+    /**
+     * Compares this duration to another one.
+     *
+     * ```
+     * // 2 days 10 hour
+     * $this->compareTo(Duration::of(days: 3))->less();     // true
+     * $this->compareTo(Duration::of(days: 2))->greater();  // true
+     * $this->compareTo(Duration::of(hours: 10))->equal();  // false
+     * ```
+     */
     public function compareTo(self $other): Compared
     {
         return Compared::compare($this->seconds, $other->seconds);
     }
 
+    /**
+     * Obtains an instance of \DateInterval from this duration.
+     *
+     * ```
+     * // 2 days, 12 hours, 30 minutes, 45 second
+     * $this->toDateInterval();  // \DateInterval('P2DT12H30M45S')
+     * ```
+     */
     public function toDateInterval(): \DateInterval
     {
         return new \DateInterval("P{$this->days()}DT{$this->hours()}H{$this->minutes()}M{$this->seconds()}S");
