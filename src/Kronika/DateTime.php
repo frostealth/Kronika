@@ -78,13 +78,12 @@ interface DateTime
      * If the day of the month of the resulting date-time is greater than
      * the length of the month, then the last day of the month will be set.
      *
-     * @example
      * ```
      * // 2025-11-29 12:15:30
-     * $this->with(Time::of(10, 45, 50));  // 2025-11-29 10:45:50
-     * $this->with(Minute::of(30));        // 2025-11-29 12:30:30
-     * $this->with(Hour::of(21));          // 2025-11-29 21:15:30
-     * $this->with(Second::of(10));        // 2025-11-29 12:15:10
+     * $this->with(Time::of(10, 45, 50));   // 2025-11-29 10:45:50
+     * $this->with(Minute::of(30));         // 2025-11-29 12:30:30
+     * $this->with(Hour::of(21));           // 2025-11-29 21:15:30
+     * $this->with(Second::of(10));         // 2025-11-29 12:15:10
      * $this->with(Date::of(1990, 01, 01)); // 1990-01-01 12:15:30
      * $this->with(Year::of(1990));         // 1990-11-29 12:15:30
      * $this->with($this->year()->next());  // 2026-11-29 12:15:30
@@ -100,7 +99,6 @@ interface DateTime
     /**
      * Resets a microsecond to 0.
      *
-     * @example
      * ```
      * // 2025-12-31 10:15:30.999999
      * $datetime->resetMicro();  // 2025-12-31 10.15.30.000000
@@ -111,7 +109,6 @@ interface DateTime
     /**
      * Resets a second and microsecond to 0.
      *
-     * @example
      * ```
      * // 2025-12-31 10:15:30.999999
      * $datetime->resetSecond();  // 2025-12-31 10:15:00.000000
@@ -122,7 +119,6 @@ interface DateTime
     /**
      * Adds an amount of days, hours, minutes and seconds to this date-time.
      *
-     * @example
      * ```
      * // 2025-12-31 10:15:30 + 2 days and 45 minutes
      * $this->add(Duration::of(days: 2, minutes: 45));  // 2026-01-02 11:00:30
@@ -133,7 +129,6 @@ interface DateTime
     /**
      * Subtracts an amount of days, hours, minutes and seconds to this date-time.
      *
-     * @example
      * ```
      * // 2025-12-31 10:15:30 - 2 days and 45 minutes
      * $this->add(Duration::of(days: 2, minutes: 45));  // 2025-12-29 09:30:30
@@ -144,7 +139,6 @@ interface DateTime
     /**
      * Returns an instance of Duration from this date-time to another.
      *
-     * @example
      * ```
      * // 2025-12-10 10:15:30 vs 2025-12-20 12:30:45
      * $duration = $this->until($other);
@@ -174,7 +168,6 @@ interface DateTime
     /**
      * Checks if this date-time is before another.
      *
-     * @example
      * ```
      * // 2025-12-31 10:15:30.000000 vs 2025-12-31 10:15:30.999999
      * $this->isBefore($other);  // true
@@ -193,7 +186,6 @@ interface DateTime
     /**
      * Checks if this date-time is before or equal to another.
      *
-     * @example
      * ```
      * // 2025-12-31 10:15:30.000000 vs 2025-12-31 10:15:30.000000
      * $this->isBeforeOrEqual($other);  // true
@@ -215,7 +207,6 @@ interface DateTime
     /**
      * Checks if this date-time is equal to another.
      *
-     * @example
      * ```
      * // 2025-12-31 10:15:30.000000 vs 2025-12-31 10:15:30.000000
      * $this->isEqualTo($other);  // true
@@ -237,7 +228,6 @@ interface DateTime
     /**
      * Checks if this date-time is not equal to another.
      *
-     * @example
      * ```
      * // 2025-12-31 10:15:30.000000 vs 2025-12-31 10:15:30.999999
      * $this->isNotEqualTo($other);  // true
@@ -256,7 +246,6 @@ interface DateTime
     /**
      * Checks if this date-time is after or equal to another.
      *
-     * @example
      * ```
      * // 2025-12-31 10:15:30.000000 vs 2025-12-31 10:15:30.000000
      * $this->isAfterOrEqual($other);  // true
@@ -278,7 +267,6 @@ interface DateTime
     /**
      * Checks if date-this time is after another.
      *
-     * @example
      * ```
      * // 2025-12-31 10:15:30.999999 vs 2025-12-31 10:15:30.000000
      * $this->isAfter($other);  // true
@@ -297,7 +285,6 @@ interface DateTime
     /**
      * Compares this time with another.
      *
-     * @example
      * ```
      * // 2025-12-31 12:15:30 vs 2025-12-31 12:15:45
      * $this->compareTo($other)->equal();  // false

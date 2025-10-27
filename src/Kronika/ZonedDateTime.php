@@ -32,7 +32,6 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     /**
      * Obtains an instance of ZonedDateTime from a date, time and time-zone.
      *
-     * @example
      * ```
      * // 2025-12-31 12:15:30 +01:00
      * $datetime = ZonedDateTime::of(
@@ -57,7 +56,6 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     /**
      * Obtains an instance of ZonedDateTime from a date and time with UTC time-zone.
      *
-     * @example
      * ```
      * // 2025-12-31 12:15:30 UTC
      * $datetime = ZonedDateTime::utcOf(
@@ -74,7 +72,6 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     /**
      * Obtains an instance of ZonedDateTime from a local date-time and time-zone.
      *
-     * @example
      * ```
      * // 2025-12-31 12:15:30 +01:00
      * $datetime = ZonedDateTime::of(
@@ -91,7 +88,6 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     /**
      * Obtains an instance of LocalDateTime from a given date and time-zone with midnight time.
      *
-     * @example
      * ```
      * // 2025-12-31 00:00:00 +01:00
      * $datetime = ZonedDateTime::midnightOf(Date::of(2025, 12, 31), new \DateTimeZone('+01:00'));
@@ -250,7 +246,6 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     /**
      * Shifts this date-time to a given time-zone.
      *
-     * @example
      * ```
      * // 2025-12-31 12:15:30 +01:00
      * $this->shiftTimezone(new \DateTimeZone('+02:30'));  // 2025-12-31 13:45:30 +02:30
@@ -264,7 +259,6 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     /**
      * {@inheritDoc}
      *
-     * @example
      * ```
      * // 2025-12-31 12:15:30 +01:00
      * $this->with(new \DateTimeZone('+02:30'));  // 2025-12-31 12:15:30 +02:30
@@ -389,7 +383,6 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     /**
      * Returns an instance of LocalDateTime from this date-time.
      *
-     * @example
      * ```
      * // 2025-12-31 12:15:30 +01:00
      * $this->toLocalDateTime();  // 2025-12-31 12:15:30
@@ -403,7 +396,6 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     /**
      * Returns an instance of ZonedDateTime with the first day of the month.
      *
-     * @example
      * ```
      * // 2025-12-31 12:15:30 +01:00
      * $this->toStartOfMonth();  // 2025-12-01 12:15:30 +01:00
@@ -417,7 +409,6 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     /**
      * Returns an instance of ZonedDateTime with the last day of the month.
      *
-     * @example
      * ```
      * // 2025-02-01 12:15:30 +01:00
      * $this->toEndOfMonth();  // 2025-02-28 12:15:30 +01:00
