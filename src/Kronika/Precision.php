@@ -17,5 +17,5 @@ enum Precision
 {
     case Micro;
     case Second;  // ignore microsecond
-    case Minute;  // ignore second with microsecond
+    case Minute;  // ignore second and microsecond
 }

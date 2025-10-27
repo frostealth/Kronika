@@ -42,11 +42,10 @@ The result **with** the extension:
 ```
 
 ## Installation
-Register a custom handler to JMS Serializer ([documentation](https://jmsyst.com/libs/serializer/master/handlers))
+Register a custom handler to JMS Serializer ([documentation](https://jmsyst.com/libs/serializer/master/handlers)).
 
 ```php
 $serializer = JMS\Serializer\SerializerBuilder::create()
-    ->enableEnumSupport()
     ->addDefaultHandlers()
     ->configureHandlers(function(JMS\Serializer\Handler\HandlerRegistry $registry) {
         $registry->registerSubscribingHandler(new \Kronika\Extension\JmsSerializer\KronikaSubscribingHandler());
