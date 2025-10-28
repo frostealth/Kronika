@@ -95,7 +95,7 @@ use yii\db\BaseActiveRecord;
  * @psalm-type TAttributeName=non-empty-string
  * @psalm-type TFormattable=Date|Time|LocalDateTime|ZonedDateTime
  * @psalm-type TFormatOptions=array{class-string<TFormattable>, non-empty-string}
- * @psalm-type TForcedTimezone=null|\DateTimeZone|callable(non-empty-string=): ?\DateTimeZone
+ * @psalm-type TForcedTimezone=null|\DateTimeZone|callable(): ?\DateTimeZone
  * @psalm-type TTimezoneOptions=array{store: bool, suffix: non-empty-string, force: TForcedTimezone}
  *
  * @property BaseActiveRecord $owner

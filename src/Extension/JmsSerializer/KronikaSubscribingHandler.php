@@ -18,7 +18,6 @@ use JMS\Serializer\Handler\SubscribingHandlerInterface;
 use JMS\Serializer\Visitor\DeserializationVisitorInterface;
 use JMS\Serializer\Visitor\SerializationVisitorInterface;
 use Kronika\Date;
-use Kronika\Date\DayOfWeek;
 use Kronika\Duration;
 use Kronika\Instant;
 use Kronika\LocalDateTime;
@@ -84,13 +83,13 @@ final readonly class KronikaSubscribingHandler implements SubscribingHandlerInte
                 'format' => $format,
             ];
             $methods[] = [
-                'type' => DayOfWeek::class,
+                'type' => Date\DayOfWeek::class,
                 'method' => 'serializeDayOfWeek',
                 'direction' => GraphNavigatorInterface::DIRECTION_SERIALIZATION,
                 'format' => $format,
             ];
             $methods[] = [
-                'type' => DayOfWeek::class,
+                'type' => Date\DayOfWeek::class,
                 'method' => 'deserializeDayOfWeek',
                 'direction' => GraphNavigatorInterface::DIRECTION_DESERIALIZATION,
                 'format' => $format,
