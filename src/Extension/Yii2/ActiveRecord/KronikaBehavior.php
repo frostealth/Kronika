@@ -94,9 +94,9 @@ use yii\db\BaseActiveRecord;
  *
  * @psalm-type TAttributeName=non-empty-string
  * @psalm-type TFormattable=Date|Time|LocalDateTime|ZonedDateTime
- * @psalm-type TFormatOptions=array{class-string<TFormattable>, non-empty-string}
+ * @psalm-type TFormatOptions=array<class-string<TFormattable>, non-empty-string>
  * @psalm-type TForcedTimezone=null|\DateTimeZone|callable(): ?\DateTimeZone
- * @psalm-type TTimezoneOptions=array{store: bool, suffix: non-empty-string, force: TForcedTimezone}
+ * @psalm-type TTimezoneOptions=array{store?: bool, suffix?: non-empty-string, force?: TForcedTimezone}
  *
  * @property BaseActiveRecord $owner
  */
@@ -137,7 +137,7 @@ final class KronikaBehavior extends Behavior
      * ],
      * ```
      *
-     * @var TFormatOptions
+     * @var TFormatOptions|[]
      */
     public array $formats = [];
 
@@ -267,8 +267,8 @@ final class KronikaBehavior extends Behavior
         $this->castAttributesToObjects($this->attributeNames());
     }
 
-    /** @param list<TAttributeName> $attributes */
-    private function castAttributesToDatabaseValues(array $attributes): void
+    /** @param iterable<TAttributeName> $attributes */
+    private function castAttributesToDatabaseValues(iterable $attributes): void
     {
         foreach ($attributes as $attributeName) {
             $attribute = $this->owner->getAttribute($attributeName);
@@ -283,8 +283,8 @@ final class KronikaBehavior extends Behavior
         }
     }
 
-    /** @param list<TAttributeName> $attributes */
-    private function castAttributesToObjects(array $attributes): void
+    /** @param iterable<TAttributeName> $attributes */
+    private function castAttributesToObjects(iterable $attributes): void
     {
         foreach ($attributes as $attributeName) {
             $attribute = $this->owner->getAttribute($attributeName);
@@ -429,7 +429,13 @@ final class KronikaBehavior extends Behavior
     /** @return iterable<TAttributeName> */
     private function attributeNames(): iterable
     {
-        foreach ($this->attributes as $names) {
+        $attributes = $this->attributes;
+
+        // prior timezones
+        yield from $attributes[\DateTimeZone::class] ?? [];
+        unset($attributes[\DateTimeZone::class]);
+
+        foreach ($attributes as $names) {
             yield from $names;
         }
     }
@@ -444,7 +450,7 @@ final class KronikaBehavior extends Behavior
     private function timezoneAttributesNames(): iterable
     {
         if (! $this->shouldStoreTimezone()) {
-            return [];
+            return;
         }
 
         foreach ($this->zonedAttributeNames() as $attributeName) {
