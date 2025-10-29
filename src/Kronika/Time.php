@@ -175,7 +175,7 @@ final readonly class Time implements Unit
      */
     public function with(TimeUnit $unit): self
     {
-        return $unit->withinTime($this);
+        return $unit->_withinTime($this);
     }
 
     /**
@@ -258,7 +258,7 @@ final readonly class Time implements Unit
     }
 
     /**
-     * Returns an instance of Duration from this time to another one.
+     * Returns a duration from this time or its unit to another one.
      *
      * ```
      * // 10:15:30 vs 23:59:59
@@ -272,15 +272,21 @@ final readonly class Time implements Unit
      * $duration->hours();   // 0
      * $duration->minutes(); // 0
      * $duration->seconds(); // 0
+     *
+     * // 10:15:30 vs Hour(12)
+     * $duration = $this->until($other);
+     * $duration->hours();   // 2
+     * $duration->minutes(); // 0
+     * $duration->seconds(); // 0
      * ```
      */
-    public function until(self $end): Duration
+    public function until(self|TimeUnit $end): Duration
     {
-        return $this->instant()->until($end->instant());
+        return $end->_untilInTime($this);
     }
 
     /**
-     * Returns an instance of Duration between this time and another one.
+     * Returns a duration between this time and another one.
      *
      * ```
      * // 10:15:30 vs 23:59:59
@@ -344,7 +350,7 @@ final readonly class Time implements Unit
     }
 
     /**
-     * Checks if this time is the end of the day.
+     * Checks if this time or its unit is the end of the day.
      *
      * ```
      * // 23:59:59.999999
@@ -365,7 +371,7 @@ final readonly class Time implements Unit
     }
 
     /**
-     * Checks if this time is before another one.
+     * Checks if this time or its unit is before another one.
      *
      * ```
      * // 10:15:30.000000 vs 10:15:30.999999
@@ -375,15 +381,18 @@ final readonly class Time implements Unit
      * // 10:15:30.000000 vs 10:15:59.999999
      * $this->isBefore($other, Precision::Second);  // true
      * $this->isBefore($other, Precision::Minute);  // false
+     *
+     * // 10:15:30.000000 vs Minute::of(15)
+     * $this->isBefore($other);  // false
      * ```
      */
-    public function isBefore(self $other, Precision $precision = Precision::Micro): bool
+    public function isBefore(self|TimeUnit $other, Precision $precision = Precision::Micro): bool
     {
         return $this->compareTo($other, $precision)->less();
     }
 
     /**
-     * Checks if this time is before or equal to another one.
+     * Checks if this time or its unit is before or equal to another one.
      *
      * ```
      * // 10:15:30.000000 vs 10:15:30.000000
@@ -396,15 +405,18 @@ final readonly class Time implements Unit
      * // 10:15:59.999999 vs 10:15:00.000000
      * $this->isBeforeOrEqualTo($other, Precision::Second);  // false
      * $this->isBeforeOrEqualTo($other, Precision::Minute);  // true
+     *
+     * // 10:15:59.999999 vs Minute::of(15)
+     * $this->isBeforeOrEqualTo($other);  // true
      * ```
      */
-    public function isBeforeOrEqualTo(self $other, Precision $precision = Precision::Micro): bool
+    public function isBeforeOrEqualTo(self|TimeUnit $other, Precision $precision = Precision::Micro): bool
     {
         return $this->compareTo($other, $precision)->lessOrEqual();
     }
 
     /**
-     * Checks if this time is equal to another one.
+     * Checks if this time or its unit is equal to another one.
      *
      * ```
      * // 10:15:30.000000 vs 10:15:30.000000
@@ -417,15 +429,18 @@ final readonly class Time implements Unit
      * // 10:15:30.000000 vs 10:15:59.999999
      * $this->isEqualTo($other, Precision::Second);  // false
      * $this->isEqualTo($other, Precision::Minute);  // true
+     *
+     * // 10:15:30.000000 vs Minute::of(15)
+     * $this->isEqualTo($other);  // true
      * ```
      */
-    public function isEqualTo(self $other, Precision $precision = Precision::Micro): bool
+    public function isEqualTo(self|TimeUnit $other, Precision $precision = Precision::Micro): bool
     {
         return $this->compareTo($other, $precision)->equal();
     }
 
     /**
-     * Checks if this time is not equal to another one.
+     * Checks if this time or its unit is not equal to another one.
      *
      * ```
      * // 10:15:30.000000 vs 10:15:30.999999
@@ -435,15 +450,19 @@ final readonly class Time implements Unit
      * // 10:15:30.000000 vs 10:15:59.999999
      * $this->isNotEqualTo($other, Precision::Second);  // true
      * $this->isNotEqualTo($other, Precision::Minute);  // false
+     *
+     * // 10:15:30.000000 vs Second::of(45)
+     * $this->isNotEqualTo($other, Precision::Second);  // true
+     * $this->isNotEqualTo($other, Precision::Minute);  // false
      * ```
      */
-    public function isNotEqualTo(self $other, Precision $precision = Precision::Micro): bool
+    public function isNotEqualTo(self|TimeUnit $other, Precision $precision = Precision::Micro): bool
     {
-        return ! $this->isEqualTo($other, $precision);
+        return $this->compareTo($other, $precision)->notEqual();
     }
 
     /**
-     * Checks if this time is after or equal to another one.
+     * Checks if this time or its unit is after or equal to another one.
      *
      * ```
      * // 10:15:30.000000 vs 10:15:30.000000
@@ -456,15 +475,18 @@ final readonly class Time implements Unit
      * // 10:15:30.000000 vs 10:15:59.999999
      * $this->isAfterOrEqualTo($other, Precision::Second);  // false
      * $this->isAfterOrEqualTo($other, Precision::Minute);  // true
+     *
+     * // 10:15:30.000000 vs Minute::of(15)
+     * $this->isAfterOrEqualTo($other);  // true
      * ```
      */
-    public function isAfterOrEqualTo(self $other, Precision $precision = Precision::Micro): bool
+    public function isAfterOrEqualTo(self|TimeUnit $other, Precision $precision = Precision::Micro): bool
     {
         return $this->compareTo($other, $precision)->greaterOrEqual();
     }
 
     /**
-     * Checks if this time is after another one.
+     * Checks if this time or its unit is after another one.
      *
      * ```
      * // 10:15:30.999999 vs 10:15:30.000000
@@ -474,15 +496,18 @@ final readonly class Time implements Unit
      * // 10:15:59.999999 vs 10:15:30.000000
      * $this->isAfter($other, Precision::Second);  // true
      * $this->isAfter($other, Precision::Minute);  // false
+     *
+     * // 10:15:59.999999 vs Minute::of(15)
+     * $this->isAfter($other);  // false
      * ```
      */
-    public function isAfter(self $other, Precision $precision = Precision::Micro): bool
+    public function isAfter(self|TimeUnit $other, Precision $precision = Precision::Micro): bool
     {
         return $this->compareTo($other, $precision)->greater();
     }
 
     /**
-     * Compares this time to another one.
+     * Compares this time or its unit to another one.
      *
      * ```
      * // 12:15:30.000000 vs 12:15:30.999999
@@ -490,15 +515,15 @@ final readonly class Time implements Unit
      * $this->compareTo($other)->less();   // true
      * $this->compareTo($other, Precision::Second)->equal();  // true
      * $this->compareTo($other, Precision::Second)->less();   // false
+     *
+     * // 12:15:30.000000 vs Hour::of(12)
+     * $this->compareTo($other)->equal();  // true
+     * $this->compareTo($other)->less();   // false
      * ```
      */
-    public function compareTo(self $other, Precision $precision = Precision::Micro): Compared
+    public function compareTo(self|TimeUnit $other, Precision $precision = Precision::Micro): Compared
     {
-        return match ($precision) {
-            Precision::Micro => $this->instant()->compareTo($other->instant()),
-            Precision::Second => $this->resetMicro()->compareTo($other->resetMicro()),
-            Precision::Minute => $this->resetSecond()->compareTo($other->resetSecond()),
-        };
+        return $other->_compareInTime($this, $precision);
     }
 
     /**
@@ -537,9 +562,39 @@ final readonly class Time implements Unit
         return ['time' => (string) $this];
     }
 
-    /** @internal */
+    /** @internal {@see DateTime::compareTo()} */
     #[\Override]
-    public function withinDateTime(LocalDateTime $dateTime): LocalDateTime
+    public function _compareInDateTime(DateTime $that, Precision $precision): Compared
+    {
+        return $that->time()->compareTo($this, $precision);
+    }
+
+    /** @see Time::compareTo() */
+    private function _compareInTime(self $that, Precision $precision): Compared
+    {
+        return match ($precision) {
+            Precision::Micro => $that->instant()->compareTo($this->instant()),
+            Precision::Second => $that->resetMicro()->compareTo($this->resetMicro()),
+            Precision::Minute => $that->resetSecond()->compareTo($this->resetSecond()),
+        };
+    }
+
+    /** @internal {@see DateTime::until()} */
+    #[\Override]
+    public function _untilInDateTime(DateTime $start): Duration
+    {
+        return $start->time()->until($this);
+    }
+
+    /** @see Time::until() */
+    private function _untilInTime(self $start): Duration
+    {
+        return $start->instant()->until($this->instant());
+    }
+
+    /** @internal {@see DateTime::with()} */
+    #[\Override]
+    public function _withinDateTime(LocalDateTime $dateTime): LocalDateTime
     {
         return $this->at($dateTime->date());
     }

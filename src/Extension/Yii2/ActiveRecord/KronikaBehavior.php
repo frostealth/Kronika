@@ -431,7 +431,7 @@ final class KronikaBehavior extends Behavior
     {
         $attributes = $this->attributes;
 
-        // prior timezones
+        // timezones are a priority
         yield from $attributes[\DateTimeZone::class] ?? [];
         unset($attributes[\DateTimeZone::class]);
 

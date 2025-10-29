@@ -179,11 +179,7 @@ final readonly class Instant
      */
     public function until(self $end): Duration
     {
-        if ($this->compareTo($end)->lessOrEqual()) {
-            return Duration::zero();
-        }
-
-        return $this->diff($end);
+        return $this->isBefore($end) ? $this->diff($end) : Duration::zero();
     }
 
     /**
@@ -278,7 +274,7 @@ final readonly class Instant
      */
     public function isNotEqualTo(self $other): bool
     {
-        return ! $this->isEqualTo($other);
+        return $this->compareTo($other)->notEqual();
     }
 
     /**
@@ -332,17 +328,6 @@ final readonly class Instant
     public function compareTo(self $other): Compared
     {
         return Compared::compare($this->value(), $other->value());
-    }
-
-    /** @internal */
-    public function merge(self ...$others): self
-    {
-        $result = \array_reduce($others, static fn(Math $carry, self $other): Math => $carry->add(
-            $other->second,
-            $other->microsecond,
-        ), $this->math());
-
-        return self::of(...$result->parts());
     }
 
     private function math(): Math

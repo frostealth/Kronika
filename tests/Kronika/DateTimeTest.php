@@ -15,10 +15,12 @@ namespace Kronika\Tests;
 
 use Kronika\Date;
 use Kronika\DateTime;
+use Kronika\Duration;
 use Kronika\LocalDateTime;
 use Kronika\Precision;
 use Kronika\Time;
 use Kronika\Time\Second;
+use Kronika\Unit;
 use Kronika\ZonedDateTime;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\DependsExternal;
@@ -359,6 +361,170 @@ final class DateTimeTest extends TestCase
                 self::localOf(2025, 10, 30, 12, 20, 45, 45),
                 self::zonedOf(2025, 10, 30, 12, 15, 55, 5555, '+01:00'),
                 Precision::Minute,
+                self::GREATER,
+            ],
+            // LocalDateTime, Date and DateUnit
+            'LocalDateTime.Date.Equal' => [
+                self::localOf(2025, 10, 30, 12, 15, 55, 5555),
+                Date::of(2025, 10, 30),
+                Precision::Micro,
+                self::EQUAL,
+            ],
+            'LocalDateTime.Date.Less' => [
+                self::localOf(2025, 10, 30, 12, 15, 55, 5555),
+                Date::of(2025, 10, 31),
+                Precision::Micro,
+                self::LESS,
+            ],
+            'LocalDateTime.Date.Greater' => [
+                self::localOf(2025, 10, 30, 12, 20, 45, 45),
+                Date::of(2025, 10, 29),
+                Precision::Micro,
+                self::GREATER,
+            ],
+            'LocalDateTime.Unit.Year.Equal' => [
+                self::localOf(2025, 10, 30, 12, 15, 55, 5555),
+                Date\Year::of(2025),
+                Precision::Micro,
+                self::EQUAL,
+            ],
+            'LocalDateTime.Unit.Year.Less' => [
+                self::localOf(2025, 10, 30, 12, 15, 55, 5555),
+                Date\Year::of(2026),
+                Precision::Micro,
+                self::LESS,
+            ],
+            'LocalDateTime.Unit.Year.Greater' => [
+                self::localOf(2025, 10, 30, 12, 20, 45, 45),
+                Date\Year::of(2024),
+                Precision::Micro,
+                self::GREATER,
+            ],
+            'LocalDateTime.Unit.Month.Equal' => [
+                self::localOf(2025, 10, 30, 12, 15, 55, 5555),
+                Date\Month::of(10),
+                Precision::Micro,
+                self::EQUAL,
+            ],
+            'LocalDateTime.Unit.Month.Less' => [
+                self::localOf(2025, 10, 30, 12, 15, 55, 5555),
+                Date\Month::of(11),
+                Precision::Micro,
+                self::LESS,
+            ],
+            'LocalDateTime.Unit.Month.Greater' => [
+                self::localOf(2025, 10, 30, 12, 20, 45, 45),
+                Date\Month::of(9),
+                Precision::Micro,
+                self::GREATER,
+            ],
+            'LocalDateTime.Unit.DayOfMonth.Equal' => [
+                self::localOf(2025, 10, 30, 12, 15, 55, 5555),
+                Date\DayOfMonth::of(30),
+                Precision::Micro,
+                self::EQUAL,
+            ],
+            'LocalDateTime.Unit.DayOfMonth.Less' => [
+                self::localOf(2025, 10, 30, 12, 15, 55, 5555),
+                Date\DayOfMonth::of(31),
+                Precision::Micro,
+                self::LESS,
+            ],
+            'LocalDateTime.Unit.DayOfMonth.Greater' => [
+                self::localOf(2025, 10, 30, 12, 20, 45, 45),
+                Date\DayOfMonth::of(29),
+                Precision::Micro,
+                self::GREATER,
+            ],
+            'LocalDateTime.Unit.DayOfWeek.Equal' => [
+                self::localOf(2025, 10, 30, 12, 15, 55, 5555),
+                Date\DayOfWeek::Thursday,
+                Precision::Micro,
+                self::EQUAL,
+            ],
+            'LocalDateTime.Unit.DayOfWeek.Less' => [
+                self::localOf(2025, 10, 30, 12, 15, 55, 5555),
+                Date\DayOfWeek::Friday,
+                Precision::Micro,
+                self::LESS,
+            ],
+            'LocalDateTime.Unit.DayOfWeek.Greater' => [
+                self::localOf(2025, 10, 30, 12, 20, 45, 45),
+                Date\DayOfWeek::Tuesday,
+                Precision::Micro,
+                self::GREATER,
+            ],
+            // LocalDateTime, Time and TimeUnit
+            'LocalDateTime.Time.Equal' => [
+                self::localOf(2025, 10, 30, 12, 15, 55, 5555),
+                Time::of(12, 15, Second::of(55, 5555)),
+                Precision::Micro,
+                self::EQUAL,
+            ],
+            'LocalDateTime.Time.Less' => [
+                self::localOf(2025, 10, 30, 12, 15, 55, 5555),
+                Time::of(12, 15, Second::of(55, 9999)),
+                Precision::Micro,
+                self::LESS,
+            ],
+            'LocalDateTime.Time.Greater' => [
+                self::localOf(2025, 10, 30, 12, 20, 55, 5555),
+                Time::of(12, 15, Second::of(55)),
+                Precision::Micro,
+                self::GREATER,
+            ],
+            'LocalDateTime.Unit.Hour.Equal' => [
+                self::localOf(2025, 10, 30, 12, 15, 55, 5555),
+                Time\Hour::of(12),
+                Precision::Micro,
+                self::EQUAL,
+            ],
+            'LocalDateTime.Unit.Hour.Less' => [
+                self::localOf(2025, 10, 30, 12, 15, 55, 5555),
+                Time\Hour::of(13),
+                Precision::Micro,
+                self::LESS,
+            ],
+            'LocalDateTime.Unit.Hour.Greater' => [
+                self::localOf(2025, 10, 30, 12, 20, 45, 45),
+                Time\Hour::of(11),
+                Precision::Micro,
+                self::GREATER,
+            ],
+            'LocalDateTime.Unit.Minute.Equal' => [
+                self::localOf(2025, 10, 30, 12, 15, 55, 5555),
+                Time\Minute::of(15),
+                Precision::Micro,
+                self::EQUAL,
+            ],
+            'LocalDateTime.Unit.Minute.Less' => [
+                self::localOf(2025, 10, 30, 12, 15, 55, 5555),
+                Time\Minute::of(20),
+                Precision::Micro,
+                self::LESS,
+            ],
+            'LocalDateTime.Unit.Minute.Greater' => [
+                self::localOf(2025, 10, 30, 12, 20, 45, 45),
+                Time\Minute::of(10),
+                Precision::Micro,
+                self::GREATER,
+            ],
+            'LocalDateTime.Unit.Second.Equal' => [
+                self::localOf(2025, 10, 30, 12, 15, 55, 5555),
+                Time\Second::of(55, 5555),
+                Precision::Micro,
+                self::EQUAL,
+            ],
+            'LocalDateTime.Unit.Second.Less' => [
+                self::localOf(2025, 10, 30, 12, 15, 55, 5555),
+                Time\Second::of(55, 999999),
+                Precision::Micro,
+                self::LESS,
+            ],
+            'LocalDateTime.Unit.Second.Greater' => [
+                self::localOf(2025, 10, 30, 12, 20, 55, 5555),
+                Time\Second::of(55),
+                Precision::Micro,
                 self::GREATER,
             ],
 
@@ -797,6 +963,170 @@ final class DateTimeTest extends TestCase
                 Precision::Minute,
                 self::GREATER,
             ],
+            // LocalDateTime, Date and DateUnit
+            'ZonedDateTime.Date.Equal' => [
+                self::zonedOf(2025, 10, 30, 12, 15, 55, 5555, '+01:00'),
+                Date::of(2025, 10, 30),
+                Precision::Micro,
+                self::EQUAL,
+            ],
+            'ZonedDateTime.Date.Less' => [
+                self::zonedOf(2025, 10, 30, 12, 15, 55, 5555, '+01:00'),
+                Date::of(2025, 10, 31),
+                Precision::Micro,
+                self::LESS,
+            ],
+            'ZonedDateTime.Date.Greater' => [
+                self::zonedOf(2025, 10, 30, 12, 20, 45, 45, '+01:00'),
+                Date::of(2025, 10, 29),
+                Precision::Micro,
+                self::GREATER,
+            ],
+            'ZonedDateTime.Unit.Year.Equal' => [
+                self::zonedOf(2025, 10, 30, 12, 15, 55, 5555, '+01:00'),
+                Date\Year::of(2025),
+                Precision::Micro,
+                self::EQUAL,
+            ],
+            'ZonedDateTime.Unit.Year.Less' => [
+                self::zonedOf(2025, 10, 30, 12, 15, 55, 5555, '+01:00'),
+                Date\Year::of(2026),
+                Precision::Micro,
+                self::LESS,
+            ],
+            'ZonedDateTime.Unit.Year.Greater' => [
+                self::zonedOf(2025, 10, 30, 12, 20, 45, 45, '+01:00'),
+                Date\Year::of(2024),
+                Precision::Micro,
+                self::GREATER,
+            ],
+            'ZonedDateTime.Unit.Month.Equal' => [
+                self::zonedOf(2025, 10, 30, 12, 15, 55, 5555, '+01:00'),
+                Date\Month::of(10),
+                Precision::Micro,
+                self::EQUAL,
+            ],
+            'ZonedDateTime.Unit.Month.Less' => [
+                self::zonedOf(2025, 10, 30, 12, 15, 55, 5555, '+01:00'),
+                Date\Month::of(11),
+                Precision::Micro,
+                self::LESS,
+            ],
+            'ZonedDateTime.Unit.Month.Greater' => [
+                self::zonedOf(2025, 10, 30, 12, 20, 45, 45, '+01:00'),
+                Date\Month::of(9),
+                Precision::Micro,
+                self::GREATER,
+            ],
+            'ZonedDateTime.Unit.DayOfMonth.Equal' => [
+                self::zonedOf(2025, 10, 30, 12, 15, 55, 5555, '+01:00'),
+                Date\DayOfMonth::of(30),
+                Precision::Micro,
+                self::EQUAL,
+            ],
+            'ZonedDateTime.Unit.DayOfMonth.Less' => [
+                self::zonedOf(2025, 10, 30, 12, 15, 55, 5555, '+01:00'),
+                Date\DayOfMonth::of(31),
+                Precision::Micro,
+                self::LESS,
+            ],
+            'ZonedDateTime.Unit.DayOfMonth.Greater' => [
+                self::zonedOf(2025, 10, 30, 12, 20, 45, 45, '+01:00'),
+                Date\DayOfMonth::of(29),
+                Precision::Micro,
+                self::GREATER,
+            ],
+            'ZonedDateTime.Unit.DayOfWeek.Equal' => [
+                self::zonedOf(2025, 10, 30, 12, 15, 55, 5555, '+01:00'),
+                Date\DayOfWeek::Thursday,
+                Precision::Micro,
+                self::EQUAL,
+            ],
+            'ZonedDateTime.Unit.DayOfWeek.Less' => [
+                self::zonedOf(2025, 10, 30, 12, 15, 55, 5555, '+01:00'),
+                Date\DayOfWeek::Friday,
+                Precision::Micro,
+                self::LESS,
+            ],
+            'ZonedDateTime.Unit.DayOfWeek.Greater' => [
+                self::zonedOf(2025, 10, 30, 12, 20, 45, 45, '+01:00'),
+                Date\DayOfWeek::Tuesday,
+                Precision::Micro,
+                self::GREATER,
+            ],
+            // ZonedDateTime, Time and TimeUnit
+            'ZonedDateTime.Time.Equal' => [
+                self::zonedOf(2025, 10, 30, 12, 15, 55, 5555, '+01:00'),
+                Time::of(12, 15, Second::of(55, 5555)),
+                Precision::Micro,
+                self::EQUAL,
+            ],
+            'ZonedDateTime.Time.Less' => [
+                self::zonedOf(2025, 10, 30, 12, 15, 55, 5555, '+01:00'),
+                Time::of(12, 15, Second::of(55, 9999)),
+                Precision::Micro,
+                self::LESS,
+            ],
+            'ZonedDateTime.Time.Greater' => [
+                self::zonedOf(2025, 10, 30, 12, 20, 55, 5555, '+01:00'),
+                Time::of(12, 15, Second::of(55)),
+                Precision::Micro,
+                self::GREATER,
+            ],
+            'ZonedDateTime.Unit.Hour.Equal' => [
+                self::zonedOf(2025, 10, 30, 12, 15, 55, 5555, '+01:00'),
+                Time\Hour::of(12),
+                Precision::Micro,
+                self::EQUAL,
+            ],
+            'ZonedDateTime.Unit.Hour.Less' => [
+                self::zonedOf(2025, 10, 30, 12, 15, 55, 5555, '+01:00'),
+                Time\Hour::of(13),
+                Precision::Micro,
+                self::LESS,
+            ],
+            'ZonedDateTime.Unit.Hour.Greater' => [
+                self::zonedOf(2025, 10, 30, 12, 20, 45, 45, '+01:00'),
+                Time\Hour::of(11),
+                Precision::Micro,
+                self::GREATER,
+            ],
+            'ZonedDateTime.Unit.Minute.Equal' => [
+                self::zonedOf(2025, 10, 30, 12, 15, 55, 5555, '+01:00'),
+                Time\Minute::of(15),
+                Precision::Micro,
+                self::EQUAL,
+            ],
+            'ZonedDateTime.Unit.Minute.Less' => [
+                self::zonedOf(2025, 10, 30, 12, 15, 55, 5555, '+01:00'),
+                Time\Minute::of(20),
+                Precision::Micro,
+                self::LESS,
+            ],
+            'ZonedDateTime.Unit.Minute.Greater' => [
+                self::zonedOf(2025, 10, 30, 12, 20, 45, 45, '+01:00'),
+                Time\Minute::of(10),
+                Precision::Micro,
+                self::GREATER,
+            ],
+            'ZonedDateTime.Unit.Second.Equal' => [
+                self::zonedOf(2025, 10, 30, 12, 15, 55, 5555, '+01:00'),
+                Time\Second::of(55, 5555),
+                Precision::Micro,
+                self::EQUAL,
+            ],
+            'ZonedDateTime.Unit.Second.Less' => [
+                self::zonedOf(2025, 10, 30, 12, 15, 55, 5555, '+01:00'),
+                Time\Second::of(55, 999999),
+                Precision::Micro,
+                self::LESS,
+            ],
+            'ZonedDateTime.Unit.Second.Greater' => [
+                self::zonedOf(2025, 10, 30, 12, 20, 55, 5555, '+01:00'),
+                Time\Second::of(55),
+                Precision::Micro,
+                self::GREATER,
+            ],
         ];
     }
 
@@ -804,7 +1134,7 @@ final class DateTimeTest extends TestCase
     #[DependsExternal(LocalDateTimeTest::class, 'testBasic')]
     #[DependsExternal(ZonedDateTimeTest::class, 'testBasic')]
     #[DataProvider('comparisonProvider')]
-    public function testComparison(DateTime $a, DateTime|\DateTimeInterface $b, Precision $precision, int $expected): void
+    public function testComparison(DateTime $a, DateTime|Unit|\DateTimeInterface $b, Precision $precision, int $expected): void
     {
         $this->assertFalse($a->isBefore($a, $precision));
         $this->assertTrue($a->isBeforeOrEqualTo($a, $precision));
@@ -862,6 +1192,589 @@ final class DateTimeTest extends TestCase
         $this->assertSame($datetime->minute(), $result->minute());
         $this->assertEquals(0, $result->second()->second());
         $this->assertEquals(0, $result->second()->microsecond());
+    }
+
+    public static function untilProvider(): array
+    {
+        return [
+            // LocalDateTime
+            'LocalDateTime.LocalDateTime.Zero' => [
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                self::localOf(2025, 12, 15, 12, 45, 50, 5555),
+                Duration::zero(),
+            ],
+            'LocalDateTime.LocalDateTime.Seconds' => [
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                self::localOf(2025, 12, 15, 12, 45, 59, 0),
+                Duration::of(seconds: 3),
+            ],
+            'LocalDateTime.LocalDateTime.Minutes' => [
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                self::localOf(2025, 12, 15, 12, 50, 55, 5555),
+                Duration::of(minutes: 5),
+            ],
+            'LocalDateTime.LocalDateTime.Hours' => [
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                self::localOf(2025, 12, 15, 13, 45, 55, 5555),
+                Duration::of(hours: 1),
+            ],
+            'LocalDateTime.LocalDateTime.Days' => [
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                self::localOf(2025, 12, 16, 12, 45, 55, 5555),
+                Duration::of(days: 1),
+            ],
+            'LocalDateTime.Date.Days' => [
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                Date::of(2025, 12, 20),
+                Duration::of(days: 5),
+            ],
+            'LocalDateTime.Date.Months' => [
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                Date::of(2026, 1, 15),
+                Duration::of(days: 31),
+            ],
+            'LocalDateTime.Unit.Year' => [
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                Date\Year::of(2026),
+                Duration::of(days: 365),
+            ],
+            'LocalDateTime.Unit.Month' => [
+                self::localOf(2025, 11, 15, 12, 45, 55, 5555),
+                Date\Month::December,
+                Duration::of(days: 30),
+            ],
+            'LocalDateTime.Unit.DayOfMonth' => [
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                Date\DayOfMonth::of(16),
+                Duration::of(days: 1),
+            ],
+            'LocalDateTime.Unit.DayOfWeek' => [
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                Date\DayOfWeek::Tuesday,
+                Duration::of(days: 1),
+            ],
+            'LocalDateTime.Time' => [
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                Time::of(12, 45, 59),
+                Duration::of(seconds: 3),
+            ],
+            'LocalDateTime.Unit.Hour' => [
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                Time\Hour::of(15),
+                Duration::of(hours: 3),
+            ],
+            'LocalDateTime.Unit.Minute' => [
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                Time\Minute::of(50),
+                Duration::of(minutes: 5),
+            ],
+            'LocalDateTime.Unit.Second' => [
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                Time\Second::of(57, 5555),
+                Duration::of(seconds: 2),
+            ],
+            // ZonedDateTime
+            'ZonedDateTime.ZonedDateTime.Zero' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                self::zonedOf(2025, 12, 15, 12, 45, 50, 5555, '+01:00'),
+                Duration::zero(),
+            ],
+            'ZonedDateTime.ZonedDateTime.Seconds' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                self::zonedOf(2025, 12, 15, 12, 45, 59, 0, '+01:00'),
+                Duration::of(seconds: 4),
+            ],
+            'ZonedDateTime.ZonedDateTime.Minutes' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                self::zonedOf(2025, 12, 15, 12, 50, 55, 5555, '+01:00'),
+                Duration::of(minutes: 5),
+            ],
+            'ZonedDateTime.ZonedDateTime.Hours' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+00:00'),
+                Duration::of(hours: 1),
+            ],
+            'ZonedDateTime.ZonedDateTime.Days' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                self::zonedOf(2025, 12, 16, 12, 45, 55, 5555, '+01:00'),
+                Duration::of(days: 1),
+            ],
+            'ZonedDateTime.Date.Days' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                Date::of(2025, 12, 20),
+                Duration::of(days: 5),
+            ],
+            'ZonedDateTime.Date.Months' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                Date::of(2026, 1, 15),
+                Duration::of(days: 31),
+            ],
+            'ZonedDateTime.Unit.Year' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                Date\Year::of(2026),
+                Duration::of(days: 365),
+            ],
+            'ZonedDateTime.Unit.Month' => [
+                self::zonedOf(2025, 11, 15, 12, 45, 55, 5555, '+01:00'),
+                Date\Month::December,
+                Duration::of(days: 30),
+            ],
+            'ZonedDateTime.Unit.DayOfMonth' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                Date\DayOfMonth::of(16),
+                Duration::of(days: 1),
+            ],
+            'ZonedDateTime.Unit.DayOfWeek' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                Date\DayOfWeek::Tuesday,
+                Duration::of(days: 1),
+            ],
+            'ZonedDateTime.Time' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                Time::of(12, 45, 59),
+                Duration::of(seconds: 3),
+            ],
+            'ZonedDateTime.Unit.Hour' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                Time\Hour::of(15),
+                Duration::of(hours: 3),
+            ],
+            'ZonedDateTime.Unit.Minute' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                Time\Minute::of(50),
+                Duration::of(minutes: 5),
+            ],
+            'ZonedDateTime.Unit.Second' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                Time\Second::of(57, 5555),
+                Duration::of(seconds: 2),
+            ],
+            // ZonedDateTime vs LocalDateTime
+            'ZonedDateTime.LocalDateTime.Zero' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                self::localOf(2025, 12, 15, 12, 45, 50, 5555),
+                Duration::zero(),
+            ],
+            'ZonedDateTime.LocalDateTime.Seconds' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                self::localOf(2025, 12, 15, 12, 45, 59, 0),
+                Duration::of(seconds: 4),
+            ],
+            'ZonedDateTime.LocalDateTime.Minutes' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                self::localOf(2025, 12, 15, 12, 50, 55, 5555),
+                Duration::of(minutes: 5),
+            ],
+            'ZonedDateTime.LocalDateTime.Hours' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                self::localOf(2025, 12, 15, 15, 45, 55, 5555),
+                Duration::of(hours: 3),
+            ],
+            'ZonedDateTime.LocalDateTime.Days' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                self::localOf(2025, 12, 16, 12, 45, 55, 5555),
+                Duration::of(days: 1),
+            ],
+            'ZonedDateTime.LocalDateTime.Months' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                self::localOf(2026, 2, 15, 12, 45, 55, 5555),
+                Duration::of(days: 62),
+            ],
+            // LocalDateTime vs ZonedDateTime
+            'LocalDateTime.ZonedDateTime.Zero' => [
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                self::zonedOf(2025, 12, 15, 12, 45, 50, 5555, '+01:00'),
+                Duration::zero(),
+            ],
+            'LocalDateTime.ZonedDateTime.Seconds' => [
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                self::zonedOf(2025, 12, 15, 12, 45, 59, 5555, '+01:00'),
+                Duration::of(seconds: 4),
+            ],
+            'LocalDateTime.ZonedDateTime.Minutes' => [
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                self::zonedOf(2025, 12, 15, 12, 50, 55, 5555, '+01:00'),
+                Duration::of(minutes: 5),
+            ],
+            'LocalDateTime.ZonedDateTime.Hours' => [
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                self::zonedOf(2025, 12, 15, 15, 45, 55, 5555, '+01:00'),
+                Duration::of(hours: 3),
+            ],
+            'LocalDateTime.ZonedDateTime.Days' => [
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555,),
+                self::zonedOf(2025, 12, 16, 12, 45, 55, 5555, '+01:00'),
+                Duration::of(days: 1),
+            ],
+            'LocalDateTime.ZonedDateTime.Months' => [
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555,),
+                self::zonedOf(2026, 02, 15, 12, 45, 55, 5555, '+01:00'),
+                Duration::of(days: 62),
+            ],
+            // ZonedDateTime vs \DateTimeInterface
+            'ZonedDateTime.Native.Zero' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                new \DateTime('2025-12-15 12:45:50.005555 +01:00'),
+                Duration::zero(),
+            ],
+            'ZonedDateTime.Native.Seconds' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                new \DateTimeImmutable('2025-12-15 12:45:59.005555 +01:00'),
+                Duration::of(seconds: 4),
+            ],
+            'ZonedDateTime.Native.Minutes' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                new \DateTimeImmutable('2025-12-15 12:50:55.005555 +01:00'),
+                Duration::of(minutes: 5),
+            ],
+            'ZonedDateTime.Native.Hours' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                new \DateTime('2025-12-15 16:45:55.005555 +02:00'),
+                Duration::of(hours: 3),
+            ],
+            'ZonedDateTime.Native.Days' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                new \DateTime('2025-12-16 12:45:55.005555 +01:00'),
+                Duration::of(days: 1),
+            ],
+            'ZonedDateTime.Native.Months' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                new \DateTimeImmutable('2026-02-15 14:45:55.005555 +03:00'),
+                Duration::of(days: 62),
+            ],
+        ];
+    }
+
+    #[DependsExternal(ZonedDateTimeTest::class, 'testBasic')]
+    #[DependsExternal(LocalDateTimeTest::class, 'testBasic')]
+    #[DependsOnClass(DurationTest::class)]
+    #[DataProvider('untilProvider')]
+    public function testUntil(DateTime $datetime, DateTime|Unit|\DateTimeInterface $end, Duration $expected): void
+    {
+        $actual = $datetime->until($end);
+
+        $this->assertEquals($expected->inSeconds(), $actual->inSeconds());
+    }
+
+    public static function withProvider(): array
+    {
+        return [
+            // LocalDateTime
+            'LocalDateTime.Date' => [
+                self::localOf(2025, 3, 24, 23, 59, 59, 999999),
+                Date::of(1834, 6, 25),
+            ],
+            'LocalDateTime.Year' => [
+                self::localOf(2025, 3, 24, 23, 59, 59, 999999),
+                Date\Year::of(1999),
+            ],
+            'LocalDateTime.Month' => [
+                self::localOf(2025, 3, 24, 23, 59, 59, 999999),
+                Date\Month::November,
+            ],
+            'LocalDateTime.DayOfMonth.14' => [
+                self::localOf(2025, 3, 24, 23, 59, 59, 999999),
+                Date\DayOfMonth::of(14),
+            ],
+            'LocalDateTime.DayOfMonth.31' => [
+                self::localOf(2025, 3, 24, 23, 59, 59, 999999),
+                Date\DayOfMonth::of(31),
+            ],
+            'LocalDateTime.DayOfWeek.Monday' => [
+                self::localOf(2025, 3, 24, 23, 59, 59, 999999),
+                Date\DayOfWeek::Monday,
+            ],
+            'LocalDateTime.DayOfWeek.Wednesday' => [
+                self::localOf(2025, 3, 24, 23, 59, 59, 999999),
+                Date\DayOfWeek::Wednesday,
+            ],
+            'LocalDateTime.DayOfWeek.Sunday' => [
+                self::localOf(2025, 3, 24, 23, 59, 59, 999999),
+                Date\DayOfWeek::Sunday,
+            ],
+            'LocalDateTime.Time' => [
+                self::localOf(2025, 3, 24, 23, 59, 59, 999999),
+                Time::midnight(),
+            ],
+            'LocalDateTime.Hour' => [
+                self::localOf(2025, 3, 24, 23, 59, 59, 999999),
+                Time\Hour::of(14),
+            ],
+            'LocalDateTime.Minute' => [
+                self::localOf(2025, 3, 24, 23, 59, 59, 999999),
+                Time\Minute::of(30),
+            ],
+            'LocalDateTime.Second.45' => [
+                self::localOf(2025, 3, 24, 23, 59, 59, 999999),
+                Time\Second::of(45),
+            ],
+            'LocalDateTime.Second.15.008765' => [
+                self::localOf(2025, 3, 24, 23, 59, 59, 999999),
+                Time\Second::of(15, 8765),
+            ],
+
+            // ZonedDateTime
+            'ZonedDateTime.Date' => [
+                self::zonedOf(2025, 3, 24, 23, 59, 59, 999999, '+01:00'),
+                Date::of(1834, 6, 25),
+            ],
+            'ZonedDateTime.Year' => [
+                self::zonedOf(2025, 3, 24, 23, 59, 59, 999999, '+01:00'),
+                Date\Year::of(1999),
+            ],
+            'ZonedDateTime.Month' => [
+                self::zonedOf(2025, 3, 24, 23, 59, 59, 999999, '+01:00'),
+                Date\Month::November,
+            ],
+            'ZonedDateTime.DayOfMonth.14' => [
+                self::zonedOf(2025, 3, 24, 23, 59, 59, 999999, '+01:00'),
+                Date\DayOfMonth::of(14),
+            ],
+            'ZonedDateTime.DayOfMonth.31' => [
+                self::zonedOf(2025, 3, 24, 23, 59, 59, 999999, '+01:00'),
+                Date\DayOfMonth::of(31),
+            ],
+            'ZonedDateTime.DayOfWeek.Monday' => [
+                self::zonedOf(2025, 3, 24, 23, 59, 59, 999999, '+01:00'),
+                Date\DayOfWeek::Monday,
+            ],
+            'ZonedDateTime.DayOfWeek.Wednesday' => [
+                self::zonedOf(2025, 3, 24, 23, 59, 59, 999999, '+01:00'),
+                Date\DayOfWeek::Wednesday,
+            ],
+            'ZonedDateTime.DayOfWeek.Sunday' => [
+                self::zonedOf(2025, 3, 24, 23, 59, 59, 999999, '+01:00'),
+                Date\DayOfWeek::Sunday,
+            ],
+            'ZonedDateTime.Time' => [
+                self::zonedOf(2025, 3, 24, 23, 59, 59, 999999, '+01:00'),
+                Time::midnight(),
+            ],
+            'ZonedDateTime.Hour' => [
+                self::zonedOf(2025, 3, 24, 23, 59, 59, 999999, '+01:00'),
+                Time\Hour::of(14),
+            ],
+            'ZonedDateTime.Minute' => [
+                self::zonedOf(2025, 3, 24, 23, 59, 59, 999999, '+01:00'),
+                Time\Minute::of(30),
+            ],
+            'ZonedDateTime.Second.45' => [
+                self::zonedOf(2025, 3, 24, 23, 59, 59, 999999, '+01:00'),
+                Time\Second::of(45),
+            ],
+            'ZonedDateTime.Second.15.008765' => [
+                self::zonedOf(2025, 3, 24, 23, 59, 59, 999999, '+01:00'),
+                Time\Second::of(15, 8765),
+            ],
+            'ZonedDateTime.Timezone.UTC' => [
+                self::zonedOf(2025, 3, 24, 23, 59, 59, 999999, '+01:00'),
+                new \DateTimeZone('UTC'),
+            ],
+            'ZonedDateTime.Timezone.+08:30' => [
+                self::zonedOf(2025, 3, 24, 23, 59, 59, 999999, '+01:00'),
+                new \DateTimeZone('+08:30'),
+            ],
+        ];
+    }
+
+    #[DependsExternal(ZonedDateTimeTest::class, 'testBasic')]
+    #[DependsExternal(LocalDateTimeTest::class, 'testBasic')]
+    #[DataProvider('withProvider')]
+    public function testWith(DateTime $datetime, Unit|\DateTimeZone $unit): void
+    {
+        $result = $datetime->with($unit);
+
+         if ($unit instanceof Date) {
+            $this->assertSame($unit, $result->date());
+            $this->assertSame($datetime->time(), $result->time());
+            if ($datetime instanceof ZonedDateTime && $result instanceof ZonedDateTime) {
+                $this->assertEquals($datetime->timezone()->getName(), $result->timezone()->getName());
+            }
+        } elseif ($unit instanceof Date\DateUnit) {
+            $this->assertSame($datetime->date()->with($unit), $result->date());
+            $this->assertSame($datetime->time(), $result->time());
+            if ($datetime instanceof ZonedDateTime && $result instanceof ZonedDateTime) {
+                $this->assertEquals($datetime->timezone()->getName(), $result->timezone()->getName());
+            }
+        } elseif ($unit instanceof Time) {
+            $this->assertSame($datetime->date(), $result->date());
+            $this->assertSame($unit, $result->time());
+            if ($datetime instanceof ZonedDateTime && $result instanceof ZonedDateTime) {
+                $this->assertEquals($datetime->timezone()->getName(), $result->timezone()->getName());
+            }
+        } elseif ($unit instanceof Time\TimeUnit) {
+            $this->assertSame($datetime->date(), $result->date());
+            $this->assertSame($datetime->time()->with($unit), $result->time());
+            if ($datetime instanceof ZonedDateTime && $result instanceof ZonedDateTime) {
+                $this->assertEquals($datetime->timezone()->getName(), $result->timezone()->getName());
+            }
+        } elseif ($unit instanceof \DateTimeZone) {
+            $this->assertSame($datetime->date(), $result->date());
+            $this->assertSame($datetime->time(), $result->time());
+            if ($result instanceof ZonedDateTime) {
+                $this->assertEquals($unit->getName(), $result->timezone()->getName());
+            }
+        }
+    }
+
+    public static function addProvider(): array
+    {
+        return [
+            // LocalDateTime
+            'LocalDateTime.Duration.Zero' => [
+                self::localOf(2025, 12, 30, 12, 15, 30, 5555),
+                Duration::zero(),
+                self::localOf(2025, 12, 30, 12, 15, 30, 5555),
+            ],
+            'LocalDateTime.Duration.Seconds' => [
+                self::localOf(2025, 12, 30, 12, 15, 30, 5555),
+                Duration::of(seconds: 5),
+                self::localOf(2025, 12, 30, 12, 15, 35, 5555),
+            ],
+            'LocalDateTime.Duration.Minutes' => [
+                self::localOf(2025, 12, 30, 12, 15, 30, 5555),
+                Duration::of(minutes: 65),
+                self::localOf(2025, 12, 30, 13, 20, 30, 5555),
+            ],
+            'LocalDateTime.Duration.Hours' => [
+                self::localOf(2025, 12, 30, 12, 15, 30, 5555),
+                Duration::of(hours: 12, minutes: 30),
+                self::localOf(2025, 12, 31, 0, 45, 30, 5555),
+            ],
+            'LocalDateTime.Duration.Days' => [
+                self::localOf(2025, 12, 30, 12, 15, 30, 5555),
+                Duration::of(days: 1, hours: 12, minutes: 30),
+                self::localOf(2026, 1, 1, 0, 45, 30, 5555),
+            ],
+            'LocalDateTime.DateInterval' => [
+                self::localOf(2025, 12, 30, 12, 15, 30, 5555),
+                new \DateInterval('P1DT12H30M0S'),
+                self::localOf(2026, 1, 1, 0, 45, 30, 5555),
+            ],
+
+            // ZonedDateTime
+            'ZonedDateTime.Duration.Zero' => [
+                self::zonedOf(2025, 12, 30, 12, 15, 30, 5555, '+01:00'),
+                Duration::zero(),
+                self::zonedOf(2025, 12, 30, 12, 15, 30, 5555, '+01:00'),
+            ],
+            'ZonedDateTime.Duration.Seconds' => [
+                self::zonedOf(2025, 12, 30, 12, 15, 30, 5555, '+01:00'),
+                Duration::of(seconds: 5),
+                self::zonedOf(2025, 12, 30, 12, 15, 35, 5555, '+01:00'),
+            ],
+            'ZonedDateTime.Duration.Minutes' => [
+                self::zonedOf(2025, 12, 30, 12, 15, 30, 5555, '+01:00'),
+                Duration::of(minutes: 65),
+                self::zonedOf(2025, 12, 30, 13, 20, 30, 5555, '+01:00'),
+            ],
+            'ZonedDateTime.Duration.Hours' => [
+                self::zonedOf(2025, 12, 30, 12, 15, 30, 5555, '+01:00'),
+                Duration::of(hours: 12, minutes: 30),
+                self::zonedOf(2025, 12, 31, 0, 45, 30, 5555, '+01:00'),
+            ],
+            'ZonedDateTime.Duration.Days' => [
+                self::zonedOf(2025, 12, 30, 12, 15, 30, 5555, '+01:00'),
+                Duration::of(days: 1, hours: 12, minutes: 30),
+                self::zonedOf(2026, 1, 1, 0, 45, 30, 5555, '+01:00'),
+            ],
+            'ZonedDateTime.DateInterval' => [
+                self::zonedOf(2025, 12, 30, 12, 15, 30, 5555, '+01:00'),
+                new \DateInterval('P1DT12H30M0S'),
+                self::zonedOf(2026, 1, 1, 0, 45, 30, 5555, '+01:00'),
+            ],
+        ];
+    }
+
+    #[DependsExternal(ZonedDateTimeTest::class, 'testBasic')]
+    #[DependsExternal(LocalDateTimeTest::class, 'testBasic')]
+    #[DependsOnClass(DurationTest::class)]
+    #[DataProvider('addProvider')]
+    public function testAdd(DateTime $datetime, Duration|\DateInterval $duration, DateTime $expected): void
+    {
+        $actual = $datetime->add($duration);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public static function subProvider(): array
+    {
+        return [
+            // LocalDateTime
+            'LocalDateTime.Duration.Zero' => [
+                self::localOf(2025, 12, 30, 12, 15, 30, 5555),
+                Duration::zero(),
+                self::localOf(2025, 12, 30, 12, 15, 30, 5555),
+            ],
+            'LocalDateTime.Duration.Seconds' => [
+                self::localOf(2025, 12, 30, 12, 15, 30, 5555),
+                Duration::of(seconds: 5),
+                self::localOf(2025, 12, 30, 12, 15, 25, 5555),
+            ],
+            'LocalDateTime.Duration.Minutes' => [
+                self::localOf(2025, 12, 30, 12, 15, 30, 5555),
+                Duration::of(minutes: 65),
+                self::localOf(2025, 12, 30, 11, 10, 30, 5555),
+            ],
+            'LocalDateTime.Duration.Hours' => [
+                self::localOf(2025, 12, 30, 12, 15, 30, 5555),
+                Duration::of(hours: 12, minutes: 30),
+                self::localOf(2025, 12, 29, 23, 45, 30, 5555),
+            ],
+            'LocalDateTime.Duration.Days' => [
+                self::localOf(2026, 1, 1, 12, 15, 30, 5555),
+                Duration::of(days: 1, hours: 12, minutes: 30),
+                self::localOf(2025, 12, 30, 23, 45, 30, 5555),
+            ],
+            'LocalDateTime.DateInterval' => [
+                self::localOf(2026, 1, 1, 12, 15, 30, 5555),
+                new \DateInterval('P1DT12H30M0S'),
+                self::localOf(2025, 12, 30, 23, 45, 30, 5555),
+            ],
+
+            // ZonedDateTime
+            'ZonedDateTime.Duration.Zero' => [
+                self::zonedOf(2025, 12, 30, 12, 15, 30, 5555, '+01:00'),
+                Duration::zero(),
+                self::zonedOf(2025, 12, 30, 12, 15, 30, 5555, '+01:00'),
+            ],
+            'ZonedDateTime.Duration.Seconds' => [
+                self::zonedOf(2025, 12, 30, 12, 15, 30, 5555, '+01:00'),
+                Duration::of(seconds: 5),
+                self::zonedOf(2025, 12, 30, 12, 15, 25, 5555, '+01:00'),
+            ],
+            'ZonedDateTime.Duration.Minutes' => [
+                self::zonedOf(2025, 12, 30, 12, 15, 30, 5555, '+01:00'),
+                Duration::of(minutes: 65),
+                self::zonedOf(2025, 12, 30, 11, 10, 30, 5555, '+01:00'),
+            ],
+            'ZonedDateTime.Duration.Hours' => [
+                self::zonedOf(2025, 12, 30, 12, 15, 30, 5555, '+01:00'),
+                Duration::of(hours: 12, minutes: 30),
+                self::zonedOf(2025, 12, 29, 23, 45, 30, 5555, '+01:00'),
+            ],
+            'ZonedDateTime.Duration.Days' => [
+                self::zonedOf(2026, 1, 1, 12, 15, 30, 5555, '+01:00'),
+                Duration::of(days: 1, hours: 12, minutes: 30),
+                self::zonedOf(2025, 12, 30, 23, 45, 30, 5555, '+01:00'),
+            ],
+            'ZonedDateTime.DateInterval' => [
+                self::zonedOf(2026, 1, 1, 12, 15, 30, 5555, '+01:00'),
+                new \DateInterval('P1DT12H30M0S'),
+                self::zonedOf(2025, 12, 30, 23, 45, 30, 5555, '+01:00'),
+            ],
+        ];
+    }
+
+    #[DependsExternal(ZonedDateTimeTest::class, 'testBasic')]
+    #[DependsExternal(LocalDateTimeTest::class, 'testBasic')]
+    #[DependsOnClass(DurationTest::class)]
+    #[DataProvider('subProvider')]
+    public function testSub(DateTime $datetime, Duration|\DateInterval $duration, DateTime $expected): void
+    {
+        $actual = $datetime->sub($duration);
+
+        $this->assertEquals($expected, $actual);
     }
 
     private static function localOf(

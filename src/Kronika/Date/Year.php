@@ -180,7 +180,7 @@ final readonly class Year implements DateUnit
      */
     public function isNotEqualTo(self $other): bool
     {
-        return ! $this->isEqualTo($other);
+        return $this->compareTo($other)->notEqual();
     }
 
     /**
@@ -238,12 +238,19 @@ final readonly class Year implements DateUnit
     /** @internal */
     public function __debugInfo(): array
     {
-        return ['year' => (string) $this];
+        return ['year' => (string)$this];
     }
 
-    /** @internal */
+    /** @internal {@see Date::compareTo()} */
     #[\Override]
-    public function withinDate(Date $date): Date
+    public function _compareInDate(Date $that): Compared
+    {
+        return $that->year()->compareTo($this);
+    }
+
+    /** @internal {@see Date::with()} */
+    #[\Override]
+    public function _withinDate(Date $date): Date
     {
         return Date::of(
             year: $this,

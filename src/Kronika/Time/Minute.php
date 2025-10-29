@@ -13,7 +13,10 @@ declare(strict_types=1);
 
 namespace Kronika\Time;
 
+use Kronika\DateTime;
+use Kronika\Duration;
 use Kronika\LocalDateTime;
+use Kronika\Precision;
 use Kronika\Time;
 use Kronika\Utils\Compared;
 use Kronika\Utils\WeakRefsTrait;
@@ -172,7 +175,7 @@ final readonly class Minute implements TimeUnit
      */
     public function isNotEqualTo(self $other): bool
     {
-        return ! $this->isEqualTo($other);
+        return $this->compareTo($other)->notEqual();
     }
 
     /**
@@ -229,20 +232,48 @@ final readonly class Minute implements TimeUnit
     /** @internal */
     public function __debugInfo(): array
     {
-        return ['minute' => (string) $this];
+        return ['minute' => (string)$this];
     }
 
-    /** @internal */
+    /** @internal {@see Time::compareTo()} */
     #[\Override]
-    public function withinTime(Time $time): Time
+    public function _compareInTime(Time $that, Precision $precision): Compared
+    {
+        return $that->minute()->compareTo($this);
+    }
+
+    /** @internal {@see DateTime::compareTo()} */
+    #[\Override]
+    public function _compareInDateTime(DateTime $that, Precision $precision): Compared
+    {
+        return $that->time()->compareTo($this, $precision);
+    }
+
+    /** @internal {@see Time::until()} */
+    #[\Override]
+    public function _untilInTime(Time $start): Duration
+    {
+        return $start->until($start->with($this));
+    }
+
+    /** @internal {@see DateTime::until()} */
+    #[\Override]
+    public function _untilInDateTime(DateTime $start): Duration
+    {
+        return $start->time()->until($this);
+    }
+
+    /** @internal {@see Time::with()} */
+    #[\Override]
+    public function _withinTime(Time $time): Time
     {
         return Time::of($time->hour(), $this, $time->second());
     }
 
-    /** @internal */
+    /** @internal {@see DateTime::with()} */
     #[\Override]
-    public function withinDateTime(LocalDateTime $dateTime): LocalDateTime
+    public function _withinDateTime(LocalDateTime $dateTime): LocalDateTime
     {
-        return $dateTime->with($this->withinTime($dateTime->time()));
+        return $dateTime->with($this->_withinTime($dateTime->time()));
     }
 }
