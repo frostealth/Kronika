@@ -176,6 +176,32 @@ final readonly class Date implements Unit
     }
 
     /**
+     * Returns an instance of LocalDateTime with this date and midnight time.
+     *
+     * ```
+     * // 2025-12-31
+     * $this->atMidnight();  // 2025-12-31 00:00:00.000000
+     * ```
+     */
+    public function atMidnight(): LocalDateTime
+    {
+        return $this->at(Time::midnight());
+    }
+
+    /**
+     * Returns an instance of LocalDateTime with this date and time of the end of the day.
+     *
+     * ```
+     * // 2025-12-31
+     * $this->atEndOfDay();  // 2025-12-31 23:59:59.999999
+     * ```
+     */
+    public function atEndOfDay(): LocalDateTime
+    {
+        return $this->at(Time::endOfDay());
+    }
+
+    /**
      * Adds an amount of days, hours, minutes and seconds to this date.
      *
      * ```
@@ -239,32 +265,6 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Returns an instance of LocalDateTime with this date and midnight time.
-     *
-     * ```
-     * // 2025-12-31
-     * $this->atMidnight();  // 2025-12-31 00:00:00.000000
-     * ```
-     */
-    public function atMidnight(): LocalDateTime
-    {
-        return $this->at(Time::midnight());
-    }
-
-    /**
-     * Returns an instance of LocalDateTime with this date and time of the end of the day.
-     *
-     * ```
-     * // 2025-12-31
-     * $this->atEndOfDay();  // 2025-12-31 23:59:59.999999
-     * ```
-     */
-    public function atEndOfDay(): LocalDateTime
-    {
-        return $this->at(Time::endOfDay());
-    }
-
-    /**
      * Returns an instance of Date with the first day of the month.
      *
      * ```
@@ -291,6 +291,38 @@ final readonly class Date implements Unit
     public function toEndOfMonth(): self
     {
         return $this->with($this->month()->lastDay($this->year()));
+    }
+
+    /**
+     * Checks if the day of the month of this date is the first in the month.
+     *
+     * ```
+     * // 2025-12-01
+     * $this->isStartOfMonth();  // true
+     *
+     * // 2025-12-31
+     * $this->isStartOfMonth();  // false
+     * ```
+     */
+    public function isStartOfMonth(): bool
+    {
+        return $this->day()->isEqualTo(DayOfMonth::of(1));
+    }
+
+    /**
+     * Checks if the day of the month of this date is the last in the month.
+     *
+     * ```
+     * // 2025-12-31
+     * $this->isEndOfMonth();  // true
+     *
+     * // 2025-12-01
+     * $this->isEndOfMonth();  // false
+     * ```
+     */
+    public function isEndOfMonth(): bool
+    {
+        return $this->day()->isEqualTo($this->month()->lastDay($this->year()));
     }
 
     /**

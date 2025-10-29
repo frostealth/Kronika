@@ -71,7 +71,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      */
     public static function utcOf(Date $date, Time $time): self
     {
-        return self::of($date, $time, new \DateTimeZone('utc'));
+        return self::of($date, $time, new \DateTimeZone('UTC'));
     }
 
     /**
@@ -120,7 +120,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      */
     public static function ofTimestamp(float|int $timestamp): self
     {
-        return self::ofInstant(Instant::ofValue($timestamp), new \DateTimeZone('utc'));
+        return self::ofInstant(Instant::ofValue($timestamp), new \DateTimeZone('UTC'));
     }
 
     /**
@@ -233,15 +233,16 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     /**
-     * Returns an instance of \DateTimeZone from this date-time.
+     * Returns the time-zone of this date-time.
      */
     public function timezone(): \DateTimeZone
     {
+        /** @psalm-ignore-falsable-return */
         return $this->getTimezone();
     }
 
     /**
-     * Returns a timestamp from this date-time.
+     * Returns the timestamp of this date-time.
      */
     public function timestamp(): float
     {
@@ -321,7 +322,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         return self::ofLocal($this->local->sub($interval), $this->timezone());
     }
 
-    public function isInTheSameTimezoneAs(Native $other): bool
+    public function isInTheSameTimezoneAs(self|Native $other): bool
     {
         return $this->isInTimezone($other->getTimezone());
     }
@@ -457,72 +458,66 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         return self::ofDateTime($object);
     }
 
-    /** @alias {@see self::ofTimestamp()} */
+    /** @see self::ofTimestamp() */
     #[\Override]
     public static function createFromTimestamp(float|int $timestamp): static
     {
-        return self::ofTimestamp($timestamp);
+        return self::ofDateTime(\DateTimeImmutable::createFromTimestamp($timestamp)->setTimezone(new \DateTimeZone('UTC')));
     }
 
-    /** @alias {@see self::ofFormat()} */
+    /** @see self::ofFormat() */
     #[\Override]
     public static function createFromFormat(string $format, string $datetime, ?\DateTimeZone $timezone = null): static
     {
-        return self::ofFormat($format, $datetime, $timezone);
+        return self::ofDateTime(\DateTimeImmutable::createFromFormat($format, $datetime, $timezone));
     }
 
+    /** @see self::with() */
     #[\Override]
     public function modify(string $modifier): static
     {
-        return self::ofDateTime(parent::modify($modifier));
+        return self::ofDateTime($this->toNative()->modify($modifier));
     }
 
-    /** @alias {@see self::with()} */
+    /** @see self::with() */
     #[\Override]
     public function setDate(int $year, int $month, int $day): static
     {
-        return $this->with(Date::of($year, $month, $day));
+        return self::ofDateTime($this->toNative()->setDate($year, $month, $day));
     }
 
     #[\Override]
     public function setISODate(int $year, int $week, int $dayOfWeek = 1): static
     {
-        return self::ofDateTime(parent::setISODate($year, $week, $dayOfWeek));
+        return self::ofDateTime($this->toNative()->setISODate($year, $week, $dayOfWeek));
     }
 
-    /** @alias {@see self::with()} */
+    /** @see self::with() */
     #[\Override]
     public function setTime(int $hour, int $minute, int $second = 0, int $microsecond = 0): static
     {
-        return $this->with(Time::of($hour, $minute, Second::of($second, $microsecond)));
+        return self::ofDateTime($this->toNative()->setTime($hour, $minute, $second, $microsecond));
     }
 
-    /** @alias {@see self::ofTimestamp()} */
+    /** @see self::ofTimestamp() */
     #[\Override]
     public function setTimestamp(int $timestamp): static
     {
-        return self::ofTimestamp($timestamp);
+        return self::ofDateTime($this->toNative()->setTimestamp($timestamp));
     }
 
-    /** @alias {@see self::shiftTimezone()} */
+    /** @see self::shiftTimezone() */
     #[\Override]
     public function setTimezone(\DateTimeZone $timezone): static
     {
-        return $this->shiftTimezone($timezone);
+        return self::ofDateTime($this->toNative()->setTimezone($timezone));
     }
 
-    /** @alias {@see self::microsecond()} */
-    #[\Override]
-    public function getMicrosecond(): int
-    {
-        return $this->microsecond();
-    }
-
-    /** @alias {@see self::with()} */
+    /** @see self::with() */
     #[\Override]
     public function setMicrosecond(int $microsecond): static
     {
-        return $this->with(Second::of($this->second()->second(), $microsecond));
+        return self::ofDateTime($this->toNative()->setMicrosecond($microsecond));
     }
 
     /** @see DateTime::compareTo() */
