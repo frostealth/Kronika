@@ -159,7 +159,7 @@ final readonly class Date implements Unit
      */
     public function with(DateUnit $unit): self
     {
-        return $unit->withinDate($this);
+        return $unit->_withinDate($this);
     }
 
     /**
@@ -217,20 +217,7 @@ final readonly class Date implements Unit
     }
 
     /**
-     * @param non-empty-string $format
-     *
-     * @return non-empty-string
-     */
-    public function format(string $format): string
-    {
-        return $this->at(Time::midnight())->format(
-            // @todo: the escaping doesn't work
-            \preg_replace('/([^DdjlNSWwzFMmntLoXxYy])/', '\\\\$1', $format),
-        );
-    }
-
-    /**
-     * Returns an instance of Duration from this date to another one.
+     * Returns a duration from this date or its unit to another one.
      *
      * ```
      * // 2025-12-31 vs 2026-01-02
@@ -240,11 +227,15 @@ final readonly class Date implements Unit
      * // 2026-01-02 vs 2025-12-31
      * $duration = $this->until($other);
      * $duration->days();   // 0
+     *
+     * // 2026-01-02 vs Month::of(2)
+     * $duration = $this->until($other);
+     * $duration->days();   // 31
      * ```
      */
-    public function until(self $end): Duration
+    public function until(self|DateUnit $end): Duration
     {
-        return $this->instant()->until($end->instant());
+        return $end->_untilInDate($this);
     }
 
     /**
@@ -303,7 +294,7 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Checks if this date is before another one.
+     * Checks if this date or its unit is before another one.
      *
      * ```
      * // 2025-12-30 vs 2025-12-31
@@ -311,15 +302,18 @@ final readonly class Date implements Unit
      *
      * // 2025-12-30 vs 2025-12-30
      * $this->isBefore($other);  // false
+     *
+     * // 2025-12-30 vs Year::of(2026)
+     * $this->isBefore($other);  // true
      * ```
      */
-    public function isBefore(self $other): bool
+    public function isBefore(self|DateUnit $other): bool
     {
         return $this->compareTo($other)->less();
     }
 
     /**
-     * Checks if this date is before or equal to another one.
+     * Checks if this date or its unit is before or equal to another one.
      *
      * ```
      * // 2025-12-30 vs 2025-12-30
@@ -330,15 +324,18 @@ final readonly class Date implements Unit
      *
      * // 2025-12-31 vs 2025-12-30
      * $this->isBeforeOrEqualTo($other);  // false
+     *
+     * // 2025-12-31 vs DayOfMonth::of(30)
+     * $this->isBeforeOrEqualTo($other);  // false
      * ```
      */
-    public function isBeforeOrEqualTo(self $other): bool
+    public function isBeforeOrEqualTo(self|DateUnit $other): bool
     {
         return $this->compareTo($other)->lessOrEqual();
     }
 
     /**
-     * Checks if this date is equal to another one.
+     * Checks if this date or its unit is equal to another one.
      *
      * ```
      * // 2025-12-30 vs 2025-12-30
@@ -346,15 +343,18 @@ final readonly class Date implements Unit
      *
      * // 2025-12-30 vs 2025-12-31
      * $this->isEqualTo($other);  // false
+     *
+     * // 2025-12-30 vs Month::December
+     * $this->isEqualTo($other);  // true
      * ```
      */
-    public function isEqualTo(self $other): bool
+    public function isEqualTo(self|DateUnit $other): bool
     {
         return $this->compareTo($other)->equal();
     }
 
     /**
-     * Checks if this date is not equal to another one.
+     * Checks if this date or its unit is not equal to another one.
      *
      * ```
      * // 2025-12-30 vs 2025-12-31
@@ -362,15 +362,18 @@ final readonly class Date implements Unit
      *
      * // 2025-12-30 vs 2025-12-30
      * $this->isNotEqualTo($other);  // false
+     *
+     * // 2025-12-30 vs Month::December
+     * $this->isNotEqualTo($other);  // false
      * ```
      */
-    public function isNotEqualTo(self $other): bool
+    public function isNotEqualTo(self|DateUnit $other): bool
     {
-        return ! $this->isEqualTo($other);
+        return $this->compareTo($other)->notEqual();
     }
 
     /**
-     * Checks if this date is after or equal to another one.
+     * Checks if this date or its unit is after or equal to another one.
      *
      * ```
      * // 2025-12-30 vs 2025-12-30
@@ -378,15 +381,18 @@ final readonly class Date implements Unit
      *
      * // 2025-12-30 vs 2025-12-31
      * $this->isAfterOrEqualTo($other);  // false
+     *
+     * // 2025-12-30 vs Year::of(2025)
+     * $this->isAfterOrEqualTo($other);  // true
      * ```
      */
-    public function isAfterOrEqualTo(self $other): bool
+    public function isAfterOrEqualTo(self|DateUnit $other): bool
     {
         return $this->compareTo($other)->greaterOrEqual();
     }
 
     /**
-     * Checks if this date is after another one.
+     * Checks if this date or its unit is after another one.
      *
      * ```
      * // 2025-12-31 vs 2025-12-30
@@ -394,30 +400,50 @@ final readonly class Date implements Unit
      *
      * // 2025-12-31 vs 2025-12-31
      * $this->isAfter($other);  // false
+     *
+     * // 2025-12-31 vs Year::of(2025)
+     * $this->isAfter($other);  // false
      * ```
      */
-    public function isAfter(self $other): bool
+    public function isAfter(self|DateUnit $other): bool
     {
         return $this->compareTo($other)->greater();
     }
 
     /**
-     * Compares this date to another one.
+     * Compares this date or its unit to another one.
      *
      * ```
-     * // 12025-12-30 vs 2025-12-31
+     * // 2025-12-30 vs 2025-12-31
      * $this->compareTo($other)->equal();  // false
      * $this->compareTo($other)->less();   // true
      *
-     * // 12025-12-30 vs 2025-12-30
+     * // 2025-12-30 vs 2025-12-30
      * $this->compareTo($other)->equal();        // true
      * $this->compareTo($other)->less();         // false
      * $this->compareTo($other)->lessOrEqual();  // true
+     *
+     * // 2025-12-30 vs DayOfMonth::of(31)
+     * $this->compareTo($other)->equal();        // false
+     * $this->compareTo($other)->less();         // true
      * ```
      */
-    public function compareTo(self $other): Compared
+    public function compareTo(self|DateUnit $other): Compared
     {
-        return $this->instant()->compareTo($other->instant());
+        return $other->_compareInDate($this);
+    }
+
+    /**
+     * @param non-empty-string $format
+     *
+     * @return non-empty-string
+     */
+    public function format(string $format): string
+    {
+        return $this->at(Time::midnight())->format(
+        // @todo: the escaping doesn't work
+            \preg_replace('/([^DdjlNSWwzFMmntLoXxYy])/', '\\\\$1', $format),
+        );
     }
 
     /**
@@ -440,9 +466,35 @@ final readonly class Date implements Unit
         return ['date' => (string)$this];
     }
 
-    /** @internal */
+    /** @internal {@see DateTime::compareTo()} */
     #[\Override]
-    public function withinDateTime(LocalDateTime $dateTime): LocalDateTime
+    public function _compareInDateTime(DateTime $that, Precision $precision): Compared
+    {
+        return $that->date()->compareTo($this);
+    }
+
+    /** @see Date::compareTo() */
+    private function _compareInDate(self $that): Compared
+    {
+        return $that->instant()->compareTo($this->instant());
+    }
+
+    /** @internal {@see DateTime::until()} */
+    #[\Override]
+    public function _untilInDateTime(DateTime $start): Duration
+    {
+        return $start->date()->until($this);
+    }
+
+    /** @see Date::until() */
+    private function _untilInDate(Date $start): Duration
+    {
+        return $start->instant()->until($this->instant());
+    }
+
+    /** @internal {@see DateTime::with()} */
+    #[\Override]
+    public function _withinDateTime(LocalDateTime $dateTime): LocalDateTime
     {
         return $this->at($dateTime->time());
     }

@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Kronika;
 
+use Kronika\Utils\Compared;
+
 /**
  * Represents a unit of date-time.
  *
@@ -20,6 +22,12 @@ namespace Kronika;
  */
 interface Unit
 {
-    /** @internal */
-    public function withinDateTime(LocalDateTime $dateTime): LocalDateTime;
+    /** @internal {@see DateTime::compareTo()} */
+    public function _compareInDateTime(DateTime $that, Precision $precision): Compared;
+
+    /** @internal {@see DateTime::until()} */
+    public function _untilInDateTime(DateTime $start): Duration;
+
+    /** @internal {@see DateTime::with()} */
+    public function _withinDateTime(LocalDateTime $dateTime): LocalDateTime;
 }

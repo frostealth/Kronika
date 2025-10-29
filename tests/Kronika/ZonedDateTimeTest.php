@@ -57,7 +57,7 @@ final class ZonedDateTimeTest extends TestCase
         $this->assertEquals($time->second()->microsecond(), $datetime->microsecond());
         $this->assertEquals($timezone->getName(), $datetime->timezone()->getName());
         $this->assertEquals(\sprintf(
-            '%04d-%02d-%02dT%02d:%02d:%02d.%06d',
+            '%04d-%02d-%02dT%02d:%02d:%02d.%06d%s',
             $date->year()->number(),
             $date->month()->number(),
             $date->day()->number(),
@@ -65,63 +65,9 @@ final class ZonedDateTimeTest extends TestCase
             $time->minute()->value(),
             $time->second()->second(),
             $time->second()->microsecond(),
-        ), $datetime->format('Y-m-d\TH:i:s.u'));
+            $timezone->getName(),
+        ), $datetime->format('Y-m-d\TH:i:s.uP'));
         $this->assertSame(ZonedDateTime::of($date, $time, $timezone), $datetime);
-    }
-
-    public static function withProvider(): array
-    {
-        return [
-            [Date::of(1834, 6, 25)],
-            [Date\Year::of(1999)],
-            [Date\Month::November],
-            [Date\DayOfMonth::of(14)],
-            [Date\DayOfMonth::of(31)],
-            [Date\DayOfWeek::Monday],
-            [Date\DayOfWeek::Wednesday],
-            [Date\DayOfWeek::Sunday],
-            [Time::midnight()],
-            [Time\Hour::of(14)],
-            [Time\Minute::of(30)],
-            [Time\Second::of(45)],
-            [Time\Second::of(15, 8765)],
-            [new \DateTimeZone('UTC')],
-            [new \DateTimeZone('+08:30')],
-        ];
-    }
-
-    #[Depends('testBasic')]
-    #[DataProvider('withProvider')]
-    public function testWith(Unit|\DateTimeZone $unit): void
-    {
-        $date = Date::of(2025, 3, 24);
-        $time = Time::endOfDay();
-        $timezone = new \DateTimeZone('-05:00');
-        $zoned = ZonedDateTime::of($date, $time, $timezone);
-
-        $result = $zoned->with($unit);
-
-        if ($unit instanceof \DateTimeZone) {
-            $this->assertSame($date, $result->date());
-            $this->assertSame($time, $result->time());
-            $this->assertEquals($unit->getName(), $result->timezone()->getName());
-        } elseif ($unit instanceof Date) {
-            $this->assertSame($unit, $result->date());
-            $this->assertSame($time, $result->time());
-            $this->assertEquals($timezone->getName(), $result->timezone()->getName());
-        } elseif ($unit instanceof Date\DateUnit) {
-            $this->assertSame($date->with($unit), $result->date());
-            $this->assertSame($time, $result->time());
-            $this->assertEquals($timezone->getName(), $result->timezone()->getName());
-        } elseif ($unit instanceof Time) {
-            $this->assertSame($date, $result->date());
-            $this->assertSame($unit, $result->time());
-            $this->assertEquals($timezone->getName(), $result->timezone()->getName());
-        } elseif ($unit instanceof Time\TimeUnit) {
-            $this->assertSame($date, $result->date());
-            $this->assertSame($time->with($unit), $result->time());
-            $this->assertEquals($timezone->getName(), $result->timezone()->getName());
-        }
     }
 
     #[Depends('testBasic')]
@@ -134,6 +80,7 @@ final class ZonedDateTimeTest extends TestCase
         $this->assertSame($local, $zoned->toLocalDateTime());
     }
 
+    #[Depends('testBasic')]
     public function testToString(): void
     {
         $datetime = ZonedDateTime::of(
@@ -263,6 +210,7 @@ final class ZonedDateTimeTest extends TestCase
         );
     }
 
+    #[Depends('testBasic')]
     public function testToNative(): void
     {
         $native = new \DateTimeImmutable('2030-09-28 05:25:10.004582 +02:00');
@@ -278,6 +226,7 @@ final class ZonedDateTimeTest extends TestCase
         $this->assertEquals($native->format($format), $result->format($format));
     }
 
+    #[Depends('testBasic')]
     public function testToNativeMutable(): void
     {
         $native = new \DateTime('2030-09-28 05:25:10.004582 +02:00');

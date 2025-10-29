@@ -175,7 +175,7 @@ final readonly class LocalDateTime implements DateTime
     #[\Override]
     public function with(Unit $unit): static
     {
-        return $unit->withinDateTime($this);
+        return $unit->_withinDateTime($this);
     }
 
     /**
@@ -224,57 +224,59 @@ final readonly class LocalDateTime implements DateTime
     }
 
     #[\Override]
-    public function until(DateTime $end): Duration
+    public function until(DateTime|Unit $end): Duration
     {
-        return $this->instant()->until(self::ofDateTime($end)->instant());
+        if ($end instanceof Unit) {
+            return $end->_untilInDateTime($this);
+        }
+
+        return $this->doUntil($end);
     }
 
     #[\Override]
-    public function isBefore(DateTime $other, Precision $precision = Precision::Micro): bool
+    public function isBefore(DateTime|Unit $other, Precision $precision = Precision::Micro): bool
     {
         return $this->compareTo($other, $precision)->less();
     }
 
     #[\Override]
-    public function isBeforeOrEqualTo(DateTime $other, Precision $precision = Precision::Micro): bool
+    public function isBeforeOrEqualTo(DateTime|Unit $other, Precision $precision = Precision::Micro): bool
     {
         return $this->compareTo($other, $precision)->lessOrEqual();
     }
 
     #[\Override]
-    public function isEqualTo(DateTime $other, Precision $precision = Precision::Micro): bool
+    public function isEqualTo(DateTime|Unit $other, Precision $precision = Precision::Micro): bool
     {
         return $this->compareTo($other, $precision)->equal();
     }
 
     #[\Override]
-    public function isNotEqualTo(DateTime $other, Precision $precision = Precision::Micro): bool
+    public function isNotEqualTo(DateTime|Unit $other, Precision $precision = Precision::Micro): bool
     {
-        return ! $this->isEqualTo($other, $precision);
+        return $this->compareTo($other, $precision)->notEqual();
     }
 
     #[\Override]
-    public function isAfterOrEqualTo(DateTime $other, Precision $precision = Precision::Micro): bool
+    public function isAfterOrEqualTo(DateTime|Unit $other, Precision $precision = Precision::Micro): bool
     {
         return $this->compareTo($other, $precision)->greaterOrEqual();
     }
 
     #[\Override]
-    public function isAfter(DateTime $other, Precision $precision = Precision::Micro): bool
+    public function isAfter(DateTime|Unit $other, Precision $precision = Precision::Micro): bool
     {
         return $this->compareTo($other, $precision)->greater();
     }
 
     #[\Override]
-    public function compareTo(DateTime $other, Precision $precision = Precision::Micro): Compared
+    public function compareTo(DateTime|Unit $other, Precision $precision = Precision::Micro): Compared
     {
-        $other = self::ofDateTime($other);
+        if ($other instanceof Unit) {
+            return $other->_compareInDateTime($this, $precision);
+        }
 
-        return match($precision) {
-            Precision::Micro => $this->instant()->compareTo($other->instant()),
-            Precision::Second => $this->resetMicro()->compareTo($other->resetMicro()),
-            Precision::Minute => $this->resetSecond()->compareTo($other->resetSecond()),
-        };
+        return $this->doCompareTo($other, $precision);
     }
 
     #[\Override]
@@ -337,7 +339,7 @@ final readonly class LocalDateTime implements DateTime
     #[\Override]
     public function instant(): Instant
     {
-        return $this->date->instant()->merge($this->time->instant());
+        return $this->time->instant()->add(Duration::of(seconds: $this->date->instant()->second()));
     }
 
     #[\Override]
@@ -353,5 +355,23 @@ final readonly class LocalDateTime implements DateTime
             'date' => (string)$this->date,
             'time' => (string)$this->time,
         ];
+    }
+
+    /** @see DateTime::compareTo() */
+    private function doCompareTo(DateTime $dateTime, Precision $precision): Compared
+    {
+        $other = self::ofDateTime($dateTime);
+
+        return match($precision) {
+            Precision::Micro => $this->instant()->compareTo($other->instant()),
+            Precision::Second => $this->resetMicro()->compareTo($other->resetMicro()),
+            Precision::Minute => $this->resetSecond()->compareTo($other->resetSecond()),
+        };
+    }
+
+    /** @see DateTime::until()} */
+    private function doUntil(DateTime $end): Duration
+    {
+        return $this->instant()->until(self::ofDateTime($end)->instant());
     }
 }

@@ -14,8 +14,10 @@ declare(strict_types=1);
 namespace Kronika\Date;
 
 use Kronika\Date;
+use Kronika\DateTime;
 use Kronika\Duration;
 use Kronika\LocalDateTime;
+use Kronika\Precision;
 use Kronika\Utils\Compared;
 
 /**
@@ -250,7 +252,7 @@ enum Month: int implements DateUnit
      */
     public function isNotEqualTo(self $other): bool
     {
-        return ! $this->isEqualTo($other);
+        return $this->compareTo($other)->notEqual();
     }
 
     /**
@@ -308,9 +310,37 @@ enum Month: int implements DateUnit
         return $day;
     }
 
-    /** @internal */
+    /** @internal {@see Date::compareTo()} */
     #[\Override]
-    public function withinDate(Date $date): Date
+    public function _compareInDate(Date $that): Compared
+    {
+        return $that->month()->compareTo($this);
+    }
+
+    /** @internal {@see DateTime::compareTo()} */
+    #[\Override]
+    public function _compareInDateTime(DateTime $that, Precision $precision): Compared
+    {
+        return $that->month()->compareTo($this);
+    }
+
+    /** @internal {@see Date::until()} */
+    #[\Override]
+    public function _untilInDate(Date $start): Duration
+    {
+        return $start->until($start->with($this));
+    }
+
+    /** @internal {@see DateTime::until()} */
+    #[\Override]
+    public function _untilInDateTime(DateTime $start): Duration
+    {
+        return $start->date()->until($this);
+    }
+
+    /** @internal {@see Date::with()} */
+    #[\Override]
+    public function _withinDate(Date $date): Date
     {
         return Date::of(
             year: $date->year(),
@@ -319,10 +349,10 @@ enum Month: int implements DateUnit
         );
     }
 
-    /** @internal */
+    /** @internal {@see DateTime::with()} */
     #[\Override]
-    public function withinDateTime(LocalDateTime $dateTime): LocalDateTime
+    public function _withinDateTime(LocalDateTime $dateTime): LocalDateTime
     {
-        return $dateTime->with($this->withinDate($dateTime->date()));
+        return $dateTime->with($this->_withinDate($dateTime->date()));
     }
 }

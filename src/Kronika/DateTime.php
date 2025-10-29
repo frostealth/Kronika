@@ -137,7 +137,7 @@ interface DateTime
     public function sub(Duration $interval): static;
 
     /**
-     * Returns an instance of Duration from this date-time to another one.
+     * Returns a duration from this date-time or its unit to another one.
      *
      * ```
      * // 2025-12-10 10:15:30 vs 2025-12-20 12:30:45
@@ -161,12 +161,20 @@ interface DateTime
      * $duration->hours();   // 2
      * $duration->minutes(); // 15
      * $duration->seconds(); // 15
+     *
+     * // DateTime vs Date
+     * // 2025-12-10 10:15:30 vs Date::of(2025, 12, 20)
+     * $duration = $this->until($other);
+     * $duration->days();    // 10
+     * $duration->hours();   // 0
+     * $duration->minutes(); // 0
+     * $duration->seconds(); // 0
      * ```
      */
-    public function until(self $end): Duration;
+    public function until(self|Unit $end): Duration;
 
     /**
-     * Checks if this date-time is before another one.
+     * Checks if this date-time or its unit is before another one.
      *
      * ```
      * // 2025-12-31 10:15:30.000000 vs 2025-12-31 10:15:30.999999
@@ -179,12 +187,15 @@ interface DateTime
      *
      * // 2026-01-01 00:00:00.000000 vs 2025-12-31 10:15:59.999999
      * $this->isBefore($other, Precision::Minute);  // false
+     *
+     * // 2026-01-01 00:00:00.000000 vs Date::of(2025, 12, 31)
+     * $this->isBefore($other);  // false
      * ```
      */
-    public function isBefore(DateTime $other, Precision $precision = Precision::Micro): bool;
+    public function isBefore(self|Unit $other, Precision $precision = Precision::Micro): bool;
 
     /**
-     * Checks if this date-time is before or equal to another one.
+     * Checks if this date-time or its unit is before or equal to another one.
      *
      * ```
      * // 2025-12-31 10:15:30.000000 vs 2025-12-31 10:15:30.000000
@@ -200,12 +211,15 @@ interface DateTime
      *
      * // 2026-01-01 00:00:00.000000 vs 2025-12-31 10:15:00.000000
      * $this->isBeforeOrEqualTo($other, Precision::Minute);  // false
+     *
+     * // 2026-01-01 00:00:00.000000 vs Date::of(2025, 12, 31)
+     * $this->isBeforeOrEqualTo($other);  // false
      * ```
      */
-    public function isBeforeOrEqualTo(DateTime $other, Precision $precision = Precision::Micro): bool;
+    public function isBeforeOrEqualTo(self|Unit $other, Precision $precision = Precision::Micro): bool;
 
     /**
-     * Checks if this date-time is equal to another one.
+     * Checks if this date-time or its unit is equal to another one.
      *
      * ```
      * // 2025-12-31 10:15:30.000000 vs 2025-12-31 10:15:30.000000
@@ -221,12 +235,15 @@ interface DateTime
      *
      * // 2025-12-31 10:30:00.000000 vs 2025-12-31 10:15:59.999999
      * $this->isEqualTo($other, Precision::Minute);  // false
+     *
+     * // 2025-12-31 10:30:00.000000 vs Date::of(2025, 12, 31)
+     * $this->isEqualTo($other);  // true
      * ```
      */
-    public function isEqualTo(DateTime $other, Precision $precision = Precision::Micro): bool;
+    public function isEqualTo(self|Unit $other, Precision $precision = Precision::Micro): bool;
 
     /**
-     * Checks if this date-time is not equal to another one.
+     * Checks if this date-time or its unit is not equal to another one.
      *
      * ```
      * // 2025-12-31 10:15:30.000000 vs 2025-12-31 10:15:30.999999
@@ -239,12 +256,15 @@ interface DateTime
      *
      * // 2026-01-01 00:00:00.000000 vs 2025-12-31 10:15:59.999999
      * $this->isNotEqualTo($other, Precision::Minute);  // true
+     *
+     * // 2026-01-01 00:00:00.000000 vs Date::of(2025, 12, 31)
+     * $this->isNotEqualTo($other);  // true
      * ```
      */
-    public function isNotEqualTo(DateTime $other, Precision $precision = Precision::Micro): bool;
+    public function isNotEqualTo(self|Unit $other, Precision $precision = Precision::Micro): bool;
 
     /**
-     * Checks if this date-time is after or equal to another one.
+     * Checks if this date-time or its unit is after or equal to another one.
      *
      * ```
      * // 2025-12-31 10:15:30.000000 vs 2025-12-31 10:15:30.000000
@@ -260,12 +280,18 @@ interface DateTime
      *
      * // 1990-01-01 23:59:59.999999 vs 2025-12-31 10:15:59.000000
      * $this->isAfterOrEqualTo($other, Precision::Minute);  // false
+     *
+     * // 1990-01-01 23:59:59.999999 vs 2025-12-31 10:15:59.000000
+     * $this->isAfterOrEqualTo($other, Precision::Minute);  // false
+     *
+     * // 1990-01-01 23:59:59.999999 vs Time::of(23, 59, 59)
+     * $this->isAfterOrEqualTo($other);  // true
      * ```
      */
-    public function isAfterOrEqualTo(DateTime $other, Precision $precision = Precision::Micro): bool;
+    public function isAfterOrEqualTo(self|Unit $other, Precision $precision = Precision::Micro): bool;
 
     /**
-     * Checks if date-this time is after another one.
+     * Checks if this date-time or its unit is after another one.
      *
      * ```
      * // 2025-12-31 10:15:30.999999 vs 2025-12-31 10:15:30.000000
@@ -278,21 +304,28 @@ interface DateTime
      *
      * // 2026-01-01 00:00:00.000000 vs 2025-12-31 10:15:30.000000
      * $this->isAfter($other, Precision::Minute);  // true
+     *
+     * // 2026-01-01 10:15:55.000000 vs Time::of(10, 15, 30)
+     * $this->isAfter($other);  // true
      * ```
      */
-    public function isAfter(DateTime $other, Precision $precision = Precision::Micro): bool;
+    public function isAfter(self|Unit $other, Precision $precision = Precision::Micro): bool;
 
     /**
-     * Compares this time to another one.
+     * Compares this date-time or its unit to another one.
      *
      * ```
      * // 2025-12-31 12:15:30 vs 2025-12-31 12:15:45
      * $this->compareTo($other)->equal();  // false
      * $this->compareTo($other)->less();   // true
      * $this->compareTo($other, Precision::Minute)->equal();  // true
+     *
+     * // 2025-12-31 12:15:30 vs Date::of(2025, 12, 31)
+     * $this->compareTo($other)->equal();  // true
+     * $this->compareTo($other)->less();   // false
      * ```
      */
-    public function compareTo(DateTime $other, Precision $precision = Precision::Micro): Compared;
+    public function compareTo(self|Unit $other, Precision $precision = Precision::Micro): Compared;
 
     /**
      * @param non-empty-string $format

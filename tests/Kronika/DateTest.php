@@ -16,10 +16,15 @@ namespace Kronika\Tests;
 use Kronika\Date;
 use Kronika\DateTime;
 use Kronika\LocalDateTime;
+use Kronika\Tests\Date\DayOfMonthTest;
+use Kronika\Tests\Date\DayOfWeekTest;
+use Kronika\Tests\Date\MonthTest;
+use Kronika\Tests\Date\YearTest;
 use Kronika\Time;
 use Kronika\ZonedDateTime;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Depends;
+use PHPUnit\Framework\Attributes\DependsOnClass;
 use PHPUnit\Framework\TestCase;
 
 final class DateTest extends TestCase
@@ -40,6 +45,10 @@ final class DateTest extends TestCase
         ];
     }
 
+    #[DependsOnClass(YearTest::class)]
+    #[DependsOnClass(MonthTest::class)]
+    #[DependsOnClass(DayOfMonthTest::class)]
+    #[DependsOnClass(DayOfWeekTest::class)]
     #[DataProvider('ofProvider')]
     public function testBasic(Date\Year $year, Date\Month $month, Date\DayOfMonth $day, Date\DayOfWeek $dayOfWeek): void
     {

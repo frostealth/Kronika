@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Kronika\Date;
 
 use Kronika\Date;
+use Kronika\Duration;
 use Kronika\Utils\Compared;
 
 /**
@@ -98,7 +99,7 @@ final readonly class DayOfMonth implements DateUnit
      */
     public function isNotEqualTo(self $other): bool
     {
-        return ! $this->isEqualTo($other);
+        return $this->compareTo($other)->notEqual();
     }
 
     /**
@@ -158,9 +159,16 @@ final readonly class DayOfMonth implements DateUnit
         return ['dayOfMonth' => (string) $this];
     }
 
-    /** @internal */
+    /** @internal {@see Date::compareTo()} */
     #[\Override]
-    public function withinDate(Date $date): Date
+    public function _compareInDate(Date $that): Compared
+    {
+        return $that->day()->compareTo($this);
+    }
+
+    /** @internal {@see Date::with()} */
+    #[\Override]
+    public function _withinDate(Date $date): Date
     {
         return Date::of(
             year: $date->year(),
