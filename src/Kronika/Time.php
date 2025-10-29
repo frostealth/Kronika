@@ -311,19 +311,16 @@ final readonly class Time implements Unit
      * Checks if this time is midnight.
      *
      * ```
-     * // 00:00:00.000000
-     * $time->isMidnight();  // true
-     *
      * // 00:00:00.999999
-     * $time->isMidnight();  // false
-     * $time->isMidnight(Precision::Second);  // true
+     * $time->isMidnight();  // true
+     * $time->isMidnight(Precision::Micro);   // false
      *
      * // 00:00:59.999999
      * $time->isMidnight();  // false
      * $time->isMidnight(Precision::Minute);  // true
      * ```
      */
-    public function isMidnight(Precision $precision = Precision::Micro): bool
+    public function isMidnight(Precision $precision = Precision::Second): bool
     {
         return $this->isEqualTo(self::midnight(), $precision);
     }
@@ -332,19 +329,16 @@ final readonly class Time implements Unit
      * Checks if this time is midday/noon.
      *
      * ```
-     * // 12:00:00.000000
-     * $time->isMidday();  // true
-     *
      * // 12:00:00.999999
-     * $time->isMidday();  // false
-     * $time->isMidday(Precision::Second);  // true
+     * $time->isMidday();  // true
+     * $time->isMidday(Precision::Micro);   // false
      *
      * // 12:00:59.999999
      * $time->isMidday();  // false
      * $time->isMidday(Precision::Minute);  // true
      * ```
      */
-    public function isMidday(Precision $precision = Precision::Micro): bool
+    public function isMidday(Precision $precision = Precision::Second): bool
     {
         return $this->isEqualTo(self::midday(), $precision);
     }
@@ -353,19 +347,16 @@ final readonly class Time implements Unit
      * Checks if this time or its unit is the end of the day.
      *
      * ```
-     * // 23:59:59.999999
-     * $time->isEndOfDay();  // true
-     *
      * // 23:59:59.000000
-     * $time->isEndOfDay();  // false
-     * $time->isEndOfDay(Precision::Second);  // true
+     * $time->isEndOfDay();  // true
+     * $time->isEndOfDay(Precision::Micro);  // false
      *
-     * // 23:59:00.000000
+     * // 23:59:01.999999
      * $time->isEndOfDay();  // false
      * $time->isEndOfDay(Precision::Minute);  // true
      * ```
      */
-    public function isEndOfDay(Precision $precision = Precision::Micro): bool
+    public function isEndOfDay(Precision $precision = Precision::Second): bool
     {
         return $this->isEqualTo(self::endOfDay(), $precision);
     }
