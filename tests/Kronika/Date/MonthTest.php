@@ -17,36 +17,38 @@ use Kronika\Date\DayOfMonth;
 use Kronika\Date\Month;
 use Kronika\Date\Year;
 use Kronika\Duration;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;
 
+#[CoversClass(Month::class)]
 final class MonthTest extends TestCase
 {
     public function testBasic(): void
     {
         $month = Month::of(1);
 
-        $this->assertEquals(1, $month->number());
-        $this->assertEquals('January', $month->name());
-        $this->assertTrue($month->is(1));
+        self::assertEquals(1, $month->number());
+        self::assertEquals('January', $month->name());
+        self::assertTrue($month->is(1));
 
-        $this->assertNotSame($month, Month::of(2));
-        $this->assertSame($month, Month::of($month));
-        $this->assertSame($month, Month::of(1));
+        self::assertNotSame($month, Month::of(2));
+        self::assertSame($month, Month::of($month));
+        self::assertSame($month, Month::of(1));
 
-        $this->assertSame(Month::January, Month::of(1));
-        $this->assertSame(Month::February, Month::of(2));
-        $this->assertSame(Month::March, Month::of(3));
-        $this->assertSame(Month::April, Month::of(4));
-        $this->assertSame(Month::May, Month::of(5));
-        $this->assertSame(Month::June, Month::of(6));
-        $this->assertSame(Month::July, Month::of(7));
-        $this->assertSame(Month::August, Month::of(8));
-        $this->assertSame(Month::September, Month::of(9));
-        $this->assertSame(Month::October, Month::of(10));
-        $this->assertSame(Month::November, Month::of(11));
-        $this->assertSame(Month::December, Month::of(12));
+        self::assertSame(Month::January, Month::of(1));
+        self::assertSame(Month::February, Month::of(2));
+        self::assertSame(Month::March, Month::of(3));
+        self::assertSame(Month::April, Month::of(4));
+        self::assertSame(Month::May, Month::of(5));
+        self::assertSame(Month::June, Month::of(6));
+        self::assertSame(Month::July, Month::of(7));
+        self::assertSame(Month::August, Month::of(8));
+        self::assertSame(Month::September, Month::of(9));
+        self::assertSame(Month::October, Month::of(10));
+        self::assertSame(Month::November, Month::of(11));
+        self::assertSame(Month::December, Month::of(12));
     }
 
     #[Depends('testBasic')]
@@ -75,21 +77,21 @@ final class MonthTest extends TestCase
     #[DataProvider('comparisonProvider')]
     public function testComparison(Month $a, Month $b, int $expected): void
     {
-        $this->assertTrue($a->isEqualTo($a));
-        $this->assertFalse($a->isNotEqualTo($a));
-        $this->assertFalse($a->isBefore($a));
-        $this->assertFalse($a->isAfter($a));
-        $this->assertTrue($a->isBeforeOrEqualTo($a));
-        $this->assertTrue($a->isAfterOrEqualTo($a));
+        self::assertTrue($a->isEqualTo($a));
+        self::assertFalse($a->isNotEqualTo($a));
+        self::assertFalse($a->isBefore($a));
+        self::assertFalse($a->isAfter($a));
+        self::assertTrue($a->isBeforeOrEqualTo($a));
+        self::assertTrue($a->isAfterOrEqualTo($a));
 
         $comparison = $a->compareTo($b);
-        $this->assertEquals($expected, $comparison->value());
-        $this->assertEquals($comparison->less(), $a->isBefore($b));
-        $this->assertEquals($comparison->greater(), $a->isAfter($b));
-        $this->assertEquals($comparison->equal(), $a->isEqualTo($b));
-        $this->assertEquals($comparison->notEqual(), $a->isNotEqualTo($b));
-        $this->assertEquals($comparison->lessOrEqual(), $a->isBeforeOrEqualTo($b));
-        $this->assertEquals($comparison->greaterOrEqual(), $a->isAfterOrEqualTo($b));
+        self::assertEquals($expected, $comparison->value());
+        self::assertEquals($comparison->less(), $a->isBefore($b));
+        self::assertEquals($comparison->greater(), $a->isAfter($b));
+        self::assertEquals($comparison->equal(), $a->isEqualTo($b));
+        self::assertEquals($comparison->notEqual(), $a->isNotEqualTo($b));
+        self::assertEquals($comparison->lessOrEqual(), $a->isBeforeOrEqualTo($b));
+        self::assertEquals($comparison->greaterOrEqual(), $a->isAfterOrEqualTo($b));
     }
 
     public static function nextProvider(): array
@@ -114,7 +116,7 @@ final class MonthTest extends TestCase
     #[DataProvider('nextProvider')]
     public function testNext(Month $current, Month $expected): void
     {
-        $this->assertSame($expected, $current->next());
+        self::assertSame($expected, $current->next());
     }
 
     public static function previousProvider(): array
@@ -139,7 +141,7 @@ final class MonthTest extends TestCase
     #[DataProvider('previousProvider')]
     public function testPrevious(Month $current, Month $expected): void
     {
-        $this->assertSame($expected, $current->previous());
+        self::assertSame($expected, $current->previous());
     }
 
     public static function lastDayProvider(): array
@@ -176,9 +178,9 @@ final class MonthTest extends TestCase
     #[DataProvider('lastDayProvider')]
     public function testLastDay(Month $month, Year $year, DayOfMonth $expected): void
     {
-        $this->assertEquals($expected, $month->lastDay($year));
-        $this->assertEquals($expected->number(), $month->length($year));
-        $this->assertEquals(Duration::of(days: $expected->number()), $month->duration($year));
+        self::assertEquals($expected, $month->lastDay($year));
+        self::assertEquals($expected->number(), $month->length($year));
+        self::assertEquals(Duration::of(days: $expected->number()), $month->duration($year));
     }
 
     public static function adjustDayProvider(): array
@@ -223,6 +225,6 @@ final class MonthTest extends TestCase
     #[DataProvider('adjustDayProvider')]
     public function testAdjustDay(Month $month, Year $year, DayOfMonth $day, DayOfMonth $expected): void
     {
-        $this->assertEquals($expected, $month->adjustDay($day, $year));
+        self::assertEquals($expected, $month->adjustDay($day, $year));
     }
 }

@@ -19,12 +19,14 @@ use Kronika\LocalDateTime;
 use Kronika\Time;
 use Kronika\Unit;
 use Kronika\ZonedDateTime;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\Attributes\DependsExternal;
 use PHPUnit\Framework\Attributes\DependsOnClass;
 use PHPUnit\Framework\TestCase;
 
+#[CoversClass(ZonedDateTime::class)]
 final class ZonedDateTimeTest extends TestCase
 {
     public static function ofProvider(): array
@@ -45,18 +47,18 @@ final class ZonedDateTimeTest extends TestCase
     {
         $datetime = ZonedDateTime::of(date: $date, time: $time, timezone: $timezone);
 
-        $this->assertSame($date, $datetime->date());
-        $this->assertSame($date->year(), $datetime->year());
-        $this->assertSame($date->month(), $datetime->month());
-        $this->assertSame($date->day(), $datetime->day());
-        $this->assertSame($date->dayOfWeek(), $datetime->dayOfWeek());
-        $this->assertSame($time, $datetime->time());
-        $this->assertSame($time->hour(), $datetime->hour());
-        $this->assertSame($time->minute(), $datetime->minute());
-        $this->assertSame($time->second(), $datetime->second());
-        $this->assertEquals($time->second()->microsecond(), $datetime->microsecond());
-        $this->assertEquals($timezone->getName(), $datetime->timezone()->getName());
-        $this->assertEquals(\sprintf(
+        self::assertSame($date, $datetime->date());
+        self::assertSame($date->year(), $datetime->year());
+        self::assertSame($date->month(), $datetime->month());
+        self::assertSame($date->day(), $datetime->day());
+        self::assertSame($date->dayOfWeek(), $datetime->dayOfWeek());
+        self::assertSame($time, $datetime->time());
+        self::assertSame($time->hour(), $datetime->hour());
+        self::assertSame($time->minute(), $datetime->minute());
+        self::assertSame($time->second(), $datetime->second());
+        self::assertEquals($time->second()->microsecond(), $datetime->microsecond());
+        self::assertEquals($timezone->getName(), $datetime->timezone()->getName());
+        self::assertEquals(\sprintf(
             '%04d-%02d-%02dT%02d:%02d:%02d.%06d%s',
             $date->year()->number(),
             $date->month()->number(),
@@ -67,7 +69,7 @@ final class ZonedDateTimeTest extends TestCase
             $time->second()->microsecond(),
             $timezone->getName(),
         ), $datetime->format('Y-m-d\TH:i:s.uP'));
-        $this->assertSame(ZonedDateTime::of($date, $time, $timezone), $datetime);
+        self::assertSame(ZonedDateTime::of($date, $time, $timezone), $datetime);
     }
 
     #[Depends('testBasic')]
@@ -81,9 +83,9 @@ final class ZonedDateTimeTest extends TestCase
 
         $actual = $datetime->shiftTimezone(new \DateTimeZone('+02:30'));
 
-        $this->assertEquals(new \DateTimeZone('+02:30'), $actual->timezone());
-        $this->assertEquals(Date::of(2025, 12, 31), $actual->date());
-        $this->assertEquals(Time::of(13, 45, 30), $actual->time());
+        self::assertEquals(new \DateTimeZone('+02:30'), $actual->timezone());
+        self::assertEquals(Date::of(2025, 12, 31), $actual->date());
+        self::assertEquals(Time::of(13, 45, 30), $actual->time());
     }
 
     #[Depends('testBasic')]
@@ -92,8 +94,8 @@ final class ZonedDateTimeTest extends TestCase
         $local = LocalDateTime::of(Date::of(2025, 3, 24), Time::of(14, 8, 47));
         $zoned = ZonedDateTime::ofLocal($local, new \DateTimeZone('-02:30'));
 
-        $this->assertInstanceOf(LocalDateTime::class, $zoned->toLocalDateTime());
-        $this->assertSame($local, $zoned->toLocalDateTime());
+        self::assertInstanceOf(LocalDateTime::class, $zoned->toLocalDateTime());
+        self::assertSame($local, $zoned->toLocalDateTime());
     }
 
     #[Depends('testBasic')]
@@ -105,7 +107,7 @@ final class ZonedDateTimeTest extends TestCase
             new \DateTimeZone('+01:30'),
         );
 
-        $this->assertEquals('2025-03-24T23:59:59+01:30', (string) $datetime);
+        self::assertEquals('2025-03-24T23:59:59+01:30', (string) $datetime);
     }
 
     #[Depends('testBasic')]
@@ -113,19 +115,19 @@ final class ZonedDateTimeTest extends TestCase
     {
         $datetime = ZonedDateTime::createFromInterface(new \DateTimeImmutable('2025-03-24T23:09:59.123456+01:30'));
 
-        $this->assertEquals('2025-03-24T23:09:59.123456+0130', $datetime->format('Y-m-d\TH:i:s.uO'));
+        self::assertEquals('2025-03-24T23:09:59.123456+0130', $datetime->format('Y-m-d\TH:i:s.uO'));
 
-        $this->assertEquals(2025, $datetime->year()->number());
-        $this->assertEquals(3, $datetime->month()->number());
-        $this->assertEquals(24, $datetime->day()->number());
+        self::assertEquals(2025, $datetime->year()->number());
+        self::assertEquals(3, $datetime->month()->number());
+        self::assertEquals(24, $datetime->day()->number());
 
-        $this->assertEquals(23, $datetime->hour()->value());
-        $this->assertEquals(9, $datetime->minute()->value());
-        $this->assertEquals(59.123456, $datetime->second()->value());
-        $this->assertEquals(123456, $datetime->microsecond());
+        self::assertEquals(23, $datetime->hour()->value());
+        self::assertEquals(9, $datetime->minute()->value());
+        self::assertEquals(59.123456, $datetime->second()->value());
+        self::assertEquals(123456, $datetime->microsecond());
 
-        $this->assertEquals('+01:30', $datetime->timezone()->getName());
-        $this->assertEquals('+01:30', $datetime->getTimezone()->getName());
+        self::assertEquals('+01:30', $datetime->timezone()->getName());
+        self::assertEquals('+01:30', $datetime->getTimezone()->getName());
     }
 
     #[Depends('testBasic')]
@@ -133,19 +135,19 @@ final class ZonedDateTimeTest extends TestCase
     {
         $datetime = ZonedDateTime::createFromMutable(new \DateTime('2025-03-24T23:09:59.123456+01:30'));
 
-        $this->assertEquals('2025-03-24T23:09:59.123456+0130', $datetime->format('Y-m-d\TH:i:s.uO'));
+        self::assertEquals('2025-03-24T23:09:59.123456+0130', $datetime->format('Y-m-d\TH:i:s.uO'));
 
-        $this->assertEquals(2025, $datetime->year()->number());
-        $this->assertEquals(3, $datetime->month()->number());
-        $this->assertEquals(24, $datetime->day()->number());
+        self::assertEquals(2025, $datetime->year()->number());
+        self::assertEquals(3, $datetime->month()->number());
+        self::assertEquals(24, $datetime->day()->number());
 
-        $this->assertEquals(23, $datetime->hour()->value());
-        $this->assertEquals(9, $datetime->minute()->value());
-        $this->assertEquals(59.123456, $datetime->second()->value());
-        $this->assertEquals(123456, $datetime->microsecond());
+        self::assertEquals(23, $datetime->hour()->value());
+        self::assertEquals(9, $datetime->minute()->value());
+        self::assertEquals(59.123456, $datetime->second()->value());
+        self::assertEquals(123456, $datetime->microsecond());
 
-        $this->assertEquals('+01:30', $datetime->timezone()->getName());
-        $this->assertEquals('+01:30', $datetime->getTimezone()->getName());
+        self::assertEquals('+01:30', $datetime->timezone()->getName());
+        self::assertEquals('+01:30', $datetime->getTimezone()->getName());
     }
 
     #[Depends('testBasic')]
@@ -156,19 +158,19 @@ final class ZonedDateTimeTest extends TestCase
             '2025-03-24T23:09:59.123456+01:30',
         );
 
-        $this->assertEquals('2025-03-24T23:09:59.123456+0130', $datetime->format('Y-m-d\TH:i:s.uO'));
+        self::assertEquals('2025-03-24T23:09:59.123456+0130', $datetime->format('Y-m-d\TH:i:s.uO'));
 
-        $this->assertEquals(2025, $datetime->year()->number());
-        $this->assertEquals(3, $datetime->month()->number());
-        $this->assertEquals(24, $datetime->day()->number());
+        self::assertEquals(2025, $datetime->year()->number());
+        self::assertEquals(3, $datetime->month()->number());
+        self::assertEquals(24, $datetime->day()->number());
 
-        $this->assertEquals(23, $datetime->hour()->value());
-        $this->assertEquals(9, $datetime->minute()->value());
-        $this->assertEquals(59.123456, $datetime->second()->value());
-        $this->assertEquals(123456, $datetime->microsecond());
+        self::assertEquals(23, $datetime->hour()->value());
+        self::assertEquals(9, $datetime->minute()->value());
+        self::assertEquals(59.123456, $datetime->second()->value());
+        self::assertEquals(123456, $datetime->microsecond());
 
-        $this->assertEquals('+01:30', $datetime->timezone()->getName());
-        $this->assertEquals('+01:30', $datetime->getTimezone()->getName());
+        self::assertEquals('+01:30', $datetime->timezone()->getName());
+        self::assertEquals('+01:30', $datetime->getTimezone()->getName());
     }
 
     public function testNativeMethods(): void
@@ -181,46 +183,46 @@ final class ZonedDateTimeTest extends TestCase
         );
         $format = 'Y-m-d\TH:i:s.uO';
 
-        $this->assertEquals($native->getTimestamp(), $kronika->getTimestamp());
-        $this->assertEquals($native->getTimezone()->getName(), $kronika->getTimezone()->getName());
-        $this->assertEquals($native->getOffset(), $kronika->getOffset());
-        $this->assertEquals(
+        self::assertEquals($native->getTimestamp(), $kronika->getTimestamp());
+        self::assertEquals($native->getTimezone()->getName(), $kronika->getTimezone()->getName());
+        self::assertEquals($native->getOffset(), $kronika->getOffset());
+        self::assertEquals(
             $native->setTime(9, 45, 32)->format($format),
             $kronika->setTime(9, 45, 32)->format($format),
         );
-        $this->assertEquals(
+        self::assertEquals(
             $native->setDate(1982, 11, 24)->format($format),
             $kronika->setDate(1982, 11, 24)->format($format),
         );
-        $this->assertEquals(
+        self::assertEquals(
             $native->setISODate(1500, 42, 3)->format($format),
             $kronika->setISODate(1500, 42, 3)->format($format),
         );
-        $this->assertEquals(
+        self::assertEquals(
             $native->setTimezone(new \DateTimeZone('-01:30'))->format($format),
             $kronika->setTimezone(new \DateTimeZone('-01:30'))->format($format),
         );
-        $this->assertEquals(
+        self::assertEquals(
             $native->add(new \DateInterval('P3DT2H23M13S'))->format($format),
             $kronika->add(new \DateInterval('P3DT2H23M13S'))->format($format),
         );
-        $this->assertEquals(
+        self::assertEquals(
             $native->add(new \DateInterval('P3DT2H23M13S'))->format($format),
             $kronika->add(Duration::of(days: 3, hours: 2, minutes: 23, seconds: 13))->format($format),
         );
-        $this->assertEquals(
+        self::assertEquals(
             $native->sub(new \DateInterval('P3DT2H23M13S'))->format($format),
             $kronika->sub(new \DateInterval('P3DT2H23M13S'))->format($format),
         );
-        $this->assertEquals(
+        self::assertEquals(
             $native->sub(new \DateInterval('P3DT2H23M13S'))->format($format),
             $kronika->sub(Duration::of(days: 3, hours: 2, minutes: 23, seconds: 13))->format($format),
         );
-        $this->assertEquals(
+        self::assertEquals(
             $native->modify('+3 days')->format($format),
             $kronika->modify('+3 days')->format($format),
         );
-        $this->assertEquals(
+        self::assertEquals(
             $native->diff(new \DateTime('2030-09-28 05:25:10 UTC'))->format($format),
             $kronika->diff(new \DateTime('2030-09-28 05:25:10 UTC'))->format($format),
         );
@@ -239,7 +241,7 @@ final class ZonedDateTimeTest extends TestCase
         $result = $kronika->toNative();
 
         $format = 'Y-m-d\TH:i:s.uO';
-        $this->assertEquals($native->format($format), $result->format($format));
+        self::assertEquals($native->format($format), $result->format($format));
     }
 
     #[Depends('testBasic')]
@@ -255,6 +257,6 @@ final class ZonedDateTimeTest extends TestCase
         $result = $kronika->toNativeMutable();
 
         $format = 'Y-m-d\TH:i:s.uO';
-        $this->assertEquals($native->format($format), $result->format($format));
+        self::assertEquals($native->format($format), $result->format($format));
     }
 }

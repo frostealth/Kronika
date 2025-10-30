@@ -15,22 +15,24 @@ namespace Kronika\Tests\Date;
 
 use Kronika\Date\Year;
 use Kronika\Duration;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;
 
+#[CoversClass(Year::class)]
 final class YearTest extends TestCase
 {
     public function testBasic(): void
     {
         $year = Year::of(2025);
 
-        $this->assertEquals(2025, $year->number());
-        $this->assertTrue($year->is(2025));
+        self::assertEquals(2025, $year->number());
+        self::assertTrue($year->is(2025));
 
-        $this->assertNotSame($year, Year::of(2024));
-        $this->assertSame($year, Year::of($year));
-        $this->assertSame($year, Year::of(2025));
+        self::assertNotSame($year, Year::of(2024));
+        self::assertSame($year, Year::of($year));
+        self::assertSame($year, Year::of(2025));
     }
 
     #[Depends('testBasic')]
@@ -41,7 +43,6 @@ final class YearTest extends TestCase
 
         $this->expectException(\AssertionError::class);
         Year::of(-100000);
-
     }
 
     public static function comparisonProvider(): array
@@ -57,21 +58,21 @@ final class YearTest extends TestCase
     #[DataProvider('comparisonProvider')]
     public function testComparison(Year $a, Year $b, int $expected): void
     {
-        $this->assertTrue($a->isEqualTo($a));
-        $this->assertFalse($a->isNotEqualTo($a));
-        $this->assertFalse($a->isBefore($a));
-        $this->assertFalse($a->isAfter($a));
-        $this->assertTrue($a->isBeforeOrEqualTo($a));
-        $this->assertTrue($a->isAfterOrEqualTo($a));
+        self::assertTrue($a->isEqualTo($a));
+        self::assertFalse($a->isNotEqualTo($a));
+        self::assertFalse($a->isBefore($a));
+        self::assertFalse($a->isAfter($a));
+        self::assertTrue($a->isBeforeOrEqualTo($a));
+        self::assertTrue($a->isAfterOrEqualTo($a));
 
         $comparison = $a->compareTo($b);
-        $this->assertEquals($expected, $comparison->value());
-        $this->assertEquals($comparison->less(), $a->isBefore($b));
-        $this->assertEquals($comparison->greater(), $a->isAfter($b));
-        $this->assertEquals($comparison->equal(), $a->isEqualTo($b));
-        $this->assertEquals($comparison->notEqual(), $a->isNotEqualTo($b));
-        $this->assertEquals($comparison->lessOrEqual(), $a->isBeforeOrEqualTo($b));
-        $this->assertEquals($comparison->greaterOrEqual(), $a->isAfterOrEqualTo($b));
+        self::assertEquals($expected, $comparison->value());
+        self::assertEquals($comparison->less(), $a->isBefore($b));
+        self::assertEquals($comparison->greater(), $a->isAfter($b));
+        self::assertEquals($comparison->equal(), $a->isEqualTo($b));
+        self::assertEquals($comparison->notEqual(), $a->isNotEqualTo($b));
+        self::assertEquals($comparison->lessOrEqual(), $a->isBeforeOrEqualTo($b));
+        self::assertEquals($comparison->greaterOrEqual(), $a->isAfterOrEqualTo($b));
     }
 
     #[Depends('testComparison')]
@@ -82,9 +83,9 @@ final class YearTest extends TestCase
 
         $result = $current->previous();
 
-        $this->assertEquals($previous->number(), $result->number());
-        $this->assertNotSame($current, $result);
-        $this->assertSame($previous, $result);
+        self::assertEquals($previous->number(), $result->number());
+        self::assertNotSame($current, $result);
+        self::assertSame($previous, $result);
     }
 
     #[Depends('testComparison')]
@@ -95,9 +96,9 @@ final class YearTest extends TestCase
 
         $result = $current->next();
 
-        $this->assertEquals($next->number(), $result->number());
-        $this->assertNotSame($current, $result);
-        $this->assertSame($next, $result);
+        self::assertEquals($next->number(), $result->number());
+        self::assertNotSame($current, $result);
+        self::assertSame($next, $result);
     }
 
     public static function leapProvider(): array
@@ -117,8 +118,8 @@ final class YearTest extends TestCase
     {
         $year = Year::of($value);
 
-        $this->assertEquals($expected, $year->isLeap());
-        $this->assertEquals($expected ? 366 : 365, $year->length());
-        $this->assertEquals(Duration::of(days: $expected ? 366 : 365), $year->duration());
+        self::assertEquals($expected, $year->isLeap());
+        self::assertEquals($expected ? 366 : 365, $year->length());
+        self::assertEquals(Duration::of(days: $expected ? 366 : 365), $year->duration());
     }
 }

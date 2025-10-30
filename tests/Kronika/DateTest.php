@@ -22,11 +22,13 @@ use Kronika\Tests\Date\MonthTest;
 use Kronika\Tests\Date\YearTest;
 use Kronika\Time;
 use Kronika\ZonedDateTime;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\Attributes\DependsOnClass;
 use PHPUnit\Framework\TestCase;
 
+#[CoversClass(Date::class)]
 final class DateTest extends TestCase
 {
     public static function ofProvider(): array
@@ -54,12 +56,12 @@ final class DateTest extends TestCase
     {
         $date = Date::of(year: $year, month: $month, day: $day);
 
-        $this->assertEquals($year, $date->year());
-        $this->assertEquals($month, $date->month());
-        $this->assertEquals($day, $date->day());
-        $this->assertEquals($dayOfWeek, $date->dayOfWeek());
-        $this->assertSame($date, Date::of(year: $year->number(), month: $month->number(), day: $day->number()));
-        $this->assertNotSame($date, Date::of(year: $year->number() + 1, month: $month->number(), day: $day->number()));
+        self::assertEquals($year, $date->year());
+        self::assertEquals($month, $date->month());
+        self::assertEquals($day, $date->day());
+        self::assertEquals($dayOfWeek, $date->dayOfWeek());
+        self::assertSame($date, Date::of(year: $year->number(), month: $month->number(), day: $day->number()));
+        self::assertNotSame($date, Date::of(year: $year->number() + 1, month: $month->number(), day: $day->number()));
     }
 
     public static function startAndEndOfMonthProvider(): array
@@ -91,15 +93,15 @@ final class DateTest extends TestCase
         $startOfMonth = $date->toStartOfMonth();
         $endOfMonth = $date->toEndOfMonth();
 
-        $this->assertEquals(Date\DayOfMonth::of(1), $startOfMonth->day());
+        self::assertEquals(Date\DayOfMonth::of(1), $startOfMonth->day());
         $date->day() === Date\DayOfMonth::of(1)
-            ? $this->assertEquals($date, $startOfMonth)
-            : $this->assertNotEquals($date, $startOfMonth);
+            ? self::assertEquals($date, $startOfMonth)
+            : self::assertNotEquals($date, $startOfMonth);
 
-        $this->assertEquals($lastDayOfMonth, $endOfMonth->day());
+        self::assertEquals($lastDayOfMonth, $endOfMonth->day());
         $date->day() === $lastDayOfMonth
-            ? $this->assertEquals($date, $endOfMonth)
-            : $this->assertNotEquals($date, $endOfMonth);
+            ? self::assertEquals($date, $endOfMonth)
+            : self::assertNotEquals($date, $endOfMonth);
     }
 
     public static function withProvider(): array
@@ -145,7 +147,7 @@ final class DateTest extends TestCase
     {
         $result = $date->with($unit);
 
-        $this->assertEquals($expected, $result);
+        self::assertEquals($expected, $result);
     }
 
     public static function formatProvider(): array
@@ -168,7 +170,7 @@ final class DateTest extends TestCase
     #[DataProvider('formatProvider')]
     public function testFormat(Date $date, string $format, string $expected): void
     {
-        $this->assertEquals($expected, $date->format($format));
+        self::assertEquals($expected, $date->format($format));
     }
 
     public static function ofDateTimeProvider(): array
@@ -203,13 +205,13 @@ final class DateTest extends TestCase
     {
         $actual = Date::ofDateTime($input);
 
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
     public function testToString(): void
     {
         $date = Date::of(2030, 5, 24);
 
-        $this->assertEquals('2030-05-24', (string) $date);
+        self::assertEquals('2030-05-24', (string) $date);
     }
 }

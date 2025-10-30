@@ -14,22 +14,24 @@ declare(strict_types=1);
 namespace Kronika\Tests\Date;
 
 use Kronika\Date\DayOfMonth;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;
 
+#[CoversClass(DayOfMonth::class)]
 final class DayOfMonthTest extends TestCase
 {
     public function testBasic(): void
     {
         $day = DayOfMonth::of(15);
 
-        $this->assertEquals(15, $day->number());
-        $this->assertTrue($day->is(15));
+        self::assertEquals(15, $day->number());
+        self::assertTrue($day->is(15));
 
-        $this->assertNotSame($day, DayOfMonth::of(2));
-        $this->assertSame($day, DayOfMonth::of(15));
-        $this->assertSame($day, DayOfMonth::of($day));
+        self::assertNotSame($day, DayOfMonth::of(2));
+        self::assertSame($day, DayOfMonth::of(15));
+        self::assertSame($day, DayOfMonth::of($day));
     }
 
     #[Depends('testBasic')]
@@ -63,7 +65,7 @@ final class DayOfMonthTest extends TestCase
     #[DataProvider('toStringProvider')]
     public function testToString(DayOfMonth $day, string $expected): void
     {
-        $this->assertEquals($expected, (string)$day);
+        self::assertEquals($expected, (string)$day);
     }
 
     public static function comparisonProvider(): array
@@ -79,20 +81,20 @@ final class DayOfMonthTest extends TestCase
     #[DataProvider('comparisonProvider')]
     public function testComparison(DayOfMonth $a, DayOfMonth $b, int $expected): void
     {
-        $this->assertTrue($a->isEqualTo($a));
-        $this->assertFalse($a->isNotEqualTo($a));
-        $this->assertFalse($a->isBefore($a));
-        $this->assertFalse($a->isAfter($a));
-        $this->assertTrue($a->isBeforeOrEqualTo($a));
-        $this->assertTrue($a->isAfterOrEqualTo($a));
+        self::assertTrue($a->isEqualTo($a));
+        self::assertFalse($a->isNotEqualTo($a));
+        self::assertFalse($a->isBefore($a));
+        self::assertFalse($a->isAfter($a));
+        self::assertTrue($a->isBeforeOrEqualTo($a));
+        self::assertTrue($a->isAfterOrEqualTo($a));
 
         $comparison = $a->compareTo($b);
-        $this->assertEquals($expected, $comparison->value());
-        $this->assertEquals($comparison->less(), $a->isBefore($b));
-        $this->assertEquals($comparison->greater(), $a->isAfter($b));
-        $this->assertEquals($comparison->equal(), $a->isEqualTo($b));
-        $this->assertEquals($comparison->notEqual(), $a->isNotEqualTo($b));
-        $this->assertEquals($comparison->lessOrEqual(), $a->isBeforeOrEqualTo($b));
-        $this->assertEquals($comparison->greaterOrEqual(), $a->isAfterOrEqualTo($b));
+        self::assertEquals($expected, $comparison->value());
+        self::assertEquals($comparison->less(), $a->isBefore($b));
+        self::assertEquals($comparison->greater(), $a->isAfter($b));
+        self::assertEquals($comparison->equal(), $a->isEqualTo($b));
+        self::assertEquals($comparison->notEqual(), $a->isNotEqualTo($b));
+        self::assertEquals($comparison->lessOrEqual(), $a->isBeforeOrEqualTo($b));
+        self::assertEquals($comparison->greaterOrEqual(), $a->isAfterOrEqualTo($b));
     }
 }
