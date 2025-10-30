@@ -1273,6 +1273,7 @@ final class DateTimeTest extends TestCase
                 Time\Second::of(57, 5555),
                 Duration::of(seconds: 2),
             ],
+
             // ZonedDateTime
             'ZonedDateTime.ZonedDateTime.Zero' => [
                 self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
@@ -1282,7 +1283,7 @@ final class DateTimeTest extends TestCase
             'ZonedDateTime.ZonedDateTime.Seconds' => [
                 self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
                 self::zonedOf(2025, 12, 15, 12, 45, 59, 0, '+01:00'),
-                Duration::of(seconds: 4),
+                Duration::of(seconds: 3),
             ],
             'ZonedDateTime.ZonedDateTime.Minutes' => [
                 self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
@@ -1349,6 +1350,7 @@ final class DateTimeTest extends TestCase
                 Time\Second::of(57, 5555),
                 Duration::of(seconds: 2),
             ],
+
             // ZonedDateTime vs LocalDateTime
             'ZonedDateTime.LocalDateTime.Zero' => [
                 self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
@@ -1358,7 +1360,7 @@ final class DateTimeTest extends TestCase
             'ZonedDateTime.LocalDateTime.Seconds' => [
                 self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
                 self::localOf(2025, 12, 15, 12, 45, 59, 0),
-                Duration::of(seconds: 4),
+                Duration::of(seconds: 3),
             ],
             'ZonedDateTime.LocalDateTime.Minutes' => [
                 self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
@@ -1380,6 +1382,7 @@ final class DateTimeTest extends TestCase
                 self::localOf(2026, 2, 15, 12, 45, 55, 5555),
                 Duration::of(days: 62),
             ],
+
             // LocalDateTime vs ZonedDateTime
             'LocalDateTime.ZonedDateTime.Zero' => [
                 self::localOf(2025, 12, 15, 12, 45, 55, 5555),
@@ -1411,6 +1414,7 @@ final class DateTimeTest extends TestCase
                 self::zonedOf(2026, 02, 15, 12, 45, 55, 5555, '+01:00'),
                 Duration::of(days: 62),
             ],
+
             // ZonedDateTime vs \DateTimeInterface
             'ZonedDateTime.Native.Zero' => [
                 self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),

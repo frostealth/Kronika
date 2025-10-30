@@ -220,7 +220,7 @@ final readonly class Minute implements TimeUnit
      */
     public function compareTo(self $other): Compared
     {
-        return Compared::compare($this->value(), $other->value());
+        return Compared::of($this->value() <=> $other->value());
     }
 
     /** @return non-empty-string */

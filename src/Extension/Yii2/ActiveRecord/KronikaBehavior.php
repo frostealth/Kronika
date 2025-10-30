@@ -105,15 +105,15 @@ final class KronikaBehavior extends Behavior
     /** @var TFormatOptions */
     public static array $defaultFormats = [
         Date::class => 'Y-m-d',
-        Time::class => 'H:i:s',
-        LocalDateTime::class => 'Y-m-d\TH:i:s',
-        ZonedDateTime::class => \DateTimeInterface::ATOM,
+        Time::class => 'H:i:s.u',
+        LocalDateTime::class => 'Y-m-d\TH:i:s.u',
+        ZonedDateTime::class => 'Y-m-d\TH:i:s.uP',
     ];
 
     /** @var TTimezoneOptions */
     public static array $defaultTimezone = [
         'store' => false,
-        'suffix' => '_Timezone',
+        'suffix' => '_timezone',
         'force' => null,
     ];
 
@@ -258,12 +258,12 @@ final class KronikaBehavior extends Behavior
         $this->syncTimezones();
 
         $this->castAttributesToDatabaseValues($this->attributeNames());
-        $this->castAttributesToDatabaseValues($this->timezoneAttributesNames());
+        $this->castAttributesToDatabaseValues($this->timezoneAttributeNames());
     }
 
     private function castAllToObjects(): void
     {
-        $this->castAttributesToObjects($this->timezoneAttributesNames());
+        $this->castAttributesToObjects($this->timezoneAttributeNames());
         $this->castAttributesToObjects($this->attributeNames());
     }
 
@@ -430,9 +430,6 @@ final class KronikaBehavior extends Behavior
     private function attributeNames(): iterable
     {
         $attributes = $this->attributes;
-
-        // timezones are a priority
-        yield from $attributes[\DateTimeZone::class] ?? [];
         unset($attributes[\DateTimeZone::class]);
 
         foreach ($attributes as $names) {
@@ -441,21 +438,21 @@ final class KronikaBehavior extends Behavior
     }
 
     /** @return iterable<TAttributeName> */
-    private function zonedAttributeNames(): iterable
+    private function timezoneAttributeNames(): iterable
     {
-        yield from $this->attributes[ZonedDateTime::class] ?? [];
+        yield from $this->attributes[\DateTimeZone::class] ?? [];
+
+        if ($this->shouldStoreTimezone()) {
+            foreach ($this->zonedAttributeNames() as $attributeName) {
+                yield $this->timezoneAttributeNameFor($attributeName);
+            }
+        }
     }
 
     /** @return iterable<TAttributeName> */
-    private function timezoneAttributesNames(): iterable
+    private function zonedAttributeNames(): iterable
     {
-        if (! $this->shouldStoreTimezone()) {
-            return;
-        }
-
-        foreach ($this->zonedAttributeNames() as $attributeName) {
-            yield $this->timezoneAttributeNameFor($attributeName);
-        }
+        yield from $this->attributes[ZonedDateTime::class] ?? [];
     }
 
     /**
@@ -471,7 +468,7 @@ final class KronikaBehavior extends Behavior
     /** @return non-empty-string */
     private function timezoneSuffix(): string
     {
-        return $this->timezone['suffix'] ?? self::$defaultTimezone['suffix'] ?? '_Timezone';
+        return $this->timezone['suffix'] ?? self::$defaultTimezone['suffix'] ?? '_timezone';
     }
 
     private function forcedTimezone(): ?\DateTimeZone

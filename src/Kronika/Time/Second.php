@@ -281,7 +281,7 @@ final readonly class Second implements TimeUnit
      */
     public function compareTo(self $other): Compared
     {
-        return Compared::compare((string)$this, (string)$other);
+        return Compared::of((string)$this <=> (string)$other);
     }
 
     /** @return non-empty-string */

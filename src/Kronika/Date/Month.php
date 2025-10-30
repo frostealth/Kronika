@@ -297,7 +297,7 @@ enum Month: int implements DateUnit
      */
     public function compareTo(self $other): Compared
     {
-        return Compared::compare($this->number(), $other->number());
+        return Compared::of($this->number() <=> $other->number());
     }
 
     /** @internal */

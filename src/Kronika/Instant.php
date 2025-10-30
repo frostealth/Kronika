@@ -327,7 +327,7 @@ final readonly class Instant
      */
     public function compareTo(self $other): Compared
     {
-        return Compared::compare($this->value(), $other->value());
+        return Compared::of($this->value() <=> $other->value());
     }
 
     private function math(): Math

@@ -67,27 +67,6 @@ final readonly class Duration
         return $instance ??= self::of(seconds: 0);
     }
 
-    /**
-     * Obtains an instance of Duration between given date-times.
-     *
-     * ```
-     * // 2025-12-31 12:15:30 vs 2026-01-01 00:00:00
-     * $duration = Duration::between($from, $to);
-     * $duration->days();     // 0
-     * $duration->hours();    // 11
-     * $duration->minutes();  // 44
-     * $duration->seconds();  // 30
-     * ```
-     */
-    public static function between(\DateTimeInterface $from, \DateTimeInterface $to): self
-    {
-        if ($from >= $to) {
-            return self::zero();
-        }
-
-        return self::of(seconds: $to->getTimestamp() - $from->getTimestamp());
-    }
-
     /** @param non-negative-int $seconds */
     private function __construct(
         private int $seconds,
@@ -475,7 +454,7 @@ final readonly class Duration
      */
     public function compareTo(self $other): Compared
     {
-        return Compared::compare($this->seconds, $other->seconds);
+        return Compared::of($this->seconds <=> $other->seconds);
     }
 
     /**

@@ -14,21 +14,32 @@ declare(strict_types=1);
 namespace Kronika\Utils;
 
 /**
+ * Represents a comparison result.
+ *
+ * ```
+ * $result = Compared::of($first <=> $second);
+ * // check if $first is less than $second
+ * $result->less();
+ * // check if $first is less than or equal to $second
+ * $result->lessOrEqual();
+ * // check if $first is equal to $second
+ * $result->equal();
+ * // check if $first is not equal to $second
+ * $result->notEqual();
+ * // check if $first is greater than or equal to $second
+ * $result->greaterOrEqual();
+ * // check if $first is greater than $second
+ * $result->greater();
+ * ```
+ *
  * @psalm-type Result=int<-1,1>
  */
 final readonly class Compared
 {
-    /**
-     * @template T
-     *
-     * @param T $first
-     * @param T $second
-     *
-     * @internal
-     */
-    public static function compare(mixed $first, mixed $second): self
+    /** @param Result $result */
+    public static function of(int $result): self
     {
-        return new self($first <=> $second);
+        return new self($result);
     }
 
     /** @param Result $result */
