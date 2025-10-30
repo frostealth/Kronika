@@ -14,32 +14,34 @@ declare(strict_types=1);
 namespace Kronika\Tests\Date;
 
 use Kronika\Date\DayOfWeek;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;
 
+#[CoversClass(DayOfWeek::class)]
 final class DayOfWeekTest extends TestCase
 {
     public function testBasic(): void
     {
         $day = DayOfWeek::of(3);
 
-        $this->assertEquals(3, $day->number());
-        $this->assertTrue($day->is(3));
-        $this->assertFalse($day->is(5));
+        self::assertEquals(3, $day->number());
+        self::assertTrue($day->is(3));
+        self::assertFalse($day->is(5));
 
-        $this->assertNotSame($day, DayOfWeek::of(2));
-        $this->assertSame($day, DayOfWeek::of(3));
+        self::assertNotSame($day, DayOfWeek::of(2));
+        self::assertSame($day, DayOfWeek::of(3));
 
-        $this->assertSame(DayOfWeek::Monday, DayOfWeek::of(1));
-        $this->assertSame(DayOfWeek::Tuesday, DayOfWeek::of(2));
-        $this->assertSame(DayOfWeek::Wednesday, DayOfWeek::of(3));
-        $this->assertSame(DayOfWeek::Thursday, DayOfWeek::of(4));
-        $this->assertSame(DayOfWeek::Friday, DayOfWeek::of(5));
-        $this->assertSame(DayOfWeek::Saturday, DayOfWeek::of(6));
-        $this->assertSame(DayOfWeek::Sunday, DayOfWeek::of(7));
+        self::assertSame(DayOfWeek::Monday, DayOfWeek::of(1));
+        self::assertSame(DayOfWeek::Tuesday, DayOfWeek::of(2));
+        self::assertSame(DayOfWeek::Wednesday, DayOfWeek::of(3));
+        self::assertSame(DayOfWeek::Thursday, DayOfWeek::of(4));
+        self::assertSame(DayOfWeek::Friday, DayOfWeek::of(5));
+        self::assertSame(DayOfWeek::Saturday, DayOfWeek::of(6));
+        self::assertSame(DayOfWeek::Sunday, DayOfWeek::of(7));
 
-        $this->assertSame(DayOfWeek::Sunday, DayOfWeek::of(0));
+        self::assertSame(DayOfWeek::Sunday, DayOfWeek::of(0));
     }
 
     #[Depends('testBasic')]
@@ -72,7 +74,7 @@ final class DayOfWeekTest extends TestCase
     #[DataProvider('nameProvider')]
     public function testName(DayOfWeek $day, string $expected): void
     {
-        $this->assertEquals($expected, $day->name());
+        self::assertEquals($expected, $day->name());
     }
 
     public static function nextProvider(): array
@@ -92,7 +94,7 @@ final class DayOfWeekTest extends TestCase
     #[DataProvider('nextProvider')]
     public function testNext(DayOfWeek $day, DayOfWeek $expected): void
     {
-        $this->assertSame($expected, $day->next());
+        self::assertSame($expected, $day->next());
     }
 
     public static function previousProvider(): array
@@ -112,7 +114,7 @@ final class DayOfWeekTest extends TestCase
     #[DataProvider('previousProvider')]
     public function testPrevious(DayOfWeek $day, DayOfWeek $expected): void
     {
-        $this->assertSame($expected, $day->previous());
+        self::assertSame($expected, $day->previous());
     }
 
     public static function comparisonProvider(): array
@@ -130,20 +132,20 @@ final class DayOfWeekTest extends TestCase
     #[DataProvider('comparisonProvider')]
     public function testComparison(DayOfWeek $a, DayOfWeek $b, int $expected): void
     {
-        $this->assertTrue($a->isEqualTo($a));
-        $this->assertFalse($a->isNotEqualTo($a));
-        $this->assertFalse($a->isBefore($a));
-        $this->assertFalse($a->isAfter($a));
-        $this->assertTrue($a->isBeforeOrEqualTo($a));
-        $this->assertTrue($a->isAfterOrEqualTo($a));
+        self::assertTrue($a->isEqualTo($a));
+        self::assertFalse($a->isNotEqualTo($a));
+        self::assertFalse($a->isBefore($a));
+        self::assertFalse($a->isAfter($a));
+        self::assertTrue($a->isBeforeOrEqualTo($a));
+        self::assertTrue($a->isAfterOrEqualTo($a));
 
         $comparison = $a->compareTo($b);
-        $this->assertEquals($expected, $comparison->value());
-        $this->assertEquals($comparison->less(), $a->isBefore($b));
-        $this->assertEquals($comparison->greater(), $a->isAfter($b));
-        $this->assertEquals($comparison->equal(), $a->isEqualTo($b));
-        $this->assertEquals($comparison->notEqual(), $a->isNotEqualTo($b));
-        $this->assertEquals($comparison->lessOrEqual(), $a->isBeforeOrEqualTo($b));
-        $this->assertEquals($comparison->greaterOrEqual(), $a->isAfterOrEqualTo($b));
+        self::assertEquals($expected, $comparison->value());
+        self::assertEquals($comparison->less(), $a->isBefore($b));
+        self::assertEquals($comparison->greater(), $a->isAfter($b));
+        self::assertEquals($comparison->equal(), $a->isEqualTo($b));
+        self::assertEquals($comparison->notEqual(), $a->isNotEqualTo($b));
+        self::assertEquals($comparison->lessOrEqual(), $a->isBeforeOrEqualTo($b));
+        self::assertEquals($comparison->greaterOrEqual(), $a->isAfterOrEqualTo($b));
     }
 }

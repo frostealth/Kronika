@@ -22,11 +22,13 @@ use Kronika\Time;
 use Kronika\Time\Second;
 use Kronika\Unit;
 use Kronika\ZonedDateTime;
+use PHPUnit\Framework\Attributes\CoversClassesThatImplementInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\DependsExternal;
 use PHPUnit\Framework\Attributes\DependsOnClass;
 use PHPUnit\Framework\TestCase;
 
+#[CoversClassesThatImplementInterface(DateTime::class)]
 final class DateTimeTest extends TestCase
 {
     private const int LESS = -1;
@@ -1136,22 +1138,22 @@ final class DateTimeTest extends TestCase
     #[DataProvider('comparisonProvider')]
     public function testComparison(DateTime $a, DateTime|Unit|\DateTimeInterface $b, Precision $precision, int $expected): void
     {
-        $this->assertFalse($a->isBefore($a, $precision));
-        $this->assertTrue($a->isBeforeOrEqualTo($a, $precision));
-        $this->assertTrue($a->isEqualTo($a, $precision));
-        $this->assertFalse($a->isNotEqualTo($a, $precision));
-        $this->assertTrue($a->isAfterOrEqualTo($a, $precision));
-        $this->assertFalse($a->isAfter($a, $precision));
+        self::assertFalse($a->isBefore($a, $precision));
+        self::assertTrue($a->isBeforeOrEqualTo($a, $precision));
+        self::assertTrue($a->isEqualTo($a, $precision));
+        self::assertFalse($a->isNotEqualTo($a, $precision));
+        self::assertTrue($a->isAfterOrEqualTo($a, $precision));
+        self::assertFalse($a->isAfter($a, $precision));
 
         $comparison = $a->compareTo($b, $precision);
-        $this->assertEquals($expected, $comparison->value());
-        $this->assertEquals($comparison->less(), $a->isBefore($b, $precision));
-        $this->assertEquals($comparison->lessOrEqual(), $a->isBeforeOrEqualTo($b, $precision));
-        $this->assertEquals($comparison->greater(), $a->isAfter($b, $precision));
-        $this->assertEquals($comparison->equal(), $a->isEqualTo($b, $precision));
-        $this->assertEquals($comparison->notEqual(), $a->isNotEqualTo($b, $precision));
-        $this->assertEquals($comparison->greaterOrEqual(), $a->isAfterOrEqualTo($b, $precision));
-        $this->assertEquals($comparison->notEqual(), $a->isNotEqualTo($b, $precision));
+        self::assertEquals($expected, $comparison->value());
+        self::assertEquals($comparison->less(), $a->isBefore($b, $precision));
+        self::assertEquals($comparison->lessOrEqual(), $a->isBeforeOrEqualTo($b, $precision));
+        self::assertEquals($comparison->greater(), $a->isAfter($b, $precision));
+        self::assertEquals($comparison->equal(), $a->isEqualTo($b, $precision));
+        self::assertEquals($comparison->notEqual(), $a->isNotEqualTo($b, $precision));
+        self::assertEquals($comparison->greaterOrEqual(), $a->isAfterOrEqualTo($b, $precision));
+        self::assertEquals($comparison->notEqual(), $a->isNotEqualTo($b, $precision));
     }
 
     public static function resetProvider(): array
@@ -1173,11 +1175,11 @@ final class DateTimeTest extends TestCase
     {
         $result = $datetime->resetMicro();
 
-        $this->assertSame($datetime->date(), $result->date());
-        $this->assertSame($datetime->hour(), $result->hour());
-        $this->assertSame($datetime->minute(), $result->minute());
-        $this->assertEquals($datetime->second()->second(), $result->second()->second());
-        $this->assertEquals(0, $result->second()->microsecond());
+        self::assertSame($datetime->date(), $result->date());
+        self::assertSame($datetime->hour(), $result->hour());
+        self::assertSame($datetime->minute(), $result->minute());
+        self::assertEquals($datetime->second()->second(), $result->second()->second());
+        self::assertEquals(0, $result->second()->microsecond());
     }
 
     #[DependsExternal(ZonedDateTimeTest::class, 'testBasic')]
@@ -1187,11 +1189,11 @@ final class DateTimeTest extends TestCase
     {
         $result = $datetime->resetSecond();
 
-        $this->assertSame($datetime->date(), $result->date());
-        $this->assertSame($datetime->hour(), $result->hour());
-        $this->assertSame($datetime->minute(), $result->minute());
-        $this->assertEquals(0, $result->second()->second());
-        $this->assertEquals(0, $result->second()->microsecond());
+        self::assertSame($datetime->date(), $result->date());
+        self::assertSame($datetime->hour(), $result->hour());
+        self::assertSame($datetime->minute(), $result->minute());
+        self::assertEquals(0, $result->second()->second());
+        self::assertEquals(0, $result->second()->microsecond());
     }
 
     public static function untilProvider(): array
@@ -1457,7 +1459,7 @@ final class DateTimeTest extends TestCase
     {
         $actual = $datetime->until($end);
 
-        $this->assertEquals($expected->inSeconds(), $actual->inSeconds());
+        self::assertEquals($expected->inSeconds(), $actual->inSeconds());
     }
 
     public static function withProvider(): array
@@ -1589,34 +1591,34 @@ final class DateTimeTest extends TestCase
         $result = $datetime->with($unit);
 
          if ($unit instanceof Date) {
-            $this->assertSame($unit, $result->date());
-            $this->assertSame($datetime->time(), $result->time());
+            self::assertSame($unit, $result->date());
+            self::assertSame($datetime->time(), $result->time());
             if ($datetime instanceof ZonedDateTime && $result instanceof ZonedDateTime) {
-                $this->assertEquals($datetime->timezone()->getName(), $result->timezone()->getName());
+                self::assertEquals($datetime->timezone()->getName(), $result->timezone()->getName());
             }
         } elseif ($unit instanceof Date\DateUnit) {
-            $this->assertSame($datetime->date()->with($unit), $result->date());
-            $this->assertSame($datetime->time(), $result->time());
+            self::assertSame($datetime->date()->with($unit), $result->date());
+            self::assertSame($datetime->time(), $result->time());
             if ($datetime instanceof ZonedDateTime && $result instanceof ZonedDateTime) {
-                $this->assertEquals($datetime->timezone()->getName(), $result->timezone()->getName());
+                self::assertEquals($datetime->timezone()->getName(), $result->timezone()->getName());
             }
         } elseif ($unit instanceof Time) {
-            $this->assertSame($datetime->date(), $result->date());
-            $this->assertSame($unit, $result->time());
+            self::assertSame($datetime->date(), $result->date());
+            self::assertSame($unit, $result->time());
             if ($datetime instanceof ZonedDateTime && $result instanceof ZonedDateTime) {
-                $this->assertEquals($datetime->timezone()->getName(), $result->timezone()->getName());
+                self::assertEquals($datetime->timezone()->getName(), $result->timezone()->getName());
             }
         } elseif ($unit instanceof Time\TimeUnit) {
-            $this->assertSame($datetime->date(), $result->date());
-            $this->assertSame($datetime->time()->with($unit), $result->time());
+            self::assertSame($datetime->date(), $result->date());
+            self::assertSame($datetime->time()->with($unit), $result->time());
             if ($datetime instanceof ZonedDateTime && $result instanceof ZonedDateTime) {
-                $this->assertEquals($datetime->timezone()->getName(), $result->timezone()->getName());
+                self::assertEquals($datetime->timezone()->getName(), $result->timezone()->getName());
             }
         } elseif ($unit instanceof \DateTimeZone) {
-            $this->assertSame($datetime->date(), $result->date());
-            $this->assertSame($datetime->time(), $result->time());
+            self::assertSame($datetime->date(), $result->date());
+            self::assertSame($datetime->time(), $result->time());
             if ($result instanceof ZonedDateTime) {
-                $this->assertEquals($unit->getName(), $result->timezone()->getName());
+                self::assertEquals($unit->getName(), $result->timezone()->getName());
             }
         }
     }
@@ -1698,7 +1700,7 @@ final class DateTimeTest extends TestCase
     {
         $actual = $datetime->add($duration);
 
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
     public static function subProvider(): array
@@ -1778,7 +1780,7 @@ final class DateTimeTest extends TestCase
     {
         $actual = $datetime->sub($duration);
 
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
     private static function localOf(

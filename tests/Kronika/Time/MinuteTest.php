@@ -14,22 +14,24 @@ declare(strict_types=1);
 namespace Kronika\Tests\Time;
 
 use Kronika\Time\Minute;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;
 
+#[CoversClass(Minute::class)]
 final class MinuteTest extends TestCase
 {
     public function testBasic(): void
     {
         $minute = Minute::of(35);
 
-        $this->assertEquals(35, $minute->value());
-        $this->assertTrue($minute->is(35));
+        self::assertEquals(35, $minute->value());
+        self::assertTrue($minute->is(35));
 
-        $this->assertNotSame($minute, Minute::of(2));
-        $this->assertSame($minute, Minute::of($minute));
-        $this->assertSame($minute, Minute::of(35));
+        self::assertNotSame($minute, Minute::of(2));
+        self::assertSame($minute, Minute::of($minute));
+        self::assertSame($minute, Minute::of(35));
     }
 
     #[Depends('testBasic')]
@@ -52,40 +54,40 @@ final class MinuteTest extends TestCase
     public function testZero(): void
     {
         $actual = Minute::zero();
-        $this->assertEquals(0, $actual->value());
-        $this->assertTrue($actual->isZero());
-        $this->assertFalse($actual->isLast());
+        self::assertEquals(0, $actual->value());
+        self::assertTrue($actual->isZero());
+        self::assertFalse($actual->isLast());
 
         unset($actual);
         $expected = Minute::zero();
         $actual = Minute::of(0);
-        $this->assertSame($expected, $actual);
-        $this->assertSame(Minute::zero(), $actual);
-        $this->assertTrue($actual->isZero());
-        $this->assertFalse($actual->isLast());
+        self::assertSame($expected, $actual);
+        self::assertSame(Minute::zero(), $actual);
+        self::assertTrue($actual->isZero());
+        self::assertFalse($actual->isLast());
 
         unset($expected, $actual);
-        $this->assertSame(Minute::of(0), Minute::zero());
+        self::assertSame(Minute::of(0), Minute::zero());
     }
 
     #[Depends('testBasic')]
     public function testLast(): void
     {
         $actual = Minute::last();
-        $this->assertEquals(59, $actual->value());
-        $this->assertFalse($actual->isZero());
-        $this->assertTrue($actual->isLast());
+        self::assertEquals(59, $actual->value());
+        self::assertFalse($actual->isZero());
+        self::assertTrue($actual->isLast());
 
         unset($actual);
         $expected = Minute::last();
         $actual = Minute::of(59);
-        $this->assertSame($expected, $actual);
-        $this->assertSame(Minute::last(), $actual);
-        $this->assertFalse($actual->isZero());
-        $this->assertTrue($actual->isLast());
+        self::assertSame($expected, $actual);
+        self::assertSame(Minute::last(), $actual);
+        self::assertFalse($actual->isZero());
+        self::assertTrue($actual->isLast());
 
         unset($expected, $actual);
-        $this->assertSame(Minute::of(59), Minute::last());
+        self::assertSame(Minute::of(59), Minute::last());
     }
 
     public static function toStringProvider(): array
@@ -103,7 +105,7 @@ final class MinuteTest extends TestCase
     #[DataProvider('toStringProvider')]
     public function testToString(Minute $minute, string $expected): void
     {
-        $this->assertEquals($expected, (string)$minute);
+        self::assertEquals($expected, (string)$minute);
     }
 
     public static function comparisonProvider(): array
@@ -119,20 +121,20 @@ final class MinuteTest extends TestCase
     #[DataProvider('comparisonProvider')]
     public function testComparison(Minute $a, Minute $b, int $expected): void
     {
-        $this->assertTrue($a->isEqualTo($a));
-        $this->assertFalse($a->isNotEqualTo($a));
-        $this->assertFalse($a->isBefore($a));
-        $this->assertFalse($a->isAfter($a));
-        $this->assertTrue($a->isBeforeOrEqualTo($a));
-        $this->assertTrue($a->isAfterOrEqualTo($a));
+        self::assertTrue($a->isEqualTo($a));
+        self::assertFalse($a->isNotEqualTo($a));
+        self::assertFalse($a->isBefore($a));
+        self::assertFalse($a->isAfter($a));
+        self::assertTrue($a->isBeforeOrEqualTo($a));
+        self::assertTrue($a->isAfterOrEqualTo($a));
 
         $comparison = $a->compareTo($b);
-        $this->assertEquals($expected, $comparison->value());
-        $this->assertEquals($comparison->less(), $a->isBefore($b));
-        $this->assertEquals($comparison->greater(), $a->isAfter($b));
-        $this->assertEquals($comparison->equal(), $a->isEqualTo($b));
-        $this->assertEquals($comparison->notEqual(), $a->isNotEqualTo($b));
-        $this->assertEquals($comparison->lessOrEqual(), $a->isBeforeOrEqualTo($b));
-        $this->assertEquals($comparison->greaterOrEqual(), $a->isAfterOrEqualTo($b));
+        self::assertEquals($expected, $comparison->value());
+        self::assertEquals($comparison->less(), $a->isBefore($b));
+        self::assertEquals($comparison->greater(), $a->isAfter($b));
+        self::assertEquals($comparison->equal(), $a->isEqualTo($b));
+        self::assertEquals($comparison->notEqual(), $a->isNotEqualTo($b));
+        self::assertEquals($comparison->lessOrEqual(), $a->isBeforeOrEqualTo($b));
+        self::assertEquals($comparison->greaterOrEqual(), $a->isAfterOrEqualTo($b));
     }
 }

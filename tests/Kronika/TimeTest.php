@@ -21,11 +21,13 @@ use Kronika\Tests\Time\MinuteTest;
 use Kronika\Tests\Time\SecondTest;
 use Kronika\Time;
 use Kronika\ZonedDateTime;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\Attributes\DependsOnClass;
 use PHPUnit\Framework\TestCase;
 
+#[CoversClass(Time::class)]
 final class TimeTest extends TestCase
 {
     private const int LESS = -1;
@@ -53,11 +55,11 @@ final class TimeTest extends TestCase
     {
         $time = Time::of(hour: $hour, minute: $minute, second: $second);
 
-        $this->assertEquals($hour, $time->hour());
-        $this->assertEquals($minute, $time->minute());
-        $this->assertEquals($second, $time->second());
-        $this->assertSame($time, Time::of(hour: $hour->value(), minute: $minute->value(), second: $second));
-        $this->assertEquals(
+        self::assertEquals($hour, $time->hour());
+        self::assertEquals($minute, $time->minute());
+        self::assertEquals($second, $time->second());
+        self::assertSame($time, Time::of(hour: $hour->value(), minute: $minute->value(), second: $second));
+        self::assertEquals(
             $time->with($time->second()->resetMicro()),
             Time::of(hour: $hour->value(), minute: $minute->value(), second: $second->second()),
         );
@@ -81,7 +83,7 @@ final class TimeTest extends TestCase
     {
         $result = $time->with($unit);
 
-        $this->assertEquals($expected, $result);
+        self::assertEquals($expected, $result);
     }
 
     public static function formatProvider(): array
@@ -102,7 +104,7 @@ final class TimeTest extends TestCase
     #[DataProvider('formatProvider')]
     public function testFormat(Time $time, string $format, string $expected): void
     {
-        $this->assertEquals($expected, $time->format($format));
+        self::assertEquals($expected, $time->format($format));
     }
 
     public static function ofDateTimeProvider(): array
@@ -143,7 +145,7 @@ final class TimeTest extends TestCase
     {
         $actual = Time::ofDateTime($input);
 
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
     #[Depends('testBasic')]
@@ -151,7 +153,7 @@ final class TimeTest extends TestCase
     {
         $time = Time::of(hour: 17, minute: 5, second: Time\Second::of(second: 39, micro: 4582));
 
-        $this->assertEquals('17:05:39.004582', (string) $time);
+        self::assertEquals('17:05:39.004582', (string) $time);
     }
 
     public static function comparisonProvider(): array
@@ -307,20 +309,20 @@ final class TimeTest extends TestCase
     #[DataProvider('comparisonProvider')]
     public function testComparison(Time $a, Time $b, Precision $precision, int $expected): void
     {
-        $this->assertTrue($a->isEqualTo($a));
-        $this->assertFalse($a->isNotEqualTo($a));
-        $this->assertFalse($a->isBefore($a));
-        $this->assertFalse($a->isAfter($a));
-        $this->assertTrue($a->isBeforeOrEqualTo($a));
-        $this->assertTrue($a->isAfterOrEqualTo($a));
+        self::assertTrue($a->isEqualTo($a));
+        self::assertFalse($a->isNotEqualTo($a));
+        self::assertFalse($a->isBefore($a));
+        self::assertFalse($a->isAfter($a));
+        self::assertTrue($a->isBeforeOrEqualTo($a));
+        self::assertTrue($a->isAfterOrEqualTo($a));
 
         $comparison = $a->compareTo($b, $precision);
-        $this->assertEquals($expected, $comparison->value());
-        $this->assertEquals($comparison->less(), $a->isBefore($b, $precision));
-        $this->assertEquals($comparison->greater(), $a->isAfter($b, $precision));
-        $this->assertEquals($comparison->equal(), $a->isEqualTo($b, $precision));
-        $this->assertEquals($comparison->notEqual(), $a->isNotEqualTo($b, $precision));
-        $this->assertEquals($comparison->lessOrEqual(), $a->isBeforeOrEqualTo($b, $precision));
-        $this->assertEquals($comparison->greaterOrEqual(), $a->isAfterOrEqualTo($b, $precision));
+        self::assertEquals($expected, $comparison->value());
+        self::assertEquals($comparison->less(), $a->isBefore($b, $precision));
+        self::assertEquals($comparison->greater(), $a->isAfter($b, $precision));
+        self::assertEquals($comparison->equal(), $a->isEqualTo($b, $precision));
+        self::assertEquals($comparison->notEqual(), $a->isNotEqualTo($b, $precision));
+        self::assertEquals($comparison->lessOrEqual(), $a->isBeforeOrEqualTo($b, $precision));
+        self::assertEquals($comparison->greaterOrEqual(), $a->isAfterOrEqualTo($b, $precision));
     }
 }

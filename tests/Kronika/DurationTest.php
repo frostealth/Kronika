@@ -14,10 +14,12 @@ declare(strict_types=1);
 namespace Kronika\Tests;
 
 use Kronika\Duration;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;
 
+#[CoversClass(Duration::class)]
 final class DurationTest extends TestCase
 {
     private const int LESS = -1;
@@ -110,13 +112,13 @@ final class DurationTest extends TestCase
     {
         $duration = Duration::of(...$args);
 
-        $this->assertEquals($expected['days'] ?? 0, $duration->days());
-        $this->assertEquals($expected['hours'] ?? 0, $duration->hours());
-        $this->assertEquals($expected['minutes'] ?? 0, $duration->minutes());
-        $this->assertEquals($expected['seconds'] ?? 0, $duration->seconds());
-        $this->assertEquals(\array_sum($args) === 0, $duration->isZero());
-        $this->assertSame(Duration::of(...$args), $duration);
-        $this->assertNotSame(Duration::of(
+        self::assertEquals($expected['days'] ?? 0, $duration->days());
+        self::assertEquals($expected['hours'] ?? 0, $duration->hours());
+        self::assertEquals($expected['minutes'] ?? 0, $duration->minutes());
+        self::assertEquals($expected['seconds'] ?? 0, $duration->seconds());
+        self::assertEquals(\array_sum($args) === 0, $duration->isZero());
+        self::assertSame(Duration::of(...$args), $duration);
+        self::assertNotSame(Duration::of(
             ...[...$args, 'seconds' => ($args['seconds'] ?? 0) + 1]),
             $duration,
         );
@@ -136,28 +138,28 @@ final class DurationTest extends TestCase
         $inMinutes = ($expected['minutes'] ?? 0) + $inHours * 60;
         $inSeconds = ($expected['seconds'] ?? 0) + $inMinutes * 60;
 
-        $this->assertEquals($inDays, $duration->inDays());
-        $this->assertEquals($inHours, $duration->inHours());
-        $this->assertEquals($inMinutes, $duration->inMinutes());
-        $this->assertEquals($inSeconds, $duration->inSeconds());
+        self::assertEquals($inDays, $duration->inDays());
+        self::assertEquals($inHours, $duration->inHours());
+        self::assertEquals($inMinutes, $duration->inMinutes());
+        self::assertEquals($inSeconds, $duration->inSeconds());
 
         $actual = $duration->dropToHours();
-        $this->assertEquals(0, $actual->days());
-        $this->assertEquals($expected['hours'] ?? 0, $actual->hours());
-        $this->assertEquals($expected['minutes'] ?? 0, $actual->minutes());
-        $this->assertEquals($expected['seconds'] ?? 0, $actual->seconds());
+        self::assertEquals(0, $actual->days());
+        self::assertEquals($expected['hours'] ?? 0, $actual->hours());
+        self::assertEquals($expected['minutes'] ?? 0, $actual->minutes());
+        self::assertEquals($expected['seconds'] ?? 0, $actual->seconds());
 
         $actual = $duration->dropToMinutes();
-        $this->assertEquals(0, $actual->days());
-        $this->assertEquals(0, $actual->hours());
-        $this->assertEquals($expected['minutes'] ?? 0, $actual->minutes());
-        $this->assertEquals($expected['seconds'] ?? 0, $actual->seconds());
+        self::assertEquals(0, $actual->days());
+        self::assertEquals(0, $actual->hours());
+        self::assertEquals($expected['minutes'] ?? 0, $actual->minutes());
+        self::assertEquals($expected['seconds'] ?? 0, $actual->seconds());
 
         $actual = $duration->dropToSeconds();
-        $this->assertEquals(0, $actual->days());
-        $this->assertEquals(0, $actual->hours());
-        $this->assertEquals(0, $actual->minutes());
-        $this->assertEquals($expected['seconds'] ?? 0, $actual->seconds());
+        self::assertEquals(0, $actual->days());
+        self::assertEquals(0, $actual->hours());
+        self::assertEquals(0, $actual->minutes());
+        self::assertEquals($expected['seconds'] ?? 0, $actual->seconds());
     }
 
     public static function addProvider(): array
@@ -225,10 +227,10 @@ final class DurationTest extends TestCase
     {
         $actual = $a->add($b, $c);
 
-        $this->assertEquals($expected['days'] ?? 0, $actual->days());
-        $this->assertEquals($expected['hours'] ?? 0, $actual->hours());
-        $this->assertEquals($expected['minutes'] ?? 0, $actual->minutes());
-        $this->assertEquals($expected['seconds'] ?? 0, $actual->seconds());
+        self::assertEquals($expected['days'] ?? 0, $actual->days());
+        self::assertEquals($expected['hours'] ?? 0, $actual->hours());
+        self::assertEquals($expected['minutes'] ?? 0, $actual->minutes());
+        self::assertEquals($expected['seconds'] ?? 0, $actual->seconds());
     }
 
     public static function subProvider(): array
@@ -278,10 +280,10 @@ final class DurationTest extends TestCase
     {
         $actual = $a->sub($b, $c);
 
-        $this->assertEquals($expected['days'] ?? 0, $actual->days());
-        $this->assertEquals($expected['hours'] ?? 0, $actual->hours());
-        $this->assertEquals($expected['minutes'] ?? 0, $actual->minutes());
-        $this->assertEquals($expected['seconds'] ?? 0, $actual->seconds());
+        self::assertEquals($expected['days'] ?? 0, $actual->days());
+        self::assertEquals($expected['hours'] ?? 0, $actual->hours());
+        self::assertEquals($expected['minutes'] ?? 0, $actual->minutes());
+        self::assertEquals($expected['seconds'] ?? 0, $actual->seconds());
     }
 
     /**
@@ -296,22 +298,22 @@ final class DurationTest extends TestCase
         $duration = Duration::of(...$args);
 
         $actual = $duration->dropToHours();
-        $this->assertEquals(0, $actual->days());
-        $this->assertEquals($expected['hours'] ?? 0, $actual->hours());
-        $this->assertEquals($expected['minutes'] ?? 0, $actual->minutes());
-        $this->assertEquals($expected['seconds'] ?? 0, $actual->seconds());
+        self::assertEquals(0, $actual->days());
+        self::assertEquals($expected['hours'] ?? 0, $actual->hours());
+        self::assertEquals($expected['minutes'] ?? 0, $actual->minutes());
+        self::assertEquals($expected['seconds'] ?? 0, $actual->seconds());
 
         $actual = $duration->dropToMinutes();
-        $this->assertEquals(0, $actual->days());
-        $this->assertEquals(0, $actual->hours());
-        $this->assertEquals($expected['minutes'] ?? 0, $actual->minutes());
-        $this->assertEquals($expected['seconds'] ?? 0, $actual->seconds());
+        self::assertEquals(0, $actual->days());
+        self::assertEquals(0, $actual->hours());
+        self::assertEquals($expected['minutes'] ?? 0, $actual->minutes());
+        self::assertEquals($expected['seconds'] ?? 0, $actual->seconds());
 
         $actual = $duration->dropToSeconds();
-        $this->assertEquals(0, $actual->days());
-        $this->assertEquals(0, $actual->hours());
-        $this->assertEquals(0, $actual->minutes());
-        $this->assertEquals($expected['seconds'] ?? 0, $actual->seconds());
+        self::assertEquals(0, $actual->days());
+        self::assertEquals(0, $actual->hours());
+        self::assertEquals(0, $actual->minutes());
+        self::assertEquals($expected['seconds'] ?? 0, $actual->seconds());
     }
 
     public static function comparisonProvider(): array
@@ -329,12 +331,12 @@ final class DurationTest extends TestCase
     {
         $compared = $a->compareTo($b);
 
-        $this->assertEquals($expected, $compared->value());
-        $this->assertEquals($compared->less(), $a->isLessThan($b));
-        $this->assertEquals($compared->lessOrEqual(), $a->isLessThanOrEqualTo($b));
-        $this->assertEquals($compared->equal(), $a->isEqualTo($b));
-        $this->assertEquals($compared->notEqual(), $a->isNotEqualTo($b));
-        $this->assertEquals($compared->greaterOrEqual(), $a->isGreaterThanOrEqualTo($b));
-        $this->assertEquals($compared->greater(), $a->isGreaterThan($b));
+        self::assertEquals($expected, $compared->value());
+        self::assertEquals($compared->less(), $a->isLessThan($b));
+        self::assertEquals($compared->lessOrEqual(), $a->isLessThanOrEqualTo($b));
+        self::assertEquals($compared->equal(), $a->isEqualTo($b));
+        self::assertEquals($compared->notEqual(), $a->isNotEqualTo($b));
+        self::assertEquals($compared->greaterOrEqual(), $a->isGreaterThanOrEqualTo($b));
+        self::assertEquals($compared->greater(), $a->isGreaterThan($b));
     }
 }

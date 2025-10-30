@@ -27,8 +27,10 @@ use Kronika\Instant;
 use Kronika\LocalDateTime;
 use Kronika\Time;
 use Kronika\ZonedDateTime;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
+#[CoversClass(KronikaSubscribingHandler::class)]
 final class KronikaSubscribingHandlerTest extends TestCase
 {
     private Serializer $serializer;
@@ -86,24 +88,24 @@ final class KronikaSubscribingHandlerTest extends TestCase
         $serialized = $this->serializer->toArray($this->entry);
         $unserialized = $this->serializer->fromArray($serialized, Foo::class);
 
-        $this->assertSame($this->entry->date, $unserialized->date);
-        $this->assertSame($this->entry->year, $unserialized->year);
-        $this->assertSame($this->entry->month1, $unserialized->month1);
-        $this->assertSame($this->entry->month2, $unserialized->month2);
-        $this->assertSame($this->entry->dayOfMonth, $unserialized->dayOfMonth);
-        $this->assertSame($this->entry->dayOfWeek1, $unserialized->dayOfWeek1);
-        $this->assertSame($this->entry->dayOfWeek2, $unserialized->dayOfWeek2);
+        self::assertSame($this->entry->date, $unserialized->date);
+        self::assertSame($this->entry->year, $unserialized->year);
+        self::assertSame($this->entry->month1, $unserialized->month1);
+        self::assertSame($this->entry->month2, $unserialized->month2);
+        self::assertSame($this->entry->dayOfMonth, $unserialized->dayOfMonth);
+        self::assertSame($this->entry->dayOfWeek1, $unserialized->dayOfWeek1);
+        self::assertSame($this->entry->dayOfWeek2, $unserialized->dayOfWeek2);
 
-        $this->assertSame($this->entry->time, $unserialized->time);
-        $this->assertSame($this->entry->hour, $unserialized->hour);
-        $this->assertSame($this->entry->minute, $unserialized->minute);
-        $this->assertSame($this->entry->second, $unserialized->second);
+        self::assertSame($this->entry->time, $unserialized->time);
+        self::assertSame($this->entry->hour, $unserialized->hour);
+        self::assertSame($this->entry->minute, $unserialized->minute);
+        self::assertSame($this->entry->second, $unserialized->second);
 
-        $this->assertSame($this->entry->duration, $unserialized->duration);
-        $this->assertSame($this->entry->instant, $unserialized->instant);
-        $this->assertSame($this->entry->localDateTime, $unserialized->localDateTime);
-        $this->assertSame($this->entry->zonedDateTime, $unserialized->zonedDateTime);
+        self::assertSame($this->entry->duration, $unserialized->duration);
+        self::assertSame($this->entry->instant, $unserialized->instant);
+        self::assertSame($this->entry->localDateTime, $unserialized->localDateTime);
+        self::assertSame($this->entry->zonedDateTime, $unserialized->zonedDateTime);
 
-        $this->assertEquals($this->entry->nativeDateTime, $unserialized->nativeDateTime);
+        self::assertEquals($this->entry->nativeDateTime, $unserialized->nativeDateTime);
     }
 }
