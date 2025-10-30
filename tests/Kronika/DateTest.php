@@ -22,11 +22,13 @@ use Kronika\Tests\Date\MonthTest;
 use Kronika\Tests\Date\YearTest;
 use Kronika\Time;
 use Kronika\ZonedDateTime;
+use PHPUnit\Framework\Attributes\CoversClassesThatImplementInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\Attributes\DependsOnClass;
 use PHPUnit\Framework\TestCase;
 
+#[CoversClassesThatImplementInterface(DateTime::class)]
 final class DateTest extends TestCase
 {
     public static function ofProvider(): array

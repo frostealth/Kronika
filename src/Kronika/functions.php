@@ -15,7 +15,7 @@ namespace Kronika;
 
 if (! \function_exists('\\Kronika\\now')) {
     /**
-     * Obtains an instance of ZonedDateTime from the current time and a given or system default time-zone.
+     * Returns the current time with a given or system time-zone from the global clock.
      *
      * @example
      * ```
@@ -33,6 +33,20 @@ if (! \function_exists('\\Kronika\\now')) {
      */
     function now(?\DateTimeZone $timezone = null): ZonedDateTime
     {
-        return ZonedDateTime::ofDateTime(new \DateTimeImmutable(timezone: $timezone));
+        return \is_null($timezone) ? clock()->now() : clock()->now()->shiftTimezone($timezone);
+    }
+}
+
+if (! \function_exists('\\Kronika\\clock')) {
+    /**
+     * Global clock.
+     *
+     * @see now()
+     */
+    function clock(?Clock $clock = null): Clock
+    {
+        static $instance = $clock ?? new Clock\SystemClock();
+
+        return $instance = $clock ?? $instance;
     }
 }
