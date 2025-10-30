@@ -87,6 +87,8 @@ final readonly class Duration
      * $duration->minutes();  // 44
      * $duration->seconds();  // 30
      * ```
+     *
+     * @deprecated use {@see DateTime::until()}
      */
     public static function between(\DateTimeInterface $from, \DateTimeInterface $to): self
     {
@@ -498,7 +500,7 @@ final readonly class Duration
      */
     public function compareTo(self $other): Compared
     {
-        return Compared::compare($this->seconds, $other->seconds);
+        return Compared::of($this->seconds <=> $other->seconds);
     }
 
     /**

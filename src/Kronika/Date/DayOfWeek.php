@@ -254,7 +254,7 @@ enum DayOfWeek: int implements DateUnit
      */
     public function compareTo(self $other): Compared
     {
-        return Compared::compare($this->value, $other->value);
+        return Compared::of($this->value <=> $other->value);
     }
 
     /**

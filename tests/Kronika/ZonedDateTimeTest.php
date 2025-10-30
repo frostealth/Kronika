@@ -71,6 +71,22 @@ final class ZonedDateTimeTest extends TestCase
     }
 
     #[Depends('testBasic')]
+    public function testShiftTimezone(): void
+    {
+        $datetime = ZonedDateTime::of(
+            date: Date::of(2025, 12, 31),
+            time: Time::of(12, 15, 30),
+            timezone: new \DateTimeZone('+01:00'),
+        );
+
+        $actual = $datetime->shiftTimezone(new \DateTimeZone('+02:30'));
+
+        $this->assertEquals(new \DateTimeZone('+02:30'), $actual->timezone());
+        $this->assertEquals(Date::of(2025, 12, 31), $actual->date());
+        $this->assertEquals(Time::of(13, 45, 30), $actual->time());
+    }
+
+    #[Depends('testBasic')]
     public function testToLocalDateTime(): void
     {
         $local = LocalDateTime::of(Date::of(2025, 3, 24), Time::of(14, 8, 47));

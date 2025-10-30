@@ -116,7 +116,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     /**
-     * Obtain an instance of ZonedDateTime from a timestamp.
+     * Obtain an instance of ZonedDateTime with UTC time-zone from a given timestamp.
      */
     public static function ofTimestamp(float|int $timestamp): self
     {
@@ -223,7 +223,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     /**
-     * Returns a microsecond from this date-time.
+     * Returns the microsecond of this date-time.
      *
      * @return TMicrosecond
      */
@@ -257,9 +257,9 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      * $this->shiftTimezone(new \DateTimeZone('+02:30'));  // 2025-12-31 13:45:30 +02:30
      * ```
      */
-    public function shiftTimezone(\DateTimeZone $toTimezone): static
+    public function shiftTimezone(\DateTimeZone $to): static
     {
-        return $this->isInTimezone($toTimezone) ? $this : self::ofDateTime(parent::setTimezone($toTimezone));
+        return $this->isInTimezone($to) ? $this : self::ofDateTime($this->toNative()->setTimezone($to));
     }
 
     /**
@@ -322,11 +322,43 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         return self::ofLocal($this->local->sub($interval), $this->timezone());
     }
 
+    /**
+     * Checks if this date-time is in the same time-zone as another one.
+     *
+     * ```
+     * // 2025-12-31 12:15:30 +01:00 vs 2025-12-31 15:00:00 +01:00
+     * $this->isInTheSameTimezone($other);  // true
+     * ```
+     * ```
+     * // 2025-12-31 12:15:30 +01:00 vs 2025-12-31 15:00:00 UTC
+     * $this->isInTheSameTimezone($other);  // false
+     * ```
+     * ```
+     * // 2025-12-31 12:15:30 +00:00 vs 2025-12-31 15:00:00 UTC
+     * $this->isInTheSameTimezone($other);  // false
+     * ```
+     *
+     * @see self::isInTimezone()
+     */
     public function isInTheSameTimezoneAs(self|Native $other): bool
     {
         return $this->isInTimezone($other->getTimezone());
     }
 
+    /**
+     * Checks if the time-zone name of this date-time is equal to another one.
+     *
+     * ```
+     * // 2025-12-31 12:15:30 +01:00
+     * $this->isInTimezone(new \DateTimeZone("+01:00"));  // true
+     * $this->isInTimezone(new \DateTimeZone("+00:00"));  // false
+     * ```
+     * ```
+     * // 2025-12-31 12:15:30 UTC
+     * $this->isInTimezone(new \DateTimeZone("+00:00"));  // false
+     * $this->isInTimezone(new \DateTimeZone("UTC"));     // true
+     * ```
+     */
     public function isInTimezone(\DateTimeZone $timezone): bool
     {
         return $this->timezone()->getName() === $timezone->getName();
@@ -512,7 +544,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         $other = $dateTime instanceof LocalDateTime ? $dateTime->atTimezone($this->timezone()) : self::ofDateTime($dateTime);
 
         return match($precision) {
-            Precision::Micro => Compared::compare($this->timestamp(), $other->timestamp()),
+            Precision::Micro => Compared::of($this->timestamp() <=> $other->timestamp()),
             Precision::Second => $this->resetMicro()->compareTo($other->resetMicro()),
             Precision::Minute => $this->resetSecond()->compareTo($other->resetSecond()),
         };
@@ -521,10 +553,9 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     /** @see DateTime::until() */
     private function doUntil(DateTime|Native $end): Duration
     {
-        if ($end instanceof LocalDateTime) {
-            $end = $end->atTimezone($this->timezone());
-        }
+        $end = $end instanceof LocalDateTime ? self::ofLocal($end, $this->timezone()) : self::ofDateTime($end);
+        $end = $end->shiftTimezone($this->timezone());
 
-        return Duration::between(from: $this, to: $end);
+        return $this->instant()->until($end->instant());
     }
 }

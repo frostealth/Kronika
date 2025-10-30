@@ -225,7 +225,7 @@ final readonly class Year implements DateUnit
      */
     public function compareTo(self $other): Compared
     {
-        return Compared::compare($this->number(), $other->number());
+        return Compared::of($this->number() <=> $other->number());
     }
 
     /** @return non-empty-string */
