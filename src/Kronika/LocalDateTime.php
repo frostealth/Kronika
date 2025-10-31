@@ -51,45 +51,6 @@ final readonly class LocalDateTime implements DateTime
     }
 
     /**
-     * Obtains an instance of LocalDateTime from a given date and midnight time.
-     *
-     * ```
-     * // 2025-12-31 00:00:00
-     * $datetime = LocalDateTime::midnightOf(Date::of(2025, 12, 31));
-     * ```
-     */
-    public static function midnightOf(Date $date): self
-    {
-        return self::of($date, Time::midnight());
-    }
-
-    /**
-     * Obtains an instance of LocalDateTime from a given date and midday/noon time.
-     *
-     * ```
-     * // 2025-12-31 12:00:00
-     * $datetime = LocalDateTime::middayOf(Date::of(2025, 12, 31));
-     * ```
-     */
-    public static function middayOf(Date $date): self
-    {
-        return self::of($date, Time::midday());
-    }
-
-    /**
-     * Obtains an instance of LocalDateTime from a given date and time of the end of the day.
-     *
-     * ```
-     * // 2025-12-31 23:59:59.999999
-     * $datetime = LocalDateTime::endOfDayOf(Date::of(2025, 12, 31));
-     * ```
-     */
-    public static function endOfDayOf(Date $date): self
-    {
-        return self::of($date, Time::endOfDay());
-    }
-
-    /**
      * Obtains an instance of LocalDateTime from a date-time with a time-zone.
      */
     public static function ofDateTime(DateTime|\DateTimeInterface $dateTime): self
@@ -183,10 +144,10 @@ final readonly class LocalDateTime implements DateTime
      *
      * ```
      * // 2025-12-31 12:15:30
-     * $this->atTimezone(new \DateTimeZone('UTC'));  // 2025-12-31 12:15:30 UTC
+     * $this->at(new \DateTimeZone('UTC'));  // 2025-12-31 12:15:30 UTC
      * ```
      */
-    public function atTimezone(\DateTimeZone $timezone): ZonedDateTime
+    public function at(\DateTimeZone $timezone): ZonedDateTime
     {
         return ZonedDateTime::ofLocal($this, $timezone);
     }
@@ -283,16 +244,6 @@ final readonly class LocalDateTime implements DateTime
     public function format(string $format): string
     {
         return $this->toNative()->format($format);
-    }
-
-    /**
-     * @param non-empty-string $modifier
-     *
-     * @throws \DateMalformedStringException
-     */
-    public function modify(string $modifier): self
-    {
-        return self::ofDateTime($this->toNative()->modify($modifier));
     }
 
     /**

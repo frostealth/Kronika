@@ -189,6 +189,19 @@ final readonly class Date implements Unit
     }
 
     /**
+     * Returns an instance of LocalDateTime with this date and midday/noon time.
+     *
+     * ```
+     * // 2025-12-31
+     * $this->atMidday();  // 2025-12-31 12:00:00.000000
+     * ```
+     */
+    public function atMidday(): LocalDateTime
+    {
+        return $this->at(Time::midday());
+    }
+
+    /**
      * Returns an instance of LocalDateTime with this date and time of the end of the day.
      *
      * ```
@@ -215,7 +228,7 @@ final readonly class Date implements Unit
     public function add(Duration|\DateInterval $duration): self
     {
         if ($duration instanceof \DateInterval) {
-            return self::ofDateTime(LocalDateTime::midnightOf($this)->add($duration));
+            return self::ofDateTime($this->at(Time::midnight())->add($duration));
         }
 
         return self::ofInstant($this->instant()->add($duration->roundToDays()));
@@ -236,7 +249,7 @@ final readonly class Date implements Unit
     public function sub(Duration|\DateInterval $duration): self
     {
         if ($duration instanceof \DateInterval) {
-            return self::ofDateTime(LocalDateTime::endOfDayOf($this)->sub($duration));
+            return self::ofDateTime($this->at(Time::endOfDay())->sub($duration));
         }
 
         return self::ofInstant($this->instant()->sub($duration->roundToDays()));

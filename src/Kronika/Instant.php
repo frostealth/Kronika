@@ -81,10 +81,10 @@ final readonly class Instant
      *
      * ```
      * // 1767161730.004545
-     * $this->atTimezone(new \DateTimeZone('+01:00'));  // 2025-12-31 12:15:30.004545 +01:00
+     * $this->at(new \DateTimeZone('+01:00'));  // 2025-12-31 12:15:30.004545 +01:00
      * ```
      */
-    public function atTimezone(\DateTimeZone $timezone): ZonedDateTime
+    public function at(\DateTimeZone $timezone): ZonedDateTime
     {
         return ZonedDateTime::ofInstant($this, $timezone);
     }

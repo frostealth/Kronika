@@ -107,60 +107,6 @@ final class LocalDateTimeTest extends TestCase
     }
 
     #[Depends('testBasic')]
-    public function testMidnightOf(): void
-    {
-        $date = Date::of(2025, 12, 31);
-
-        $actual = LocalDateTime::midnightOf($date);
-
-        self::assertEquals(2025, $actual->year()->number());
-        self::assertEquals(12, $actual->month()->number());
-        self::assertEquals(31, $actual->day()->number());
-        self::assertEquals(Date\DayOfWeek::Wednesday, $actual->dayOfWeek());
-        self::assertEquals(0, $actual->hour()->value());
-        self::assertEquals(0, $actual->minute()->value());
-        self::assertEquals(0, $actual->second()->second());
-        self::assertEquals(0, $actual->second()->microsecond());
-        self::assertSame($actual, LocalDateTime::midnightOf($date));
-    }
-
-    #[Depends('testBasic')]
-    public function testMiddayOf(): void
-    {
-        $date = Date::of(2025, 12, 31);
-
-        $actual = LocalDateTime::middayOf($date);
-
-        self::assertEquals(2025, $actual->year()->number());
-        self::assertEquals(12, $actual->month()->number());
-        self::assertEquals(31, $actual->day()->number());
-        self::assertEquals(Date\DayOfWeek::Wednesday, $actual->dayOfWeek());
-        self::assertEquals(12, $actual->hour()->value());
-        self::assertEquals(0, $actual->minute()->value());
-        self::assertEquals(0, $actual->second()->second());
-        self::assertEquals(0, $actual->second()->microsecond());
-        self::assertSame($actual, LocalDateTime::middayOf($date));
-    }
-
-    #[Depends('testBasic')]
-    public function testEndOfDay(): void
-    {
-        $date = Date::of(2025, 12, 31);
-
-        $actual = LocalDateTime::endOfDayOf($date);
-
-        self::assertEquals(2025, $actual->year()->number());
-        self::assertEquals(12, $actual->month()->number());
-        self::assertEquals(31, $actual->day()->number());
-        self::assertEquals(Date\DayOfWeek::Wednesday, $actual->dayOfWeek());
-        self::assertEquals(23, $actual->hour()->value());
-        self::assertEquals(59, $actual->minute()->value());
-        self::assertEquals(59, $actual->second()->second());
-        self::assertEquals(999999, $actual->second()->microsecond());
-        self::assertSame($actual, LocalDateTime::endOfDayOf($date));
-    }
-
-    #[Depends('testBasic')]
     public function testToString(): void
     {
         $datetime = LocalDateTime::of(Date::of(2025, 3, 24), Time::endOfDay());

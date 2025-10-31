@@ -100,7 +100,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      */
     public static function midnightOf(Date $date, \DateTimeZone $timezone): self
     {
-        return self::ofLocal(LocalDateTime::midnightOf($date), $timezone);
+        return self::ofLocal($date->at(Time::midnight()), $timezone);
     }
 
     /**
@@ -555,7 +555,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     /** @see DateTime::compareTo() */
     private function doCompareTo(DateTime|Native $dateTime, Precision $precision): Compared
     {
-        $other = $dateTime instanceof LocalDateTime ? $dateTime->atTimezone($this->timezone()) : self::ofDateTime($dateTime);
+        $other = $dateTime instanceof LocalDateTime ? $dateTime->at($this->timezone()) : self::ofDateTime($dateTime);
 
         return match($precision) {
             Precision::Micro => Compared::of($this->timestamp() <=> $other->timestamp()),
