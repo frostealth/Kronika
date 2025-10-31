@@ -243,7 +243,7 @@ final readonly class Duration
     public function format(string $format): string
     {
         return $this->toDateInterval()->format(
-            \preg_replace('/%([^DdHhIiSs])//', '$1', $format),
+            \preg_replace('/%([^DdHhIiSs])/', '$1', $format),
         );
     }
 
