@@ -248,7 +248,7 @@ final readonly class Year implements DateUnit
         return Date::of(
             year: $this,
             month: $date->month(),
-            day: $date->month()->adjustDay($date->day(), $this),
+            day: $date->month()->_adjustDay($date->day(), $this),
         );
     }
 

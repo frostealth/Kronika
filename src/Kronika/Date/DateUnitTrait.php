@@ -53,14 +53,10 @@ trait DateUnitTrait
         return $this->value;
     }
 
-    /** @internal {@see Date::with()} */
-    #[\Override]
-    abstract public function _withinDate(Date $date): Date;
-
     /** @internal {@see DateTime::with()} */
     #[\Override]
     final public function _withinDateTime(LocalDateTime $datetime): LocalDateTime
     {
-        return $datetime->with($this->_withinDate($datetime->date()));
+        return $datetime->with($datetime->date()->with($this));
     }
 }

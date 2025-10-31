@@ -225,6 +225,6 @@ final class MonthTest extends TestCase
     #[DataProvider('adjustDayProvider')]
     public function testAdjustDay(Month $month, Year $year, DayOfMonth $day, DayOfMonth $expected): void
     {
-        self::assertEquals($expected, $month->adjustDay($day, $year));
+        self::assertEquals($expected, $month->_adjustDay($day, $year));
     }
 }

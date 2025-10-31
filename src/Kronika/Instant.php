@@ -185,7 +185,7 @@ final readonly class Instant
      */
     public function until(self $end): Duration
     {
-        return $this->isBefore($end) ? $this->diff($end) : Duration::zero();
+        return $this->isBefore($end) ? $this->difference($end) : Duration::zero();
     }
 
     /**
@@ -193,7 +193,7 @@ final readonly class Instant
      *
      * ```
      * // 1767161730.004545 vs 1767337230.004545
-     * $duration = $this->until($other);
+     * $duration = $this->difference($other);
      * $duration->days();    // 2
      * $duration->hours();   // 0
      * $duration->minutes(); // 45
@@ -201,16 +201,24 @@ final readonly class Instant
      * ```
      * ```
      * // 1767161730.004545 vs 1766979030.004545
-     * $duration = $this->until($other);
+     * $duration = $this->difference($other);
      * $duration->days();    // 2
      * $duration->hours();   // 0
      * $duration->minutes(); // 45
      * $duration->seconds(); // 0
      * ```
      */
-    public function diff(self $other): Duration
+    public function difference(self $other): Duration
     {
         return Duration::of(seconds: \abs($other->math()->sub($this->second, $this->microsecond)->integer()));
+    }
+
+    /**
+     * @deprecated {@see self::difference()}
+     */
+    public function diff(self $other): Duration
+    {
+        return $this->difference($other);
     }
 
     /**

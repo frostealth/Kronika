@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Kronika;
 
+use DateTimeInterface as Native;
 use Kronika\Time\Hour;
 use Kronika\Time\Minute;
 use Kronika\Time\Second;
@@ -86,13 +87,13 @@ final readonly class Time implements Unit
     /**
      * Obtain an instance of Time from a date-time.
      */
-    public static function ofDateTime(DateTime|\DateTimeInterface $dateTime): self
+    public static function ofDateTime(DateTime|Native $datetime): self
     {
-        if ($dateTime instanceof DateTime) {
-            return $dateTime->time();
+        if ($datetime instanceof DateTime) {
+            return $datetime->time();
         }
 
-        [$hour, $minute, $second, $micro] = \sscanf($dateTime->format('H:i:s.u'), '%d:%d:%d.%d');
+        [$hour, $minute, $second, $micro] = \sscanf($datetime->format('H:i:s.u'), '%d:%d:%d.%d');
 
         return self::of($hour, $minute, Second::of($second, $micro));
     }
@@ -266,13 +267,15 @@ final readonly class Time implements Unit
      * $duration->hours();   // 12
      * $duration->minutes(); // 44
      * $duration->seconds(); // 29
-     *
+     * ```
+     * ```
      * // 10:15:30 vs 00:00:00
      * $duration = $this->until($other);
      * $duration->hours();   // 0
      * $duration->minutes(); // 0
      * $duration->seconds(); // 0
-     *
+     * ```
+     * ```
      * // 10:15:30 vs Hour(12)
      * $duration = $this->until($other);
      * $duration->hours();   // 2
@@ -286,25 +289,34 @@ final readonly class Time implements Unit
     }
 
     /**
-     * Returns a duration between this time and another one.
+     * Returns a duration between this time or its unit and another one.
      *
      * ```
      * // 10:15:30 vs 23:59:59
-     * $duration = $this->diff($other);
+     * $duration = $this->difference($other);
      * $duration->hours();   // 12
      * $duration->minutes(); // 44
      * $duration->seconds(); // 29
-     *
+     * ```
+     * ```
      * // 10:15:30 vs 00:00:00
-     * $duration = $this->diff($other);
+     * $duration = $this->difference($other);
      * $duration->hours();   // 10
      * $duration->minutes(); // 15
      * $duration->seconds(); // 30
      * ```
      */
+    public function difference(self|TimeUnit $other): Duration
+    {
+        return $this->instant()->difference($this->normalize($other)->instant());
+    }
+
+    /**
+     * @deprecated {@see self::difference()}
+     */
     public function diff(self $other): Duration
     {
-        return $this->instant()->diff($other->instant());
+        return $this->difference($other);
     }
 
     /**

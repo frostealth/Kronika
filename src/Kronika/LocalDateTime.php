@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Kronika;
 
+use DateTimeInterface as Native;
 use Kronika\Date\DayOfMonth;
 use Kronika\Date\DayOfWeek;
 use Kronika\Date\Month;
@@ -98,7 +99,7 @@ final readonly class LocalDateTime implements DateTime
     /**
      * Obtains an instance of LocalDateTime from a date-time with a time-zone.
      */
-    public static function ofDateTime(DateTime|\DateTimeInterface $dateTime): self
+    public static function ofDateTime(DateTime|Native $dateTime): self
     {
         if ($dateTime instanceof self) {
             return $dateTime;
@@ -239,6 +240,12 @@ final readonly class LocalDateTime implements DateTime
     public function until(DateTime|Unit $end): Duration
     {
         return $this->instant()->until($this->normalize($end)->instant());
+    }
+
+    #[\Override]
+    public function difference(DateTime|Unit $other): Duration
+    {
+        return $this->instant()->difference($this->normalize($other)->instant());
     }
 
     #[\Override]
