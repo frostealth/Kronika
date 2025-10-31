@@ -57,6 +57,8 @@ final readonly class LocalDateTime implements DateTime
      * // 2025-12-31 00:00:00
      * $datetime = LocalDateTime::midnightOf(Date::of(2025, 12, 31));
      * ```
+     *
+     * @deprecated {@see Date::atMidnight()}
      */
     public static function midnightOf(Date $date): self
     {
@@ -70,6 +72,8 @@ final readonly class LocalDateTime implements DateTime
      * // 2025-12-31 12:00:00
      * $datetime = LocalDateTime::middayOf(Date::of(2025, 12, 31));
      * ```
+     *
+     * @deprecated {@see Date::atMidday()}
      */
     public static function middayOf(Date $date): self
     {
@@ -83,6 +87,8 @@ final readonly class LocalDateTime implements DateTime
      * // 2025-12-31 23:59:59.999999
      * $datetime = LocalDateTime::endOfDayOf(Date::of(2025, 12, 31));
      * ```
+     *
+     * @deprecated {@see Date::atEndOfDay()}
      */
     public static function endOfDayOf(Date $date): self
     {
@@ -183,12 +189,18 @@ final readonly class LocalDateTime implements DateTime
      *
      * ```
      * // 2025-12-31 12:15:30
-     * $this->atTimezone(new \DateTimeZone('UTC'));  // 2025-12-31 12:15:30 UTC
+     * $this->at(new \DateTimeZone('UTC'));  // 2025-12-31 12:15:30 UTC
      * ```
      */
-    public function atTimezone(\DateTimeZone $timezone): ZonedDateTime
+    public function at(\DateTimeZone $timezone): ZonedDateTime
     {
         return ZonedDateTime::ofLocal($this, $timezone);
+    }
+
+    /** @deprecated {@see self::at()} */
+    public function atTimezone(\DateTimeZone $timezone): ZonedDateTime
+    {
+        return $this->at($timezone);
     }
 
     #[\Override]
@@ -289,6 +301,8 @@ final readonly class LocalDateTime implements DateTime
      * @param non-empty-string $modifier
      *
      * @throws \DateMalformedStringException
+     *
+     * @deprecated {@see DateTime::with()}
      */
     public function modify(string $modifier): self
     {
