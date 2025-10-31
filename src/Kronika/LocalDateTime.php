@@ -238,11 +238,7 @@ final readonly class LocalDateTime implements DateTime
     #[\Override]
     public function until(DateTime|Unit $end): Duration
     {
-        if ($end instanceof Unit) {
-            return $end->_untilInDateTime($this);
-        }
-
-        return $this->doUntil($end);
+        return $this->instant()->until($this->normalize($end)->instant());
     }
 
     #[\Override]
@@ -284,11 +280,11 @@ final readonly class LocalDateTime implements DateTime
     #[\Override]
     public function compareTo(DateTime|Unit $other, Precision $precision = Precision::Micro): Compared
     {
-        if ($other instanceof Unit) {
-            return $other->_compareInDateTime($this, $precision);
-        }
-
-        return $this->doCompareTo($other, $precision);
+        return match($precision) {
+            Precision::Micro => $this->instant()->compareTo($this->normalize($other)->instant()),
+            Precision::Second => $this->resetMicro()->compareTo($this->normalize($other)->resetMicro()),
+            Precision::Minute => $this->resetSecond()->compareTo($this->normalize($other)->resetSecond()),
+        };
     }
 
     #[\Override]
@@ -371,21 +367,8 @@ final readonly class LocalDateTime implements DateTime
         ];
     }
 
-    /** @see DateTime::compareTo() */
-    private function doCompareTo(DateTime $dateTime, Precision $precision): Compared
+    private function normalize(DateTime|Unit $datetime): DateTime
     {
-        $other = self::ofDateTime($dateTime);
-
-        return match($precision) {
-            Precision::Micro => $this->instant()->compareTo($other->instant()),
-            Precision::Second => $this->resetMicro()->compareTo($other->resetMicro()),
-            Precision::Minute => $this->resetSecond()->compareTo($other->resetSecond()),
-        };
-    }
-
-    /** @see DateTime::until()} */
-    private function doUntil(DateTime $end): Duration
-    {
-        return $this->instant()->until(self::ofDateTime($end)->instant());
+        return $datetime instanceof Unit ? $this->with($datetime) : $datetime;
     }
 }

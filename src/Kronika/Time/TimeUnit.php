@@ -13,11 +13,8 @@ declare(strict_types=1);
 
 namespace Kronika\Time;
 
-use Kronika\Duration;
-use Kronika\Precision;
 use Kronika\Time;
 use Kronika\Unit;
-use Kronika\Utils\Compared;
 
 /**
  * Represents a unit of time.
@@ -43,12 +40,6 @@ interface TimeUnit extends Unit
      * @param TTimeUnit $value
      */
     public function is(int $value): bool;
-
-    /** @internal {@see Time::compareTo()} */
-    public function _compareInTime(Time $that, Precision $precision): Compared;
-
-    /** @internal {@see Time::until()} */
-    public function _untilInTime(Time $start): Duration;
 
     /** @internal {@see Time::with()} */
     public function _withinTime(Time $time): Time;

@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Kronika\Date;
 
 use Kronika\Date;
-use Kronika\Duration;
 use Kronika\Utils\Compared;
 
 /**
@@ -148,6 +147,7 @@ final readonly class DayOfMonth implements DateUnit
     }
 
     /** @return non-empty-string */
+    #[\Override]
     public function __toString(): string
     {
         return \sprintf('%02d', $this->number());
@@ -156,14 +156,7 @@ final readonly class DayOfMonth implements DateUnit
     /** @internal */
     public function __debugInfo(): array
     {
-        return ['dayOfMonth' => (string) $this];
-    }
-
-    /** @internal {@see Date::compareTo()} */
-    #[\Override]
-    public function _compareInDate(Date $that): Compared
-    {
-        return $that->day()->compareTo($this);
+        return ['dayOfMonth' => (string)$this];
     }
 
     /** @internal {@see Date::with()} */

@@ -282,7 +282,7 @@ final readonly class Time implements Unit
      */
     public function until(self|TimeUnit $end): Duration
     {
-        return $end->_untilInTime($this);
+        return $this->instant()->until($this->normalize($end)->instant());
     }
 
     /**
@@ -514,7 +514,11 @@ final readonly class Time implements Unit
      */
     public function compareTo(self|TimeUnit $other, Precision $precision = Precision::Micro): Compared
     {
-        return $other->_compareInTime($this, $precision);
+        return match ($precision) {
+            Precision::Micro => $this->instant()->compareTo($this->normalize($other)->instant()),
+            Precision::Second => $this->resetMicro()->compareTo($this->normalize($other)->resetMicro()),
+            Precision::Minute => $this->resetSecond()->compareTo($this->normalize($other)->resetSecond()),
+        };
     }
 
     /**
@@ -524,7 +528,7 @@ final readonly class Time implements Unit
      */
     public function format(string $format): string
     {
-        return (new \DateTimeImmutable((string) $this))->format(
+        return (new \DateTimeImmutable((string)$this))->format(
             // @todo: the escaping doesn't work
             \preg_replace('/([^AaBGgHisu])/', '\\\\$1', $format),
         );
@@ -542,6 +546,7 @@ final readonly class Time implements Unit
     }
 
     /** @return non-empty-string */
+    #[\Override]
     public function __toString(): string
     {
         return \sprintf('%s:%s:%s', $this->hour(), $this->minute(), $this->second());
@@ -550,43 +555,18 @@ final readonly class Time implements Unit
     /** @internal */
     public function __debugInfo(): array
     {
-        return ['time' => (string) $this];
-    }
-
-    /** @internal {@see DateTime::compareTo()} */
-    #[\Override]
-    public function _compareInDateTime(DateTime $that, Precision $precision): Compared
-    {
-        return $that->time()->compareTo($this, $precision);
-    }
-
-    /** @see Time::compareTo() */
-    private function _compareInTime(self $that, Precision $precision): Compared
-    {
-        return match ($precision) {
-            Precision::Micro => $that->instant()->compareTo($this->instant()),
-            Precision::Second => $that->resetMicro()->compareTo($this->resetMicro()),
-            Precision::Minute => $that->resetSecond()->compareTo($this->resetSecond()),
-        };
-    }
-
-    /** @internal {@see DateTime::until()} */
-    #[\Override]
-    public function _untilInDateTime(DateTime $start): Duration
-    {
-        return $start->time()->until($this);
-    }
-
-    /** @see Time::until() */
-    private function _untilInTime(self $start): Duration
-    {
-        return $start->instant()->until($this->instant());
+        return ['time' => (string)$this];
     }
 
     /** @internal {@see DateTime::with()} */
     #[\Override]
-    public function _withinDateTime(LocalDateTime $dateTime): LocalDateTime
+    public function _withinDateTime(LocalDateTime $datetime): LocalDateTime
     {
-        return $this->at($dateTime->date());
+        return $this->at($datetime->date());
+    }
+
+    private function normalize(self|TimeUnit $time): self
+    {
+        return $time instanceof TimeUnit ? $this->with($time) : $time;
     }
 }

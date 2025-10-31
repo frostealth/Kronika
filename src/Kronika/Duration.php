@@ -175,7 +175,7 @@ final readonly class Duration
      * $this->inDays(Duration::ROUND_HALF_AWAY_FROM_ZERO);  // 3
      * ```
      *
-     * @psalm-param RoundingMode $mode
+     * @param RoundingMode $mode
      *
      * @return non-negative-int
      */
@@ -193,7 +193,7 @@ final readonly class Duration
      * $this->inHours(Duration::ROUND_HALF_AWAY_FROM_ZERO);  // 61
      * ```
      *
-     * @psalm-param RoundingMode $mode
+     * @param RoundingMode $mode
      *
      * @return non-negative-int
      */
@@ -211,7 +211,7 @@ final readonly class Duration
      * $this->inMinutes(Duration::ROUND_HALF_AWAY_FROM_ZERO);  // 3631
      * ```
      *
-     * @psalm-param RoundingMode $mode
+     * @param RoundingMode $mode
      *
      * @return non-negative-int
      */
@@ -227,8 +227,6 @@ final readonly class Duration
      * // 2 days, 12 hours, 30 minutes, 45 second
      * $this->inSeconds();  // 217845
      * ```
-     *
-     * @psalm-param RoundingMode $mode
      *
      * @return non-negative-int
      */
@@ -304,7 +302,7 @@ final readonly class Duration
      *
      * @see self::inDays()
      *
-     * @psalm-param RoundingMode $mode
+     * @param RoundingMode $mode
      */
     public function roundToDays(int $mode = self::ROUND_FLOOR): self
     {
@@ -316,7 +314,7 @@ final readonly class Duration
      *
      * @see self::inHours()
      *
-     * @psalm-param RoundingMode $mode
+     * @param RoundingMode $mode
      */
     public function roundToHours(int $mode = self::ROUND_FLOOR): self
     {
@@ -328,7 +326,7 @@ final readonly class Duration
      *
      * @see self::inMinutes()
      *
-     * @psalm-param RoundingMode $mode
+     * @param RoundingMode $mode
      */
     public function roundToMinutes(int $mode = self::ROUND_FLOOR): self
     {
@@ -533,6 +531,7 @@ final readonly class Duration
     }
 
     /** @return non-empty-string */
+    #[\Override]
     public function __toString(): string
     {
         return \sprintf(
