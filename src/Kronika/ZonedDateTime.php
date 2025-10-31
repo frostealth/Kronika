@@ -71,7 +71,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      */
     public static function utcOf(Date $date, Time $time): self
     {
-        return self::of($date, $time, new \DateTimeZone('UTC'));
+        return self::of($date, $time, utc());
     }
 
     /**
@@ -120,7 +120,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      */
     public static function ofTimestamp(float|int $timestamp): self
     {
-        return self::ofInstant(Instant::ofValue($timestamp), new \DateTimeZone('UTC'));
+        return self::ofInstant(Instant::ofValue($timestamp), utc());
     }
 
     /**
@@ -484,7 +484,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     #[\Override]
     public static function createFromTimestamp(float|int $timestamp): static
     {
-        return self::ofDateTime(\DateTimeImmutable::createFromTimestamp($timestamp)->setTimezone(new \DateTimeZone('UTC')));
+        return self::ofDateTime(\DateTimeImmutable::createFromTimestamp($timestamp)->setTimezone(utc()));
     }
 
     /** @see self::ofFormat() */

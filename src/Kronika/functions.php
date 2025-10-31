@@ -50,3 +50,84 @@ if (! \function_exists('\\Kronika\\clock')) {
         return $instance = $clock ?? $instance;
     }
 }
+
+if (! \function_exists('\\Kronika\\earliest')) {
+    /**
+     * Returns the earliest date-time.
+     *
+     * ```
+     * // $first: 2025-12-31 00:00:00
+     * // $second: 2025-12-30 23:00:00
+     * earliest($first, $second);  // 2025-12-30 12:00:00
+     * ```
+     *
+     * @template T of DateTime
+     *
+     * @param T $first
+     * @param T ...$others
+     *
+     * @return T
+     */
+    function earliest(DateTime $first, DateTime ...$others): DateTime
+    {
+        return chronologize($first, ...$others)[0];
+    }
+}
+
+if (! \function_exists('\\Kronika\\latest')) {
+    /**
+     * Returns the latest date-time.
+     *
+     * ```
+     * // $first: 2025-12-31 00:00:00
+     * // $second: 2025-12-30 23:00:00
+     * latest($first, $second);  // 2025-12-31 00:00:00
+     * ```
+     *
+     * @template T of DateTime
+     *
+     * @param T $first
+     * @param T ...$others
+     *
+     * @return T
+     */
+    function latest(DateTime $first, DateTime ...$others): DateTime
+    {
+        return \array_reverse(chronologize($first, ...$others))[0];
+    }
+}
+
+if (! \function_exists('\\Kronika\\chronologize')) {
+    /**
+     * Sorts in chronological order.
+     *
+     * @template T of DateTime
+     *
+     * @param T $first
+     * @param T ...$others
+     *
+     * @return non-empty-list<T>
+     */
+    function chronologize(DateTime $first, DateTime ...$others): array
+    {
+        /** @var list<T> $chronology */
+        $chronology = [$first, ...\array_values($others)];
+        \usort($chronology, static function(DateTime $a, DateTime $b): int {
+            return $a->compareTo($b)->value();
+        });
+
+        return $chronology;
+    }
+}
+
+if (! \function_exists('\\Kronika\\utc')) {
+    /**
+     * Returns UTC time-zone.
+     */
+    function utc(): \DateTimeZone
+    {
+        static $utc = new \DateTimeZone('UTC');
+
+        return $utc;
+    }
+}
