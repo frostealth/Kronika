@@ -299,6 +299,12 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     #[\Override]
+    public function difference(DateTime|Unit|Native $other): Duration
+    {
+        return $this->local->difference($this->localize($other));
+    }
+
+    #[\Override]
     public function add(Duration|\DateInterval $interval): static
     {
         return self::ofLocal($this->local->add($interval), $this->timezone());

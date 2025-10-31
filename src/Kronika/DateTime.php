@@ -25,7 +25,7 @@ use Kronika\Utils\Compared;
 /**
  * Represents a date-time.
  */
-interface DateTime
+interface DateTime extends \Stringable
 {
     /**
      * Returns an instance of Date from this date-time.
@@ -84,6 +84,7 @@ interface DateTime
      * $this->with(Minute::of(30));         // 2025-11-29 12:30:30
      * $this->with(Hour::of(21));           // 2025-11-29 21:15:30
      * $this->with(Second::of(10));         // 2025-11-29 12:15:10
+     *
      * $this->with(Date::of(1990, 01, 01)); // 1990-01-01 12:15:30
      * $this->with(Year::of(1990));         // 1990-11-29 12:15:30
      * $this->with($this->year()->next());  // 2026-11-29 12:15:30
@@ -137,7 +138,7 @@ interface DateTime
     public function sub(Duration $interval): static;
 
     /**
-     * Returns a duration from this date-time or its unit to another one.
+     * Returns a duration since this date-time or its unit until another one.
      *
      * ```
      * // 2025-12-10 10:15:30 vs 2025-12-20 12:30:45
@@ -146,22 +147,16 @@ interface DateTime
      * $duration->hours();   // 2
      * $duration->minutes(); // 15
      * $duration->seconds(); // 15
-     *
+     * ```
+     * ```
      * // 2025-12-10 10:15:30 vs 2025-11-01 00:00:00
      * $duration = $this->until($other);
      * $duration->days();    // 0
      * $duration->hours();   // 0
      * $duration->minutes(); // 0
      * $duration->seconds(); // 0
-     *
-     * // ZonedDateTime vs LocalDateTime
-     * // 2025-12-10 10:15:30 +01:00 vs 2025-12-20 12:30:45
-     * $duration = $this->until($other);
-     * $duration->days();    // 10
-     * $duration->hours();   // 2
-     * $duration->minutes(); // 15
-     * $duration->seconds(); // 15
-     *
+     * ```
+     * ```
      * // DateTime vs Date
      * // 2025-12-10 10:15:30 vs Date::of(2025, 12, 20)
      * $duration = $this->until($other);
@@ -172,6 +167,37 @@ interface DateTime
      * ```
      */
     public function until(self|Unit $end): Duration;
+
+    /**
+     * Returns an amount of days, hours, minutes and seconds between this instant and another one.
+     *
+     * ```
+     * // 2025-12-10 10:15:30 vs 2025-12-20 12:30:45
+     * $duration = $this->difference($other);
+     * $duration->days();    // 10
+     * $duration->hours();   // 2
+     * $duration->minutes(); // 15
+     * $duration->seconds(); // 15
+     * ```
+     * ```
+     * // 2025-12-10 10:15:30 vs 2025-11-01 00:00:00
+     * $duration = $this->difference($other);
+     * $duration->days();    // 0
+     * $duration->hours();   // 0
+     * $duration->minutes(); // 0
+     * $duration->seconds(); // 0
+     * ```
+     * ```
+     * // DateTime vs Date
+     * // 2025-12-10 10:15:30 vs Date::of(2025, 12, 20)
+     * $duration = $this->difference($other);
+     * $duration->days();    // 10
+     * $duration->hours();   // 0
+     * $duration->minutes(); // 0
+     * $duration->seconds(); // 0
+     * ```
+     */
+    public function difference(self|Unit $other): Duration;
 
     /**
      * Checks if this date-time or its unit is before another one.
@@ -350,5 +376,6 @@ interface DateTime
     public function instant(): Instant;
 
     /** @return non-empty-string */
+    #[\Override]
     public function __toString(): string;
 }

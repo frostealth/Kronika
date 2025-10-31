@@ -166,7 +166,7 @@ final readonly class DayOfMonth implements DateUnit
         return Date::of(
             year: $date->year(),
             month: $date->month(),
-            day: $date->month()->adjustDay($this, $date->year()),
+            day: $date->month()->_adjustDay($this, $date->year()),
         );
     }
 

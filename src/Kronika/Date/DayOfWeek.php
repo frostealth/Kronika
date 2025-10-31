@@ -256,29 +256,13 @@ enum DayOfWeek: int implements DateUnit
         return Compared::of($this->value <=> $other->value);
     }
 
-    /**
-     * Returns an amount of days between this day of week and another one.
-     *
-     * ```
-     * // Wednesday
-     * $this->diff(DayOfWeek::Friday);  // Duration::of(days: 2)
-     * $this->diff(DayOfWeek::Tuesday); // Duration::of(days: 1)
-     * ```
-     */
-    private function diff(self $other): Duration
-    {
-        return Duration::of(days: \abs($this->number() - $other->number()));
-    }
-
     /** @internal {@see Date::with()} */
     #[\Override]
     public function _withinDate(Date $date): Date
     {
-        if ($this->isBefore($date->dayOfWeek())) {
-            return $date->sub($this->diff($date->dayOfWeek()));
-        }
+        $diff = Duration::of(days: \abs($this->number() - $date->dayOfWeek()->number()));
 
-        return $date->add($this->diff($date->dayOfWeek()));
+        return $this->isBefore($date->dayOfWeek()) ? $date->sub($diff) : $date->add($diff);
     }
 
     /** @internal {@see DateTime::with()} */

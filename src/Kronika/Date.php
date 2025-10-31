@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Kronika;
 
+use DateTimeInterface as Native;
 use Kronika\Date\DateUnit;
 use Kronika\Date\DayOfMonth;
 use Kronika\Date\DayOfWeek;
@@ -54,13 +55,13 @@ final readonly class Date implements Unit
     /**
      * Obtain an instance of Date from a date-time.
      */
-    public static function ofDateTime(DateTime|\DateTimeInterface $dateTime): self
+    public static function ofDateTime(DateTime|Native $datetime): self
     {
-        if ($dateTime instanceof DateTime) {
-            return $dateTime->date();
+        if ($datetime instanceof DateTime) {
+            return $datetime->date();
         }
 
-        [$year, $month, $day] = \sscanf($dateTime->format('Y-m-d'), '%d-%d-%d');
+        [$year, $month, $day] = \sscanf($datetime->format('Y-m-d'), '%d-%d-%d');
 
         return self::of($year, $month, $day);
     }
@@ -275,6 +276,24 @@ final readonly class Date implements Unit
     public function until(self|DateUnit $end): Duration
     {
         return $this->instant()->until($this->normalize($end)->instant());
+    }
+
+    /**
+     * Returns a duration between this date or its unit and another one.
+     *
+     * ```
+     * // 2025-12-31 vs 2026-01-02
+     * $duration = $this->difference($other);
+     * $duration->days();   // 2
+     *
+     * // 2026-01-02 vs 2025-12-31
+     * $duration = $this->difference($other);
+     * $duration->days();   // 2
+     * ```
+     */
+    public function difference(self|DateUnit $other): Duration
+    {
+        return $this->instant()->difference($this->normalize($other)->instant());
     }
 
     /**

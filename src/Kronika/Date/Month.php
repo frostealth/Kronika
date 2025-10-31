@@ -299,16 +299,6 @@ enum Month: int implements DateUnit
         return Compared::of($this->number() <=> $other->number());
     }
 
-    /** @internal */
-    public function adjustDay(DayOfMonth $day, Year $year): DayOfMonth
-    {
-        if (! $this->containsDay($day, $year)) {
-            return $this->lastDay($year);
-        }
-
-        return $day;
-    }
-
     /** @internal {@see Date::with()} */
     #[\Override]
     public function _withinDate(Date $date): Date
@@ -316,7 +306,7 @@ enum Month: int implements DateUnit
         return Date::of(
             year: $date->year(),
             month: $this,
-            day: $this->adjustDay($date->day(), $date->year()),
+            day: $this->_adjustDay($date->day(), $date->year()),
         );
     }
 
@@ -325,5 +315,15 @@ enum Month: int implements DateUnit
     public function _withinDateTime(LocalDateTime $datetime): LocalDateTime
     {
         return $datetime->with($this->_withinDate($datetime->date()));
+    }
+
+    /** @internal */
+    public function _adjustDay(DayOfMonth $day, Year $year): DayOfMonth
+    {
+        if (! $this->containsDay($day, $year)) {
+            return $this->lastDay($year);
+        }
+
+        return $day;
     }
 }
