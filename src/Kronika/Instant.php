@@ -330,12 +330,8 @@ final readonly class Instant
         return Compared::of($this->value() <=> $other->value());
     }
 
-    private function math(): Math
-    {
-        return math($this->second, $this->microsecond, precision: 6);
-    }
-
     /** @return non-empty-string */
+    #[\Override]
     public function __toString(): string
     {
         return (string)$this->value();
@@ -345,5 +341,10 @@ final readonly class Instant
     public function __debugInfo(): array
     {
         return ['second' => $this->value()];
+    }
+
+    private function math(): Math
+    {
+        return math($this->second, $this->microsecond, precision: 6);
     }
 }

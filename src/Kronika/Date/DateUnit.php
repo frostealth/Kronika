@@ -14,9 +14,7 @@ declare(strict_types=1);
 namespace Kronika\Date;
 
 use Kronika\Date;
-use Kronika\Duration;
 use Kronika\Unit;
-use Kronika\Utils\Compared;
 
 /**
  * Represents a unit of day (date).
@@ -39,12 +37,6 @@ interface DateUnit extends Unit
      * @param TDateUnit $number
      */
     public function is(int $number): bool;
-
-    /** @internal {@see Date::compareTo()} */
-    public function _compareInDate(Date $that): Compared;
-
-    /** @internal {@see Date::until()} */
-    public function _untilInDate(Date $start): Duration;
 
     /** @internal {@see Date::with()} */
     public function _withinDate(Date $date): Date;

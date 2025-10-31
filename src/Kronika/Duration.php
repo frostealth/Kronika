@@ -471,6 +471,7 @@ final readonly class Duration
     }
 
     /** @return non-empty-string */
+    #[\Override]
     public function __toString(): string
     {
         return \sprintf(

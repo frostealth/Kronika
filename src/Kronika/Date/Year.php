@@ -241,13 +241,6 @@ final readonly class Year implements DateUnit
         return ['year' => (string)$this];
     }
 
-    /** @internal {@see Date::compareTo()} */
-    #[\Override]
-    public function _compareInDate(Date $that): Compared
-    {
-        return $that->year()->compareTo($this);
-    }
-
     /** @internal {@see Date::with()} */
     #[\Override]
     public function _withinDate(Date $date): Date

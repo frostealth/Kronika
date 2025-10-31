@@ -274,7 +274,7 @@ final readonly class Date implements Unit
      */
     public function until(self|DateUnit $end): Duration
     {
-        return $end->_untilInDate($this);
+        return $this->instant()->until($this->normalize($end)->instant());
     }
 
     /**
@@ -475,7 +475,7 @@ final readonly class Date implements Unit
      */
     public function compareTo(self|DateUnit $other): Compared
     {
-        return $other->_compareInDate($this);
+        return $this->instant()->compareTo($this->normalize($other)->instant());
     }
 
     /**
@@ -486,7 +486,7 @@ final readonly class Date implements Unit
     public function format(string $format): string
     {
         return $this->at(Time::midnight())->format(
-        // @todo: the escaping doesn't work
+            // @todo: the escaping doesn't work
             \preg_replace('/([^DdjlNSWwzFMmntLoXxYy])/', '\\\\$1', $format),
         );
     }
@@ -500,6 +500,7 @@ final readonly class Date implements Unit
     }
 
     /** @return non-empty-string */
+    #[\Override]
     public function __toString(): string
     {
         return \sprintf('%04d-%02d-%02d', $this->year()->number(), $this->month()->number(), $this->day()->number());
@@ -511,36 +512,15 @@ final readonly class Date implements Unit
         return ['date' => (string)$this];
     }
 
-    /** @internal {@see DateTime::compareTo()} */
-    #[\Override]
-    public function _compareInDateTime(DateTime $that, Precision $precision): Compared
-    {
-        return $that->date()->compareTo($this);
-    }
-
-    /** @see Date::compareTo() */
-    private function _compareInDate(self $that): Compared
-    {
-        return $that->instant()->compareTo($this->instant());
-    }
-
-    /** @internal {@see DateTime::until()} */
-    #[\Override]
-    public function _untilInDateTime(DateTime $start): Duration
-    {
-        return $start->date()->until($this);
-    }
-
-    /** @see Date::until() */
-    private function _untilInDate(Date $start): Duration
-    {
-        return $start->instant()->until($this->instant());
-    }
-
     /** @internal {@see DateTime::with()} */
     #[\Override]
-    public function _withinDateTime(LocalDateTime $dateTime): LocalDateTime
+    public function _withinDateTime(LocalDateTime $datetime): LocalDateTime
     {
-        return $this->at($dateTime->time());
+        return $this->at($datetime->time());
+    }
+
+    private function normalize(self|DateUnit $date): self
+    {
+        return $date instanceof DateUnit ? $this->with($date) : $date;
     }
 }

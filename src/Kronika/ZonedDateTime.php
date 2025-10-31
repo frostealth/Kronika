@@ -295,30 +295,18 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     #[\Override]
     public function until(DateTime|Unit|Native $end): Duration
     {
-        if ($end instanceof Unit) {
-            return $end->_untilInDateTime($this);
-        }
-
-        return $this->doUntil($end);
+        return $this->local->until($this->localize($end));
     }
 
     #[\Override]
     public function add(Duration|\DateInterval $interval): static
     {
-        if ($interval instanceof \DateInterval) {
-            return self::ofDateTime(parent::add($interval));
-        }
-
         return self::ofLocal($this->local->add($interval), $this->timezone());
     }
 
     #[\Override]
     public function sub(Duration|\DateInterval $interval): static
     {
-        if ($interval instanceof \DateInterval) {
-            return self::ofDateTime(parent::sub($interval));
-        }
-
         return self::ofLocal($this->local->sub($interval), $this->timezone());
     }
 
@@ -403,11 +391,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     #[\Override]
     public function compareTo(DateTime|Unit|Native $other, Precision $precision = Precision::Micro): Compared
     {
-        if ($other instanceof Unit) {
-            return $other->_compareInDateTime($this, $precision);
-        }
-
-        return $this->doCompareTo($other, $precision);
+        return $this->local->compareTo($this->localize($other), $precision);
     }
 
     /**
@@ -552,24 +536,15 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         return self::ofDateTime($this->toNative()->setMicrosecond($microsecond));
     }
 
-    /** @see DateTime::compareTo() */
-    private function doCompareTo(DateTime|Native $dateTime, Precision $precision): Compared
+    private function localize(DateTime|Unit|Native $datetime): DateTime
     {
-        $other = $dateTime instanceof LocalDateTime ? $dateTime->at($this->timezone()) : self::ofDateTime($dateTime);
+        if ($datetime instanceof LocalDateTime) {
+            return $datetime;
+        }
+        if ($datetime instanceof Unit) {
+            return $this->with($datetime);
+        }
 
-        return match($precision) {
-            Precision::Micro => Compared::of($this->timestamp() <=> $other->timestamp()),
-            Precision::Second => $this->resetMicro()->compareTo($other->resetMicro()),
-            Precision::Minute => $this->resetSecond()->compareTo($other->resetSecond()),
-        };
-    }
-
-    /** @see DateTime::until() */
-    private function doUntil(DateTime|Native $end): Duration
-    {
-        $end = $end instanceof LocalDateTime ? self::ofLocal($end, $this->timezone()) : self::ofDateTime($end);
-        $end = $end->shiftTimezone($this->timezone());
-
-        return $this->instant()->until($end->instant());
+        return self::ofDateTime($datetime)->shiftTimezone($this->timezone());
     }
 }

@@ -15,10 +15,7 @@ namespace Kronika\Date;
 
 use Kronika\Date;
 use Kronika\DateTime;
-use Kronika\Duration;
 use Kronika\LocalDateTime;
-use Kronika\Precision;
-use Kronika\Utils\Compared;
 use Kronika\Utils\WeakRefsTrait;
 
 /**
@@ -56,39 +53,14 @@ trait DateUnitTrait
         return $this->value;
     }
 
-    /** @internal {@see Date::compareTo()} */
-    #[\Override]
-    abstract public function _compareInDate(Date $that): Compared;
-
-    /** @internal {@see DateTime::compareTo()} */
-    #[\Override]
-    final public function _compareInDateTime(DateTime $that, Precision $precision): Compared
-    {
-        return $this->_compareInDate($that->date());
-    }
-
-    /** @internal {@see Date::until()} */
-    #[\Override]
-    final public function _untilInDate(Date $start): Duration
-    {
-        return $start->until($start->with($this));
-    }
-
-    /** @internal {@see DateTime::until()} */
-    #[\Override]
-    final public function _untilInDateTime(DateTime $start): Duration
-    {
-        return $start->date()->until($this);
-    }
-
     /** @internal {@see Date::with()} */
     #[\Override]
     abstract public function _withinDate(Date $date): Date;
 
     /** @internal {@see DateTime::with()} */
     #[\Override]
-    final public function _withinDateTime(LocalDateTime $dateTime): LocalDateTime
+    final public function _withinDateTime(LocalDateTime $datetime): LocalDateTime
     {
-        return $dateTime->with($this->_withinDate($dateTime->date()));
+        return $datetime->with($this->_withinDate($datetime->date()));
     }
 }

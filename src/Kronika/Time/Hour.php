@@ -14,9 +14,7 @@ declare(strict_types=1);
 namespace Kronika\Time;
 
 use Kronika\DateTime;
-use Kronika\Duration;
 use Kronika\LocalDateTime;
-use Kronika\Precision;
 use Kronika\Time;
 use Kronika\Utils\Compared;
 use Kronika\Utils\WeakRefsTrait;
@@ -224,6 +222,7 @@ final readonly class Hour implements TimeUnit
     }
 
     /** @return non-empty-string */
+    #[\Override]
     public function __toString(): string
     {
         return \sprintf('%02d', $this->value());
@@ -235,34 +234,6 @@ final readonly class Hour implements TimeUnit
         return ['hour' => (string)$this];
     }
 
-    /** @internal {@see Time::compareTo()} */
-    #[\Override]
-    public function _compareInTime(Time $that, Precision $precision): Compared
-    {
-        return $that->hour()->compareTo($this);
-    }
-
-    /** @internal {@see DateTime::compareTo()} */
-    #[\Override]
-    public function _compareInDateTime(DateTime $that, Precision $precision): Compared
-    {
-        return $that->time()->compareTo($this, $precision);
-    }
-
-    /** @internal {@see Time::until()} */
-    #[\Override]
-    public function _untilInTime(Time $start): Duration
-    {
-        return $start->until($start->with($this));
-    }
-
-    /** @internal {@see DateTime::until()} */
-    #[\Override]
-    public function _untilInDateTime(DateTime $start): Duration
-    {
-        return $start->time()->until($this);
-    }
-
     /** @internal {@see Time::with()} */
     #[\Override]
     public function _withinTime(Time $time): Time
@@ -272,8 +243,8 @@ final readonly class Hour implements TimeUnit
 
     /** @internal {@see DateTime::with()} */
     #[\Override]
-    public function _withinDateTime(LocalDateTime $dateTime): LocalDateTime
+    public function _withinDateTime(LocalDateTime $datetime): LocalDateTime
     {
-        return $dateTime->with($this->_withinTime($dateTime->time()));
+        return $datetime->with($this->_withinTime($datetime->time()));
     }
 }

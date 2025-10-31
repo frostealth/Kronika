@@ -17,7 +17,6 @@ use Kronika\Date;
 use Kronika\DateTime;
 use Kronika\Duration;
 use Kronika\LocalDateTime;
-use Kronika\Precision;
 use Kronika\Utils\Compared;
 
 /**
@@ -271,34 +270,6 @@ enum DayOfWeek: int implements DateUnit
         return Duration::of(days: \abs($this->number() - $other->number()));
     }
 
-    /** @internal {@see Date::compareTo()} */
-    #[\Override]
-    public function _compareInDate(Date $that): Compared
-    {
-        return $that->dayOfWeek()->compareTo($this);
-    }
-
-    /** @internal {@see DateTime::compareTo()} */
-    #[\Override]
-    public function _compareInDateTime(DateTime $that, Precision $precision): Compared
-    {
-        return $that->dayOfWeek()->compareTo($this);
-    }
-
-    /** @internal {@see Date::until()} */
-    #[\Override]
-    public function _untilInDate(Date $start): Duration
-    {
-        return $start->until($start->with($this));
-    }
-
-    /** @internal {@see DateTime::until()} */
-    #[\Override]
-    public function _untilInDateTime(DateTime $start): Duration
-    {
-        return $start->date()->until($this);
-    }
-
     /** @internal {@see Date::with()} */
     #[\Override]
     public function _withinDate(Date $date): Date
@@ -312,8 +283,8 @@ enum DayOfWeek: int implements DateUnit
 
     /** @internal {@see DateTime::with()} */
     #[\Override]
-    public function _withinDateTime(LocalDateTime $dateTime): LocalDateTime
+    public function _withinDateTime(LocalDateTime $datetime): LocalDateTime
     {
-        return $dateTime->with($this->_withinDate($dateTime->date()));
+        return $datetime->with($this->_withinDate($datetime->date()));
     }
 }
