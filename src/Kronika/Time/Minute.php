@@ -245,6 +245,6 @@ final readonly class Minute implements TimeUnit
     #[\Override]
     public function _withinDateTime(LocalDateTime $datetime): LocalDateTime
     {
-        return $datetime->with($this->_withinTime($datetime->time()));
+        return $datetime->with($datetime->time()->with($this));
     }
 }

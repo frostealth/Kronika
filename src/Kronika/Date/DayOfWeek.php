@@ -269,6 +269,6 @@ enum DayOfWeek: int implements DateUnit
     #[\Override]
     public function _withinDateTime(LocalDateTime $datetime): LocalDateTime
     {
-        return $datetime->with($this->_withinDate($datetime->date()));
+        return $datetime->with($datetime->date()->with($this));
     }
 }
