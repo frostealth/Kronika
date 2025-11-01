@@ -18,23 +18,38 @@ use JMS\Serializer\GraphNavigatorInterface as GraphNavigator;
 use JMS\Serializer\Handler\SubscribingHandlerInterface;
 use JMS\Serializer\Visitor\DeserializationVisitorInterface as DeserializationVisitor;
 use JMS\Serializer\Visitor\SerializationVisitorInterface as SerializationVisitor;
+use Kronika\Date;
 use Kronika\Extension\JmsSerializer\Handlers\DateHandler;
+use Kronika\Extension\JmsSerializer\Handlers\DateTimeHandler;
 use Kronika\Extension\JmsSerializer\Handlers\DayOfMonthHandler;
 use Kronika\Extension\JmsSerializer\Handlers\DayOfWeekHandler;
 use Kronika\Extension\JmsSerializer\Handlers\DurationHandler;
 use Kronika\Extension\JmsSerializer\Handlers\Handler;
 use Kronika\Extension\JmsSerializer\Handlers\HourHandler;
 use Kronika\Extension\JmsSerializer\Handlers\InstantHandler;
-use Kronika\Extension\JmsSerializer\Handlers\LocalDateTimeHandler;
 use Kronika\Extension\JmsSerializer\Handlers\MinuteHandler;
 use Kronika\Extension\JmsSerializer\Handlers\MonthHandler;
 use Kronika\Extension\JmsSerializer\Handlers\SecondHandler;
 use Kronika\Extension\JmsSerializer\Handlers\TimeHandler;
 use Kronika\Extension\JmsSerializer\Handlers\YearHandler;
-use Kronika\Extension\JmsSerializer\Handlers\ZonedDateTimeHandler;
+use Kronika\LocalDateTime;
+use Kronika\Time;
+use Kronika\ZonedDateTime;
 
+/**
+ * @psalm-type TFormattable=LocalDateTime|ZonedDateTime|Date|Time
+ */
 final class KronikaSubscribingHandler implements SubscribingHandlerInterface
 {
+    /** @var array<class-string<TFormattable>, non-empty-string> Default formats */
+    public static array $formats = [
+        Date::class => DateHandler::FORMAT,
+        Time::class => TimeHandler::FORMAT,
+        LocalDateTime::class => DateTimeHandler::FORMAT_LOCAL,
+        // \DateTimeInterface::ATOM will be replaced with DateTimeHandler::FORMAT_ZONED
+        ZonedDateTime::class => \DateTimeInterface::ATOM,
+    ];
+
     /** @var null|array<non-empty-string, Handler> */
     private static ?array $_handlers = null;
 
@@ -72,10 +87,17 @@ final class KronikaSubscribingHandler implements SubscribingHandlerInterface
         }
 
         $handlers = [
-            new DateHandler(), new YearHandler(), new MonthHandler(), new DayOfMonthHandler(), new DayOfWeekHandler(),
-            new TimeHandler(), new HourHandler(), new MinuteHandler(), new SecondHandler(),
+            new DateHandler(format: self::$formats[Date::class] ?? DateHandler::FORMAT),
+            new YearHandler(), new MonthHandler(), new DayOfMonthHandler(), new DayOfWeekHandler(),
+
+            new TimeHandler(format: self::$formats[Time::class] ?? TimeHandler::FORMAT),
+            new HourHandler(), new MinuteHandler(), new SecondHandler(),
+
             new DurationHandler(), new InstantHandler(),
-            new LocalDateTimeHandler(), new ZonedDateTimeHandler(),
+            new DateTimeHandler(
+                formatLocal: self::$formats[LocalDateTime::class] ?? DateTimeHandler::FORMAT_LOCAL,
+                formatZoned: self::$formats[ZonedDateTime::class] ?? DateTimeHandler::FORMAT_ZONED,
+            ),
         ];
 
         foreach ($handlers as $handler) {

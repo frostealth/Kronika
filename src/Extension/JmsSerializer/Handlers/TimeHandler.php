@@ -19,6 +19,14 @@ use Kronika\Time;
 
 final readonly class TimeHandler implements Handler
 {
+    final public const string FORMAT = 'H:i:s.u';
+
+    /** @param non-empty-string $format */
+    public function __construct(
+        private string $format,
+    ) {
+    }
+
     #[\Override]
     public function types(): array
     {
@@ -31,13 +39,7 @@ final readonly class TimeHandler implements Handler
             return $visitor->visitNull($time, $type);
         }
 
-        return $visitor->visitString(\sprintf(
-            '%02d:%02d:%02d.%06d',
-            $time->hour()->value(),
-            $time->minute()->value(),
-            $time->second()->second(),
-            $time->second()->microsecond(),
-        ), $type);
+        return $visitor->visitString($time->format($this->getFormat($type)), $type);
     }
 
     public function deserialize(DeserializationVisitor $visitor, ?string $value, array $type): ?Time
@@ -47,12 +49,12 @@ final readonly class TimeHandler implements Handler
             return $visitor->visitNull($value, $type);
         }
 
-        [$hour, $minute, $second, $micro] = \sscanf($value, '%2d:%2d:%2d.%6d');
+        return Time::ofFormat($this->getFormat($type), $value);
+    }
 
-        return Time::of(
-            hour: (int) $hour,
-            minute: (int) $minute,
-            second: Time\Second::of(second: (int) $second, micro: (int) $micro),
-        );
+    /** @return non-empty-string */
+    private function getFormat(array $type): string
+    {
+        return $type['params'][0] ?? $this->format;
     }
 }

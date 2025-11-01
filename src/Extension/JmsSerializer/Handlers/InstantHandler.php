@@ -41,8 +41,6 @@ final readonly class InstantHandler implements Handler
             return $visitor->visitNull($value, $type);
         }
 
-        [$second, $micro] = \sscanf($value, '%d.%6d');
-
-        return Instant::of(second: (int)$second, micro: (int)$micro);
+        return Instant::ofValue($value);
     }
 }
