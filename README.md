@@ -9,12 +9,12 @@ composer require frostealth/kronika
 ```
 
 ## Version Guidance
-| Version | Status   | Branch            | PHP Version |
-|---------|----------|-------------------|-------------|
-| 0.2-dev | latest   | [0.x][branch-0.x] | ^8.4        |
-| 0.1     | support  | [0.1][branch-0.1] | >=8.3,<8.5  |
+| Version | Status   |      Branch       | PHP Version |
+|:-------:|:---------|:-----------------:|:-----------:|
+|   0.2   | latest   | [0.x][branch-0.2] |    ^8.4     |
+|   0.1   | support  | [0.1][branch-0.1] | >=8.3,<=8.5 |
 
-[branch-0.x]: https://github.com/frostealth/kronika/tree/0.x
+[branch-0.2]: https://github.com/frostealth/kronika/tree/0.x
 [branch-0.1]: https://github.com/frostealth/kronika/tree/0.1
 
 ## Usage
@@ -27,10 +27,12 @@ composer require frostealth/kronika
 - Extensions:
   - [Doctrine][extension-doctrine]
   - [JMS Serializer][extension-jms-serializer]
+  - [Symfony Serializer][extension-symfony]
   - [Yii2][extension-yii2]
 
 [extension-doctrine]: src/Extension/Doctrine/README.md
 [extension-jms-serializer]: src/Extension/JmsSerializer/README.md
+[extension-symfony]: src/Extension/Symfony/README.md
 [extension-yii2]: src/Extension/Yii2/README.md
 
 ### Date
