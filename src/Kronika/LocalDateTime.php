@@ -293,7 +293,7 @@ final readonly class LocalDateTime implements DateTime
     #[\Override]
     public function instant(): Instant
     {
-        return $this->time->instant()->add(Duration::of(seconds: $this->date->instant()->second()));
+        return $this->date->instant()->join($this->time->instant());
     }
 
     #[\Override]

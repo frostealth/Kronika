@@ -31,13 +31,13 @@ final readonly class InstantHandler implements Handler
             return $visitor->visitNull($instant, $type);
         }
 
-        return $visitor->visitString(\sprintf('%d.%06d', $instant->second(), $instant->microsecond()), $type);
+        return $visitor->visitString((string)$instant, $type);
     }
 
     public function deserialize(DeserializationVisitor $visitor, ?string $value, array $type): ?Instant
     {
         $value = $visitor->visitString($value, $type);
-        if ($value === null) {
+        if ($value === null || $value === '') {
             return $visitor->visitNull($value, $type);
         }
 

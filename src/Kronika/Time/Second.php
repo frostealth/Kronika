@@ -18,6 +18,8 @@ use Kronika\LocalDateTime;
 use Kronika\Time;
 use Kronika\Utils\Compared;
 use Kronika\Utils\WeakRefsTrait;
+use function Kronika\Utils\Math\double;
+use function Kronika\Utils\Math\double_split;
 
 /**
  * Represents a second with a microsecond of the minute.
@@ -89,8 +91,8 @@ final readonly class Second implements TimeUnit
     }
 
     /**
-     * @psalm-param TSecond $second
-     * @psalm-param TMicrosecond $microsecond
+     * @param TSecond $second
+     * @param TMicrosecond $microsecond
      */
     private function __construct(
         private int $second,
@@ -103,7 +105,7 @@ final readonly class Second implements TimeUnit
     /**
      * Returns the integer part of this second.
      *
-     * @psalm-return TSecond
+     * @return TSecond
      */
     public function second(): int
     {
@@ -113,7 +115,7 @@ final readonly class Second implements TimeUnit
     /**
      * Returns the microsecond of this second.
      *
-     * @psalm-return TMicrosecond
+     * @return TMicrosecond
      */
     public function microsecond(): int
     {
@@ -125,7 +127,7 @@ final readonly class Second implements TimeUnit
      */
     public function value(): float
     {
-        return (float)(string)$this;
+        return double([$this->second, $this->microsecond], precision: 6);
     }
 
     /**
@@ -167,12 +169,7 @@ final readonly class Second implements TimeUnit
     #[\Override]
     public function is(int|string|float $value): bool
     {
-        if (\is_int($value)) {
-            return $this->second === $value && $this->microsecond === 0;
-        }
-        \assert(\is_numeric($value));
-
-        [$second, $micro] = \sscanf((string)$value, '%d.%6d');
+        [$second, $micro] = double_split($value, precision: 6);
 
         return $this->second === $second && $this->microsecond === $micro;
     }

@@ -93,7 +93,7 @@ enum DayOfWeek: int implements DateUnit
      *
      * @param iso $iso
      *
-     * @psalm-return iso is not false ? TDayOfWeek : TDayOfWeekNative
+     * @return (iso is true ? TDayOfWeek : TDayOfWeekNative)
      */
     #[\Override]
     public function number(bool $iso = true): int

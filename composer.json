@@ -32,7 +32,8 @@
         },
         "files": [
             "src/Kronika/functions.php",
-            "src/Utils/functions.php"
+            "src/Utils/functions.php",
+            "src/Utils/Math/functions.php"
         ]
     },
     "autoload-dev": {

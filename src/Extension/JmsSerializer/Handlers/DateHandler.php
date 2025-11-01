@@ -46,7 +46,7 @@ final readonly class DateHandler implements Handler
     public function deserialize(DeserializationVisitor $visitor, ?string $value, array $type, Context $context): ?Date
     {
         $value = $visitor->visitString($value, $type);
-        if ($value === null) {
+        if ($value === null || $value === '') {
             return $visitor->visitNull($value, $type);
         }
 
