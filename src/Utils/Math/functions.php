@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Kronika\Utils\Math;
 
 
-if (! \function_exists('\\Kronika\\Utils\\Math\\double')) {
+if (! \function_exists('\Kronika\Utils\Math\double_split')) {
     /**
      * Splits a number into integer and fraction parts.
      *
