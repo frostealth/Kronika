@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Kronika\Date;
 
-use Kronika\Date;
 use Kronika\DateTime;
 use Kronika\LocalDateTime;
 use Kronika\Utils\WeakRefsTrait;
