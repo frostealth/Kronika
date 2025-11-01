@@ -20,6 +20,7 @@
         "doctrine/dbal": "^4.3",
         "jms/serializer": "^3.32",
         "phpunit/phpunit": "^12.4",
+        "symfony/serializer": "^7.3",
         "vimeo/psalm": "^6.13",
         "yiisoft/yii2": "^2.0.53"
     },
