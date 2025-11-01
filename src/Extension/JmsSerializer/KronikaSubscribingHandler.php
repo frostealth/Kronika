@@ -19,6 +19,7 @@ use JMS\Serializer\Handler\SubscribingHandlerInterface;
 use JMS\Serializer\Visitor\DeserializationVisitorInterface as DeserializationVisitor;
 use JMS\Serializer\Visitor\SerializationVisitorInterface as SerializationVisitor;
 use Kronika\Date;
+use Kronika\Duration;
 use Kronika\Extension\JmsSerializer\Handlers\DateHandler;
 use Kronika\Extension\JmsSerializer\Handlers\DateTimeHandler;
 use Kronika\Extension\JmsSerializer\Handlers\DayOfMonthHandler;
@@ -37,7 +38,7 @@ use Kronika\Time;
 use Kronika\ZonedDateTime;
 
 /**
- * @psalm-type TFormattable=LocalDateTime|ZonedDateTime|Date|Time
+ * @psalm-type TFormattable=LocalDateTime|ZonedDateTime|Date|Time|Duration
  */
 final class KronikaSubscribingHandler implements SubscribingHandlerInterface
 {
@@ -45,6 +46,7 @@ final class KronikaSubscribingHandler implements SubscribingHandlerInterface
     public static array $formats = [
         Date::class => DateHandler::FORMAT,
         Time::class => TimeHandler::FORMAT,
+        Duration::class => DurationHandler::FORMAT_IN_SECONDS,
         LocalDateTime::class => DateTimeHandler::FORMAT_LOCAL,
         // \DateTimeInterface::ATOM will be replaced with DateTimeHandler::FORMAT_ZONED
         ZonedDateTime::class => \DateTimeInterface::ATOM,
@@ -93,7 +95,8 @@ final class KronikaSubscribingHandler implements SubscribingHandlerInterface
             new TimeHandler(format: self::$formats[Time::class] ?? TimeHandler::FORMAT),
             new HourHandler(), new MinuteHandler(), new SecondHandler(),
 
-            new DurationHandler(), new InstantHandler(),
+            new DurationHandler(format: self::$formats[Duration::class] ?? DurationHandler::FORMAT_IN_SECONDS),
+            new InstantHandler(),
             new DateTimeHandler(
                 formatLocal: self::$formats[LocalDateTime::class] ?? DateTimeHandler::FORMAT_LOCAL,
                 formatZoned: self::$formats[ZonedDateTime::class] ?? DateTimeHandler::FORMAT_ZONED,

@@ -79,6 +79,10 @@ final readonly class Foo
 
         #[Type(Duration::class)]
         public Duration $duration,
+        #[Type(Duration::class . "<'in_hours'>")]
+        public Duration $durationInHours,
+        #[Type(Duration::class . "<'array'>")]
+        public Duration $durationArray,
         #[Type('KronikaDuration')]
         public Duration $durationAlias,
 
