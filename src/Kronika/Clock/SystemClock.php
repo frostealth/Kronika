@@ -30,20 +30,26 @@ use Kronika\ZonedDateTime;
  */
 final readonly class SystemClock implements Clock
 {
+    /** @param \DateTimeZone|(\Closure(): ?\DateTimeZone)|null $timezone */
     public function __construct(
-        private ?\DateTimeZone $timezone = null,
+        private \Closure|\DateTimeZone|null $timezone = null,
     ) {
     }
 
     #[\Override]
     public function now(): ZonedDateTime
     {
-        return ZonedDateTime::ofDateTime(new \DateTime(timezone: $this->timezone));
+        return ZonedDateTime::ofDateTime(new \DateTime(timezone: $this->timezone()));
     }
 
     #[\Override]
     public function sleep(Duration $duration): void
     {
         \sleep($duration->inSeconds());
+    }
+
+    private function timezone(): ?\DateTimeZone
+    {
+        return \is_callable($this->timezone) ? ($this->timezone)() : $this->timezone;
     }
 }

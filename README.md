@@ -75,7 +75,7 @@ echo $date->format('l, F jS, Y.');  // 'Monday, January 5th, 2026.'
 $date = $date->sub(Duration::of(hours: 48));
 echo $date->format('l, F jS, Y.');  // 'Saturday, January 3rd, 2026.'
 
-// getting the duration from one date to another
+// getting the duration from one date to another one
 $duration = $date->until(Date::of(year: 2026, month: 1, day: 5));
 echo $duration->days();     // 2
 echo $duration->hours();    // 0
@@ -106,7 +106,7 @@ echo $time->format('H:i:s');  // '12:10:30'
 $time = $time->with(Minute::of(30))->with(Second::zero());
 echo $time->format('H:i:s');  // '12:30:00'
 
-// comparison
+// comparing time or its unit to another one
 $other = $time->with(Second::of(0, micro: 999999));
 echo $time->isEqualTo($other);                     // false
 echo $time->isEqualTo($other, Precision::Second);  // true
@@ -123,7 +123,7 @@ echo $time->format('H:i:s');  // '16:00:30'
 $time = $time->sub(Duration::of(hours: 2, minutes: 120, seconds: 30));
 echo $time->format('H:i:s');  // '12:00:00'
 
-// getting the duration from one time to another
+// getting the duration from one time to another one
 $duration = $time->until(Time::of(hour: 18, minute: 30, second: 30));
 echo $duration->hours();      // 6
 echo $duration->minutes();    // 30
@@ -168,9 +168,9 @@ echo $datetime->format('Y-m-d H:i:s');  // '2026-01-01 01:00:30'
 $datetime = $datetime->sub(Duration::of(hours: 12, minutes: 60, seconds: 30));
 echo $datetime->format('Y-m-d H:i:s');  // '2025-12-31 12:00:00'
 
-// getting the duration from one "LocalDateTime" to another
+// getting the duration from one "LocalDateTime" to another one
 $duration = $datetime->until(
-    LocalDateTime::midnightOf(Date::of(year: 2026, month: 1, day: 14)),
+    LocalDateTime::of(Date::of(year: 2026, month: 1, day: 14), Time::midnight()),
 );
 echo $duration->days();     // 13
 echo $duration->hours();    // 12
@@ -196,11 +196,11 @@ $time     = Time::midday();
 $timezone = new \DateTimeZone('UTC')
 $datetime = ZonedDateTime::of($date, $time, $timezone);
 // or
-$datetime = $date->at($time)->atTimezone($timezone);
+$datetime = $date->at($time)->at($timezone);
 // or
 $datetime = ZonedDateTime::ofLocal(LocalDateTime::of($date, $time), $timezone);
 // or
-$datetime = LocalDateTime::of($date, $time)->atTimezone($timezone);
+$datetime = LocalDateTime::of($date, $time)->at($timezone);
 // or
 $datetime = ZonedDateTime::utcOf($date, $time);
 // or with current time and specified time-zone
@@ -242,7 +242,7 @@ echo $datetime->format(\DateTimeInterface::ATOM);  // '2025-12-31T12:00:00+00:00
 $datetime = $datetime->shiftTimezone(new \DateTimeZone('+01:00'));
 echo $datetime->format(\DateTimeInterface::ATOM);  // '2025-12-31T13:00:00+01:00'
 
-// getting the duration from one "ZonedDateTime" to another
+// getting the duration from one "ZonedDateTime" to another one
 $duration = $datetime->until(new \DateTime('2026-01-14T12:30:15+00:00'));
 $days     = $duration->days();     // 14
 $hours    = $duration->hours();    // 0
