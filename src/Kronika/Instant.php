@@ -17,6 +17,8 @@ use Kronika\Utils\Compared;
 use Kronika\Utils\Math;
 use Kronika\Utils\WeakRefsTrait;
 use function Kronika\Utils\math;
+use function Kronika\Utils\Math\double;
+use function Kronika\Utils\Math\double_split;
 
 /**
  * Represents the number of seconds counted from epoch of
@@ -58,14 +60,7 @@ final readonly class Instant
      */
     public static function ofValue(float|int|string $value): self
     {
-        if (\is_int($value)) {
-            return self::of($value);
-        }
-
-        \assert(\is_numeric($value));
-        [$second, $micro] = \sscanf((string)$value, '%d.%06d');
-
-        return self::of($second, $micro ?? 0);
+        return self::of(...double_split($value, precision: 6));
     }
 
     /** @param TMicrosecond $microsecond */
@@ -122,11 +117,7 @@ final readonly class Instant
      */
     public function value(): float
     {
-        if ($this->microsecond === 0) {
-            return (float)$this->second;
-        }
-
-        return (float)\sprintf('%d.%06d', $this->second, $this->microsecond);
+        return double([$this->second, $this->microsecond], precision: 6);
     }
 
     /**
@@ -348,13 +339,19 @@ final readonly class Instant
     #[\Override]
     public function __toString(): string
     {
-        return (string)$this->value();
+        return \sprintf('%06f', $this->value());
     }
 
     /** @internal */
     public function __debugInfo(): array
     {
         return ['second' => $this->value()];
+    }
+
+    /** @internal */
+    public function join(self $other): self
+    {
+        return self::of(...$this->math()->add($other->second, $other->microsecond)->parts());
     }
 
     private function math(): Math

@@ -80,7 +80,7 @@ final readonly class Year implements DateUnit
      * $this->length();  // 366
      * ```
      *
-     * @return int<365>|int<366>
+     * @return int<365,366>
      */
     public function length(): int
     {

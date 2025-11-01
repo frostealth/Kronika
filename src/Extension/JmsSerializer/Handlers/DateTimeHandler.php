@@ -61,7 +61,7 @@ final readonly class DateTimeHandler implements Handler
     public function deserialize(DeserializationVisitor $visitor, null|float|int|string $value, array $type): ?DateTime
     {
         $value = $visitor->visitString($value, $type);
-        if ($value === null) {
+        if ($value === null || $value === '') {
             return $visitor->visitNull($value, $type);
         }
 

@@ -45,7 +45,7 @@ final readonly class TimeHandler implements Handler
     public function deserialize(DeserializationVisitor $visitor, ?string $value, array $type): ?Time
     {
         $value = $visitor->visitString($value, $type);
-        if ($value === null) {
+        if ($value === null || $value === '') {
             return $visitor->visitNull($value, $type);
         }
 

@@ -19,7 +19,7 @@ use Kronika\Unit;
 /**
  * Represents a unit of day (date).
  *
- * @template TDateUnit of int
+ * @template-covariant TDateUnit of int
  * @internal
  */
 interface DateUnit extends Unit

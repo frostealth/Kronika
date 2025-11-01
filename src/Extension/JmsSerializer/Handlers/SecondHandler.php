@@ -16,6 +16,7 @@ namespace Kronika\Extension\JmsSerializer\Handlers;
 use JMS\Serializer\Visitor\DeserializationVisitorInterface as DeserializationVisitor;
 use JMS\Serializer\Visitor\SerializationVisitorInterface as SerializationVisitor;
 use Kronika\Time\Second;
+use function Kronika\Utils\Math\double_split;
 
 final readonly class SecondHandler implements Handler
 {
@@ -37,12 +38,10 @@ final readonly class SecondHandler implements Handler
     public function deserialize(DeserializationVisitor $visitor, ?string $value, array $type): ?Second
     {
         $value = $visitor->visitString($value, $type);
-        if ($value === null) {
+        if ($value === null || $value === '') {
             return $visitor->visitNull($value, $type);
         }
 
-        [$second, $micro] = \sscanf($value, '%2d.%6d');
-
-        return Second::of(second: (int)$second, micro: (int)$micro);
+        return Second::of(...double_split($value, precision: 6));
     }
 }
