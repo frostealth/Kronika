@@ -20,6 +20,14 @@ use Kronika\Date;
 
 final readonly class DateHandler implements Handler
 {
+    final public const string FORMAT = 'Y-m-d';
+
+    /** @param non-empty-string $format */
+    public function __construct(
+        private string $format,
+    ) {
+    }
+
     #[\Override]
     public function types(): array
     {
@@ -32,12 +40,7 @@ final readonly class DateHandler implements Handler
             return $visitor->visitNull($date, $type);
         }
 
-        return $visitor->visitString(\sprintf(
-            '%04d-%02d-%02d',
-            $date->year()->number(),
-            $date->month()->number(),
-            $date->day()->number(),
-        ), $type);
+        return $visitor->visitString($date->format($this->getFormat($type)), $type);
     }
 
     public function deserialize(DeserializationVisitor $visitor, ?string $value, array $type, Context $context): ?Date
@@ -47,8 +50,12 @@ final readonly class DateHandler implements Handler
             return $visitor->visitNull($value, $type);
         }
 
-        [$year, $month, $day] = \sscanf($value, '%4d-%2d-%2d');
+        return Date::ofFormat($this->getFormat($type), $value);
+    }
 
-        return Date::of(year: (int)$year, month: (int)$month, day: (int)$day);
+    /** @return non-empty-string */
+    private function getFormat(array $type): string
+    {
+        return $type['params'][0] ?? $this->format;
     }
 }
