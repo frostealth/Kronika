@@ -35,6 +35,8 @@ interface DateUnit extends Unit
      * Checks if this date unit's number is equal to a given one.
      *
      * @param TDateUnit $number
+     *
+     * @deprecated
      */
     public function is(int $number): bool;
 

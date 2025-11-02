@@ -102,6 +102,8 @@ enum Month: int implements DateUnit
 
     /**
      * Checks if the number of this month is equal to a given one.
+     *
+     * @deprecated
      */
     #[\Override]
     public function is(int|self $number): bool

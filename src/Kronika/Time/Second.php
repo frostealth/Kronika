@@ -165,6 +165,8 @@ final readonly class Second implements TimeUnit
      * Checks if this second's value equal to a given one.
      *
      * @param TSecond|numeric $value
+     *
+     * @deprecated
      */
     #[\Override]
     public function is(int|string|float $value): bool

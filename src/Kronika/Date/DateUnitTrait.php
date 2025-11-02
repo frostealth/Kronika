@@ -40,6 +40,7 @@ trait DateUnitTrait
         \assert(static::minValue() <= $value && $value <= static::maxValue());
     }
 
+    /** @deprecated */
     #[\Override]
     final public function is(int $number): bool
     {

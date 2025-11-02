@@ -109,6 +109,8 @@ final readonly class Minute implements TimeUnit
 
     /**
      * Checks if this minute's value is equal to a given one.
+     *
+     * @deprecated
      */
     #[\Override]
     public function is(int $value): bool

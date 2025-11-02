@@ -38,6 +38,8 @@ interface TimeUnit extends Unit
      * Checks if this time unit's value is equal to a given one.
      *
      * @param TTimeUnit $value
+     *
+     * @deprecated
      */
     public function is(int $value): bool;
 
