@@ -19,10 +19,10 @@ if (! \function_exists('\\Kronika\\now')) {
      *
      * @example
      * ```
-     * // 2025-12-31 12:15:30.000155 UTC
+     * // 2025-12-31 11:15:30.000155 UTC
      * $datetime = now();
      *
-     * // 2025-12-31 13:15:30.000155 +01:00
+     * // 2025-12-31 12:15:30.000155 +01:00
      * $datetime = now(new \DateTimeZone('+01:00'));
      * $datetime->resetMicro();      // 2025-12-31 12:15:30.000000 +01:00
      * $datetime->resetSecond();     // 2025-12-31 12:15:00.000000 +01:00
@@ -58,7 +58,7 @@ if (! \function_exists('\\Kronika\\earliest')) {
      * ```
      * // $first: 2025-12-31 00:00:00
      * // $second: 2025-12-30 23:00:00
-     * earliest($first, $second);  // 2025-12-30 12:00:00
+     * earliest($first, $second);  // 2025-12-30 23:00:00
      * ```
      *
      * @template T of DateTime

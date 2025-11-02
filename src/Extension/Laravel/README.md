@@ -3,6 +3,11 @@ This extension allows you to automatically store Kronika objects
 in a database with Laravel Eloquent.
 
 ## Usage
+
+- [Eloquent](#eloquent)
+- [Clock](#clock)
+
+### Eloquent
 ```php
 <?php
 
@@ -45,3 +50,10 @@ echo $foo->datetime instanceof ZonedDateTime;  // true
 ```
 
 See more in [Casts](Eloquent/Casts).
+
+### Clock
+Publish the Kronika Clock configuration file using the `vendor:publish` Artisan command.
+This command will publish the `kronika.php` configuration file to your application's config directory:
+```bash
+php artisan vendor:publish --provider="Kronika\Extension\Laravel\Clock\ClockServiceProvider"
+```

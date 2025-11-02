@@ -18,8 +18,8 @@
         "ext-bcmath": "*",
         "ext-gmp": "*",
         "doctrine/dbal": "^4.3",
-        "illuminate/database": "^12.36",
         "jms/serializer": "^3.32",
+        "laravel/framework": "^12.36",
         "phpunit/phpunit": "^12.4",
         "psr/clock": "^1.0",
         "symfony/serializer": "^7.3",
@@ -52,6 +52,14 @@
         "branch-alias": {
             "dev-0.x": "0.2-dev",
             "dev-0.1": "0.1-dev"
+        },
+        "laravel": {
+            "providers": [
+                "Kronika\\Extension\\Laravel\\Clock\\ClockServiceProvider"
+            ],
+            "aliases": {
+                "Kronika": "Kronika\\Extension\\Laravel\\Clock\\Facade"
+            }
         }
     },
     "config": {
