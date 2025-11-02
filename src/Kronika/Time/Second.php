@@ -127,7 +127,7 @@ final readonly class Second implements TimeUnit
      */
     public function value(): float
     {
-        return double([$this->second, $this->microsecond], precision: 6);
+        return double([$this->second, $this->microsecond]);
     }
 
     /**
@@ -169,7 +169,7 @@ final readonly class Second implements TimeUnit
     #[\Override]
     public function is(int|string|float $value): bool
     {
-        [$second, $micro] = double_split($value, precision: 6);
+        [$second, $micro] = double_split($value);
 
         return $this->second === $second && $this->microsecond === $micro;
     }

@@ -119,6 +119,36 @@ final readonly class LocalDateTime implements DateTime
         return self::of(Date::ofInstant($instant), Time::ofInstant($instant));
     }
 
+    /**
+     * Obtain an instance of LocalDateTime from a given format and date-time string.
+     *
+     * @param non-empty-string $format
+     * @param non-empty-string $datetime
+     *
+     * @throws \DateMalformedStringException
+     */
+    public static function ofFormat(string $format, string $datetime): self
+    {
+        $native = \DateTimeImmutable::createFromFormat(self::quote($format), $datetime);
+        if (! $native instanceof \DateTimeImmutable) {
+            throw new \DateMalformedStringException();
+        }
+
+        return self::ofDateTime($native);
+    }
+
+    /**
+     * Obtains an instance of LocalDateTime from a given date-time string.
+     *
+     * @param non-empty-string $datetime
+     *
+     * @throws \DateMalformedStringException
+     */
+    public static function parse(string $datetime): self
+    {
+        return self::ofDateTime(new \DateTimeImmutable($datetime));
+    }
+
     private function __construct(
         private Date $date,
         private Time $time,

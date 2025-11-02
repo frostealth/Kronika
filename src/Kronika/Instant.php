@@ -60,7 +60,7 @@ final readonly class Instant
      */
     public static function ofValue(float|int|string $value): self
     {
-        return self::of(...double_split($value, precision: 6));
+        return self::of(...double_split($value));
     }
 
     /** @param TMicrosecond $microsecond */
@@ -117,7 +117,7 @@ final readonly class Instant
      */
     public function value(): float
     {
-        return double([$this->second, $this->microsecond], precision: 6);
+        return double([$this->second, $this->microsecond]);
     }
 
     /**

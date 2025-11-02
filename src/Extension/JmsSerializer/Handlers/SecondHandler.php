@@ -42,6 +42,6 @@ final readonly class SecondHandler implements Handler
             return $visitor->visitNull($value, $type);
         }
 
-        return Second::of(...double_split($value, precision: 6));
+        return Second::of(...double_split($value));
     }
 }

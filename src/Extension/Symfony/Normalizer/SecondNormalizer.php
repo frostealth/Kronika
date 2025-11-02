@@ -62,6 +62,6 @@ final readonly class SecondNormalizer implements Normalizer, Denormalizer
             );
         }
 
-        return Second::of(...double_split($data, precision: 6));
+        return Second::of(...double_split($data));
     }
 }

@@ -91,14 +91,21 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Obtain an instance of Date from a format.
+     * Obtain an instance of Date from a given format and date string.
      *
      * @param non-empty-string $format
      * @param non-empty-string $date
+     *
+     * @throws \DateMalformedStringException
      */
     public static function ofFormat(string $format, string $date): self
     {
-        return self::ofDateTime(\DateTimeImmutable::createFromFormat(self::quote($format), $date));
+        $native = \DateTimeImmutable::createFromFormat(self::quote($format), $date);
+        if (! $native instanceof \DateTimeImmutable) {
+            throw new \DateMalformedStringException();
+        }
+
+        return self::ofDateTime($native);
     }
 
     private function __construct(

@@ -123,14 +123,21 @@ final readonly class Time implements Unit
     }
 
     /**
-     * Obtain an instance of Time from a format.
+     * Obtain an instance of Time from a given format and time string.
      *
      * @param non-empty-string $format
      * @param non-empty-string $time
+     *
+     * @throws \DateMalformedStringException
      */
     public static function ofFormat(string $format, string $time): self
     {
-        return self::ofDateTime(\DateTimeImmutable::createFromFormat(self::quote($format), $time));
+        $native = \DateTimeImmutable::createFromFormat(self::quote($format), $time);
+        if (! $native instanceof \DateTimeImmutable) {
+            throw new \DateMalformedStringException();
+        }
+
+        return self::ofDateTime($native);
     }
 
     private function __construct(
