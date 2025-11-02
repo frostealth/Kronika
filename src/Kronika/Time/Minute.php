@@ -79,11 +79,7 @@ final readonly class Minute implements TimeUnit
         \assert($value >= 0 && $value < 60);
     }
 
-    /**
-     * Returns the value of this minute.
-     *
-     * @return TMinute
-     */
+    #[\Override]
     public function value(): int
     {
         return $this->value;
@@ -105,15 +101,6 @@ final readonly class Minute implements TimeUnit
     public function isLast(): bool
     {
         return $this->isEqualTo(self::last());
-    }
-
-    /**
-     * Checks if this minute's value is equal to a given one.
-     */
-    #[\Override]
-    public function is(int $value): bool
-    {
-        return $this->value() === $value;
     }
 
     /**

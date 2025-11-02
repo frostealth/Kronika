@@ -31,7 +31,6 @@ final class MonthTest extends TestCase
 
         self::assertEquals(1, $month->number());
         self::assertEquals('January', $month->name());
-        self::assertTrue($month->is(1));
 
         self::assertNotSame($month, Month::of(2));
         self::assertSame($month, Month::of($month));

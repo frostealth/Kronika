@@ -19,7 +19,7 @@ use Kronika\Unit;
 /**
  * Represents a unit of time.
  *
- * @template TTimeUnit of int
+ * @template TTimeUnit of numeric
  * @internal
  */
 interface TimeUnit extends Unit
@@ -35,11 +35,11 @@ interface TimeUnit extends Unit
     public function isLast(): bool;
 
     /**
-     * Checks if this time unit's value is equal to a given one.
+     * Returns the value of this time unit.
      *
-     * @param TTimeUnit $value
+     * @return TTimeUnit
      */
-    public function is(int $value): bool;
+    public function value(): float|int|string;
 
     /** @internal {@see Time::with()} */
     public function _withinTime(Time $time): Time;

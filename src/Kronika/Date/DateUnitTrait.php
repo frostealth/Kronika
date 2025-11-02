@@ -41,12 +41,6 @@ trait DateUnitTrait
     }
 
     #[\Override]
-    final public function is(int $number): bool
-    {
-        return $this->number() === $number;
-    }
-
-    #[\Override]
     final public function number(): int
     {
         return $this->value;

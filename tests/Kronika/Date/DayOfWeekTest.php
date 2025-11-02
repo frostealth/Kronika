@@ -27,9 +27,6 @@ final class DayOfWeekTest extends TestCase
         $day = DayOfWeek::of(3);
 
         self::assertEquals(3, $day->number());
-        self::assertTrue($day->is(3));
-        self::assertFalse($day->is(5));
-
         self::assertNotSame($day, DayOfWeek::of(2));
         self::assertSame($day, DayOfWeek::of(3));
 

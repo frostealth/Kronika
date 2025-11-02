@@ -27,8 +27,6 @@ final class MinuteTest extends TestCase
         $minute = Minute::of(35);
 
         self::assertEquals(35, $minute->value());
-        self::assertTrue($minute->is(35));
-
         self::assertNotSame($minute, Minute::of(2));
         self::assertSame($minute, Minute::of($minute));
         self::assertSame($minute, Minute::of(35));

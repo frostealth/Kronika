@@ -79,11 +79,7 @@ final readonly class Hour implements TimeUnit
         \assert($value >= 0 && $value < 24);
     }
 
-    /**
-     * Returns the value of this hour.
-     *
-     * @return THour
-     */
+    #[\Override]
     public function value(): int
     {
         return $this->value;
@@ -105,15 +101,6 @@ final readonly class Hour implements TimeUnit
     public function isLast(): bool
     {
         return $this->isEqualTo(self::last());
-    }
-
-    /**
-     * Checks if this hour's value is equal to a given one.
-     */
-    #[\Override]
-    public function is(int $value): bool
-    {
-        return $this->value() === $value;
     }
 
     /**

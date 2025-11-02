@@ -19,14 +19,13 @@ use Kronika\Time;
 use Kronika\Utils\Compared;
 use Kronika\Utils\WeakRefsTrait;
 use function Kronika\Utils\Math\double;
-use function Kronika\Utils\Math\double_split;
 
 /**
  * Represents a second with a microsecond of the minute.
  *
  * @psalm-type TSecond=int<0,59>
  * @psalm-type TMicrosecond=int<0,999999>
- * @implements TimeUnit<TSecond>
+ * @implements TimeUnit<float>
  */
 final readonly class Second implements TimeUnit
 {
@@ -122,9 +121,7 @@ final readonly class Second implements TimeUnit
         return $this->microsecond;
     }
 
-    /**
-     * Returns the value of this second.
-     */
+    #[\Override]
     public function value(): float
     {
         return double([$this->second, $this->microsecond]);
@@ -159,19 +156,6 @@ final readonly class Second implements TimeUnit
     public function isLast(): bool
     {
         return $this->isEqualTo(self::last());
-    }
-
-    /**
-     * Checks if this second's value equal to a given one.
-     *
-     * @param TSecond|numeric $value
-     */
-    #[\Override]
-    public function is(int|string|float $value): bool
-    {
-        [$second, $micro] = double_split($value);
-
-        return $this->second === $second && $this->microsecond === $micro;
     }
 
     /**

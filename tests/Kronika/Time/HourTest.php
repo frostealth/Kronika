@@ -27,8 +27,6 @@ final class HourTest extends TestCase
         $hour = Hour::of(12);
 
         self::assertEquals(12, $hour->value());
-        self::assertTrue($hour->is(12));
-
         self::assertNotSame($hour, Hour::of(2));
         self::assertSame($hour, Hour::of(12));
         self::assertSame($hour, Hour::of($hour));

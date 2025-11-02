@@ -101,17 +101,6 @@ enum Month: int implements DateUnit
     }
 
     /**
-     * Checks if the number of this month is equal to a given one.
-     */
-    #[\Override]
-    public function is(int|self $number): bool
-    {
-        $number = $number instanceof self ? $number->value : $number;
-
-        return $number === $this->value;
-    }
-
-    /**
      * Returns the number of this month.
      */
     #[\Override]

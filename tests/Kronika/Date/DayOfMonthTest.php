@@ -27,8 +27,6 @@ final class DayOfMonthTest extends TestCase
         $day = DayOfMonth::of(15);
 
         self::assertEquals(15, $day->number());
-        self::assertTrue($day->is(15));
-
         self::assertNotSame($day, DayOfMonth::of(2));
         self::assertSame($day, DayOfMonth::of(15));
         self::assertSame($day, DayOfMonth::of($day));

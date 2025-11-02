@@ -28,8 +28,6 @@ final class YearTest extends TestCase
         $year = Year::of(2025);
 
         self::assertEquals(2025, $year->number());
-        self::assertTrue($year->is(2025));
-
         self::assertNotSame($year, Year::of(2024));
         self::assertSame($year, Year::of($year));
         self::assertSame($year, Year::of(2025));

@@ -71,17 +71,6 @@ enum DayOfWeek: int implements DateUnit
     }
 
     /**
-     * Checks if the number of this day of week is equal to a given one.
-     */
-    #[\Override]
-    public function is(self|int $number): bool
-    {
-        $number = $number instanceof self ? $number->value : $number;
-
-        return $this->value === $number;
-    }
-
-    /**
      * Returns the number of this day of week.
      *
      * ```
