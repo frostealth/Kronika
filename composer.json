@@ -18,6 +18,7 @@
         "ext-bcmath": "*",
         "ext-gmp": "*",
         "doctrine/dbal": "^4.3",
+        "illuminate/database": "^12.36",
         "jms/serializer": "^3.32",
         "phpunit/phpunit": "^12.4",
         "symfony/serializer": "^7.3",

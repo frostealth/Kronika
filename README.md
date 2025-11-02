@@ -26,11 +26,13 @@ composer require frostealth/kronika
 - Extensions:
   - [Doctrine][extension-doctrine]
   - [JMS Serializer][extension-jms-serializer]
+  - [Laravel][extension-laravel]
   - [Symfony Serializer][extension-symfony]
   - [Yii2][extension-yii2]
 
 [extension-doctrine]: src/Extension/Doctrine/README.md
 [extension-jms-serializer]: src/Extension/JmsSerializer/README.md
+[extension-laravel]: src/Extension/Laravel/README.md
 [extension-symfony]: src/Extension/Symfony/README.md
 [extension-yii2]: src/Extension/Yii2/README.md
 
