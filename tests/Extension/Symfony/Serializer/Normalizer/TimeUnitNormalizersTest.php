@@ -11,11 +11,11 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Kronika\Extension\Tests\Symfony\Normalizer;
+namespace Kronika\Extension\Tests\Symfony\Serializer\Normalizer;
 
-use Kronika\Extension\Symfony\Normalizer\HourNormalizer;
-use Kronika\Extension\Symfony\Normalizer\MinuteNormalizer;
-use Kronika\Extension\Symfony\Normalizer\SecondNormalizer;
+use Kronika\Extension\Symfony\Serializer\Normalizer\HourNormalizer;
+use Kronika\Extension\Symfony\Serializer\Normalizer\MinuteNormalizer;
+use Kronika\Extension\Symfony\Serializer\Normalizer\SecondNormalizer;
 use Kronika\Time\Hour;
 use Kronika\Time\Minute;
 use Kronika\Time\Second;

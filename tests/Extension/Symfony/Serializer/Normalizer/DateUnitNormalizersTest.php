@@ -11,16 +11,16 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Kronika\Extension\Tests\Symfony\Normalizer;
+namespace Kronika\Extension\Tests\Symfony\Serializer\Normalizer;
 
 use Kronika\Date\DayOfMonth;
 use Kronika\Date\DayOfWeek;
 use Kronika\Date\Month;
 use Kronika\Date\Year;
-use Kronika\Extension\Symfony\Normalizer\DayOfMonthNormalizer;
-use Kronika\Extension\Symfony\Normalizer\DayOfWeekNormalizer;
-use Kronika\Extension\Symfony\Normalizer\MonthNormalizer;
-use Kronika\Extension\Symfony\Normalizer\YearNormalizer;
+use Kronika\Extension\Symfony\Serializer\Normalizer\DayOfMonthNormalizer;
+use Kronika\Extension\Symfony\Serializer\Normalizer\DayOfWeekNormalizer;
+use Kronika\Extension\Symfony\Serializer\Normalizer\MonthNormalizer;
+use Kronika\Extension\Symfony\Serializer\Normalizer\YearNormalizer;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\Serializer;

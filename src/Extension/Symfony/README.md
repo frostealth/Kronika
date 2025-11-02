@@ -7,7 +7,7 @@ Register the handlers to Symfony Serializer
 ([documentation](https://symfony.com/doc/current/serializer/custom_normalizer.html#registering-it-in-your-application)).
 
 ```php
-use Kronika\Extension\Symfony\KronikaNormalizers;
+use Kronika\Extension\Symfony\Serializer\KronikaNormalizers;
 use Symfony\Component\Serializer\Serializer;
 
 $serializer = new Serializer(

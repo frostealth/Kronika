@@ -11,46 +11,46 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Kronika\Extension\Symfony\Normalizer;
+namespace Kronika\Extension\Symfony\Serializer\Normalizer;
 
-use Kronika\Date\DayOfMonth;
+use Kronika\Time\Minute;
 use Symfony\Component\Serializer\Exception\InvalidArgumentException;
 use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface as Denormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface as Normalizer;
 
-final readonly class DayOfMonthNormalizer implements Normalizer, Denormalizer
+final readonly class MinuteNormalizer implements Normalizer, Denormalizer
 {
     #[\Override]
     public function getSupportedTypes(?string $format): array
     {
-        return [DayOfMonth::class => true];
+        return [Minute::class => true];
     }
 
     #[\Override]
     public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
-        return $data instanceof DayOfMonth;
+        return $data instanceof Minute;
     }
 
     #[\Override]
     public function supportsDenormalization(mixed $data, string $type, ?string $format = null, array $context = []): bool
     {
-        return \is_a($type, DayOfMonth::class, true);
+        return \is_a($type, Minute::class, true);
     }
 
     #[\Override]
     public function normalize(mixed $data, ?string $format = null, array $context = []): int
     {
-        if (! $data instanceof DayOfMonth) {
-            throw new InvalidArgumentException(\sprintf('The object must be an instance of "%s".', DayOfMonth::class));
+        if (! $data instanceof Minute) {
+            throw new InvalidArgumentException(\sprintf('The object must be an instance of "%s".', Minute::class));
         }
 
-        return $data->number();
+        return $data->value();
     }
 
     #[\Override]
-    public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): DayOfMonth
+    public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): Minute
     {
         if (! \is_int($data)) {
             throw NotNormalizableValueException::createForUnexpectedDataType(
@@ -61,6 +61,6 @@ final readonly class DayOfMonthNormalizer implements Normalizer, Denormalizer
             );
         }
 
-        return DayOfMonth::of($data);
+        return Minute::of($data);
     }
 }

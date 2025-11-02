@@ -11,57 +11,56 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Kronika\Extension\Symfony\Normalizer;
+namespace Kronika\Extension\Symfony\Serializer\Normalizer;
 
-use Kronika\Time\Second;
+use Kronika\Date\DayOfMonth;
 use Symfony\Component\Serializer\Exception\InvalidArgumentException;
 use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface as Denormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface as Normalizer;
-use function Kronika\Utils\Math\double_split;
 
-final readonly class SecondNormalizer implements Normalizer, Denormalizer
+final readonly class DayOfMonthNormalizer implements Normalizer, Denormalizer
 {
     #[\Override]
     public function getSupportedTypes(?string $format): array
     {
-        return [Second::class => true];
+        return [DayOfMonth::class => true];
     }
 
     #[\Override]
     public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
-        return $data instanceof Second;
+        return $data instanceof DayOfMonth;
     }
 
     #[\Override]
     public function supportsDenormalization(mixed $data, string $type, ?string $format = null, array $context = []): bool
     {
-        return \is_a($type, Second::class, true);
+        return \is_a($type, DayOfMonth::class, true);
     }
 
     #[\Override]
-    public function normalize(mixed $data, ?string $format = null, array $context = []): float
+    public function normalize(mixed $data, ?string $format = null, array $context = []): int
     {
-        if (! $data instanceof Second) {
-            throw new InvalidArgumentException(\sprintf('The object must be an instance of "%s".', Second::class));
+        if (! $data instanceof DayOfMonth) {
+            throw new InvalidArgumentException(\sprintf('The object must be an instance of "%s".', DayOfMonth::class));
         }
 
-        return $data->value();
+        return $data->number();
     }
 
     #[\Override]
-    public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): Second
+    public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): DayOfMonth
     {
-        if (! \is_float($data)) {
+        if (! \is_int($data)) {
             throw NotNormalizableValueException::createForUnexpectedDataType(
                 message: 'Unsupported type',
                 data: $data,
-                expectedTypes: ['float'],
+                expectedTypes: ['integer'],
                 path: $context['deserialization_path'] ?? null,
             );
         }
 
-        return Second::of(...double_split($data));
+        return DayOfMonth::of($data);
     }
 }
