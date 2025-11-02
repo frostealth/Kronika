@@ -25,7 +25,7 @@ if (! \function_exists('\Kronika\Utils\Math\double_split')) {
      *
      * @internal
      */
-    function double_split(float|int|string $number, int $precision): array
+    function double_split(float|int|string $number, int $precision = 6): array
     {
         if (\is_int($number)) {
             return [$number, 0];
@@ -45,7 +45,7 @@ if (! \function_exists('\\Kronika\\Utils\\Math\\double')) {
      *
      * @internal
      */
-    function double(array|float|int|string $number, int $precision): float
+    function double(array|float|int|string $number, int $precision = 6): float
     {
         if (\is_float($number)) {
             return $number;

@@ -72,7 +72,7 @@ final readonly class DateTimeNormalizer implements Normalizer, Denormalizer
 
         return match ($format) {
             'U' => (int)$data->format($format),
-            'U.u' => double($data->format($format), precision: 6),
+            'U.u' => double($data->format($format)),
             default => $data->format($format),
         };
     }
@@ -95,7 +95,7 @@ final readonly class DateTimeNormalizer implements Normalizer, Denormalizer
         $format = $this->getFormat($type, $context);
 
         return match ($type) {
-            LocalDateTime::class => ZonedDateTime::ofFormat($format, (string)$data)->toLocalDateTime(),
+            LocalDateTime::class => LocalDateTime::ofFormat($format, (string)$data),
             ZonedDateTime::class => ZonedDateTime::ofFormat($format, (string)$data),
         };
     }

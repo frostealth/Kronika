@@ -133,7 +133,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     /**
-     * Obtain an instance of ZonedDateTime from a format.
+     * Obtain an instance of ZonedDateTime from a given format, date-time string and time-zone.
      *
      * @param non-empty-string $format
      * @param non-empty-string $datetime
@@ -247,7 +247,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      */
     public function timestamp(): float
     {
-        return double([parent::getTimestamp(), $this->microsecond()], precision: 6);
+        return double([parent::getTimestamp(), $this->microsecond()]);
     }
 
     /**

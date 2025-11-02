@@ -130,6 +130,22 @@ final class LocalDateTimeTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
+    #[TestWith(['Y-m-d\TH:i:s.u', '2025-12-31T12:15:59.999999'])]
+    #[TestWith(['Y-m-d\TH:i:sP', '2025-12-31T12:15:59P'])]
+    #[TestWith(['Y-m-d H:i:sP', '2025-12-31 12:15:59P'])]
+    #[TestWith(['\Y-m-d H:i:sP', 'Y-12-31 12:15:59P'])]
+    #[TestWith([
+        '\D\a\t\e: "l, d M y", \T\i\m\e: "G \h\o\u\r\s, i \m\i\n\u\t\e\s, s \s\e\c\o\n\d\s"',
+        'Date: "Wednesday, 31 Dec 25", Time: "12 hours, 15 minutes, 59 seconds"',
+    ])]
+    #[Depends('testFormat')]
+    public function testOfFormat(string $format, string $str): void
+    {
+        $datetime = LocalDateTime::ofFormat($format, $str);
+
+        self::assertEquals($str, $datetime->format($format));
+    }
+
     #[Depends('testBasic')]
     public function testToString(): void
     {
