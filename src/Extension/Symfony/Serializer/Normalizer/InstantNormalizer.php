@@ -11,56 +11,56 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Kronika\Extension\Symfony\Normalizer;
+namespace Kronika\Extension\Symfony\Serializer\Normalizer;
 
-use Kronika\Date\DayOfWeek;
+use Kronika\Instant;
 use Symfony\Component\Serializer\Exception\InvalidArgumentException;
 use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface as Denormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface as Normalizer;
 
-final readonly class DayOfWeekNormalizer implements Normalizer, Denormalizer
+final readonly class InstantNormalizer implements Normalizer, Denormalizer
 {
     #[\Override]
     public function getSupportedTypes(?string $format): array
     {
-        return [DayOfWeek::class => true];
+        return [Instant::class => true];
     }
 
     #[\Override]
     public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
-        return $data instanceof DayOfWeek;
+        return $data instanceof Instant;
     }
 
     #[\Override]
     public function supportsDenormalization(mixed $data, string $type, ?string $format = null, array $context = []): bool
     {
-        return \is_a($type, DayOfWeek::class, true);
+        return \is_a($type, Instant::class, true);
     }
 
     #[\Override]
-    public function normalize(mixed $data, ?string $format = null, array $context = []): int
+    public function normalize(mixed $data, ?string $format = null, array $context = []): float|int|string
     {
-        if (! $data instanceof DayOfWeek) {
-            throw new InvalidArgumentException(\sprintf('The object must be an instance of "%s".', DayOfWeek::class));
+        if (! $data instanceof Instant) {
+            throw new InvalidArgumentException(\sprintf('The object must be an instance of "%s".', Instant::class));
         }
 
-        return $data->number();
+        return $data->value();
     }
 
     #[\Override]
-    public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): DayOfWeek
+    public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): Instant
     {
-        if (! \is_int($data)) {
+        if (! \is_float($data) && ! \is_string($data) && ! \is_int($data) || $data === '') {
             throw NotNormalizableValueException::createForUnexpectedDataType(
                 message: 'Unsupported type',
                 data: $data,
-                expectedTypes: ['integer'],
+                expectedTypes: ['float', 'integer', 'string'],
                 path: $context['deserialization_path'] ?? null,
             );
         }
 
-        return DayOfWeek::of($data);
+        return Instant::ofValue($data);
     }
 }

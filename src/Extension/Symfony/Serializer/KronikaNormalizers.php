@@ -11,22 +11,22 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Kronika\Extension\Symfony;
+namespace Kronika\Extension\Symfony\Serializer;
 
 use Kronika\Date;
 use Kronika\Duration;
-use Kronika\Extension\Symfony\Normalizer\DateNormalizer;
-use Kronika\Extension\Symfony\Normalizer\DateTimeNormalizer;
-use Kronika\Extension\Symfony\Normalizer\DayOfMonthNormalizer;
-use Kronika\Extension\Symfony\Normalizer\DayOfWeekNormalizer;
-use Kronika\Extension\Symfony\Normalizer\DurationNormalizer;
-use Kronika\Extension\Symfony\Normalizer\HourNormalizer;
-use Kronika\Extension\Symfony\Normalizer\InstantNormalizer;
-use Kronika\Extension\Symfony\Normalizer\MinuteNormalizer;
-use Kronika\Extension\Symfony\Normalizer\MonthNormalizer;
-use Kronika\Extension\Symfony\Normalizer\SecondNormalizer;
-use Kronika\Extension\Symfony\Normalizer\TimeNormalizer;
-use Kronika\Extension\Symfony\Normalizer\YearNormalizer;
+use Kronika\Extension\Symfony\Serializer\Normalizer\DateNormalizer;
+use Kronika\Extension\Symfony\Serializer\Normalizer\DateTimeNormalizer;
+use Kronika\Extension\Symfony\Serializer\Normalizer\DayOfMonthNormalizer;
+use Kronika\Extension\Symfony\Serializer\Normalizer\DayOfWeekNormalizer;
+use Kronika\Extension\Symfony\Serializer\Normalizer\DurationNormalizer;
+use Kronika\Extension\Symfony\Serializer\Normalizer\HourNormalizer;
+use Kronika\Extension\Symfony\Serializer\Normalizer\InstantNormalizer;
+use Kronika\Extension\Symfony\Serializer\Normalizer\MinuteNormalizer;
+use Kronika\Extension\Symfony\Serializer\Normalizer\MonthNormalizer;
+use Kronika\Extension\Symfony\Serializer\Normalizer\SecondNormalizer;
+use Kronika\Extension\Symfony\Serializer\Normalizer\TimeNormalizer;
+use Kronika\Extension\Symfony\Serializer\Normalizer\YearNormalizer;
 use Kronika\LocalDateTime;
 use Kronika\Time;
 use Kronika\ZonedDateTime;

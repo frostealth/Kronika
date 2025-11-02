@@ -11,7 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Kronika\Extension\Symfony\Normalizer;
+namespace Kronika\Extension\Symfony\Serializer\Normalizer;
 
 use Kronika\DateTime;
 use Kronika\LocalDateTime;

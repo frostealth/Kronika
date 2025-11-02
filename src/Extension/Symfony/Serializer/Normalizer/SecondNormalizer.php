@@ -11,56 +11,57 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Kronika\Extension\Symfony\Normalizer;
+namespace Kronika\Extension\Symfony\Serializer\Normalizer;
 
-use Kronika\Date\Year;
+use Kronika\Time\Second;
 use Symfony\Component\Serializer\Exception\InvalidArgumentException;
 use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface as Denormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface as Normalizer;
+use function Kronika\Utils\Math\double_split;
 
-final readonly class YearNormalizer implements Normalizer, Denormalizer
+final readonly class SecondNormalizer implements Normalizer, Denormalizer
 {
     #[\Override]
     public function getSupportedTypes(?string $format): array
     {
-        return [Year::class => true];
+        return [Second::class => true];
     }
 
     #[\Override]
     public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
-        return $data instanceof Year;
+        return $data instanceof Second;
     }
 
     #[\Override]
     public function supportsDenormalization(mixed $data, string $type, ?string $format = null, array $context = []): bool
     {
-        return \is_a($type, Year::class, true);
+        return \is_a($type, Second::class, true);
     }
 
     #[\Override]
-    public function normalize(mixed $data, ?string $format = null, array $context = []): int
+    public function normalize(mixed $data, ?string $format = null, array $context = []): float
     {
-        if (! $data instanceof Year) {
-            throw new InvalidArgumentException(\sprintf('The object must be an instance of "%s".', Year::class));
+        if (! $data instanceof Second) {
+            throw new InvalidArgumentException(\sprintf('The object must be an instance of "%s".', Second::class));
         }
 
-        return $data->number();
+        return $data->value();
     }
 
     #[\Override]
-    public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): Year
+    public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): Second
     {
-        if (! \is_int($data)) {
+        if (! \is_float($data)) {
             throw NotNormalizableValueException::createForUnexpectedDataType(
                 message: 'Unsupported type',
                 data: $data,
-                expectedTypes: ['integer'],
+                expectedTypes: ['float'],
                 path: $context['deserialization_path'] ?? null,
             );
         }
 
-        return Year::of($data);
+        return Second::of(...double_split($data));
     }
 }

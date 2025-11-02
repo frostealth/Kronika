@@ -11,10 +11,10 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Kronika\Extension\Tests\Symfony\Normalizer;
+namespace Kronika\Extension\Tests\Symfony\Serializer\Normalizer;
 
 use Kronika\Duration;
-use Kronika\Extension\Symfony\Normalizer\DurationNormalizer;
+use Kronika\Extension\Symfony\Serializer\Normalizer\DurationNormalizer;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
