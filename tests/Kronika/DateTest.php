@@ -26,6 +26,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\Attributes\DependsOnClass;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(Date::class)]
@@ -150,27 +151,37 @@ final class DateTest extends TestCase
         self::assertEquals($expected, $result);
     }
 
-    public static function formatProvider(): array
+    #[TestWith(['Y-m-d', '2025-01-15'])]
+    #[TestWith(['Y m d', '2025 01 15'])]
+    #[TestWith(['Y-n-d', '2025-1-15'])]
+    #[TestWith(['d/m/Y', '15/01/2025'])]
+    #[TestWith(['H:i:s.u', 'H:i:s.u'])]
+    #[TestWith(['w', '3'])]
+    #[TestWith(['N', '3'])]
+    #[TestWith(['L', '0'])]
+    #[TestWith(['\Y/m/d', 'Y/01/15'])]
+    #[TestWith(['\D\a\t\e: "l, d M y"', 'Date: "Wednesday, 15 Jan 25"'])]
+    #[Depends('testBasic')]
+    public function testFormat(string $format, string $expected): void
     {
-        return [
-            [Date::of(2025, 1, 15), 'Y-m-d', '2025-01-15'],
-            [Date::of(2025, 1, 15), 'Y m d', '2025 01 15'],
-            [Date::of(2025, 1, 15), 'Y-n-d', '2025-1-15'],
-            [Date::of(2025, 1, 15), 'd/m/Y', '15/01/2025'],
-            [Date::of(2025, 1, 15), 'H:i:s.u', 'H:i:s.u'],
-            [Date::of(2025, 1, 15), 'w', '3'],
-            [Date::of(2025, 1, 15), 'N', '3'],
-            [Date::of(2025, 1, 19), 'w', '0'],
-            [Date::of(2025, 1, 19), 'N', '7'],
-            [Date::of(2025, 1, 15), 'L', '0'],
-            [Date::of(2024, 1, 15), 'L', '1'],
-        ];
+        $date = Date::of(2025, 01, 15);
+
+        self::assertEquals($expected, $date->format($format));
     }
 
-    #[DataProvider('formatProvider')]
-    public function testFormat(Date $date, string $format, string $expected): void
+    #[TestWith(['Y-m-d', '2025-01-15'])]
+    #[TestWith(['Y m d', '2025 01 15'])]
+    #[TestWith(['Y-n-d', '2025-1-15'])]
+    #[TestWith(['d/m/Y', '15/01/2025'])]
+    #[TestWith(['H:i:s.u', 'H:i:s.u'])]
+    #[TestWith(['\Y/m/d', 'Y/01/15'])]
+    #[TestWith(['\D\a\t\e: "l, d M y"', 'Date: "Wednesday, 15 Jan 25"'])]
+    #[Depends('testFormat')]
+    public function testOfFormat(string $format, string $str): void
     {
-        self::assertEquals($expected, $date->format($format));
+        $date = Date::ofFormat($format, $str);
+
+        self::assertEquals($str, $date->format($format));
     }
 
     public static function ofDateTimeProvider(): array

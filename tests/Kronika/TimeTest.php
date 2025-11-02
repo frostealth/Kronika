@@ -25,6 +25,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\Attributes\DependsOnClass;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(Time::class)]
@@ -86,25 +87,44 @@ final class TimeTest extends TestCase
         self::assertEquals($expected, $result);
     }
 
-    public static function formatProvider(): array
+    #[TestWith(['H:i:s.u', '22:07:08.000001'])]
+    #[TestWith(['H:i:s', '22:07:08'])]
+    #[TestWith(['H i s', '22 07 08'])]
+    #[TestWith(['i', '07'])]
+    #[TestWith(['Y-m-d', 'Y-m-d'])]
+    #[TestWith(['Y-m-d\TH:i:s.u', 'Y-m-dT22:07:08.000001'])]
+    #[TestWith(['Y m d', 'Y m d'])]
+    #[TestWith(['d/m/Y', 'd/m/Y'])]
+    #[TestWith([
+        '\T\i\m\e: "g \h\o\u\r\s, i \m\i\n\u\t\e\s, s \s\e\c\o\n\d\s"',
+        'Time: "10 hours, 07 minutes, 08 seconds"',
+    ])]
+    #[Depends('testBasic')]
+    public function testFormat(string $format, string $expected): void
     {
-        return [
-            [Time::of(hour: 22, minute: 7, second: Time\Second::of(second: 42, micro: 8647)), 'H:i:s.u', '22:07:42.008647'],
-            [Time::of(hour: 22, minute: 7, second: Time\Second::of(second: 42, micro: 8647)), 'H:i:s', '22:07:42'],
-            [Time::of(hour: 2, minute: 7, second: Time\Second::of(second: 8, micro: 1)), 'H:i:s.u', '02:07:08.000001'],
-            [Time::of(hour: 2, minute: 7, second: Time\Second::of(second: 8, micro: 1)), 'H i s', '02 07 08'],
-            [Time::of(hour: 2, minute: 7, second: Time\Second::of(second: 8, micro: 1)), 'i', '07'],
-            [Time::of(hour: 2, minute: 7, second: Time\Second::of(second: 8, micro: 1)), 'Y-m-d', 'Y-m-d'],
-            [Time::of(hour: 2, minute: 7, second: Time\Second::of(second: 8, micro: 1)), 'Y m d', 'Y m d'],
-            [Time::of(hour: 2, minute: 7, second: Time\Second::of(second: 8, micro: 1)), 'd/m/Y', 'd/m/Y'],
-        ];
+        $time = Time::of(22, 7, Time\Second::of(second: 8, micro: 1));
+
+        self::assertEquals($expected, $time->format($format));
     }
 
-    #[Depends('testBasic')]
-    #[DataProvider('formatProvider')]
-    public function testFormat(Time $time, string $format, string $expected): void
+    #[TestWith(['H:i:s.u', '22:07:08.000001'])]
+    #[TestWith(['H:i:s', '22:07:08'])]
+    #[TestWith(['H i s', '22 07 08'])]
+    #[TestWith(['i', '07'])]
+    #[TestWith(['Y-m-d', 'Y-m-d'])]
+    #[TestWith(['Y-m-d\TH:i:s.u', 'Y-m-dT22:07:08.000001'])]
+    #[TestWith(['Y m d', 'Y m d'])]
+    #[TestWith(['d/m/Y', 'd/m/Y'])]
+    #[TestWith([
+        '\T\i\m\e: "g \h\o\u\r\s, i \m\i\n\u\t\e\s, s \s\e\c\o\n\d\s"',
+        'Time: "10 hours, 07 minutes, 08 seconds"',
+    ])]
+    #[Depends('testFormat')]
+    public function testOfFormat(string $format, string $str): void
     {
-        self::assertEquals($expected, $time->format($format));
+        $time = Time::ofFormat($format, $str);
+
+        self::assertEquals($str, $time->format($format));
     }
 
     public static function ofDateTimeProvider(): array
