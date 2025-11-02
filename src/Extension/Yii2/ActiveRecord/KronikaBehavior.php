@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Kronika\Extension\Yii2\ActiveRecord;
 
+use DateTimeInterface as Native;
 use Kronika\Date;
 use Kronika\Duration;
 use Kronika\Instant;
@@ -315,7 +316,7 @@ final class KronikaBehavior extends Behavior
             $obj instanceof Duration => $obj->inSeconds(),
             $obj instanceof Instant => $obj->value(),
             $obj instanceof LocalDateTime => $obj->format($this->getFormatFor(LocalDateTime::class)),
-            $obj instanceof ZonedDateTime => $obj->format($this->getFormatFor(ZonedDateTime::class)),
+            $obj instanceof Native => $obj->format($this->getFormatFor(ZonedDateTime::class)),
             $obj instanceof \DateTimeZone => $obj->getName(),
             default => throw new \RuntimeException(\sprintf('Unknown type: [%s]', \get_debug_type($obj))),
         };
@@ -361,6 +362,9 @@ final class KronikaBehavior extends Behavior
         foreach ($this->zonedAttributeNames() as $name) {
             $datetime = $this->owner->getAttribute($name);
             $oldDatetime = $this->owner->getOldAttribute($name);
+            if ($datetime instanceof Native) {
+                $datetime = ZonedDateTime::ofDateTime($datetime);
+            }
             if (! $datetime instanceof ZonedDateTime) {
                 continue;
             }
@@ -380,7 +384,8 @@ final class KronikaBehavior extends Behavior
 
         foreach ($this->zonedAttributeNames() as $name) {
             $datetime = $this->owner->getAttribute($name);
-            $timezone = $datetime instanceof ZonedDateTime ? $datetime->getTimezone() : null;
+            $datetime = $datetime instanceof Native ? ZonedDateTime::ofDateTime($datetime) : $datetime;
+            $timezone = $datetime instanceof ZonedDateTime ? $datetime->timezone() : null;
 
             $this->owner->setAttribute($this->timezoneAttributeNameFor($name), $timezone);
         }
