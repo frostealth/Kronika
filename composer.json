@@ -19,7 +19,7 @@
         "ext-gmp": "*",
         "doctrine/dbal": "^4.3",
         "jms/serializer": "^3.32",
-        "laravel/framework": "^12.36",
+        "laravel/framework": "^11.0 | ^12.0",
         "phpunit/phpunit": "^12.4",
         "psr/clock": "^1.0",
         "symfony/serializer": "^7.3",
