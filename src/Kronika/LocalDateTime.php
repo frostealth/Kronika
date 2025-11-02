@@ -297,7 +297,7 @@ final readonly class LocalDateTime implements DateTime
     #[\Override]
     public function format(string $format): string
     {
-        return $this->toNative()->format($format);
+        return $this->toNative()->format(self::quote($format));
     }
 
     /**
@@ -372,6 +372,11 @@ final readonly class LocalDateTime implements DateTime
             'date' => (string)$this->date,
             'time' => (string)$this->time,
         ];
+    }
+
+    private static function quote(string $format): string
+    {
+        return \preg_replace('/(?<!\\\\)([eOPpTZ])/', '\\\\$1', $format);
     }
 
     private function normalize(DateTime|Unit $datetime): DateTime

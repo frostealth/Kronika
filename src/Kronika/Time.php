@@ -130,7 +130,7 @@ final readonly class Time implements Unit
      */
     public static function ofFormat(string $format, string $time): self
     {
-        return self::ofDateTime(\DateTimeImmutable::createFromFormat($format, $time));
+        return self::ofDateTime(\DateTimeImmutable::createFromFormat(self::quote($format), $time));
     }
 
     private function __construct(
@@ -540,10 +540,7 @@ final readonly class Time implements Unit
      */
     public function format(string $format): string
     {
-        return (new \DateTimeImmutable((string)$this))->format(
-            // @todo: the escaping doesn't work
-            \preg_replace('/([^AaBGgHisu])/', '\\\\$1', $format),
-        );
+        return (new \DateTimeImmutable((string)$this))->format(self::quote($format));
     }
 
     /**
@@ -575,6 +572,11 @@ final readonly class Time implements Unit
     public function _withinDateTime(LocalDateTime $datetime): LocalDateTime
     {
         return $this->at($datetime->date());
+    }
+
+    private static function quote(string $format): string
+    {
+        return \preg_replace('/(?<!\\\\)([^AaBGgHisu:\\\\\s\d-])/', '\\\\$1', $format);
     }
 
     private function normalize(self|TimeUnit $time): self

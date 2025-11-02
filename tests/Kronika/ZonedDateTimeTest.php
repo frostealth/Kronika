@@ -24,6 +24,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\Attributes\DependsExternal;
 use PHPUnit\Framework\Attributes\DependsOnClass;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(ZonedDateTime::class)]
@@ -88,6 +89,46 @@ final class ZonedDateTimeTest extends TestCase
         self::assertEquals(Time::of(13, 45, 30), $actual->time());
     }
 
+    #[TestWith(['Y-m-d', '2025-12-31'])]
+    #[TestWith(['H:i:s.u', '12:15:59.999999'])]
+    #[TestWith(['Y-m-d\TH:i:s.u', '2025-12-31T12:15:59.999999'])]
+    #[TestWith(['Y-m-d\TH:i:sP', '2025-12-31T12:15:59+01:00'])]
+    #[TestWith(['Y-m-d H:i:sP', '2025-12-31 12:15:59+01:00'])]
+    #[TestWith([
+        '\D\a\t\e: "l, d M y", \T\i\m\e: "G \h\o\u\r\s, i \m\i\n\u\t\e\s, s \s\e\c\o\n\d\s"',
+        'Date: "Wednesday, 31 Dec 25", Time: "12 hours, 15 minutes, 59 seconds"',
+    ])]
+    #[Depends('testBasic')]
+    public function testFormat(string $format, string $expected): void
+    {
+        $datetime = ZonedDateTime::of(
+            date: Date::of(2025, 12, 31),
+            time: Time::of(12, 15, Time\Second::last()),
+            timezone: new \DateTimeZone('+01:00'),
+        );
+
+        $actual = $datetime->format($format);
+
+        self::assertEquals($expected, $actual);
+    }
+
+    #[TestWith(['Y-m-d', '2025-12-31'])]
+    #[TestWith(['H:i:s.u', '12:15:59.999999'])]
+    #[TestWith(['Y-m-d\TH:i:s.u', '2025-12-31T12:15:59.999999'])]
+    #[TestWith(['Y-m-d\TH:i:sP', '2025-12-31T12:15:59+01:00'])]
+    #[TestWith(['Y-m-d H:i:sP', '2025-12-31 12:15:59+01:00'])]
+    #[TestWith([
+        '\D\a\t\e: "l, d M y", \T\i\m\e: "G \h\o\u\r\s, i \m\i\n\u\t\e\s, s \s\e\c\o\n\d\s"',
+        'Date: "Wednesday, 31 Dec 25", Time: "12 hours, 15 minutes, 59 seconds"',
+    ])]
+    #[Depends('testBasic')]
+    public function testOfFormat(string $format, string $str): void
+    {
+        $datetime = ZonedDateTime::ofFormat($format, $str);
+
+        self::assertEquals($str, $datetime->format($format));
+    }
+
     #[Depends('testBasic')]
     public function testToLocalDateTime(): void
     {
@@ -107,7 +148,7 @@ final class ZonedDateTimeTest extends TestCase
             new \DateTimeZone('+01:30'),
         );
 
-        self::assertEquals('2025-03-24T23:59:59+01:30', (string) $datetime);
+        self::assertEquals('2025-03-24T23:59:59.999999+01:30', (string) $datetime);
     }
 
     #[Depends('testBasic')]

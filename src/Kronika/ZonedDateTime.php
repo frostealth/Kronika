@@ -23,6 +23,7 @@ use Kronika\Time\Minute;
 use Kronika\Time\Second;
 use Kronika\Utils\Compared;
 use Kronika\Utils\WeakRefsTrait;
+use function Kronika\Utils\Math\double;
 
 /**
  * Represents a date-time with a time-zone.
@@ -246,7 +247,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      */
     public function timestamp(): float
     {
-        return (float)\sprintf('%d.%06d', parent::getTimestamp(), $this->microsecond());
+        return double([parent::getTimestamp(), $this->microsecond()], precision: 6);
     }
 
     /**
@@ -463,7 +464,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     #[\Override]
     public function __toString(): string
     {
-        return $this->format(Native::ATOM);
+        return $this->format('Y-m-d\TH:i:s.uP');
     }
 
     /** @alias {@see self::ofDateTime()} */

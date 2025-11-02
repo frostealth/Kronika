@@ -98,7 +98,7 @@ final readonly class Date implements Unit
      */
     public static function ofFormat(string $format, string $date): self
     {
-        return self::ofDateTime(\DateTimeImmutable::createFromFormat($format, $date));
+        return self::ofDateTime(\DateTimeImmutable::createFromFormat(self::quote($format), $date));
     }
 
     private function __construct(
@@ -504,10 +504,7 @@ final readonly class Date implements Unit
      */
     public function format(string $format): string
     {
-        return $this->at(Time::midnight())->format(
-            // @todo: the escaping doesn't work
-            \preg_replace('/([^DdjlNSWwzFMmntLoXxYy])/', '\\\\$1', $format),
-        );
+        return $this->at(Time::midnight())->format(self::quote($format));
     }
 
     /**
@@ -536,6 +533,11 @@ final readonly class Date implements Unit
     public function _withinDateTime(LocalDateTime $datetime): LocalDateTime
     {
         return $this->at($datetime->time());
+    }
+
+    private static function quote(string $format): string
+    {
+        return \preg_replace('/(?<!\\\\)([^DdjlNSWwzFMmntLoXxYy:\\\\\s\d-])/', '\\\\$1', $format);
     }
 
     private function normalize(self|DateUnit $date): self
