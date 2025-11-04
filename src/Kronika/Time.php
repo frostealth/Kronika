@@ -97,7 +97,7 @@ final readonly class Time implements Unit
             return $datetime->time();
         }
 
-        [$hour, $minute, $second, $micro] = \sscanf($datetime->format('H:i:s.u'), '%d:%d:%d.%d');
+        [$hour, $minute, $second, $micro] = \sscanf($datetime->format('H:i:s.u'), '%u:%u:%u.%u');
 
         return self::of($hour, $minute, Second::of($second, $micro));
     }
@@ -131,6 +131,8 @@ final readonly class Time implements Unit
      *
      * @param non-empty-string $format
      * @param non-empty-string $time
+     *
+     * @throws Exception\FormatError
      */
     public static function ofFormat(string $format, string $time, ?Formatter $formatter = null): self
     {
@@ -542,8 +544,10 @@ final readonly class Time implements Unit
      *
      * @return non-empty-string
      *
-     * @see \Kronika\Format\native()
+     * @throws Exception\FormatError
+     *
      * @see \Kronika\formatter()
+     * @see \Kronika\Format\native() formatter
      */
     public function format(string $format, ?Formatter $formatter = null): string
     {

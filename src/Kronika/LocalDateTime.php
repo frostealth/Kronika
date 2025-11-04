@@ -82,6 +82,8 @@ final readonly class LocalDateTime implements DateTime
      *
      * @param non-empty-string $format
      * @param non-empty-string $datetime
+     *
+     * @throws Exception\FormatError
      */
     public static function ofFormat(string $format, string $datetime, ?Formatter $formatter = null): self
     {
@@ -278,6 +280,7 @@ final readonly class LocalDateTime implements DateTime
         };
     }
 
+    /** @throws Exception\FormatError */
     #[\Override]
     public function format(string $format, ?Formatter $formatter = null): string
     {
@@ -316,12 +319,14 @@ final readonly class LocalDateTime implements DateTime
     #[\Override]
     public function toNative(?\DateTimeZone $timezone = null): \DateTimeImmutable
     {
+        /** @psalm-ignore-falsable-return */
         return \DateTimeImmutable::createFromFormat('Y-m-d\TH:i:s.u', (string)$this, $timezone);
     }
 
     #[\Override]
     public function toNativeMutable(?\DateTimeZone $timezone = null): \DateTime
     {
+        /** @psalm-ignore-falsable-return */
         return \DateTime::createFromFormat('Y-m-d\TH:i:s.u', (string)$this, $timezone);
     }
 

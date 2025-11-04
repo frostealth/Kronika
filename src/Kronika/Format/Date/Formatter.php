@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Kronika\Format\Date;
 
 use Kronika\Date;
+use Kronika\Format\Exception\FormatterError;
 use Kronika\Format\Parsed;
 
 interface Formatter
@@ -22,8 +23,13 @@ interface Formatter
      * @param non-empty-string $format
      *
      * @return non-empty-string
+     *
+     * @throws FormatterError
      */
     public function format(Date $formattable, string $format): string;
 
+    /**
+     * @throws FormatterError
+     */
     public function parse(Formatted $formatted): Parsed;
 }

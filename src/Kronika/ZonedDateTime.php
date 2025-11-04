@@ -75,7 +75,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      */
     public static function utcOf(Date $date, Time $time): self
     {
-        return self::of($date, $time, utc());
+        return self::of($date, $time, timezone_utc());
     }
 
     /**
@@ -124,7 +124,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      */
     public static function ofTimestamp(float|int $timestamp): self
     {
-        return self::ofInstant(Instant::ofValue($timestamp), utc());
+        return self::ofInstant(Instant::ofValue($timestamp), timezone_utc());
     }
 
     /**
@@ -138,8 +138,13 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     /**
      * Obtain an instance of ZonedDateTime from a given format, date-time string and time-zone.
      *
+     * If the date-time string doesn't contain time-zone, then a given time-zone will be used,
+     * otherwise the system's time-zone will be used.
+     *
      * @param non-empty-string $format
      * @param non-empty-string $datetime
+     *
+     * @throws Exception\FormatError
      */
     public static function ofFormat(
         string $format,
@@ -151,8 +156,8 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
 
         return self::of(
             date: Date::of($parsed->year(), $parsed->month(), $parsed->day()),
-            time: Time::of($parsed->hour(), $parsed->minute(Second::zero(...)), $parsed->second(Second::zero(...))),
-            timezone: $parsed->timezone(fn(): \DateTimeZone => $timezone ?? new \DateTimeZone(\date('e'))),
+            time: Time::of($parsed->hour(), $parsed->minute(Minute::zero(...)), $parsed->second(Second::zero(...))),
+            timezone: $parsed->timezone(fn(): \DateTimeZone => $timezone ?? timezone_system()),
         );
     }
 
@@ -411,6 +416,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         return $this->local->compareTo($this->localize($other), $precision);
     }
 
+    /** @throws Exception\FormatError */
     #[\Override]
     public function format(string $format, ?Formatter $formatter = null): string
     {
@@ -501,21 +507,31 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     #[\Override]
     public static function createFromTimestamp(float|int $timestamp): static
     {
-        return self::ofDateTime(\DateTimeImmutable::createFromTimestamp($timestamp)->setTimezone(utc()));
+        return self::ofDateTime(\DateTimeImmutable::createFromTimestamp($timestamp)->setTimezone(timezone_utc()));
     }
 
     /** @see self::ofFormat() */
     #[\Override]
-    public static function createFromFormat(string $format, string $datetime, ?\DateTimeZone $timezone = null): static
-    {
-        return self::ofDateTime(\DateTimeImmutable::createFromFormat($format, $datetime, $timezone));
+    public static function createFromFormat(
+        string $format,
+        string $datetime,
+        ?\DateTimeZone $timezone = null,
+    ): static|false {
+        return self::ofNativeOrFalse(\DateTimeImmutable::createFromFormat($format, $datetime, $timezone));
     }
 
-    /** @see self::with() */
+    /**
+     * @throws DateTimeMalformedString
+     * @see self::with()
+     */
     #[\Override]
     public function modify(string $modifier): static
     {
-        return self::ofDateTime($this->toNative()->modify($modifier));
+        try {
+            return self::ofDateTime($this->toNative()->modify($modifier));
+        } catch (\DateMalformedStringException $e) {
+            throw DateTimeMalformedString::wrap($e);
+        }
     }
 
     /** @see self::with() */
@@ -557,6 +573,11 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     public function setMicrosecond(int $microsecond): static
     {
         return self::ofDateTime($this->toNative()->setMicrosecond($microsecond));
+    }
+
+    private static function ofNativeOrFalse(Native|false $native): self|false
+    {
+        return $native instanceof Native ? self::ofDateTime($native) : false;
     }
 
     private function localize(DateTime|Unit|Native $datetime): DateTime

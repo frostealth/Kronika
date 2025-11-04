@@ -18,6 +18,7 @@ use Kronika\DateTime;
 use Kronika\Format\DateTime\Formatted;
 use Kronika\Format\DateTime\FormattedLocal;
 use Kronika\Format\DateTime\Formatter;
+use Kronika\Format\Exception\FormatterError;
 use Kronika\Format\Parsed;
 use Kronika\LocalDateTime;
 
@@ -37,22 +38,39 @@ final readonly class DateTimeFormatter implements Formatter
         $isLocal = $formatted instanceof FormattedLocal;
         $format = $isLocal ? $this->sanitize($formatted->format()) : $formatted->format();
 
-        $native = \DateTimeImmutable::createFromFormat($format, $formatted->string());
+        $native = \DateTimeImmutable::createFromFormat($format, $formatted->value());
         if ($native === false && $formatted instanceof FormattedLocal) {
-            $native = \DateTimeImmutable::createFromFormat($formatted->format(), $formatted->string());
+            $native = \DateTimeImmutable::createFromFormat($formatted->format(), $formatted->value());
         }
         if (! $native instanceof Native) {
-            throw new \RuntimeException("Failed to parse [{$formatted->string()}]");
+            throw new FormatterError("Failed to parse date-time string [{$formatted->value()}]");
         }
 
-        return new Parsed(...\sscanf(
+        [$year, $month, $day, $hour, $minute, $second, $micro, $timezone] = \sscanf(
             $native->format('Y-m-d H:i:s.u e'),
             format: '%d-%u-%u %u:%u:%u.%u %s',
-        ));
+        );
+
+        return new Parsed(
+            date: new Parsed\ParsedDate(year: $year, month: $month, day: $day),
+            time: new Parsed\ParsedTime(hour: $hour, minute: $minute, second: $second, micro: $micro),
+            timezone: $isLocal ? null : $timezone,
+        );
     }
 
+    /** @return non-empty-string */
     private function sanitize(string $format): string
     {
-        return \trim(\preg_replace('/(?<!\\\\)([eOPpTZ])/', '', $format), ' ');
+        $sanitized = \preg_replace('/(?<!\\\\)([eOPpTZ])/', '', $format);
+        if (! \is_string($sanitized)) {
+            throw new FormatterError("Invalid date-time format string [$format]");
+        }
+
+        $sanitized = \trim($sanitized, ' ');
+        if ($sanitized === '') {
+            throw new FormatterError("Invalid date-time format string [$format]");
+        }
+
+        return $sanitized;
     }
 }

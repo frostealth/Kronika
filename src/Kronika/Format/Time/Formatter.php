@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Kronika\Format\Time;
 
+use Kronika\Format\Exception\FormatterError;
 use Kronika\Format\Parsed;
 use Kronika\Time;
 
@@ -22,8 +23,13 @@ interface Formatter
      * @param non-empty-string $format
      *
      * @return non-empty-string
+     *
+     * @throws FormatterError
      */
     public function format(Time $formattable, string $format): string;
 
+    /**
+     * @throws FormatterError
+     */
     public function parse(Formatted $formatted): Parsed;
 }

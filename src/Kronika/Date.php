@@ -65,7 +65,7 @@ final readonly class Date implements Unit
             return $datetime->date();
         }
 
-        [$year, $month, $day] = \sscanf($datetime->format('Y-m-d'), '%d-%d-%d');
+        [$year, $month, $day] = \sscanf($datetime->format('Y-m-d'), '%d-%u-%u');
 
         return self::of($year, $month, $day);
     }
@@ -99,6 +99,8 @@ final readonly class Date implements Unit
      *
      * @param non-empty-string $format
      * @param non-empty-string $date
+     *
+     * @throws Exception\FormatError
      */
     public static function ofFormat(string $format, string $date, ?Formatter $formatter = null): self
     {
@@ -517,8 +519,10 @@ final readonly class Date implements Unit
      *
      * @return non-empty-string
      *
-     * @see \Kronika\Format\native()
+     * @throws Exception\FormatError
+     *
      * @see \Kronika\formatter()
+     * @see \Kronika\Format\native() formatter
      */
     public function format(string $format, ?Formatter $formatter = null): string
     {

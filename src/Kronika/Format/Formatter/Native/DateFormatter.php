@@ -16,6 +16,7 @@ namespace Kronika\Format\Formatter\Native;
 use Kronika\Date;
 use Kronika\Format\Date\Formatted;
 use Kronika\Format\Date\Formatter;
+use Kronika\Format\Exception\FormatterError;
 use Kronika\Format\Parsed;
 use Kronika\Time;
 
@@ -30,22 +31,28 @@ final readonly class DateFormatter implements Formatter
     #[\Override]
     public function parse(Formatted $formatted): Parsed
     {
-        $native = $this->native($this->sanitize($formatted->format()), $formatted->string());
+        $native = $this->native($this->sanitize($formatted->format()), $formatted->value());
         [$year, $month, $day] = \sscanf($native->format('Y-m-d'), '%d-%u-%u');
 
-        return new Parsed(year: $year, month: $month, day: $day);
+        return new Parsed(date: new Parsed\ParsedDate(year: $year, month: $month, day: $day));
     }
 
+    /** @return non-empty-string */
     private function sanitize(string $format): string
     {
-        return \preg_replace('/(?<!\\\\)([^DdjlNSWwzFMmntLoXxYy:\\\\\s\d-])/', '\\\\$1', $format);
+        $sanitized = \preg_replace('/(?<!\\\\)([^DdjlNSWwzFMmntLoXxYy:\\\\\s\d-])/', '\\\\$1', $format);
+        if (! \is_string($sanitized) || $sanitized === '') {
+            throw new FormatterError("Invalid date format string [$format]");
+        }
+
+        return $sanitized;
     }
 
     private function native(string $format, string $string): \DateTimeInterface
     {
         $native = \DateTimeImmutable::createFromFormat($format, $string);
         if (! $native instanceof \DateTimeImmutable) {
-            throw new \RuntimeException("Failed to parse [$string]");
+            throw new FormatterError("Failed to parse date string [$string]");
         }
 
         return $native;

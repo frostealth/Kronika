@@ -17,6 +17,10 @@ use Kronika\Date\DateUnit;
 use Kronika\Date\DayOfMonth;
 use Kronika\Date\Month;
 use Kronika\Date\Year;
+use Kronika\Format\Exception\FormatterError;
+use Kronika\Format\Parsed\ParsedDate;
+use Kronika\Format\Parsed\ParsedTime;
+use Kronika\Format\Parsed\ParsedTrait;
 use Kronika\Time\Hour;
 use Kronika\Time\Minute;
 use Kronika\Time\Second;
@@ -24,74 +28,99 @@ use Kronika\Time\TimeUnit;
 
 final readonly class Parsed
 {
+    use ParsedTrait;
+
     public function __construct(
-        private ?int $year = null,
-        private ?int $month = null,
-        private ?int $day = null,
-        private ?int $hour = null,
-        private ?int $minute = null,
-        private ?int $second = null,
-        private ?int $micro = null,
+        private ?ParsedDate $date = null,
+        private ?ParsedTime $time = null,
         private ?string $timezone = null,
     ) {
     }
 
     /**
-     * @template TReturn of DateUnit|TimeUnit|\DateTimeZone
+     * @param (callable(): Year)|null $fallback
      *
-     * @param null|callable(): TReturn $fallback
-     * @param non-empty-string $unit
-     *
-     * @return TReturn
+     * @throws FormatterError
      */
-    private static function fall(?callable $fallback, string $unit): mixed
-    {
-        return ($fallback ?? static fn() => throw new \RuntimeException("Missed {$unit}"))();
-    }
-
-    /** @param null|callable(): Year $fallback */
     public function year(?callable $fallback = null): Year
     {
-        return \is_int($this->year) ? Year::of($this->year) : self::fall($fallback, 'Year');
+        return $this->date?->year($fallback) ?? self::fallback('Year', $fallback)();
     }
 
-    /** @param null|callable(): Month $fallback */
+    /**
+     * @param (callable(): Month)|null $fallback
+     *
+     * @throws FormatterError
+     */
     public function month(?callable $fallback = null): Month
     {
-        return \is_int($this->month) ? Month::of($this->month) : self::fall($fallback, 'Month');
+        return $this->date?->month($fallback) ?? self::fallback('Month', $fallback)();
     }
 
-    /** @param null|callable(): DayOfMonth $fallback */
+    /**
+     * @param (callable(): DayOfMonth)|null $fallback
+     *
+     * @throws FormatterError
+     */
     public function day(?callable $fallback = null): DayOfMonth
     {
-        return \is_int($this->day) ? DayOfMonth::of($this->day) : self::fall($fallback, 'DayOfMonth');
+        return $this->date?->day($fallback) ?? self::fallback('DayOfMonth', $fallback)();
     }
 
-    /** @param null|callable(): Hour $fallback */
+    /**
+     * @param (callable(): Hour)|null $fallback
+     *
+     * @throws FormatterError
+     */
     public function hour(?callable $fallback = null): Hour
     {
-        return \is_int($this->hour) ? Hour::of($this->hour) : self::fall($fallback, 'Hour');
+        return $this->time?->hour($fallback) ?? self::fallback('Hour', $fallback)();
     }
 
-    /** @param null|callable(): Minute $fallback */
+    /**
+     * @param (callable(): Minute)|null $fallback
+     *
+     * @throws FormatterError
+     */
     public function minute(?callable $fallback = null): Minute
     {
-        return \is_int($this->minute) ? Minute::of($this->minute) : self::fall($fallback, 'Minute');
+        return $this->time?->minute($fallback) ?? self::fallback('Minute', $fallback)();
     }
 
-    /** @param null|callable(): Second $fallback */
+    /**
+     * @param (callable(): Second)|null $fallback
+     *
+     * @throws FormatterError
+     */
     public function second(?callable $fallback = null): Second
     {
-        if (! \is_int($this->second) && ! \is_int($this->micro)) {
-            return self::fall($fallback, 'Second');
-        }
-
-        return Second::of(second: $this->second ?? 0, micro: $this->micro ?? 0);
+        return $this->time?->second($fallback) ?? self::fallback('Second', $fallback)();
     }
 
-    /** @param null|callable(): \DateTimeZone $fallback */
+    /**
+     * @param (callable(): \DateTimeZone)|null $fallback
+     *
+     * @throws FormatterError
+     */
     public function timezone(?callable $fallback = null): \DateTimeZone
     {
-        return \is_string($this->timezone) ? new \DateTimeZone($this->timezone) : self::fall($fallback, 'Timezone');
+        return self::wrap(
+            'Timezone',
+            fn(string $timezone): \DateTimeZone => new \DateTimeZone($timezone),
+            $fallback,
+            $this->timezone,
+        );
+    }
+
+    /**
+     * @template TReturn
+     *
+     * @param (callable(): TReturn)|null $fallback
+     *
+     * @return callable(): TReturn
+     */
+    private static function fallback(string $unit, ?callable $fallback): callable
+    {
+        return $fallback ?? fn() => throw new FormatterError("Failed to parse $unit");
     }
 }

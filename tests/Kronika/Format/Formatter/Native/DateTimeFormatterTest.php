@@ -150,16 +150,17 @@ final class DateTimeFormatterTest extends TestCase
     #[TestWith(['D, d M y H:i:s.u O', 'Wed, 09 Jul 25 14:03:02.123456 +0130'])]
     #[TestWith(['Y-m-d\TH:i:s.uPO', '2025-07-09T14:03:02.123456+01:30+0130'])]
     #[TestWith(['D, d M Y H:i:s.u \G\M\TO', 'Wed, 09 Jul 2025 14:03:02.123456 GMT+0130'])]
-    #[TestWith(['U.u', '1752064382.123456'])]
-    public function testParseZoned(string $format, string $value): void
+    #[TestWith(['U.u', '1752064382.123456', true])]
+    public function testParseZoned(string $format, string $value, bool $isUtc = false): void
     {
-        $isUtc = $format === 'U.u';
         $expected = new Parsed(
-            year: 2025, month: 7, day: 9,
-            hour: $isUtc ? 12 : 14,
-            minute: $isUtc ? 33 : 3,
-            second: 2,
-            micro: 123456,
+            date: new Parsed\ParsedDate(year: 2025, month: 7, day: 9),
+            time: new Parsed\ParsedTime(
+                hour: $isUtc ? 12 : 14,
+                minute: $isUtc ? 33 : 3,
+                second: 2,
+                micro: 123456,
+            ),
             timezone: $isUtc ? '+00:00' : '+01:30',
         );
         $actual = self::$formatter->parse(new FormattedZoned($format, $value));
@@ -181,19 +182,16 @@ final class DateTimeFormatterTest extends TestCase
     {
         $isUtc = $format === 'U.u';
         $expected = new Parsed(
-            year: 2025, month: 7, day: 9,
-            hour: $isUtc ? 12 : 14,
-            minute: $isUtc ? 33 : 3,
-            second: 2,
-            micro: 123456,
+            date: new Parsed\ParsedDate(year: 2025, month: 7, day: 9),
+            time: new Parsed\ParsedTime(
+                hour: $isUtc ? 12 : 14,
+                minute: $isUtc ? 33 : 3,
+                second: 2,
+                micro: 123456,
+            ),
         );
         $actual = self::$formatter->parse(new FormattedLocal($format, $value));
 
-        self::assertEquals($expected->year(), $actual->year());
-        self::assertEquals($expected->month(), $actual->month());
-        self::assertEquals($expected->day(), $actual->day());
-        self::assertEquals($expected->hour(), $actual->hour());
-        self::assertEquals($expected->minute(), $actual->minute());
-        self::assertEquals($expected->second(), $actual->second());
+        self::assertEquals($expected, $actual);
     }
 }

@@ -82,7 +82,7 @@ final class DateFormatterTest extends TestCase
     #[TestWith(['D, d M Y H:i:s \G\M\T', 'Wed, 09 Jul 2025 H:i:s GMT'])]
     public function testParse(string $format, string $value): void
     {
-        $expected = new Parsed(year: 2025, month: 7, day: 9);
+        $expected = new Parsed(date: new Parsed\ParsedDate(year: 2025, month: 7, day: 9));
         $actual = self::$formatter->parse(new Formatted($format, $value));
 
         self::assertEquals($expected, $actual);

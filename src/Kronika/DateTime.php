@@ -17,6 +17,7 @@ use Kronika\Date\DayOfMonth;
 use Kronika\Date\DayOfWeek;
 use Kronika\Date\Month;
 use Kronika\Date\Year;
+use Kronika\Exception\FormatError;
 use Kronika\Format\DateTime\Formatter;
 use Kronika\Time\Hour;
 use Kronika\Time\Minute;
@@ -365,8 +366,10 @@ interface DateTime extends \Stringable
      *
      * @return non-empty-string
      *
-     * @see \Kronika\Format\native()
+     * @throws FormatError
+     *
      * @see \Kronika\formatter()
+     * @see \Kronika\Format\native() formatter
      */
     public function format(string $format, ?Formatter $formatter = null): string;
 

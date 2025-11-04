@@ -76,7 +76,7 @@ final class TimeFormatterTest extends TestCase
     #[TestWith(['Y-m-d\TH:i:s.uP', 'Y-m-dT14:07:12.123456P'])]
     public function testParse(string $format, string $value): void
     {
-        $expected = new Parsed(hour: 14, minute: 7, second: 12, micro: 123456);
+        $expected = new Parsed(time: new Parsed\ParsedTime(hour: 14, minute: 7, second: 12, micro: 123456));
         $actual = self::$formatter->parse(new Formatted($format, $value));
 
         self::assertEquals($expected, $actual);

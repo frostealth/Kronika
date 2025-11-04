@@ -122,15 +122,30 @@ if (! \function_exists('\\Kronika\\chronologize')) {
     }
 }
 
-if (! \function_exists('\\Kronika\\utc')) {
+if (! \function_exists('\\Kronika\\timezone_utc')) {
     /**
      * Returns UTC time-zone.
      */
-    function utc(): \DateTimeZone
+    function timezone_utc(): \DateTimeZone
     {
         static $utc = new \DateTimeZone('UTC');
 
         return $utc;
+    }
+}
+
+if (! \function_exists('\\Kronika\\timezone_system')) {
+    /**
+     * Returns the system's time-zone.
+     */
+    function timezone_system(): \DateTimeZone
+    {
+        static $timezone = new \DateTimeZone(\date_default_timezone_get());
+        if ($timezone->getName() !== \date_default_timezone_get()) {
+            $timezone = new \DateTimeZone(\date_default_timezone_get());
+        }
+
+        return $timezone;
     }
 }
 

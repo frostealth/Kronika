@@ -19,6 +19,7 @@ use Kronika\Format\Date\Formatted as FormattedDate;
 use Kronika\Format\Date\Formatter as DateFormatter;
 use Kronika\Format\DateTime\Formatted as FormattedDateTime;
 use Kronika\Format\DateTime\Formatter as DateTimeFormatter;
+use Kronika\Format\Exception\FormatterError;
 use Kronika\Format\Time\Formatted as FormattedTime;
 use Kronika\Format\Time\Formatter as TimeFormatter;
 use Kronika\Time;
@@ -32,6 +33,7 @@ final readonly class Formatter implements DateTimeFormatter, DateFormatter, Time
     ) {
     }
 
+    /** @throws FormatterError */
     #[\Override]
     public function format(DateTime|Date|Time $formattable, string $format): string
     {
@@ -42,6 +44,7 @@ final readonly class Formatter implements DateTimeFormatter, DateFormatter, Time
         };
     }
 
+    /** @throws FormatterError */
     #[\Override]
     public function parse(Formatted $formatted): Parsed
     {
@@ -49,7 +52,7 @@ final readonly class Formatter implements DateTimeFormatter, DateFormatter, Time
             $formatted instanceof FormattedDateTime => $this->datetime->parse($formatted),
             $formatted instanceof FormattedDate => $this->date->parse($formatted),
             $formatted instanceof FormattedTime => $this->time->parse($formatted),
-            default => throw new \UnexpectedValueException(\sprintf(
+            default => throw new FormatterError(\sprintf(
                 'Unexpected type [%s]',
                 $formatted::class,
             )),
