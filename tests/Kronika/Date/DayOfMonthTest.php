@@ -14,9 +14,11 @@ declare(strict_types=1);
 namespace Kronika\Tests\Date;
 
 use Kronika\Date\DayOfMonth;
+use Kronika\Date\Exception\InvalidDayOfMonth;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Depends;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(DayOfMonth::class)]
@@ -32,20 +34,14 @@ final class DayOfMonthTest extends TestCase
         self::assertSame($day, DayOfMonth::of($day));
     }
 
+    #[TestWith([32])]
+    #[TestWith([0])]
+    #[TestWith([-1])]
     #[Depends('testBasic')]
-    public function testInvalidValues(): void
+    public function testInvalidValue(int $value): void
     {
-        $this->expectException(\AssertionError::class);
-        DayOfMonth::of(32);
-
-        $this->expectException(\AssertionError::class);
-        DayOfMonth::of(1212);
-
-        $this->expectException(\AssertionError::class);
-        DayOfMonth::of(0);
-
-        $this->expectException(\AssertionError::class);
-        DayOfMonth::of(-1);
+        $this->expectException(InvalidDayOfMonth::class);
+        DayOfMonth::of($value);
     }
 
     public static function toStringProvider(): array

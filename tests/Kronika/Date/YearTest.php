@@ -13,11 +13,13 @@ declare(strict_types=1);
 
 namespace Kronika\Tests\Date;
 
+use Kronika\Date\Exception\InvalidYear;
 use Kronika\Date\Year;
 use Kronika\Duration;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Depends;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(Year::class)]
@@ -33,14 +35,13 @@ final class YearTest extends TestCase
         self::assertSame($year, Year::of(2025));
     }
 
+    #[TestWith([10_000])]
+    #[TestWith([-10_000])]
     #[Depends('testBasic')]
-    public function testInvalidValues(): void
+    public function testInvalidValue(int $value): void
     {
-        $this->expectException(\AssertionError::class);
-        Year::of(100000);
-
-        $this->expectException(\AssertionError::class);
-        Year::of(-100000);
+        $this->expectException(InvalidYear::class);
+        Year::of($value);
     }
 
     public static function comparisonProvider(): array

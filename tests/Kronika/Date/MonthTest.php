@@ -14,12 +14,14 @@ declare(strict_types=1);
 namespace Kronika\Tests\Date;
 
 use Kronika\Date\DayOfMonth;
+use Kronika\Date\Exception\InvalidMonth;
 use Kronika\Date\Month;
 use Kronika\Date\Year;
 use Kronika\Duration;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Depends;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(Month::class)]
@@ -48,19 +50,30 @@ final class MonthTest extends TestCase
         self::assertSame(Month::October, Month::of(10));
         self::assertSame(Month::November, Month::of(11));
         self::assertSame(Month::December, Month::of(12));
+
+        self::assertSame(Month::January, Month::of('january'));
+        self::assertSame(Month::February, Month::of('february'));
+        self::assertSame(Month::March, Month::of('march'));
+        self::assertSame(Month::April, Month::of('april'));
+        self::assertSame(Month::May, Month::of('may'));
+        self::assertSame(Month::June, Month::of('june'));
+        self::assertSame(Month::July, Month::of('july'));
+        self::assertSame(Month::August, Month::of('august'));
+        self::assertSame(Month::September, Month::of('september'));
+        self::assertSame(Month::October, Month::of('october'));
+        self::assertSame(Month::November, Month::of('november'));
+        self::assertSame(Month::December, Month::of('december'));
     }
 
+    #[TestWith([0])]
+    #[TestWith([-1])]
+    #[TestWith([13])]
+    #[TestWith(['Monday'])]
     #[Depends('testBasic')]
-    public function testInvalidValues(): void
+    public function testInvalidValue(int|string $value): void
     {
-        $this->expectException(\ValueError::class);
-        Month::of(0);
-
-        $this->expectException(\ValueError::class);
-        Month::of(-1);
-
-        $this->expectException(\ValueError::class);
-        Month::of(13);
+        $this->expectException(InvalidMonth::class);
+        Month::of($value);
     }
 
     public static function comparisonProvider(): array

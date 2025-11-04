@@ -18,6 +18,7 @@ use Kronika\Date\DayOfMonth;
 use Kronika\Date\DayOfWeek;
 use Kronika\Date\Month;
 use Kronika\Date\Year;
+use Kronika\Exception\MalformedString\DateTimeMalformedString;
 use Kronika\Format\DateTime\FormattedZoned as Formatted;
 use Kronika\Format\DateTime\Formatter;
 use Kronika\Time\Hour;
@@ -28,7 +29,7 @@ use Kronika\Utils\WeakRefsTrait;
 use function Kronika\Utils\Math\double;
 
 /**
- * Represents a date-time with a time-zone.
+ * Represents a date-time with time-zone.
  *
  * @psalm-import-type TMicrosecond from Second
  */
@@ -127,7 +128,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     /**
-     * Obtain an instance of ZonedDateTime from a "Kronika\Instant" and a time-zone.
+     * Obtain an instance of ZonedDateTime from a given "Kronika\Instant" and time-zone.
      */
     public static function ofInstant(Instant $instant, \DateTimeZone $timezone): self
     {
@@ -160,11 +161,15 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      *
      * @param non-empty-string $datetime
      *
-     * @throws \DateMalformedStringException
+     * @throws DateTimeMalformedString
      */
     public static function parse(string $datetime, ?\DateTimeZone $timezone = null): self
     {
-        return self::ofDateTime(new \DateTimeImmutable($datetime, $timezone));
+        try {
+            return self::ofDateTime(new \DateTimeImmutable($datetime, $timezone));
+        } catch (\DateMalformedStringException $e) {
+            throw DateTimeMalformedString::wrap($e);
+        }
     }
 
     private function __construct(

@@ -18,6 +18,7 @@ use Kronika\Date\DayOfMonth;
 use Kronika\Date\DayOfWeek;
 use Kronika\Date\Month;
 use Kronika\Date\Year;
+use Kronika\Exception\MalformedString\DateTimeMalformedString;
 use Kronika\Format\DateTime\FormattedLocal as Formatted;
 use Kronika\Format\DateTime\Formatter;
 use Kronika\Time\Hour;
@@ -97,11 +98,15 @@ final readonly class LocalDateTime implements DateTime
      *
      * @param non-empty-string $datetime
      *
-     * @throws \DateMalformedStringException
+     * @throws DateTimeMalformedString
      */
     public static function parse(string $datetime): self
     {
-        return self::ofDateTime(new \DateTimeImmutable($datetime));
+        try {
+            return self::ofDateTime(new \DateTimeImmutable($datetime));
+        } catch (\DateMalformedStringException $e) {
+            throw DateTimeMalformedString::wrap($e);
+        }
     }
 
     private function __construct(

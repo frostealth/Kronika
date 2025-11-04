@@ -54,20 +54,16 @@ enum DayOfWeek: int implements DateUnit
      * ```
      *
      * @psalm-param TDayOfWeek|TDayOfWeekName|TDayOfWeekNative|self $value
+     *
+     * @throws Exception\InvalidDayOfWeek
      */
     public static function of(int|string|self $value): self
     {
         if ($value instanceof self) {
             return $value;
         }
-        if (\is_string($value)) {
-            return self::{\ucfirst($value)};
-        }
-        if (0 === $value) {
-            return self::Sunday;
-        }
 
-        return self::from($value);
+        return \is_int($value) ? self::ofValue($value) : self::ofName($value);
     }
 
     /**
@@ -243,6 +239,30 @@ enum DayOfWeek: int implements DateUnit
     public function compareTo(self $other): Compared
     {
         return Compared::of($this->value <=> $other->value);
+    }
+
+    /** @throws Exception\InvalidDayOfWeek */
+    private static function ofName(string $name): self
+    {
+        try {
+            return self::{\ucfirst($name)};
+        } catch (\Throwable $e) {
+            throw new Exception\InvalidDayOfWeek("Invalid day of week name [$name]", previous: $e);
+        }
+    }
+
+    /** @throws Exception\InvalidDayOfWeek */
+    private static function ofValue(int $value): self
+    {
+        if (0 === $value) {
+            return self::Sunday;
+        }
+
+        try {
+            return self::from($value);
+        } catch (\ValueError $e) {
+            throw new Exception\InvalidDayOfWeek("Day of week must be between 0 and 7, got [$value]", previous: $e);
+        }
     }
 
     /** @internal {@see Date::with()} */

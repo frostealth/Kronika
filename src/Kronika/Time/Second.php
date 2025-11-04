@@ -45,6 +45,8 @@ final readonly class Second implements TimeUnit
      *
      * @param TSecond|self $second
      * @param TMicrosecond|null $micro
+     *
+     * @throws Exception\InvalidSecond
      */
     public static function of(int|self $second, ?int $micro = null): self
     {
@@ -92,13 +94,14 @@ final readonly class Second implements TimeUnit
     /**
      * @param TSecond $second
      * @param TMicrosecond $microsecond
+     *
+     * @throws Exception\InvalidSecond
      */
     private function __construct(
         private int $second,
         private int $microsecond,
     ) {
-        \assert($second >= 0 && $second < 60);
-        \assert($microsecond >= 0 && $microsecond < 1_000_000);
+        self::assertValues($second, $microsecond);
     }
 
     /**
@@ -274,6 +277,17 @@ final readonly class Second implements TimeUnit
     public function __debugInfo(): array
     {
         return ['second' => (string)$this];
+    }
+
+    /** @throws Exception\InvalidSecond */
+    private static function assertValues(int $second, int $microsecond): void
+    {
+        if ($second < 0 || $second > 59) {
+            throw new Exception\InvalidSecond("Second must be between 0 and 23, got [$second]");
+        }
+        if ($microsecond < 0 || $microsecond > 999_999) {
+            throw new Exception\InvalidSecond("Microseconds must be between 0 and 999_999, got [$microsecond]");
+        }
     }
 
     /** @internal {@see Time::with()} */

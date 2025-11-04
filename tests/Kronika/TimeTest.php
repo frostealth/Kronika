@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Kronika\Tests;
 
 use Kronika\Date;
+use Kronika\Exception\InvalidTime;
 use Kronika\LocalDateTime;
 use Kronika\Precision;
 use Kronika\Tests\Time\HourTest;
@@ -64,6 +65,19 @@ final class TimeTest extends TestCase
             $time->with($time->second()->resetMicro()),
             Time::of(hour: $hour->value(), minute: $minute->value(), second: $second->second()),
         );
+    }
+
+    #[TestWith([24, 00, 00])]
+    #[TestWith([-1, 00, 00])]
+    #[TestWith([23, 60, 00])]
+    #[TestWith([23, -1, 00])]
+    #[TestWith([23, 00, 60])]
+    #[TestWith([23, 00, -1])]
+    #[Depends('testBasic')]
+    public function testInvalidValues(int $hour, int $minute, int $second): void
+    {
+        $this->expectException(InvalidTime::class);
+        Time::of($hour, $minute, $second);
     }
 
     public static function withProvider(): array

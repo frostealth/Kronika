@@ -38,6 +38,8 @@ final readonly class Hour implements TimeUnit
      * ```
      *
      * @param THour|self $value
+     *
+     * @throws Exception\InvalidHour
      */
     public static function of(int|self $value): self
     {
@@ -72,11 +74,15 @@ final readonly class Hour implements TimeUnit
         return $instance;
     }
 
-    /** @param THour $value */
+    /**
+     * @param THour $value
+     *
+     * @throws Exception\InvalidHour
+     */
     private function __construct(
         private int $value,
     ) {
-        \assert($value >= 0 && $value < 24);
+        self::assertValue($value);
     }
 
     #[\Override]
@@ -219,6 +225,14 @@ final readonly class Hour implements TimeUnit
     public function __debugInfo(): array
     {
         return ['hour' => (string)$this];
+    }
+
+    /** @throws Exception\InvalidHour */
+    private static function assertValue(int $value): void
+    {
+        if ($value < 0 || $value > 23) {
+            throw new Exception\InvalidHour("Hour must be between 0 and 23, got [$value]");
+        }
     }
 
     /** @internal {@see Time::with()} */
