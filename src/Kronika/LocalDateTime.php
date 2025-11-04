@@ -18,6 +18,7 @@ use Kronika\Date\DayOfMonth;
 use Kronika\Date\DayOfWeek;
 use Kronika\Date\Month;
 use Kronika\Date\Year;
+use Kronika\Exception\MalformedString\DateTimeMalformedString;
 use Kronika\Time\Hour;
 use Kronika\Time\Minute;
 use Kronika\Time\Second;
@@ -125,13 +126,13 @@ final readonly class LocalDateTime implements DateTime
      * @param non-empty-string $format
      * @param non-empty-string $datetime
      *
-     * @throws \DateMalformedStringException
+     * @throws Exception\Exception
      */
     public static function ofFormat(string $format, string $datetime): self
     {
         $native = \DateTimeImmutable::createFromFormat(self::quote($format), $datetime);
         if (! $native instanceof \DateTimeImmutable) {
-            throw new \DateMalformedStringException();
+            throw new DateTimeMalformedString();
         }
 
         return self::ofDateTime($native);
@@ -142,11 +143,15 @@ final readonly class LocalDateTime implements DateTime
      *
      * @param non-empty-string $datetime
      *
-     * @throws \DateMalformedStringException
+     * @throws DateTimeMalformedString
      */
     public static function parse(string $datetime): self
     {
-        return self::ofDateTime(new \DateTimeImmutable($datetime));
+        try {
+            return self::ofDateTime(new \DateTimeImmutable($datetime));
+        } catch (\DateMalformedStringException $e) {
+            throw DateTimeMalformedString::wrap($e);
+        }
     }
 
     private function __construct(
@@ -333,13 +338,17 @@ final readonly class LocalDateTime implements DateTime
     /**
      * @param non-empty-string $modifier
      *
-     * @throws \DateMalformedStringException
+     * @throws DateTimeMalformedString
      *
      * @deprecated {@see DateTime::with()}
      */
     public function modify(string $modifier): self
     {
-        return self::ofDateTime($this->toNative()->modify($modifier));
+        try {
+            return self::ofDateTime($this->toNative()->modify($modifier));
+        } catch (\DateMalformedStringException $e) {
+            throw DateTimeMalformedString::wrap($e);
+        }
     }
 
     /**

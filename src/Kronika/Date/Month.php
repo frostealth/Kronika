@@ -52,17 +52,16 @@ enum Month: int implements DateUnit
      * ```
      *
      * @psalm-param TMonth|TMonthName|self $value
+     *
+     * @throws Exception\InvalidMonth
      */
     public static function of(int|string|self $value): self
     {
         if ($value instanceof self) {
             return $value;
         }
-        if (\is_string($value)) {
-            return self::{\ucfirst($value)};
-        }
 
-        return self::from($value);
+        return \is_int($value) ? self::ofValue($value) : self::ofName($value);
     }
 
     /**
@@ -299,6 +298,26 @@ enum Month: int implements DateUnit
     public function compareTo(self $other): Compared
     {
         return Compared::of($this->number() <=> $other->number());
+    }
+
+    /** @throws Exception\InvalidMonth */
+    private static function ofName(string $name): self
+    {
+        try {
+            return self::{\ucfirst($name)};
+        } catch (\Throwable $e) {
+            throw new Exception\InvalidMonth("Invalid month name [$name]", previous: $e);
+        }
+    }
+
+    /** @throws Exception\InvalidMonth */
+    private static function ofValue(int $value): self
+    {
+        try {
+            return self::from($value);
+        } catch (\ValueError $e) {
+            throw new Exception\InvalidMonth("Invalid month value [$value]", previous: $e);
+        }
     }
 
     /** @internal {@see Date::with()} */

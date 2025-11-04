@@ -14,9 +14,11 @@ declare(strict_types=1);
 namespace Kronika\Tests\Date;
 
 use Kronika\Date\DayOfWeek;
+use Kronika\Date\Exception\InvalidDayOfWeek;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Depends;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(DayOfWeek::class)]
@@ -41,20 +43,24 @@ final class DayOfWeekTest extends TestCase
         self::assertSame(DayOfWeek::Saturday, DayOfWeek::of(6));
         self::assertSame(DayOfWeek::Sunday, DayOfWeek::of(7));
 
+        self::assertSame(DayOfWeek::Monday, DayOfWeek::of('monday'));
+        self::assertSame(DayOfWeek::Tuesday, DayOfWeek::of('tuesday'));
+        self::assertSame(DayOfWeek::Wednesday, DayOfWeek::of('wednesday'));
+        self::assertSame(DayOfWeek::Friday, DayOfWeek::of('friday'));
+        self::assertSame(DayOfWeek::Saturday, DayOfWeek::of('saturday'));
+        self::assertSame(DayOfWeek::Sunday, DayOfWeek::of('sunday'));
+
         self::assertSame(DayOfWeek::Sunday, DayOfWeek::of(0));
     }
 
+    #[TestWith([8])]
+    #[TestWith([-1])]
+    #[TestWith(['November'])]
     #[Depends('testBasic')]
-    public function testInvalidValues(): void
+    public function testInvalidValue(int|string $value): void
     {
-        $this->expectException(\ValueError::class);
-        DayOfWeek::of(8);
-
-        $this->expectException(\ValueError::class);
-        DayOfWeek::of(1212);
-
-        $this->expectException(\ValueError::class);
-        DayOfWeek::of(-1);
+        $this->expectException(InvalidDayOfWeek::class);
+        DayOfWeek::of($value);
     }
 
     public static function nameProvider(): array

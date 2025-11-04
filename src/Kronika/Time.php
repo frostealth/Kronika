@@ -48,6 +48,8 @@ final readonly class Time implements Unit
      * @psalm-param Hour|THour     $hour
      * @psalm-param Minute|TMinute $minute
      * @psalm-param Second|TSecond $second
+     *
+     * @throws Exception\InvalidTime
      */
     public static function of(Hour|int $hour, Minute|int $minute, Second|int $second = 0): self
     {

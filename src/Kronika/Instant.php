@@ -42,6 +42,8 @@ final readonly class Instant
      * ```
      *
      * @param TMicrosecond $micro
+     *
+     * @throws Exception\InvalidValue
      */
     public static function of(int $second, int $micro = 0): self
     {
@@ -63,12 +65,16 @@ final readonly class Instant
         return self::of(...double_split($value));
     }
 
-    /** @param TMicrosecond $microsecond */
+    /**
+     * @param TMicrosecond $microsecond
+     *
+     * @throws Exception\InvalidValue
+     */
     private function __construct(
         private int $second,
         private int $microsecond,
     ){
-        \assert($microsecond >= 0 && $microsecond < 1_000_000);
+        self::assertMicrosecond($microsecond);
     }
 
     /**
@@ -346,6 +352,14 @@ final readonly class Instant
     public function __debugInfo(): array
     {
         return ['second' => $this->value()];
+    }
+
+    /** @throws Exception\InvalidValue */
+    private static function assertMicrosecond(int $microsecond): void
+    {
+        if ($microsecond < 0 || $microsecond > 999_999) {
+            throw new Exception\InvalidValue("Microsecond must be between 0 and 999_999, got [$microsecond]");
+        }
     }
 
     /** @internal */

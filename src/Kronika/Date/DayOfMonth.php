@@ -14,7 +14,9 @@ declare(strict_types=1);
 namespace Kronika\Date;
 
 use Kronika\Date;
+use Kronika\LocalDateTime;
 use Kronika\Utils\Compared;
+use Kronika\Utils\WeakRefsTrait;
 
 /**
  * Represents a day of month.
@@ -24,8 +26,8 @@ use Kronika\Utils\Compared;
  */
 final readonly class DayOfMonth implements DateUnit
 {
-    /** @use DateUnitTrait<TDayOfMonth> */
-    use DateUnitTrait;
+    /** @use WeakRefsTrait<static,TDayOfMonth> */
+    use WeakRefsTrait;
 
     /**
      * Obtains an instance of DayOfMonth from a given number.
@@ -35,10 +37,36 @@ final readonly class DayOfMonth implements DateUnit
      * ```
      *
      * @param TDayOfMonth|DayOfMonth $value
+     *
+     * @throws Exception\InvalidDayOfMonth
      */
     public static function of(int|self $value): self
     {
-        return $value instanceof self ? $value : self::weak(value: $value);
+        return $value instanceof self ? $value : self::weak(number: $value);
+    }
+
+    /**
+     * @param TDayOfMonth $number
+     *
+     * @throws Exception\InvalidDayOfMonth
+     */
+    private function __construct(
+        private int $number,
+    ) {
+        self::assertValue($number);
+    }
+
+    #[\Override]
+    public function number(): int
+    {
+        return $this->number;
+    }
+
+    /** @deprecated */
+    #[\Override]
+    public function is(int $number): bool
+    {
+        return $this->number() === $number;
     }
 
     /**
@@ -159,6 +187,14 @@ final readonly class DayOfMonth implements DateUnit
         return ['dayOfMonth' => (string)$this];
     }
 
+    /** @throws Exception\InvalidDayOfMonth */
+    private static function assertValue(int $value): void
+    {
+        if ($value < 1 || $value > 31) {
+            throw new Exception\InvalidDayOfMonth("Day of month must be between 1 and 12, got [$value]");
+        }
+    }
+
     /** @internal {@see Date::with()} */
     #[\Override]
     public function _withinDate(Date $date): Date
@@ -170,15 +206,10 @@ final readonly class DayOfMonth implements DateUnit
         );
     }
 
+    /** @internal {@see DateTime::with()} */
     #[\Override]
-    protected static function minValue(): int
+    public function _withinDateTime(LocalDateTime $datetime): LocalDateTime
     {
-        return 1;
-    }
-
-    #[\Override]
-    protected static function maxValue(): int
-    {
-        return 31;
+        return $datetime->with($datetime->date()->with($this));
     }
 }

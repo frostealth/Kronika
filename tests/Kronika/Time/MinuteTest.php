@@ -13,10 +13,12 @@ declare(strict_types=1);
 
 namespace Kronika\Tests\Time;
 
+use Kronika\Time\Exception\InvalidMinute;
 use Kronika\Time\Minute;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Depends;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(Minute::class)]
@@ -34,20 +36,13 @@ final class MinuteTest extends TestCase
         self::assertSame($minute, Minute::of(35));
     }
 
+    #[TestWith([60])]
+    #[TestWith([-1])]
     #[Depends('testBasic')]
-    public function testInvalidValues(): void
+    public function testInvalidValue(int $value): void
     {
-        $this->expectException(\AssertionError::class);
-        Minute::of(60);
-
-        $this->expectException(\AssertionError::class);
-        Minute::of(1212);
-
-        $this->expectException(\AssertionError::class);
-        Minute::of(0);
-
-        $this->expectException(\AssertionError::class);
-        Minute::of(-1);
+        $this->expectException(InvalidMinute::class);
+        Minute::of($value);
     }
 
     #[Depends('testBasic')]

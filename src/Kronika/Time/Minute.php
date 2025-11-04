@@ -38,6 +38,8 @@ final readonly class Minute implements TimeUnit
      * ```
      *
      * @param TMinute|self $value
+     *
+     * @throws Exception\InvalidMinute
      */
     public static function of(int|self $value): self
     {
@@ -72,11 +74,15 @@ final readonly class Minute implements TimeUnit
         return $instance;
     }
 
-    /** @param TMinute $value */
+    /**
+     * @param TMinute $value
+     *
+     * @throws Exception\InvalidMinute
+     */
     private function __construct(
         private int $value,
     ) {
-        \assert($value >= 0 && $value < 60);
+        self::assertValue($value);
     }
 
     /**
@@ -234,6 +240,14 @@ final readonly class Minute implements TimeUnit
     public function __debugInfo(): array
     {
         return ['minute' => (string)$this];
+    }
+
+    /** @throws Exception\InvalidMinute */
+    private static function assertValue(int $value): void
+    {
+        if ($value < 0 || $value > 59) {
+            throw new Exception\InvalidMinute("Minute must be between 0 and 59, got [$value]");
+        }
     }
 
     /** @internal {@see Time::with()} */

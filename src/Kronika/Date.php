@@ -46,6 +46,8 @@ final readonly class Date implements Unit
      * @psalm-param Year|TYear             $year
      * @psalm-param Month|TMonth           $month
      * @psalm-param DayOfMonth|TDayOfMonth $day
+     *
+     * @throws Exception\InvalidDate
      */
     public static function of(Year|int $year, Month|int $month, DayOfMonth|int $day): self
     {
@@ -108,12 +110,15 @@ final readonly class Date implements Unit
         return self::ofDateTime($native);
     }
 
+    /** @throws Exception\InvalidDate */
     private function __construct(
-        private Year       $year,
-        private Month      $month,
+        private Year $year,
+        private Month $month,
         private DayOfMonth $day,
     ){
-        \assert($month->containsDay($day, $year));
+        if (! $month->containsDay($day, $year)) {
+            throw new Exception\InvalidDate(\sprintf('Invalid date [%s]', $this));
+        }
     }
 
     /**

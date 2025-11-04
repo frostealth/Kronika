@@ -47,9 +47,13 @@ final readonly class Duration
      * @param non-negative-int $hours
      * @param non-negative-int $minutes
      * @param non-negative-int $seconds
+     *
+     * @throws Exception\InvalidValue
      */
     public static function of(int $days = 0, int $hours = 0, int $minutes = 0, int $seconds = 0): self
     {
+        self::assertValues(days: $days, hours: $hours, minutes: $minutes, seconds: $seconds);
+
         // total duration in seconds
         $hours += $days * 24;
         $minutes += $hours * 60;
@@ -99,11 +103,15 @@ final readonly class Duration
         return self::of(seconds: $to->getTimestamp() - $from->getTimestamp());
     }
 
-    /** @param non-negative-int $seconds */
+    /**
+     * @param non-negative-int $seconds
+     *
+     * @throws Exception\InvalidValue
+     */
     private function __construct(
         private int $seconds,
     ) {
-        \assert($seconds >= 0, 'Duration cannot be negative');
+        self::assertValues(duration: $seconds);
     }
 
     /**
@@ -553,5 +561,17 @@ final readonly class Duration
             'seconds' => \sprintf('%02d', $this->seconds()),
             'inSeconds' => \sprintf('%02d', $this->inSeconds()),
         ];
+    }
+
+    /** @throws Exception\InvalidValue */
+    private static function assertValues(int ...$values): void
+    {
+        foreach ($values as $name => $value) {
+            if ($value < 0) {
+                throw new Exception\InvalidValue(
+                    \sprintf('%s cannot be negative, got [%d]', \ucfirst($name), $value),
+                );
+            }
+        }
     }
 }

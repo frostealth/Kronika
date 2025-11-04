@@ -15,18 +15,20 @@ namespace Kronika\Date;
 
 use Kronika\Date;
 use Kronika\Duration;
+use Kronika\LocalDateTime;
 use Kronika\Utils\Compared;
+use Kronika\Utils\WeakRefsTrait;
 
 /**
  * Represents a year.
  *
- * @psalm-type TYear=int<-99999,99999>
+ * @psalm-type TYear=int<-9999,9999>
  * @implements DateUnit<TYear>
  */
 final readonly class Year implements DateUnit
 {
-    /** @use DateUnitTrait<TYear> */
-    use DateUnitTrait;
+    /** @use WeakRefsTrait<static,TYear> */
+    use WeakRefsTrait;
 
     /**
      * Obtains an instance of Year from a number.
@@ -37,10 +39,36 @@ final readonly class Year implements DateUnit
      * ```
      *
      * @param TYear|self $value
+     *
+     * @throws Exception\InvalidYear
      */
     public static function of(int|self $value): self
     {
-        return $value instanceof self ? $value : self::weak(value: $value);
+        return $value instanceof self ? $value : self::weak(number: $value);
+    }
+
+    /**
+     * @param TYear $number
+     *
+     * @throws Exception\InvalidYear
+     */
+    private function __construct(
+        private int $number,
+    ) {
+        self::assertValue($number);
+    }
+
+    #[\Override]
+    public function number(): int
+    {
+        return $this->number;
+    }
+
+    /** @deprecated */
+    #[\Override]
+    public function is(int $number): bool
+    {
+        return $this->number() === $number;
     }
 
     /**
@@ -241,6 +269,14 @@ final readonly class Year implements DateUnit
         return ['year' => (string)$this];
     }
 
+    /** @throws Exception\InvalidYear */
+    private static function assertValue(int $value): void
+    {
+        if ($value < -9999 || $value > 9999) {
+            throw new Exception\InvalidYear("Year must be between -9999 and 9999, got [$value]");
+        }
+    }
+
     /** @internal {@see Date::with()} */
     #[\Override]
     public function _withinDate(Date $date): Date
@@ -252,15 +288,10 @@ final readonly class Year implements DateUnit
         );
     }
 
+    /** @internal {@see DateTime::with()} */
     #[\Override]
-    protected static function minValue(): int
+    public function _withinDateTime(LocalDateTime $datetime): LocalDateTime
     {
-        return -99999;
-    }
-
-    #[\Override]
-    protected static function maxValue(): int
-    {
-        return 99999;
+        return $datetime->with($datetime->date()->with($this));
     }
 }

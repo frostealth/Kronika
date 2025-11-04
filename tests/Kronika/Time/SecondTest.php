@@ -13,10 +13,12 @@ declare(strict_types=1);
 
 namespace Kronika\Tests\Time;
 
+use Kronika\Time\Exception\InvalidSecond;
 use Kronika\Time\Second;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Depends;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(Second::class)]
@@ -47,23 +49,15 @@ final class SecondTest extends TestCase
         self::assertNotEquals($second, Second::of($second, 50));
     }
 
+    #[TestWith([60, 0])]
+    #[TestWith([-1, 0])]
+    #[TestWith([30, 1_000_000])]
+    #[TestWith([30, -1])]
     #[Depends('testBasic')]
-    public function testInvalidValues(): void
+    public function testInvalidValue(int $second, int $micro): void
     {
-        $this->expectException(\AssertionError::class);
-        Second::of(60);
-
-        $this->expectException(\AssertionError::class);
-        Second::of(30, 1_000_000);
-
-        $this->expectException(\AssertionError::class);
-        Second::of(1212);
-
-        $this->expectException(\AssertionError::class);
-        Second::of(-1);
-
-        $this->expectException(\AssertionError::class);
-        Second::of(30, -75);
+        $this->expectException(InvalidSecond::class);
+        Second::of(second: $second, micro: $micro);
     }
 
     #[Depends('testBasic')]

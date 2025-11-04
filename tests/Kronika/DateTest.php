@@ -15,6 +15,7 @@ namespace Kronika\Tests;
 
 use Kronika\Date;
 use Kronika\DateTime;
+use Kronika\Exception\InvalidDate;
 use Kronika\LocalDateTime;
 use Kronika\Tests\Date\DayOfMonthTest;
 use Kronika\Tests\Date\DayOfWeekTest;
@@ -63,6 +64,22 @@ final class DateTest extends TestCase
         self::assertEquals($dayOfWeek, $date->dayOfWeek());
         self::assertSame($date, Date::of(year: $year->number(), month: $month->number(), day: $day->number()));
         self::assertNotSame($date, Date::of(year: $year->number() + 1, month: $month->number(), day: $day->number()));
+    }
+
+    #[TestWith([100_000, 01, 01])]
+    #[TestWith([-100_000, 01, 01])]
+    #[TestWith([2025, 00, 01])]
+    #[TestWith([2025, 13, 01])]
+    #[TestWith([2025, 01, 00])]
+    #[TestWith([2025, 01, 32])]
+    #[TestWith([2024, 02, 30])]
+    #[TestWith([2025, 02, 29])]
+    #[TestWith([2025, 04, 31])]
+    #[Depends('testBasic')]
+    public function testInvalidValues(int $year, int $month, int $day): void
+    {
+        $this->expectException(InvalidDate::class);
+        Date::of(year: $year, month: $month, day: $day);
     }
 
     public static function startAndEndOfMonthProvider(): array
