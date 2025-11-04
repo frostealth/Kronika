@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Kronika;
 
+use Kronika\Format\Formatter;
+
 if (! \function_exists('\\Kronika\\now')) {
     /**
      * Returns the current time with a given or system time-zone from the global clock.
@@ -129,5 +131,18 @@ if (! \function_exists('\\Kronika\\utc')) {
         static $utc = new \DateTimeZone('UTC');
 
         return $utc;
+    }
+}
+
+if (! \function_exists('\\Kronika\\formatter')) {
+    /**
+     * Returns a global formatter.
+     * Changes and returns a global formatter with a given one.
+     */
+    function formatter(?Formatter $asGlobal = null): Formatter
+    {
+        static $global = $asGlobal ?? Format\native();
+
+        return $global = $asGlobal ?? $global;
     }
 }

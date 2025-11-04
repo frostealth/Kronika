@@ -11,6 +11,10 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-require __DIR__ . '/../vendor/autoload.php';
+namespace Kronika\Format\Time;
 
-\date_default_timezone_set('UTC');
+use Kronika\Format\Formatted as BaseFormatted;
+
+final readonly class Formatted extends BaseFormatted
+{
+}

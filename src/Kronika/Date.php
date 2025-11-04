@@ -19,6 +19,8 @@ use Kronika\Date\DayOfMonth;
 use Kronika\Date\DayOfWeek;
 use Kronika\Date\Month;
 use Kronika\Date\Year;
+use Kronika\Format\Date\Formatted;
+use Kronika\Format\Date\Formatter;
 use Kronika\Utils\Compared;
 use Kronika\Utils\WeakRefsTrait;
 
@@ -95,17 +97,12 @@ final readonly class Date implements Unit
      *
      * @param non-empty-string $format
      * @param non-empty-string $date
-     *
-     * @throws \DateMalformedStringException
      */
-    public static function ofFormat(string $format, string $date): self
+    public static function ofFormat(string $format, string $date, ?Formatter $formatter = null): self
     {
-        $native = \DateTimeImmutable::createFromFormat(self::quote($format), $date);
-        if (! $native instanceof \DateTimeImmutable) {
-            throw new \DateMalformedStringException();
-        }
+        $parsed = ($formatter ?? formatter())->parse(new Formatted($format, $date));
 
-        return self::ofDateTime($native);
+        return self::of($parsed->year(), $parsed->month(), $parsed->day());
     }
 
     private function __construct(
@@ -505,13 +502,22 @@ final readonly class Date implements Unit
     }
 
     /**
+     * Returns this date formatted according to a given string
+     * and using the global formatter or a given one.
+     *
+     * Supports {@see \DateTimeInterface::format()} syntax by default.
+     * Non year, month, week and day characters will be printed as-is.
+     *
      * @param non-empty-string $format
      *
      * @return non-empty-string
+     *
+     * @see \Kronika\Format\native()
+     * @see \Kronika\formatter()
      */
-    public function format(string $format): string
+    public function format(string $format, ?Formatter $formatter = null): string
     {
-        return $this->at(Time::midnight())->format(self::quote($format));
+        return ($formatter ?? formatter())->format($this, $format);
     }
 
     /**
@@ -540,11 +546,6 @@ final readonly class Date implements Unit
     public function _withinDateTime(LocalDateTime $datetime): LocalDateTime
     {
         return $this->at($datetime->time());
-    }
-
-    private static function quote(string $format): string
-    {
-        return \preg_replace('/(?<!\\\\)([^DdjlNSWwzFMmntLoXxYy:\\\\\s\d-])/', '\\\\$1', $format);
     }
 
     private function normalize(self|DateUnit $date): self

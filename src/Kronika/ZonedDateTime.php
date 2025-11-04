@@ -18,6 +18,8 @@ use Kronika\Date\DayOfMonth;
 use Kronika\Date\DayOfWeek;
 use Kronika\Date\Month;
 use Kronika\Date\Year;
+use Kronika\Format\DateTime\FormattedZoned as Formatted;
+use Kronika\Format\DateTime\Formatter;
 use Kronika\Time\Hour;
 use Kronika\Time\Minute;
 use Kronika\Time\Second;
@@ -137,17 +139,20 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      *
      * @param non-empty-string $format
      * @param non-empty-string $datetime
-     *
-     * @throws \DateMalformedStringException
      */
-    public static function ofFormat(string $format, string $datetime, ?\DateTimeZone $timezone = null): self
-    {
-        $native = \DateTimeImmutable::createFromFormat($format, $datetime, $timezone);
-        if (! $native instanceof \DateTimeImmutable) {
-            throw new \DateMalformedStringException();
-        }
+    public static function ofFormat(
+        string $format,
+        string $datetime,
+        ?\DateTimeZone $timezone = null,
+        ?Formatter $formatter = null,
+    ): self {
+        $parsed = ($formatter ?? formatter())->parse(new Formatted($format, $datetime));
 
-        return self::ofDateTime($native);
+        return self::of(
+            date: Date::of($parsed->year(), $parsed->month(), $parsed->day()),
+            time: Time::of($parsed->hour(), $parsed->minute(Second::zero(...)), $parsed->second(Second::zero(...))),
+            timezone: $parsed->timezone(fn(): \DateTimeZone => $timezone ?? new \DateTimeZone(\date('e'))),
+        );
     }
 
     /**
@@ -401,6 +406,12 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         return $this->local->compareTo($this->localize($other), $precision);
     }
 
+    #[\Override]
+    public function format(string $format, ?Formatter $formatter = null): string
+    {
+        return ($formatter ?? formatter())->format($this, $format);
+    }
+
     /**
      * Returns an instance of LocalDateTime from this date-time.
      *
@@ -464,7 +475,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     #[\Override]
     public function __toString(): string
     {
-        return $this->format('Y-m-d\TH:i:s.uP');
+        return $this->format('Y-m-d\TH:i:s.uP', Format\native());
     }
 
     /** @alias {@see self::ofDateTime()} */

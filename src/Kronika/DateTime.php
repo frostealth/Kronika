@@ -17,6 +17,7 @@ use Kronika\Date\DayOfMonth;
 use Kronika\Date\DayOfWeek;
 use Kronika\Date\Month;
 use Kronika\Date\Year;
+use Kronika\Format\DateTime\Formatter;
 use Kronika\Time\Hour;
 use Kronika\Time\Minute;
 use Kronika\Time\Second;
@@ -354,11 +355,20 @@ interface DateTime extends \Stringable
     public function compareTo(self|Unit $other, Precision $precision = Precision::Micro): Compared;
 
     /**
+     * Returns this date-time formatted according to a given string
+     * and using the global formatter or a given one.
+     *
+     * Supports {@see \DateTimeInterface::format()} syntax by default.
+     * The time-zone characters will be omitted for `LocalDateTime`.
+     *
      * @param non-empty-string $format
      *
      * @return non-empty-string
+     *
+     * @see \Kronika\Format\native()
+     * @see \Kronika\formatter()
      */
-    public function format(string $format): string;
+    public function format(string $format, ?Formatter $formatter = null): string;
 
     /**
      * Returns an instance of \DateTimeImmutable with this date-time.

@@ -18,6 +18,8 @@ use Kronika\Date\DayOfMonth;
 use Kronika\Date\DayOfWeek;
 use Kronika\Date\Month;
 use Kronika\Date\Year;
+use Kronika\Format\DateTime\FormattedLocal as Formatted;
+use Kronika\Format\DateTime\Formatter;
 use Kronika\Time\Hour;
 use Kronika\Time\Minute;
 use Kronika\Time\Second;
@@ -79,17 +81,15 @@ final readonly class LocalDateTime implements DateTime
      *
      * @param non-empty-string $format
      * @param non-empty-string $datetime
-     *
-     * @throws \DateMalformedStringException
      */
-    public static function ofFormat(string $format, string $datetime): self
+    public static function ofFormat(string $format, string $datetime, ?Formatter $formatter = null): self
     {
-        $native = \DateTimeImmutable::createFromFormat(self::quote($format), $datetime);
-        if (! $native instanceof \DateTimeImmutable) {
-            throw new \DateMalformedStringException();
-        }
+        $parsed = ($formatter ?? formatter())->parse(new Formatted($format, $datetime));
 
-        return self::ofDateTime($native);
+        return self::of(
+            Date::of($parsed->year(), $parsed->month(), $parsed->day()),
+            Time::of($parsed->hour(), $parsed->minute(Minute::zero(...)), $parsed->second(Second::zero(...)))
+        );
     }
 
     /**
@@ -274,9 +274,9 @@ final readonly class LocalDateTime implements DateTime
     }
 
     #[\Override]
-    public function format(string $format): string
+    public function format(string $format, ?Formatter $formatter = null): string
     {
-        return $this->toNative()->format(self::quote($format));
+        return ($formatter ?? formatter())->format($this, $format);
     }
 
     /**
@@ -339,11 +339,6 @@ final readonly class LocalDateTime implements DateTime
             'date' => (string)$this->date,
             'time' => (string)$this->time,
         ];
-    }
-
-    private static function quote(string $format): string
-    {
-        return \preg_replace('/(?<!\\\\)([eOPpTZ])/', '\\\\$1', $format);
     }
 
     private function normalize(DateTime|Unit $datetime): DateTime

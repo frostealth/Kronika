@@ -36,6 +36,7 @@
         },
         "files": [
             "src/Kronika/functions.php",
+            "src/Kronika/Format/functions.php",
             "src/Utils/functions.php",
             "src/Utils/Math/functions.php"
         ]

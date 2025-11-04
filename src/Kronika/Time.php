@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace Kronika;
 
 use DateTimeInterface as Native;
+use Kronika\Format\Time\Formatted as Formatted;
+use Kronika\Format\Time\Formatter;
 use Kronika\Time\Hour;
 use Kronika\Time\Minute;
 use Kronika\Time\Second;
@@ -127,17 +129,12 @@ final readonly class Time implements Unit
      *
      * @param non-empty-string $format
      * @param non-empty-string $time
-     *
-     * @throws \DateMalformedStringException
      */
-    public static function ofFormat(string $format, string $time): self
+    public static function ofFormat(string $format, string $time, ?Formatter $formatter = null): self
     {
-        $native = \DateTimeImmutable::createFromFormat(self::quote($format), $time);
-        if (! $native instanceof \DateTimeImmutable) {
-            throw new \DateMalformedStringException();
-        }
+        $parsed = ($formatter ?? formatter())->parse(new Formatted($format, $time));
 
-        return self::ofDateTime($native);
+        return self::of($parsed->hour(), $parsed->minute(), $parsed->second(Second::zero(...)));
     }
 
     private function __construct(
@@ -533,13 +530,22 @@ final readonly class Time implements Unit
     }
 
     /**
+     * Returns this time formatted according to a given string
+     * and using the global formatter or a given one.
+     *
+     * Supports {@see \DateTimeInterface::format()} syntax by default.
+     * Non-time characters will be printed as-is.
+     *
      * @param non-empty-string $format
      *
      * @return non-empty-string
+     *
+     * @see \Kronika\Format\native()
+     * @see \Kronika\formatter()
      */
-    public function format(string $format): string
+    public function format(string $format, ?Formatter $formatter = null): string
     {
-        return \DateTimeImmutable::createFromTimestamp($this->instant()->value())->format(self::quote($format));
+        return ($formatter ?? formatter())->format($this, $format);
     }
 
     /**
@@ -571,11 +577,6 @@ final readonly class Time implements Unit
     public function _withinDateTime(LocalDateTime $datetime): LocalDateTime
     {
         return $this->at($datetime->date());
-    }
-
-    private static function quote(string $format): string
-    {
-        return \preg_replace('/(?<!\\\\)([^AaBGgHisu:\\\\\s\d-])/', '\\\\$1', $format);
     }
 
     private function normalize(self|TimeUnit $time): self
