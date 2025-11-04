@@ -126,13 +126,13 @@ final readonly class LocalDateTime implements DateTime
      * @param non-empty-string $format
      * @param non-empty-string $datetime
      *
-     * @throws Exception\Exception
+     * @throws Exception\FormatError
      */
     public static function ofFormat(string $format, string $datetime): self
     {
         $native = \DateTimeImmutable::createFromFormat(self::quote($format), $datetime);
         if (! $native instanceof \DateTimeImmutable) {
-            throw new DateTimeMalformedString();
+            throw new Exception\FormatError("Failed to parse [$datetime] with format [$format]");
         }
 
         return self::ofDateTime($native);

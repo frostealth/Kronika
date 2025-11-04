@@ -98,13 +98,13 @@ final readonly class Date implements Unit
      * @param non-empty-string $format
      * @param non-empty-string $date
      *
-     * @throws \DateMalformedStringException
+     * @throws Exception\FormatError
      */
     public static function ofFormat(string $format, string $date): self
     {
         $native = \DateTimeImmutable::createFromFormat(self::quote($format), $date);
         if (! $native instanceof \DateTimeImmutable) {
-            throw new \DateMalformedStringException();
+            throw new Exception\FormatError("Failed to parse [$date] with format [$format]");
         }
 
         return self::ofDateTime($native);
