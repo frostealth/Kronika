@@ -13,6 +13,6 @@ declare(strict_types=1);
 
 namespace Kronika\Exception;
 
-class FormatError extends RuntimeException
+final class FormatError extends RuntimeException
 {
 }
