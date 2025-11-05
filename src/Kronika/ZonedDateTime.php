@@ -18,7 +18,7 @@ use Kronika\Date\DayOfMonth;
 use Kronika\Date\DayOfWeek;
 use Kronika\Date\Month;
 use Kronika\Date\Year;
-use Kronika\Exception\MalformedString\DateTimeMalformedString;
+use Kronika\Exception\MalformedString;
 use Kronika\Time\Hour;
 use Kronika\Time\Minute;
 use Kronika\Time\Second;
@@ -156,14 +156,14 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      *
      * @param non-empty-string $datetime
      *
-     * @throws DateTimeMalformedString
+     * @throws MalformedString
      */
     public static function parse(string $datetime, ?\DateTimeZone $timezone = null): self
     {
         try {
             return self::ofDateTime(new \DateTimeImmutable($datetime, $timezone));
         } catch (\DateMalformedStringException $e) {
-            throw DateTimeMalformedString::wrap($e);
+            throw MalformedString\DateTimeMalformedString::wrap($e);
         }
     }
 
@@ -260,12 +260,18 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      *
      * ```
      * // 2025-12-31 12:15:30 +01:00
-     * $this->shiftTimezone(new \DateTimeZone('+02:30'));  // 2025-12-31 13:45:30 +02:30
+     * $this->shift(new \DateTimeZone('+02:30'));  // 2025-12-31 13:45:30 +02:30
      * ```
      */
-    public function shiftTimezone(\DateTimeZone $to): static
+    public function shift(\DateTimeZone $to): static
     {
         return $this->isInTimezone($to) ? $this : self::ofDateTime($this->toNative()->setTimezone($to));
+    }
+
+    /** @deprecated {@see self::shift()} */
+    public function shiftTimezone(\DateTimeZone $to): static
+    {
+        return $this->shift($to);
     }
 
     /**
@@ -527,7 +533,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         return self::ofDateTime($this->toNative()->setTimestamp($timestamp));
     }
 
-    /** @see self::shiftTimezone() */
+    /** @see self::shift() */
     #[\Override]
     public function setTimezone(\DateTimeZone $timezone): static
     {
@@ -543,6 +549,6 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
             return $this->with($datetime);
         }
 
-        return self::ofDateTime($datetime)->shiftTimezone($this->timezone());
+        return self::ofDateTime($datetime)->shift($this->timezone());
     }
 }

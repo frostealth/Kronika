@@ -18,7 +18,7 @@ use Kronika\Date\DayOfMonth;
 use Kronika\Date\DayOfWeek;
 use Kronika\Date\Month;
 use Kronika\Date\Year;
-use Kronika\Exception\MalformedString\DateTimeMalformedString;
+use Kronika\Exception\MalformedString;
 use Kronika\Time\Hour;
 use Kronika\Time\Minute;
 use Kronika\Time\Second;
@@ -143,14 +143,14 @@ final readonly class LocalDateTime implements DateTime
      *
      * @param non-empty-string $datetime
      *
-     * @throws DateTimeMalformedString
+     * @throws MalformedString
      */
     public static function parse(string $datetime): self
     {
         try {
             return self::ofDateTime(new \DateTimeImmutable($datetime));
         } catch (\DateMalformedStringException $e) {
-            throw DateTimeMalformedString::wrap($e);
+            throw MalformedString\DateTimeMalformedString::wrap($e);
         }
     }
 
@@ -338,7 +338,7 @@ final readonly class LocalDateTime implements DateTime
     /**
      * @param non-empty-string $modifier
      *
-     * @throws DateTimeMalformedString
+     * @throws MalformedString
      *
      * @deprecated {@see DateTime::with()}
      */
@@ -347,7 +347,7 @@ final readonly class LocalDateTime implements DateTime
         try {
             return self::ofDateTime($this->toNative()->modify($modifier));
         } catch (\DateMalformedStringException $e) {
-            throw DateTimeMalformedString::wrap($e);
+            throw MalformedString\DateTimeMalformedString::wrap($e);
         }
     }
 

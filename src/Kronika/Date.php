@@ -102,7 +102,7 @@ final readonly class Date implements Unit
      */
     public static function ofFormat(string $format, string $date): self
     {
-        $native = \DateTimeImmutable::createFromFormat(self::quote($format), $date);
+        $native = \DateTimeImmutable::createFromFormat(self::sanitize($format), $date);
         if (! $native instanceof \DateTimeImmutable) {
             throw new Exception\FormatError("Failed to parse [$date] with format [$format]");
         }
@@ -516,7 +516,7 @@ final readonly class Date implements Unit
      */
     public function format(string $format): string
     {
-        return $this->at(Time::midnight())->format(self::quote($format));
+        return $this->at(Time::midnight())->format(self::sanitize($format));
     }
 
     /**
@@ -547,7 +547,7 @@ final readonly class Date implements Unit
         return $this->at($datetime->time());
     }
 
-    private static function quote(string $format): string
+    private static function sanitize(string $format): string
     {
         return \preg_replace('/(?<!\\\\)([^DdjlNSWwzFMmntLoXxYy:\\\\\s\d-])/', '\\\\$1', $format);
     }
