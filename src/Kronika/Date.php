@@ -28,9 +28,9 @@ use Kronika\Utils\WeakRefsTrait;
 /**
  * Represents a date.
  *
- * @psalm-import-type TYear from Year
- * @psalm-import-type TMonth from Month
- * @psalm-import-type TDayOfMonth from DayOfMonth
+ * @psalm-type TYear=int<-9999,9999>
+ * @psalm-type TMonth=value-of<Month>
+ * @psalm-type TDayOfMonth=int<1,31>
  */
 final readonly class Date implements Unit
 {
@@ -46,15 +46,15 @@ final readonly class Date implements Unit
      * $date = Date::of(Year::of(2025), Month::December, DayOfMonth::of(31));
      * ```
      *
-     * @psalm-param Year|TYear             $year
-     * @psalm-param Month|TMonth           $month
-     * @psalm-param DayOfMonth|TDayOfMonth $day
+     * @param Year|TYear             $year
+     * @param Month|TMonth           $month
+     * @param DayOfMonth|TDayOfMonth $day
      *
      * @throws Exception\InvalidDate
      */
     public static function of(Year|int $year, Month|int $month, DayOfMonth|int $day): self
     {
-        return self::weak(year: Year::of($year), month: Month::of($month), day: DayOfMonth::of($day));
+        return self::weak(year: Year::of($year), month: Month::of($month)->number(), day: DayOfMonth::of($day));
     }
 
     /**
@@ -134,13 +134,18 @@ final readonly class Date implements Unit
         }
     }
 
-    /** @throws Exception\InvalidDate */
+    /**
+     * @param TMonth $month
+     *
+     * @throws Exception\InvalidDate
+     */
     private function __construct(
         private Year $year,
-        private Month $month,
+        // enums are not comparable using `<`, `>` and `<=>`
+        private int $month,
         private DayOfMonth $day,
-    ){
-        if (! $month->containsDay($day, $year)) {
+    ) {
+        if (! $this->month()->containsDay($day, $year)) {
             throw new Exception\InvalidDate(\sprintf('Invalid date [%s]', $this));
         }
     }
@@ -158,7 +163,7 @@ final readonly class Date implements Unit
      */
     public function month(): Month
     {
-        return $this->month;
+        return Month::of($this->month);
     }
 
     /**

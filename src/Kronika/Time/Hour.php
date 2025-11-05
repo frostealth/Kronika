@@ -234,7 +234,7 @@ final readonly class Hour implements TimeUnit
         }
     }
 
-    /** @internal {@see T\Kronika\ime::with()} */
+    /** @internal {@see \Kronika\Time::with()} */
     #[\Override]
     public function _withinTime(Time $time): Time
     {
