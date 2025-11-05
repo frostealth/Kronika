@@ -52,7 +52,7 @@
         }
     },
     "provide": {
-        "psr/clock-implementation": "1.0"
+        "psr/clock-implementation": "^1.0"
     },
     "extra": {
         "branch-alias": {
