@@ -15,7 +15,9 @@ namespace Kronika\Tests;
 
 use Kronika\Date;
 use Kronika\DateTime;
+use Kronika\Exception\FormatError;
 use Kronika\Exception\InvalidDate;
+use Kronika\Exception\MalformedString\DateMalformedString;
 use Kronika\LocalDateTime;
 use Kronika\Tests\Date\DayOfMonthTest;
 use Kronika\Tests\Date\DayOfWeekTest;
@@ -199,6 +201,43 @@ final class DateTest extends TestCase
         $date = Date::ofFormat($format, $str);
 
         self::assertEquals($str, $date->format($format));
+    }
+
+    #[TestWith(['Y-m-d', '2025-01'])]
+    #[TestWith(['H:i:s', '12:00:10'])]
+    #[TestWith(['H:i:s', ''])]
+    #[TestWith(['', '2025-01-31'])]
+    #[TestWith(['', ''])]
+    #[Depends('testOfFormat')]
+    public function testOfFormatFail(string $format, string $str): void
+    {
+        $this->expectException(FormatError::class);
+        Date::ofFormat($format, $str);
+    }
+
+    #[TestWith(['2025-01-15', [2025, 01, 15]])]
+    #[TestWith(['1980-12-05', [1980, 12, 05]])]
+    #[TestWith(['15 Jan 25', [2025, 01, 15]])]
+    #[TestWith(['15-12-2025', [2025, 12, 15]])]
+    #[Depends('testBasic')]
+    public function testParse(string $str, array $expected): void
+    {
+        self::assertEquals(Date::of(...$expected), Date::parse($str));
+    }
+
+    #[TestWith(['1980 12 05'])]
+    #[TestWith(['15 15 2025'])]
+    #[TestWith(['15-15-2025'])]
+    #[TestWith([''])]
+    #[TestWith(['now'])]
+    #[TestWith(['Now'])]
+    #[TestWith(['today'])]
+    #[TestWith(['Today'])]
+    #[Depends('testParse')]
+    public function testParseFail(string $str): void
+    {
+        self::expectException(DateMalformedString::class);
+        Date::parse($str);
     }
 
     public static function ofDateTimeProvider(): array

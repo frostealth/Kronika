@@ -24,6 +24,8 @@ final readonly class TimeFormatter implements Formatter
     #[\Override]
     public function format(Time $formattable, string $format): string
     {
+        $this->assertNotEmpty($format, 'Format');
+
         return \DateTimeImmutable::createFromTimestamp(
             $formattable->instant()->value(),
         )->format($this->sanitize($format));
@@ -32,6 +34,9 @@ final readonly class TimeFormatter implements Formatter
     #[\Override]
     public function parse(Formatted $formatted): Parsed
     {
+        $this->assertNotEmpty($formatted->format(), 'Format');
+        $this->assertNotEmpty($formatted->value(), 'Time');
+
         $native = $this->native($this->sanitize($formatted->format()), $formatted->value());
         [$hour, $minute, $second, $micro] = \sscanf($native->format('H:i:s.u'), '%u:%u:%u.%u');
 
@@ -57,5 +62,13 @@ final readonly class TimeFormatter implements Formatter
         }
 
         return $native;
+    }
+
+    /** @throws FormatterError */
+    private function assertNotEmpty(string $value, string $unit): void
+    {
+        if (\trim($value) === '') {
+            throw new FormatterError("$unit string cannot be empty");
+        }
     }
 }

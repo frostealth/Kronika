@@ -45,6 +45,8 @@ composer require frostealth/kronika
 $date = Date::of(year: 2025, month: 12, day:31);
 // or from "\DateTimeInterface"
 $date = Date::ofDateTime(new \DateTimeImmutable('2025-12-31'));
+// or from a date string
+$date = Date::parse('2025-12-31');
 
 // formatting the "Date"
 echo $date->format('Y-m-d');        // '2025-12-31'
@@ -92,6 +94,8 @@ echo $duration->minutes();  // 0
 $time = Time::of(hour: 9, minutes: 10, seconds:30);
 // or from "\DateTimeInterface"
 $time = Time::ofDateTime(new \DateTimeImmutable('09:10:30'));
+// or from time string
+$time = Time::parse('09:10:30.000000');
 
 // formatting the "Time"
 echo $time->format('H:i:s');    // '09:10:30'
@@ -145,6 +149,8 @@ $datetime = LocalDateTime::of($date, $time);
 $datetime = $date->at($time);
 // or from "\DateTimeInterface"
 $datetime = LocalDateTime::ofDateTime(new \DateTimeImmutable('2025-12-31 12:00:00'));
+// or from a date-time string
+$datetime = LocalDateTime::parse('2025-12-31 12:00:00');
 
 // formatting the "LocalDateTime"
 echo $datetime->format('Y-m-d H:i:s');  // '2025-12-31 12:00:00'
@@ -209,6 +215,10 @@ $datetime = ZonedDateTime::utcOf($date, $time);
 $datetime = now($timezone);
 // or from "\DateTimeInterface"
 $datetime = ZonedDateTime::ofDateTime(new \DateTimeImmutable('2025-12-31 12:00:00 UTC'));
+// or from a date-time string with time-zone
+$datetime = ZonedDateTime::parse('2025-12-31 12:00:00 UTC');
+// or from a date-time string without time-zone
+$datetime = ZonedDateTime::parse('2025-12-31 12:00:00', new \DateTimeZone('UTC'));
 
 // formatting the "ZonedDateTime"
 echo $datetime->format(\DateTimeInterface::ATOM);  // '2025-12-31T12:00:00+00:00'

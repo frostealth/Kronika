@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace Kronika\Utils;
 
 /**
- * @template TType of static
- * @template TArgs
+ * @template-covariant TType of static
+ * @template-covariant TArgs
  * @internal
  */
 trait WeakRefsTrait

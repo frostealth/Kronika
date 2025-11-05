@@ -72,6 +72,8 @@ enum Month: int implements DateUnit
      * $this->length(Year::of(2025));  // 28
      * $this->length(Year::of(2024));  // 29 - leap year
      * ```
+     *
+     * @return int<1,31>
      */
     public function length(Year $year): int
     {

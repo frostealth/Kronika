@@ -14,7 +14,9 @@ declare(strict_types=1);
 namespace Kronika\Tests;
 
 use Kronika\Date;
+use Kronika\Exception\FormatError;
 use Kronika\Exception\InvalidTime;
+use Kronika\Exception\MalformedString\TimeMalformedString;
 use Kronika\LocalDateTime;
 use Kronika\Precision;
 use Kronika\Tests\Time\HourTest;
@@ -139,6 +141,51 @@ final class TimeTest extends TestCase
         $time = Time::ofFormat($format, $str);
 
         self::assertEquals($str, $time->format($format));
+    }
+
+    #[TestWith(['H:i:s.u', '22:07:08.0000001'])]
+    #[TestWith(['H:i:s', '22:07'])]
+    #[TestWith(['H i s', '07 08'])]
+    #[TestWith(['H i s', ''])]
+    #[TestWith(['', '22:12:08'])]
+    #[TestWith(['', ''])]
+    #[Depends('testOfFormat')]
+    public function testOfFormatFail(string $format, string $str): void
+    {
+        $this->expectException(FormatError::class);
+        Time::ofFormat($format, $str);
+    }
+
+    #[TestWith(['12:15:30.000999', [12, 15, 30, 999]])]
+    #[TestWith(['12:15:30', [12, 15, 30]])]
+    #[TestWith(['12:15:00.000999', [12, 15, 0, 999]])]
+    #[TestWith(['12:15:00.12', [12, 15, 0, 120_000]])]
+    #[TestWith(['12:00', [12, 0, 0]])]
+    #[TestWith(['23:00', [23, 0, 0]])]
+    #[TestWith(['00:00', [0, 0, 0]])]
+    #[Depends('testBasic')]
+    public function testParse(string $str, array $expected): void
+    {
+        $expected = Time::of($expected[0], $expected[1], Time\Second::of($expected[2], $expected[3] ?? 0));
+        $actual = Time::parse($str);
+
+        self::assertEquals($expected, $actual);
+    }
+
+    #[TestWith(['12'])]
+    #[TestWith(['59'])]
+    #[TestWith(['12 15'])]
+    #[TestWith(['12 15 30.999'])]
+    #[TestWith([''])]
+    #[TestWith(['now'])]
+    #[TestWith(['Now'])]
+    #[TestWith(['today'])]
+    #[TestWith(['Today'])]
+    #[Depends('testParse')]
+    public function testParseFail(string $str): void
+    {
+        $this->expectException(TimeMalformedString::class);
+        Time::parse($str);
     }
 
     public static function ofDateTimeProvider(): array

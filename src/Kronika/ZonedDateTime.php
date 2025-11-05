@@ -18,7 +18,7 @@ use Kronika\Date\DayOfMonth;
 use Kronika\Date\DayOfWeek;
 use Kronika\Date\Month;
 use Kronika\Date\Year;
-use Kronika\Exception\MalformedString\DateTimeMalformedString;
+use Kronika\Exception\MalformedString;
 use Kronika\Format\DateTime\FormattedZoned as Formatted;
 use Kronika\Format\DateTime\Formatter;
 use Kronika\Time\Hour;
@@ -162,18 +162,28 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     /**
-     * Obtains an instance of ZonedDateTime from a given date-time string and time-zome.
+     * Obtains an instance of `ZonedDateTime` from a given date-time string and time-zome.
+     *
+     * ```
+     * $datetime = ZonedDateTime::parse(
+     *     '2025-12-31 12:15:30.000999 +01:30',
+     * );
+     * ```
      *
      * @param non-empty-string $datetime
      *
-     * @throws DateTimeMalformedString
+     * @throws MalformedString
      */
     public static function parse(string $datetime, ?\DateTimeZone $timezone = null): self
     {
+        if ($datetime === '' || \in_array(\strtolower($datetime), ['now', 'today'], strict: true)) {
+            throw new MalformedString\DateTimeMalformedString('Invalid date-time string');
+        }
+
         try {
             return self::ofDateTime(new \DateTimeImmutable($datetime, $timezone));
         } catch (\DateMalformedStringException $e) {
-            throw DateTimeMalformedString::wrap($e);
+            throw MalformedString\DateTimeMalformedString::wrap($e);
         }
     }
 
@@ -521,7 +531,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     /**
-     * @throws DateTimeMalformedString
+     * @throws MalformedString\DateTimeMalformedString
      * @see self::with()
      */
     #[\Override]
@@ -530,7 +540,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         try {
             return self::ofDateTime($this->toNative()->modify($modifier));
         } catch (\DateMalformedStringException $e) {
-            throw DateTimeMalformedString::wrap($e);
+            throw MalformedString\DateTimeMalformedString::wrap($e);
         }
     }
 

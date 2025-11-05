@@ -25,12 +25,17 @@ final readonly class DateFormatter implements Formatter
     #[\Override]
     public function format(Date $formattable, string $format): string
     {
+        $this->assertNotEmpty($format, 'Format');
+
         return $formattable->at(Time::midnight())->toNative()->format($this->sanitize($format));
     }
 
     #[\Override]
     public function parse(Formatted $formatted): Parsed
     {
+        $this->assertNotEmpty($formatted->format(), 'Format');
+        $this->assertNotEmpty($formatted->value(), 'Date');
+
         $native = $this->native($this->sanitize($formatted->format()), $formatted->value());
         [$year, $month, $day] = \sscanf($native->format('Y-m-d'), '%d-%u-%u');
 
@@ -48,13 +53,21 @@ final readonly class DateFormatter implements Formatter
         return $sanitized;
     }
 
-    private function native(string $format, string $string): \DateTimeInterface
+    private function native(string $format, string $value): \DateTimeInterface
     {
-        $native = \DateTimeImmutable::createFromFormat($format, $string);
+        $native = \DateTimeImmutable::createFromFormat($format, $value);
         if (! $native instanceof \DateTimeImmutable) {
-            throw new FormatterError("Failed to parse date string [$string]");
+            throw new FormatterError("Failed to parse date string [$value]");
         }
 
         return $native;
+    }
+
+    /** @throws FormatterError */
+    private function assertNotEmpty(string $value, string $unit): void
+    {
+        if (\trim($value) === '') {
+            throw new FormatterError("$unit string cannot be empty");
+        }
     }
 }

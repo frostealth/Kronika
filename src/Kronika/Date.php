@@ -19,6 +19,7 @@ use Kronika\Date\DayOfMonth;
 use Kronika\Date\DayOfWeek;
 use Kronika\Date\Month;
 use Kronika\Date\Year;
+use Kronika\Exception\MalformedString;
 use Kronika\Format\Date\Formatted;
 use Kronika\Format\Date\Formatter;
 use Kronika\Utils\Compared;
@@ -107,6 +108,30 @@ final readonly class Date implements Unit
         $parsed = ($formatter ?? formatter())->parse(new Formatted($format, $date));
 
         return self::of($parsed->year(), $parsed->month(), $parsed->day());
+    }
+
+    /**
+     * Obtains an instance of `Date` from a given date string.
+     *
+     * ```
+     * $date = Date::parse('2025-12-31');
+     * ```
+     *
+     * @param non-empty-string $date
+     *
+     * @throws MalformedString
+     */
+    public static function parse(string $date): self
+    {
+        if ($date === '' || \in_array(\strtolower($date), ['now', 'today'], strict: true)) {
+            throw new MalformedString\DateMalformedString('Invalid date string');
+        }
+
+        try {
+            return self::ofDateTime(new \DateTimeImmutable($date));
+        } catch (\DateMalformedStringException $e) {
+            throw MalformedString\DateMalformedString::wrap($e);
+        }
     }
 
     /** @throws Exception\InvalidDate */

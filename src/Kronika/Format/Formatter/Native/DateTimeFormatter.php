@@ -27,6 +27,8 @@ final readonly class DateTimeFormatter implements Formatter
     #[\Override]
     public function format(DateTime $formattable, string $format): string
     {
+        $this->assertNotEmpty($format, 'Format');
+
         return $formattable->toNative()->format(
             format: $formattable instanceof LocalDateTime ? $this->sanitize($format) : $format,
         );
@@ -35,6 +37,9 @@ final readonly class DateTimeFormatter implements Formatter
     #[\Override]
     public function parse(Formatted $formatted): Parsed
     {
+        $this->assertNotEmpty($formatted->value(), 'Date-time');
+        $this->assertNotEmpty($formatted->format(), 'Format');
+
         $isLocal = $formatted instanceof FormattedLocal;
         $format = $isLocal ? $this->sanitize($formatted->format()) : $formatted->format();
 
@@ -72,5 +77,13 @@ final readonly class DateTimeFormatter implements Formatter
         }
 
         return $sanitized;
+    }
+
+    /** @throws FormatterError */
+    private function assertNotEmpty(string $value, string $unit): void
+    {
+        if (\trim($value) === '') {
+            throw new FormatterError("$unit string cannot be empty");
+        }
     }
 }

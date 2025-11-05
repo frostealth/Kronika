@@ -14,8 +14,11 @@ declare(strict_types=1);
 namespace Kronika\Tests;
 
 use Kronika\Date;
+use Kronika\Exception\MalformedString\DateTimeMalformedString;
+use Kronika\Format\Exception\FormatterError;
 use Kronika\LocalDateTime;
 use Kronika\Time;
+use Kronika\Time\Second;
 use Kronika\ZonedDateTime;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -144,6 +147,58 @@ final class LocalDateTimeTest extends TestCase
         $datetime = LocalDateTime::ofFormat($format, $str);
 
         self::assertEquals($str, $datetime->format($format));
+    }
+
+    #[TestWith(['Y-m-d\TH:i:s.u', '2025-12-31T12:15:59'])]
+    #[TestWith(['Y-m-d\TH:i:sP', '2025-12-31 12:15:59'])]
+    #[TestWith(['Y-m-d H:i:sP', '2025-12-31 12:15:59 TZ'])]
+    #[TestWith(['Y-m-d H:i', '2025-12-31 12:15:59'])]
+    #[TestWith(['\Y-m-d H:i:sP', '2025-12-31 12:15:59'])]
+    #[TestWith(['Y-m-d H:i:s', '2025-12-31'])]
+    #[TestWith(['Y-m-d\TH:i:s.u', ''])]
+    #[TestWith(['', '2025-12-31T12:15:59.999999'])]
+    #[TestWith(['', ''])]
+    #[Depends('testOfFormat')]
+    public function testOfFormatFail(string $format, string $str): void
+    {
+        $this->expectException(FormatterError::class);
+        LocalDateTime::ofFormat($format, $str);
+    }
+
+    #[TestWith(['2025-12-31T12:15:59.000999', [2025, 12, 31, 12, 15, 59, 999]])]
+    #[TestWith(['2025-12-31T12:15:59.999999+00:00', [2025, 12, 31, 12, 15, 59, 999_999]])]
+    #[TestWith(['2025-12-31 12:15:59.999999', [2025, 12, 31, 12, 15, 59, 999_999]])]
+    #[TestWith(['2025-12-31 12:15:59', [2025, 12, 31, 12, 15, 59]])]
+    #[TestWith(['2025-12-31 12:15', [2025, 12, 31, 12, 15, 0]])]
+    #[TestWith(['12:15 31-12-2025', [2025, 12, 31, 12, 15, 0]])]
+    #[TestWith(['15 Jan 25, 12:15:59', [2025, 1, 15, 12, 15, 59]])]
+    #[Depends('testBasic')]
+    public function testParse(string $str, array $expected): void
+    {
+        $expected = LocalDateTime::of(
+            date: Date::of($expected[0], $expected[1], $expected[2]),
+            time: Time::of($expected[3], $expected[4], Second::of($expected[5], $expected[6] ?? 0)),
+        );
+        $actual = LocalDateTime::parse($str);
+
+        self::assertEquals($expected, $actual);
+    }
+
+    #[TestWith(['2025 12:15'])]
+    #[TestWith(['2025 12:15:59'])]
+    #[TestWith(['2025-31-31 12:75:90'])]
+    #[TestWith(['12/15 31 12 2025'])]
+    #[TestWith(['15 Com 25, 12:15:59'])]
+    #[TestWith([''])]
+    #[TestWith(['now'])]
+    #[TestWith(['Now'])]
+    #[TestWith(['today'])]
+    #[TestWith(['Today'])]
+    #[Depends('testParse')]
+    public function testParseFail(string $str): void
+    {
+        $this->expectException(DateTimeMalformedString::class);
+        LocalDateTime::parse($str);
     }
 
     #[Depends('testBasic')]

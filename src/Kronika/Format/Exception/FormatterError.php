@@ -15,6 +15,6 @@ namespace Kronika\Format\Exception;
 
 use Kronika\Exception\FormatError;
 
-class FormatterError extends FormatError
+final class FormatterError extends FormatError
 {
 }

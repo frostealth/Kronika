@@ -19,7 +19,7 @@ use Kronika\Unit;
 /**
  * Represents a unit of time.
  *
- * @template TTimeUnit of numeric
+ * @template-covariant TTimeUnit of numeric
  * @internal
  */
 interface TimeUnit extends Unit

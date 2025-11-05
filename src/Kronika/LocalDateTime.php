@@ -18,7 +18,7 @@ use Kronika\Date\DayOfMonth;
 use Kronika\Date\DayOfWeek;
 use Kronika\Date\Month;
 use Kronika\Date\Year;
-use Kronika\Exception\MalformedString\DateTimeMalformedString;
+use Kronika\Exception\MalformedString;
 use Kronika\Format\DateTime\FormattedLocal as Formatted;
 use Kronika\Format\DateTime\Formatter;
 use Kronika\Time\Hour;
@@ -96,18 +96,28 @@ final readonly class LocalDateTime implements DateTime
     }
 
     /**
-     * Obtains an instance of LocalDateTime from a given date-time string.
+     * Obtains an instance of `LocalDateTime` from a given date-time string.
+     *
+     * ```
+     * $datetime = LocalDateTime::parse(
+     *     '2025-12-31 12:15:30.000999',
+     * );
+     * ```
      *
      * @param non-empty-string $datetime
      *
-     * @throws DateTimeMalformedString
+     * @throws MalformedString
      */
     public static function parse(string $datetime): self
     {
+        if ($datetime === '' || \in_array(\strtolower($datetime), ['now', 'today'], strict: true)) {
+            throw new MalformedString\DateTimeMalformedString('Invalid date-time string');
+        }
+
         try {
             return self::ofDateTime(new \DateTimeImmutable($datetime));
         } catch (\DateMalformedStringException $e) {
-            throw DateTimeMalformedString::wrap($e);
+            throw MalformedString\DateTimeMalformedString::wrap($e);
         }
     }
 
@@ -319,14 +329,12 @@ final readonly class LocalDateTime implements DateTime
     #[\Override]
     public function toNative(?\DateTimeZone $timezone = null): \DateTimeImmutable
     {
-        /** @psalm-ignore-falsable-return */
         return \DateTimeImmutable::createFromFormat('Y-m-d\TH:i:s.u', (string)$this, $timezone);
     }
 
     #[\Override]
     public function toNativeMutable(?\DateTimeZone $timezone = null): \DateTime
     {
-        /** @psalm-ignore-falsable-return */
         return \DateTime::createFromFormat('Y-m-d\TH:i:s.u', (string)$this, $timezone);
     }
 

@@ -15,9 +15,11 @@ namespace Kronika\Tests;
 
 use Kronika\Date;
 use Kronika\Duration;
+use Kronika\Exception\FormatError;
+use Kronika\Exception\MalformedString\DateTimeMalformedString;
 use Kronika\LocalDateTime;
 use Kronika\Time;
-use Kronika\Unit;
+use Kronika\Time\Second;
 use Kronika\ZonedDateTime;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -125,6 +127,58 @@ final class ZonedDateTimeTest extends TestCase
         $datetime = ZonedDateTime::ofFormat($format, $str);
 
         self::assertEquals($str, $datetime->format($format));
+    }
+
+    #[TestWith(['Y-m-d\TH:i:s.u', '2025-12-31T12:15:59'])]
+    #[TestWith(['Y-m-d\TH:i:sP', '2025-12-31T12:15:59'])]
+    #[TestWith(['Y-m-d H:i:sP', '2025- 12:15:59+01:00'])]
+    #[TestWith(['Y-m-d\TH:i:s.uO', ''])]
+    #[TestWith(['', '2025-12-31T12:15:59+01:00'])]
+    #[TestWith(['', ''])]
+    #[Depends('testOfFormat')]
+    public function testOfFormatFail(string $format, string $str): void
+    {
+        $this->expectException(FormatError::class);
+        ZonedDateTime::ofFormat($format, $str);
+    }
+
+    #[TestWith(['2025-12-31T12:15:59.000999+01:30', [2025, 12, 31, 12, 15, 59, 999, '+01:30']])]
+    #[TestWith(['2025-12-31T12:15:59.999999+00:00', [2025, 12, 31, 12, 15, 59, 999_999, '+00:00']])]
+    #[TestWith(['2025-12-31 12:15:59.999999', [2025, 12, 31, 12, 15, 59, 999_999, 'UTC']])]
+    #[TestWith(['2025-12-31 12:15:59 UTC', [2025, 12, 31, 12, 15, 59, 0, 'UTC']])]
+    #[TestWith(['2025-12-31 12:15 +0200', [2025, 12, 31, 12, 15, 0, 0, '+0200']])]
+    #[TestWith(['12:15 31-12-2025 +01:00', [2025, 12, 31, 12, 15, 0, 0, '+01:00']])]
+    #[TestWith(['15 Jan 25, 12:15:59 GMT', [2025, 1, 15, 12, 15, 59, 0, 'GMT']])]
+    #[Depends('testBasic')]
+    public function testParse(string $str, array $expected): void
+    {
+        $expected = ZonedDateTime::of(
+            date: Date::of($expected[0], $expected[1], $expected[2]),
+            time: Time::of($expected[3], $expected[4], Second::of($expected[5], $expected[6])),
+            timezone: new \DateTimeZone($expected[7]),
+        );
+        $actual = ZonedDateTime::parse($str);
+
+        self::assertEquals($expected, $actual);
+    }
+
+    #[TestWith(['2025-12-31 12:15:98'])]
+    #[TestWith(['2025-12-31 12:15:30 FAIL'])]
+    #[TestWith(['2025 12:15'])]
+    #[TestWith(['2025 12:15:59'])]
+    #[TestWith(['2025-31-31 12:75:90'])]
+    #[TestWith(['12/15 31 12 2025'])]
+    #[TestWith(['15 Com 25, 12:15:59'])]
+    #[TestWith([''])]
+    #[TestWith(['now'])]
+    #[TestWith(['Now'])]
+    #[TestWith(['today'])]
+    #[TestWith(['Today'])]
+    #[Depends('testParse')]
+    public function testParseFail(string $str): void
+    {
+        $this->expectException(DateTimeMalformedString::class);
+        ZonedDateTime::parse($str);
     }
 
     #[Depends('testBasic')]
