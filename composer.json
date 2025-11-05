@@ -3,7 +3,10 @@
     "description": "DateTime value objects such as Date, Time, LocalDateTime, etc.",
     "license": "MIT",
     "type": "library",
-    "keywords": ["datetime", "date", "time", "value-object", "value-objects", "vo"],
+    "keywords": [
+        "datetime", "date", "time", "value-object", "value-objects", "vo", "clock",
+        "yii2", "laravel", "doctrine", "symfony", "jms", "jms-serializer", "ddd"
+    ],
     "homepage": "https://github.com/frostealth/kronika",
     "authors": [
         {
