@@ -30,52 +30,52 @@ use Kronika\Utils\Compared;
 interface DateTime extends \Stringable
 {
     /**
-     * Returns an instance of Date from this date-time.
+     * Returns an instance of `Date` from this date-time.
      */
     public function date(): Date;
 
     /**
-     * Returns an instance of Year from this date-time.
+     * Returns an instance of `Year` from this date-time.
      */
     public function year(): Year;
 
     /**
-     * Returns an instance of Month from this date-time.
+     * Returns an instance of `Month` from this date-time.
      */
     public function month(): Month;
 
     /**
-     * Returns an instance of DayOfMonth from this date-time.
+     * Returns an instance of `DayOfMonth` from this date-time.
      */
     public function day(): DayOfMonth;
 
     /**
-     * Returns an instance of DayOfWeek from this date-time.
+     * Returns an instance of `DayOfWeek` from this date-time.
      */
     public function dayOfWeek(): DayOfWeek;
 
     /**
-     * Returns an instance of Time from this date-time.
+     * Returns an instance of `Time` from this date-time.
      */
     public function time(): Time;
 
     /**
-     * Returns an instance of Hour from this date-time.
+     * Returns an instance of `Hour` from this date-time.
      */
     public function hour(): Hour;
 
     /**
-     * Returns an instance of Minute from this date-time.
+     * Returns an instance of `Minute` from this date-time.
      */
     public function minute(): Minute;
 
     /**
-     * Returns an instance of Second from this date-time.
+     * Returns an instance of `Second` from this date-time.
      */
     public function second(): Second;
 
     /**
-     * Returns an instance of DateTime with a given date-time unit.
+     * Returns an instance of `DateTime` with a given date-time unit.
      *
      * If the day of the month of the resulting date-time is greater than
      * the length of the month, then the last day of the month will be set.
@@ -96,6 +96,16 @@ interface DateTime extends \Stringable
      * $this->with(DayOfMonth::of(31));     // 2025-11-30 12:15:30
      * $this->with(DayOfWeek::Monday);      // 2025-11-24 12:15:30
      * ```
+     *
+     * @see \Kronika\Date – change only date
+     * @see \Kronika\Date\Year – change only year
+     * @see \Kronika\Date\Month – change only month
+     * @see \Kronika\Date\DayOfMonth – change only day
+     * @see \Kronika\Date\DayOfWeek – change/shift only day of week
+     * @see \Kronika\Time – change only time
+     * @see \Kronika\Time\Hour – change only hour
+     * @see \Kronika\Time\Minute – change only minute
+     * @see \Kronika\Time\Second – change only second with microsecond
      */
     public function with(Unit $unit): static;
 
@@ -167,6 +177,16 @@ interface DateTime extends \Stringable
      * $duration->minutes(); // 0
      * $duration->seconds(); // 0
      * ```
+     *
+     * @see \Kronika\Date
+     * @see \Kronika\Date\Year
+     * @see \Kronika\Date\Month
+     * @see \Kronika\Date\DayOfMonth
+     * @see \Kronika\Date\DayOfWeek
+     * @see \Kronika\Time
+     * @see \Kronika\Time\Hour
+     * @see \Kronika\Time\Minute
+     * @see \Kronika\Time\Second
      */
     public function until(self|Unit $end): Duration;
 
@@ -198,6 +218,16 @@ interface DateTime extends \Stringable
      * $duration->minutes(); // 0
      * $duration->seconds(); // 0
      * ```
+     *
+     * @see \Kronika\Date
+     * @see \Kronika\Date\Year
+     * @see \Kronika\Date\Month
+     * @see \Kronika\Date\DayOfMonth
+     * @see \Kronika\Date\DayOfWeek
+     * @see \Kronika\Time
+     * @see \Kronika\Time\Hour
+     * @see \Kronika\Time\Minute
+     * @see \Kronika\Time\Second
      */
     public function difference(self|Unit $other): Duration;
 
@@ -219,6 +249,16 @@ interface DateTime extends \Stringable
      * // 2026-01-01 00:00:00.000000 vs Date::of(2025, 12, 31)
      * $this->isBefore($other);  // false
      * ```
+     *
+     * @see \Kronika\Date – compare to a date
+     * @see \Kronika\Date\Year – compare to a year
+     * @see \Kronika\Date\Month – compare to a month
+     * @see \Kronika\Date\DayOfMonth – compare to a day
+     * @see \Kronika\Date\DayOfWeek – compare to a day of week
+     * @see \Kronika\Time – compare to a time
+     * @see \Kronika\Time\Hour – compare to an hour
+     * @see \Kronika\Time\Minute – compare to a minute
+     * @see \Kronika\Time\Second – compare to a second
      */
     public function isBefore(self|Unit $other, Precision $precision = Precision::Micro): bool;
 
@@ -243,6 +283,16 @@ interface DateTime extends \Stringable
      * // 2026-01-01 00:00:00.000000 vs Date::of(2025, 12, 31)
      * $this->isBeforeOrEqualTo($other);  // false
      * ```
+     *
+     * @see \Kronika\Date – compare to a date
+     * @see \Kronika\Date\Year – compare to a year
+     * @see \Kronika\Date\Month – compare to a month
+     * @see \Kronika\Date\DayOfMonth – compare to a day
+     * @see \Kronika\Date\DayOfWeek – compare to a day of week
+     * @see \Kronika\Time – compare to a time
+     * @see \Kronika\Time\Hour – compare to an hour
+     * @see \Kronika\Time\Minute – compare to a minute
+     * @see \Kronika\Time\Second – compare to a second
      */
     public function isBeforeOrEqualTo(self|Unit $other, Precision $precision = Precision::Micro): bool;
 
@@ -267,6 +317,16 @@ interface DateTime extends \Stringable
      * // 2025-12-31 10:30:00.000000 vs Date::of(2025, 12, 31)
      * $this->isEqualTo($other);  // true
      * ```
+     *
+     * @see \Kronika\Date – compare to a date
+     * @see \Kronika\Date\Year – compare to a year
+     * @see \Kronika\Date\Month – compare to a month
+     * @see \Kronika\Date\DayOfMonth – compare to a day
+     * @see \Kronika\Date\DayOfWeek – compare to a day of week
+     * @see \Kronika\Time – compare to a time
+     * @see \Kronika\Time\Hour – compare to an hour
+     * @see \Kronika\Time\Minute – compare to a minute
+     * @see \Kronika\Time\Second – compare to a second
      */
     public function isEqualTo(self|Unit $other, Precision $precision = Precision::Micro): bool;
 
@@ -288,6 +348,16 @@ interface DateTime extends \Stringable
      * // 2026-01-01 00:00:00.000000 vs Date::of(2025, 12, 31)
      * $this->isNotEqualTo($other);  // true
      * ```
+     *
+     * @see \Kronika\Date – compare to a date
+     * @see \Kronika\Date\Year – compare to a year
+     * @see \Kronika\Date\Month – compare to a month
+     * @see \Kronika\Date\DayOfMonth – compare to a day
+     * @see \Kronika\Date\DayOfWeek – compare to a day of week
+     * @see \Kronika\Time – compare to a time
+     * @see \Kronika\Time\Hour – compare to an hour
+     * @see \Kronika\Time\Minute – compare to a minute
+     * @see \Kronika\Time\Second – compare to a second
      */
     public function isNotEqualTo(self|Unit $other, Precision $precision = Precision::Micro): bool;
 
@@ -315,6 +385,16 @@ interface DateTime extends \Stringable
      * // 1990-01-01 23:59:59.999999 vs Time::of(23, 59, 59)
      * $this->isAfterOrEqualTo($other);  // true
      * ```
+     *
+     * @see \Kronika\Date – compare to a date
+     * @see \Kronika\Date\Year – compare to a year
+     * @see \Kronika\Date\Month – compare to a month
+     * @see \Kronika\Date\DayOfMonth – compare to a day
+     * @see \Kronika\Date\DayOfWeek – compare to a day of week
+     * @see \Kronika\Time – compare to a time
+     * @see \Kronika\Time\Hour – compare to an hour
+     * @see \Kronika\Time\Minute – compare to a minute
+     * @see \Kronika\Time\Second – compare to a second
      */
     public function isAfterOrEqualTo(self|Unit $other, Precision $precision = Precision::Micro): bool;
 
@@ -336,6 +416,16 @@ interface DateTime extends \Stringable
      * // 2026-01-01 10:15:55.000000 vs Time::of(10, 15, 30)
      * $this->isAfter($other);  // true
      * ```
+     *
+     * @see \Kronika\Date – compare to a date
+     * @see \Kronika\Date\Year – compare to a year
+     * @see \Kronika\Date\Month – compare to a month
+     * @see \Kronika\Date\DayOfMonth – compare to a day
+     * @see \Kronika\Date\DayOfWeek – compare to a day of week
+     * @see \Kronika\Time – compare to a time
+     * @see \Kronika\Time\Hour – compare to an hour
+     * @see \Kronika\Time\Minute – compare to a minute
+     * @see \Kronika\Time\Second – compare to a second
      */
     public function isAfter(self|Unit $other, Precision $precision = Precision::Micro): bool;
 
@@ -352,6 +442,16 @@ interface DateTime extends \Stringable
      * $this->compareTo($other)->equal();  // true
      * $this->compareTo($other)->less();   // false
      * ```
+     *
+     * @see \Kronika\Date – compare to a date
+     * @see \Kronika\Date\Year – compare to a year
+     * @see \Kronika\Date\Month – compare to a month
+     * @see \Kronika\Date\DayOfMonth – compare to a day
+     * @see \Kronika\Date\DayOfWeek – compare to a day of week
+     * @see \Kronika\Time – compare to a time
+     * @see \Kronika\Time\Hour – compare to an hour
+     * @see \Kronika\Time\Minute – compare to a minute
+     * @see \Kronika\Time\Second – compare to a second
      */
     public function compareTo(self|Unit $other, Precision $precision = Precision::Micro): Compared;
 
@@ -374,17 +474,17 @@ interface DateTime extends \Stringable
     public function format(string $format, ?Formatter $formatter = null): string;
 
     /**
-     * Returns an instance of \DateTimeImmutable with this date-time.
+     * Returns an instance of `\DateTimeImmutable` with this date-time.
      */
     public function toNative(): \DateTimeImmutable;
 
     /**
-     * Returns an instance of \DateTime with this date-time.
+     * Returns an instance of `\DateTime` with this date-time.
      */
     public function toNativeMutable(): \DateTime;
 
     /**
-     * Returns an instance of "Kronika\Instant" with this date-time.
+     * Returns an instance of `Kronika\Instant` with this date-time.
      */
     public function instant(): Instant;
 

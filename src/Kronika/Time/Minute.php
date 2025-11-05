@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Kronika\Time;
 
-use Kronika\DateTime;
 use Kronika\LocalDateTime;
 use Kronika\Time;
 use Kronika\Utils\Compared;
@@ -235,14 +234,14 @@ final readonly class Minute implements TimeUnit
         }
     }
 
-    /** @internal {@see Time::with()} */
+    /** @internal {@see \Kronika\Time::with()} */
     #[\Override]
     public function _withinTime(Time $time): Time
     {
         return Time::of($time->hour(), $this, $time->second());
     }
 
-    /** @internal {@see DateTime::with()} */
+    /** @internal {@see \Kronika\DateTime::with()} */
     #[\Override]
     public function _withinDateTime(LocalDateTime $datetime): LocalDateTime
     {

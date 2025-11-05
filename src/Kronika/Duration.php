@@ -26,7 +26,7 @@ final readonly class Duration
     use WeakRefsTrait;
 
     /**
-     * Obtains an instance of Duration from days, hours, minutes and seconds.
+     * Obtains an instance of `Duration` from days, hours, minutes and seconds.
      *
      * ```
      * // 1 day, 30 minutes, 45 seconds
@@ -54,7 +54,7 @@ final readonly class Duration
     }
 
     /**
-     * Obtains an instance of Duration equaled to zero.
+     * Obtains an instance of `Duration` equaled to zero.
      *
      * ```
      * $duration = Duration::zero();
@@ -268,7 +268,7 @@ final readonly class Duration
     }
 
     /**
-     * Returns an instance of Duration with rounded amount of days in this duration.
+     * Returns an instance of `Duration` with rounded amount of days in this duration.
      *
      * @see self::inDays()
      */
@@ -278,7 +278,7 @@ final readonly class Duration
     }
 
     /**
-     * Returns an instance of Duration with rounded amount of hours in this duration.
+     * Returns an instance of `Duration` with rounded amount of hours in this duration.
      *
      * @see self::inHours()
      */
@@ -288,7 +288,7 @@ final readonly class Duration
     }
 
     /**
-     * Returns an instance of Duration with rounded amount of minutes in this duration.
+     * Returns an instance of `Duration` with rounded amount of minutes in this duration.
      *
      * @see self::inMinutes()
      */
@@ -466,7 +466,7 @@ final readonly class Duration
     }
 
     /**
-     * Obtains an instance of \DateInterval from this duration.
+     * Obtains an instance of `\DateInterval` from this duration.
      *
      * ```
      * // 2 days, 12 hours, 30 minutes, 45 second

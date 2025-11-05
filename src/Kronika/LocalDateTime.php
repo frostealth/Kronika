@@ -36,7 +36,7 @@ final readonly class LocalDateTime implements DateTime
     use WeakRefsTrait;
 
     /**
-     * Obtains an instance of LocalDateTime from a date and time.
+     * Obtains an instance of `LocalDateTime` from a date and time.
      *
      * ```
      * // 2025-12-31 12:15:30
@@ -55,7 +55,7 @@ final readonly class LocalDateTime implements DateTime
     }
 
     /**
-     * Obtains an instance of LocalDateTime from a date-time with a time-zone.
+     * Obtains an instance of `LocalDateTime` from a date-time with a time-zone.
      */
     public static function ofDateTime(DateTime|Native $datetime): self
     {
@@ -70,7 +70,7 @@ final readonly class LocalDateTime implements DateTime
     }
 
     /**
-     * Obtain an instance of LocalDateTime from a "Kronika\Instant".
+     * Obtain an instance of `LocalDateTime` from a `Instant`.
      */
     public static function ofInstant(Instant $instant): self
     {
@@ -78,7 +78,7 @@ final readonly class LocalDateTime implements DateTime
     }
 
     /**
-     * Obtain an instance of LocalDateTime from a given format and date-time string.
+     * Obtain an instance of `LocalDateTime` from a given format and date-time string.
      *
      * @param non-empty-string $format
      * @param non-empty-string $datetime
@@ -188,7 +188,7 @@ final readonly class LocalDateTime implements DateTime
     }
 
     /**
-     * Returns an instance of ZonedDateTime from this date-time and a given time-zone.
+     * Returns an instance of `ZonedDateTime` from this date-time and a given time-zone.
      *
      * ```
      * // 2025-12-31 12:15:30
@@ -298,12 +298,14 @@ final readonly class LocalDateTime implements DateTime
     }
 
     /**
-     * Returns an instance of LocalDateTime with the first day of the month.
+     * Returns an instance of `LocalDateTime` with the first day of the month.
      *
      * ```
      * // 2025-12-31 12:15:30
      * $this->toStartOfMonth();  // 2025-12-01 12:15:30
      * ```
+     *
+     * @see \Kronika\Date::toStartOfMonth()
      */
     public function toStartOfMonth(): static
     {
@@ -311,7 +313,7 @@ final readonly class LocalDateTime implements DateTime
     }
 
     /**
-     * Returns an instance of LocalDateTime with the last day of the month.
+     * Returns an instance of `LocalDateTime` with the last day of the month.
      *
      * ```
      * // 2025-02-01 12:15:30
@@ -320,6 +322,8 @@ final readonly class LocalDateTime implements DateTime
      * // 2024-02-01 12:15:30 – leap year
      * $this->toEndOfMonth();  // 2025-02-29 12:15:30
      * ```
+     *
+     * @see \Kronika\Date::toEndOfMonth()
      */
     public function toEndOfMonth(): static
     {

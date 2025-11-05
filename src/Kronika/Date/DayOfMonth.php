@@ -188,7 +188,7 @@ final readonly class DayOfMonth implements DateUnit
         }
     }
 
-    /** @internal {@see Date::with()} */
+    /** @internal {@see \Kronika\Date::with()} */
     #[\Override]
     public function _withinDate(Date $date): Date
     {
@@ -199,7 +199,7 @@ final readonly class DayOfMonth implements DateUnit
         );
     }
 
-    /** @internal {@see DateTime::with()} */
+    /** @internal {@see \Kronika\DateTime::with()} */
     #[\Override]
     public function _withinDateTime(LocalDateTime $datetime): LocalDateTime
     {

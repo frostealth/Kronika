@@ -32,6 +32,9 @@ if (! \function_exists('\\Kronika\\now')) {
      * $datetime->date();            // 2025-12-31
      * $datetime->time();            // 12:15:30.000155
      * ```
+     *
+     * @see \Kronika\Clock
+     * @see \Kronika\clock()
      */
     function now(?\DateTimeZone $timezone = null): ZonedDateTime
     {
@@ -43,7 +46,8 @@ if (! \function_exists('\\Kronika\\clock')) {
     /**
      * Global clock.
      *
-     * @see now()
+     * @see \Kronika\Clock
+     * @see \Kronika\now()
      */
     function clock(?Clock $clock = null): Clock
     {

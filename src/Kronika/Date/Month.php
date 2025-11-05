@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Kronika\Date;
 
 use Kronika\Date;
-use Kronika\DateTime;
 use Kronika\Duration;
 use Kronika\LocalDateTime;
 use Kronika\Utils\Compared;
@@ -309,7 +308,7 @@ enum Month: int implements DateUnit
         }
     }
 
-    /** @internal {@see Date::with()} */
+    /** @internal {@see \Kronika\Date::with()} */
     #[\Override]
     public function _withinDate(Date $date): Date
     {
@@ -320,7 +319,7 @@ enum Month: int implements DateUnit
         );
     }
 
-    /** @internal {@see DateTime::with()} */
+    /** @internal {@see \Kronika\DateTime::with()} */
     #[\Override]
     public function _withinDateTime(LocalDateTime $datetime): LocalDateTime
     {

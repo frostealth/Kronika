@@ -39,7 +39,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     use WeakRefsTrait;
 
     /**
-     * Obtains an instance of ZonedDateTime from a date, time and time-zone.
+     * Obtains an instance of `ZonedDateTime` from a date, time and time-zone.
      *
      * ```
      * // 2025-12-31 12:15:30 +01:00
@@ -63,7 +63,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     /**
-     * Obtains an instance of ZonedDateTime from a date and time in UTC time-zone.
+     * Obtains an instance of `ZonedDateTime` from a date and time in UTC time-zone.
      *
      * ```
      * // 2025-12-31 12:15:30 UTC
@@ -79,7 +79,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     /**
-     * Obtains an instance of ZonedDateTime from a local date-time and time-zone.
+     * Obtains an instance of `ZonedDateTime` from a local date-time and time-zone.
      *
      * ```
      * // 2025-12-31 12:15:30 +01:00
@@ -95,12 +95,14 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     /**
-     * Obtains an instance of LocalDateTime from a given date and time-zone with midnight time.
+     * Obtains an instance of `ZonedDateTime` from a given date and time-zone with midnight time.
      *
      * ```
      * // 2025-12-31 00:00:00 +01:00
      * $datetime = ZonedDateTime::midnightOf(Date::of(2025, 12, 31), new \DateTimeZone('+01:00'));
      * ```
+     *
+     * @see \Kronika\Time::midnight()
      */
     public static function midnightOf(Date $date, \DateTimeZone $timezone): self
     {
@@ -108,7 +110,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     /**
-     * Obtains an instance of ZonedDateTime from a date-time with time-zone.
+     * Obtains an instance of `ZonedDateTime` from a date-time with time-zone.
      */
     public static function ofDateTime(Native $datetime): self
     {
@@ -120,7 +122,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     /**
-     * Obtain an instance of ZonedDateTime with UTC time-zone from a given timestamp.
+     * Obtain an instance of `ZonedDateTime` with UTC time-zone from a given timestamp.
      */
     public static function ofTimestamp(float|int $timestamp): self
     {
@@ -128,7 +130,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     /**
-     * Obtain an instance of ZonedDateTime from a given "Kronika\Instant" and time-zone.
+     * Obtain an instance of `ZonedDateTime` from a given `Kronika\Instant` and time-zone.
      */
     public static function ofInstant(Instant $instant, \DateTimeZone $timezone): self
     {
@@ -136,7 +138,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     /**
-     * Obtain an instance of ZonedDateTime from a given format, date-time string and time-zone.
+     * Obtain an instance of `ZonedDateTime` from a given format, date-time string and time-zone.
      *
      * If the date-time string doesn't contain time-zone, then a given time-zone will be used,
      * otherwise the system's time-zone will be used.
@@ -282,6 +284,8 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      * // 2025-12-31 12:15:30 +01:00
      * $this->shift(new \DateTimeZone('+02:30'));  // 2025-12-31 13:45:30 +02:30
      * ```
+     *
+     * @see self::with() – change time-zone without changing time
      */
     public function shift(\DateTimeZone $to): static
     {
@@ -295,6 +299,17 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      * // 2025-12-31 12:15:30 +01:00
      * $this->with(new \DateTimeZone('+02:30'));  // 2025-12-31 12:15:30 +02:30
      * ```
+     *
+     * @see self::shift() – change time-zone and shifts time
+     * @see \Kronika\Date – change only date
+     * @see \Kronika\Date\Year – change only year
+     * @see \Kronika\Date\Month – change only month
+     * @see \Kronika\Date\DayOfMonth – change only day
+     * @see \Kronika\Date\DayOfWeek – change/shift only day of week
+     * @see \Kronika\Time – change only time
+     * @see \Kronika\Time\Hour – change only hour
+     * @see \Kronika\Time\Minute – change only minute
+     * @see \Kronika\Time\Second – change only second with microsecond
      */
     #[\Override]
     public function with(Unit|\DateTimeZone $unit): static
@@ -378,6 +393,8 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      * $this->isInTimezone(new \DateTimeZone("+00:00"));  // false
      * $this->isInTimezone(new \DateTimeZone("UTC"));     // true
      * ```
+     *
+     * @see self::isInTheSameTimezoneAs()
      */
     public function isInTimezone(\DateTimeZone $timezone): bool
     {
@@ -434,7 +451,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     /**
-     * Returns an instance of LocalDateTime from this date-time.
+     * Returns an instance of `LocalDateTime` from this date-time.
      *
      * ```
      * // 2025-12-31 12:15:30 +01:00
@@ -447,12 +464,15 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     /**
-     * Returns an instance of ZonedDateTime with the first day of the month.
+     * Returns an instance of `ZonedDateTime` with the first day of the month.
      *
      * ```
      * // 2025-12-31 12:15:30 +01:00
      * $this->toStartOfMonth();  // 2025-12-01 12:15:30 +01:00
      * ```
+     *
+     * @see \Kronika\Date::toStartOfMonth()
+     * @see \Kronika\Date::isStartOfMonth()
      */
     public function toStartOfMonth(): static
     {
@@ -460,7 +480,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     /**
-     * Returns an instance of ZonedDateTime with the last day of the month.
+     * Returns an instance of `ZonedDateTime` with the last day of the month.
      *
      * ```
      * // 2025-02-01 12:15:30 +01:00
@@ -469,6 +489,9 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      * // 2024-02-01 – leap year
      * $this->toEndOfMonth();  // 2025-02-29 12:15:30 +01:00
      * ```
+     *
+     * @see \Kronika\Date::toEndOfMonth()
+     * @see \Kronika\Date::isEndOfMonth()
      */
     public function toEndOfMonth(): static
     {
@@ -532,7 +555,10 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
 
     /**
      * @throws MalformedString\DateTimeMalformedString
+     *
      * @see self::with()
+     * @see self::add()
+     * @see self::sub()
      */
     #[\Override]
     public function modify(string $modifier): static

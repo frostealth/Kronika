@@ -37,7 +37,7 @@ final readonly class Time implements Unit
     use WeakRefsTrait;
 
     /**
-     * Obtains an instance of Time from an hour, minute and second.
+     * Obtains an instance of `Time` from an hour, minute and second.
      *
      * ```
      * // 10:30:45
@@ -60,7 +60,9 @@ final readonly class Time implements Unit
     }
 
     /**
-     * Obtains an instance of Time at the start of the day ("00:00:00.000000").
+     * Obtains an instance of `Time` at the start of the day ("00:00:00.000000").
+     *
+     * @see self::isMidnight()
      */
     public static function midnight(): self
     {
@@ -70,7 +72,9 @@ final readonly class Time implements Unit
     }
 
     /**
-     * Obtains an instance of Time at the middle of the day ("12:00:00.000000").
+     * Obtains an instance of `Time` at the middle of the day ("12:00:00.000000").
+     *
+     * @see self::midday()
      */
     public static function midday(): self
     {
@@ -80,7 +84,9 @@ final readonly class Time implements Unit
     }
 
     /**
-     * Obtains an instance of Time at the end of the day ("23:59:59.999999").
+     * Obtains an instance of `Time` at the end of the day ("23:59:59.999999").
+     *
+     * @see self::endOfDay()
      */
     public static function endOfDay(): self
     {
@@ -90,7 +96,7 @@ final readonly class Time implements Unit
     }
 
     /**
-     * Obtain an instance of Time from a date-time.
+     * Obtain an instance of `Time` from a date-time.
      */
     public static function ofDateTime(DateTime|Native $datetime): self
     {
@@ -104,7 +110,7 @@ final readonly class Time implements Unit
     }
 
     /**
-     * Obtain an instance of Time from a timestamp.
+     * Obtain an instance of `Time` from a timestamp.
      */
     public static function ofTimestamp(float|int $timestamp): self
     {
@@ -112,7 +118,7 @@ final readonly class Time implements Unit
     }
 
     /**
-     * Obtain an instance of Time from a "Kronika\Instant".
+     * Obtain an instance of `Time` from a `Kronika\Instant`.
      */
     public static function ofInstant(Instant $instant): self
     {
@@ -128,7 +134,7 @@ final readonly class Time implements Unit
     }
 
     /**
-     * Obtain an instance of Time from a given format and time string.
+     * Obtain an instance of `Time` from a given format and time string.
      *
      * @param non-empty-string $format
      * @param non-empty-string $time
@@ -174,7 +180,7 @@ final readonly class Time implements Unit
     }
 
     /**
-     * Returns an instance of Hour from this time.
+     * Returns an instance of `Hour` from this time.
      */
     public function hour(): Hour
     {
@@ -182,7 +188,7 @@ final readonly class Time implements Unit
     }
 
     /**
-     * Returns an instance of Minute from this time.
+     * Returns an instance of `Minute` from this time.
      */
     public function minute(): Minute
     {
@@ -190,7 +196,7 @@ final readonly class Time implements Unit
     }
 
     /**
-     * Returns an instance of Second from this time.
+     * Returns an instance of `Second` from this time.
      */
     public function second(): Second
     {
@@ -198,7 +204,7 @@ final readonly class Time implements Unit
     }
 
     /**
-     * Returns an instance of Time with a given time unit.
+     * Returns an instance of `Time` with a given time unit.
      *
      * ```
      * // 12:15:30
@@ -206,6 +212,10 @@ final readonly class Time implements Unit
      * $this->with(Hour::of(21));    // 21:30:30
      * $this->with(Second::of(10));  // 12:30:10
      * ```
+     *
+     * @see \Kronika\Time\Hour – change only hour
+     * @see \Kronika\Time\Minute – change only minute
+     * @see \Kronika\Time\Second – change only second
      */
     public function with(TimeUnit $unit): self
     {
@@ -213,7 +223,7 @@ final readonly class Time implements Unit
     }
 
     /**
-     * Returns an instance of LocalDateTime with a given date and this time.
+     * Returns an instance of `LocalDateTime` with a given date and this time.
      *
      * ```
      * // 12:15:30
@@ -315,6 +325,10 @@ final readonly class Time implements Unit
      * $duration->minutes(); // 0
      * $duration->seconds(); // 0
      * ```
+     *
+     * @see \Kronika\Time\Hour
+     * @see \Kronika\Time\Minute
+     * @see \Kronika\Time\Second
      */
     public function until(self|TimeUnit $end): Duration
     {
@@ -338,6 +352,10 @@ final readonly class Time implements Unit
      * $duration->minutes(); // 15
      * $duration->seconds(); // 30
      * ```
+     *
+     * @see \Kronika\Time\Hour
+     * @see \Kronika\Time\Minute
+     * @see \Kronika\Time\Second
      */
     public function difference(self|TimeUnit $other): Duration
     {
@@ -356,6 +374,8 @@ final readonly class Time implements Unit
      * $time->isMidnight();  // false
      * $time->isMidnight(Precision::Minute);  // true
      * ```
+     *
+     * @see self::midnight()
      */
     public function isMidnight(Precision $precision = Precision::Second): bool
     {
@@ -374,6 +394,8 @@ final readonly class Time implements Unit
      * $time->isMidday();  // false
      * $time->isMidday(Precision::Minute);  // true
      * ```
+     *
+     * @see self::midday()
      */
     public function isMidday(Precision $precision = Precision::Second): bool
     {
@@ -392,6 +414,8 @@ final readonly class Time implements Unit
      * $time->isEndOfDay();  // false
      * $time->isEndOfDay(Precision::Minute);  // true
      * ```
+     *
+     * @see self::endOfDay()
      */
     public function isEndOfDay(Precision $precision = Precision::Second): bool
     {
@@ -413,6 +437,10 @@ final readonly class Time implements Unit
      * // 10:15:30.000000 vs Minute::of(15)
      * $this->isBefore($other);  // false
      * ```
+     *
+     * @see \Kronika\Time\Hour – compare to an hour
+     * @see \Kronika\Time\Minute – compare to a minute
+     * @see \Kronika\Time\Second – compare to a second
      */
     public function isBefore(self|TimeUnit $other, Precision $precision = Precision::Micro): bool
     {
@@ -437,6 +465,10 @@ final readonly class Time implements Unit
      * // 10:15:59.999999 vs Minute::of(15)
      * $this->isBeforeOrEqualTo($other);  // true
      * ```
+     *
+     * @see \Kronika\Time\Hour – compare to an hour
+     * @see \Kronika\Time\Minute – compare to a minute
+     * @see \Kronika\Time\Second – compare to a second
      */
     public function isBeforeOrEqualTo(self|TimeUnit $other, Precision $precision = Precision::Micro): bool
     {
@@ -461,6 +493,10 @@ final readonly class Time implements Unit
      * // 10:15:30.000000 vs Minute::of(15)
      * $this->isEqualTo($other);  // true
      * ```
+     *
+     * @see \Kronika\Time\Hour – compare to an hour
+     * @see \Kronika\Time\Minute – compare to a minute
+     * @see \Kronika\Time\Second – compare to a second
      */
     public function isEqualTo(self|TimeUnit $other, Precision $precision = Precision::Micro): bool
     {
@@ -483,6 +519,10 @@ final readonly class Time implements Unit
      * $this->isNotEqualTo($other, Precision::Second);  // true
      * $this->isNotEqualTo($other, Precision::Minute);  // false
      * ```
+     *
+     * @see \Kronika\Time\Hour – compare to an hour
+     * @see \Kronika\Time\Minute – compare to a minute
+     * @see \Kronika\Time\Second – compare to a second
      */
     public function isNotEqualTo(self|TimeUnit $other, Precision $precision = Precision::Micro): bool
     {
@@ -507,6 +547,10 @@ final readonly class Time implements Unit
      * // 10:15:30.000000 vs Minute::of(15)
      * $this->isAfterOrEqualTo($other);  // true
      * ```
+     *
+     * @see \Kronika\Time\Hour – compare to an hour
+     * @see \Kronika\Time\Minute – compare to a minute
+     * @see \Kronika\Time\Second – compare to a second
      */
     public function isAfterOrEqualTo(self|TimeUnit $other, Precision $precision = Precision::Micro): bool
     {
@@ -528,6 +572,10 @@ final readonly class Time implements Unit
      * // 10:15:59.999999 vs Minute::of(15)
      * $this->isAfter($other);  // false
      * ```
+     *
+     * @see \Kronika\Time\Hour – compare to an hour
+     * @see \Kronika\Time\Minute – compare to a minute
+     * @see \Kronika\Time\Second – compare to a second
      */
     public function isAfter(self|TimeUnit $other, Precision $precision = Precision::Micro): bool
     {
@@ -548,6 +596,10 @@ final readonly class Time implements Unit
      * $this->compareTo($other)->equal();  // true
      * $this->compareTo($other)->less();   // false
      * ```
+     *
+     * @see \Kronika\Time\Hour – compare to an hour
+     * @see \Kronika\Time\Minute – compare to a minute
+     * @see \Kronika\Time\Second – compare to a second
      */
     public function compareTo(self|TimeUnit $other, Precision $precision = Precision::Micro): Compared
     {
@@ -580,7 +632,7 @@ final readonly class Time implements Unit
     }
 
     /**
-     * Returns an instance of Instant with this time.
+     * Returns an instance of `Instant` with this time.
      */
     public function instant(): Instant
     {

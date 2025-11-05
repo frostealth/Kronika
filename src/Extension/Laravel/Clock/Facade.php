@@ -18,9 +18,9 @@ use Kronika\Duration;
 use Kronika\ZonedDateTime;
 
 /**
- * @see Clock
+ * @see \Kronika\Clock
  *
- * @method static ZonedDateTime now(?\DateTimeZone $timezone)
+ * @method static ZonedDateTime now()
  * @method static void sleep(Duration $duration)
  */
 class Facade extends \Illuminate\Support\Facades\Facade

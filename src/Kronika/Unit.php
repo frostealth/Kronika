@@ -20,6 +20,6 @@ namespace Kronika;
  */
 interface Unit
 {
-    /** @internal {@see DateTime::with()} */
+    /** @internal {@see \Kronika\DateTime::with()} */
     public function _withinDateTime(LocalDateTime $datetime): LocalDateTime;
 }

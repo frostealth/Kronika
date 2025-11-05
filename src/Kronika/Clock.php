@@ -15,6 +15,9 @@ namespace Kronika;
 
 /**
  * Represents a clock.
+ *
+ * @see \Kronika\Clock\SystemClock
+ * @see \Kronika\Clock\InaccurateClock
  */
 interface Clock
 {

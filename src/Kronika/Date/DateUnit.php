@@ -31,6 +31,6 @@ interface DateUnit extends Unit
      */
     public function number(): int;
 
-    /** @internal {@see Date::with()} */
+    /** @internal {@see \Kronika\Date::with()} */
     public function _withinDate(Date $date): Date;
 }

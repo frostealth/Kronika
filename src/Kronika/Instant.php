@@ -34,7 +34,7 @@ final readonly class Instant
     use WeakRefsTrait;
 
     /**
-     * Obtains an instance of Instant from a second and microsecond.
+     * Obtains an instance of `Instant` from a second and microsecond.
      *
      * ```
      * // 1767161730.004545
@@ -51,7 +51,7 @@ final readonly class Instant
     }
 
     /**
-     * Obtains an instance of Instant from a value of a second with microsecond.
+     * Obtains an instance of `Instant` from a value of a second with microsecond.
      *
      * ```
      * // 1767161730.004545
@@ -78,7 +78,7 @@ final readonly class Instant
     }
 
     /**
-     * Returns an instance of ZonedDateTime from this instant and a given time-zone.
+     * Returns an instance of `ZonedDateTime` from this instant and a given time-zone.
      *
      * ```
      * // 1767161730.004545

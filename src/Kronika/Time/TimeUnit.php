@@ -41,6 +41,6 @@ interface TimeUnit extends Unit
      */
     public function value(): float|int|string;
 
-    /** @internal {@see Time::with()} */
+    /** @internal {@see \Kronika\Time::with()} */
     public function _withinTime(Time $time): Time;
 }

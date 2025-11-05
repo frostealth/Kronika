@@ -38,7 +38,7 @@ final readonly class Date implements Unit
     use WeakRefsTrait;
 
     /**
-     * Obtains an instance of Date from a year, month and day of the month.
+     * Obtains an instance of `Date` from a year, month and day of the month.
      *
      * ```
      * // 2025-12-31
@@ -58,7 +58,7 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Obtain an instance of Date from a date-time.
+     * Obtain an instance of `Date` from a date-time.
      */
     public static function ofDateTime(DateTime|Native $datetime): self
     {
@@ -72,7 +72,7 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Obtain an instance of Date from a timestamp.
+     * Obtain an instance of `Date` from a timestamp.
      */
     public static function ofTimestamp(float|int $timestamp): self
     {
@@ -80,7 +80,7 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Obtain an instance of Date from a "Kronika\Instant".
+     * Obtain an instance of `Date` from a "Kronika\Instant".
      */
     public static function ofInstant(Instant $instant): self
     {
@@ -96,7 +96,7 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Obtain an instance of Date from a given format and date string.
+     * Obtain an instance of `Date` from a given format and date string.
      *
      * @param non-empty-string $format
      * @param non-empty-string $date
@@ -146,7 +146,7 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Returns an instance of Year from this date.
+     * Returns an instance of `Year `from this date.
      */
     public function year(): Year
     {
@@ -154,7 +154,7 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Returns an instance of Month from this date.
+     * Returns an instance of `Month` from this date.
      */
     public function month(): Month
     {
@@ -162,7 +162,7 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Returns an instance of Day from this date.
+     * Returns an instance of `DayOfMonth` from this date.
      */
     public function day(): DayOfMonth
     {
@@ -170,7 +170,7 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Returns an instance of DayOfWeek from this date.
+     * Returns an instance of `DayOfWeek` from this date.
      */
     public function dayOfWeek(): DayOfWeek
     {
@@ -178,7 +178,7 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Returns an instance of Date with a given date unit.
+     * Returns an instance of `Date` with a given date unit.
      *
      * If the day of the month of the resulting date is greater than
      * the length of the month, then the last day of the month will be set.
@@ -193,6 +193,11 @@ final readonly class Date implements Unit
      * $this->with(DayOfMonth::of(31));     // 2025-11-30
      * $this->with(DayOfWeek::Monday);      // 2025-11-24
      * ```
+     *
+     * @see \Kronika\Date\Year – change only year
+     * @see \Kronika\Date\Month – change only month
+     * @see \Kronika\Date\DayOfMonth – change only day of month
+     * @see \Kronika\Date\DayOfWeek – change/shift only day of week
      */
     public function with(DateUnit $unit): self
     {
@@ -200,7 +205,7 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Returns an instance of LocalDateTime with this date and a given time.
+     * Returns an instance of `LocalDateTime` with this date and a given time.
      *
      * ```
      * // 2025-12-31
@@ -213,12 +218,14 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Returns an instance of LocalDateTime with this date and midnight time.
+     * Returns an instance of `LocalDateTime` with this date and midnight time.
      *
      * ```
      * // 2025-12-31
      * $this->atMidnight();  // 2025-12-31 00:00:00.000000
      * ```
+     *
+     * @see \Kronika\Time::midnight()
      */
     public function atMidnight(): LocalDateTime
     {
@@ -226,12 +233,14 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Returns an instance of LocalDateTime with this date and midday/noon time.
+     * Returns an instance of `LocalDateTime` with this date and midday/noon time.
      *
      * ```
      * // 2025-12-31
      * $this->atMidday();  // 2025-12-31 12:00:00.000000
      * ```
+     *
+     * @see \Kronika\Time::midday()
      */
     public function atMidday(): LocalDateTime
     {
@@ -239,12 +248,14 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Returns an instance of LocalDateTime with this date and time of the end of the day.
+     * Returns an instance of `LocalDateTime` with this date and time of the end of the day.
      *
      * ```
      * // 2025-12-31
      * $this->atEndOfDay();  // 2025-12-31 23:59:59.999999
      * ```
+     *
+     * @see \Kronika\Time::endOfDay()
      */
     public function atEndOfDay(): LocalDateTime
     {
@@ -308,6 +319,11 @@ final readonly class Date implements Unit
      * $duration = $this->until($other);
      * $duration->days();   // 31
      * ```
+     *
+     * @see \Kronika\Date\Year
+     * @see \Kronika\Date\Month
+     * @see \Kronika\Date\DayOfMonth
+     * @see \Kronika\Date\DayOfWeek
      */
     public function until(self|DateUnit $end): Duration
     {
@@ -326,6 +342,11 @@ final readonly class Date implements Unit
      * $duration = $this->difference($other);
      * $duration->days();   // 2
      * ```
+     *
+     * @see \Kronika\Date\Year
+     * @see \Kronika\Date\Month
+     * @see \Kronika\Date\DayOfMonth
+     * @see \Kronika\Date\DayOfWeek
      */
     public function difference(self|DateUnit $other): Duration
     {
@@ -333,12 +354,14 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Returns an instance of Date with the first day of the month.
+     * Returns an instance of `Date` with the first day of the month.
      *
      * ```
      * // 2025-12-31
      * $this->toStartOfMonth();  // 2025-12-01
      * ```
+     *
+     * @see self::isStartOfMonth()
      */
     public function toStartOfMonth(): self
     {
@@ -346,7 +369,7 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Returns an instance of Date with the last day of the month.
+     * Returns an instance of `Date` with the last day of the month.
      *
      * ```
      * // 2025-02-01
@@ -355,6 +378,8 @@ final readonly class Date implements Unit
      * // 2024-02-01 – leap year
      * $this->toEndOfMonth();  // 2025-02-29
      * ```
+     *
+     * @see self::isEndOfMonth()
      */
     public function toEndOfMonth(): self
     {
@@ -371,6 +396,8 @@ final readonly class Date implements Unit
      * // 2025-12-31
      * $this->isStartOfMonth();  // false
      * ```
+     *
+     * @see self::toStartOfMonth()
      */
     public function isStartOfMonth(): bool
     {
@@ -387,6 +414,8 @@ final readonly class Date implements Unit
      * // 2025-12-01
      * $this->isEndOfMonth();  // false
      * ```
+     *
+     * @see self::isEndOfMonth()
      */
     public function isEndOfMonth(): bool
     {
@@ -406,6 +435,11 @@ final readonly class Date implements Unit
      * // 2025-12-30 vs Year::of(2026)
      * $this->isBefore($other);  // true
      * ```
+     *
+     * @see \Kronika\Date\Year – compare to a year
+     * @see \Kronika\Date\Month – compare to a month
+     * @see \Kronika\Date\DayOfMonth – compare to a day of month
+     * @see \Kronika\Date\DayOfWeek – compare to a day of week
      */
     public function isBefore(self|DateUnit $other): bool
     {
@@ -428,6 +462,11 @@ final readonly class Date implements Unit
      * // 2025-12-31 vs DayOfMonth::of(30)
      * $this->isBeforeOrEqualTo($other);  // false
      * ```
+     *
+     * @see \Kronika\Date\Year – compare to a year
+     * @see \Kronika\Date\Month – compare to a month
+     * @see \Kronika\Date\DayOfMonth – compare to a day of month
+     * @see \Kronika\Date\DayOfWeek – compare to a day of week
      */
     public function isBeforeOrEqualTo(self|DateUnit $other): bool
     {
@@ -447,6 +486,11 @@ final readonly class Date implements Unit
      * // 2025-12-30 vs Month::December
      * $this->isEqualTo($other);  // true
      * ```
+     *
+     * @see \Kronika\Date\Year – compare to a year
+     * @see \Kronika\Date\Month – compare to a month
+     * @see \Kronika\Date\DayOfMonth – compare to a day of month
+     * @see \Kronika\Date\DayOfWeek – compare to a day of week
      */
     public function isEqualTo(self|DateUnit $other): bool
     {
@@ -466,6 +510,11 @@ final readonly class Date implements Unit
      * // 2025-12-30 vs Month::December
      * $this->isNotEqualTo($other);  // false
      * ```
+     *
+     * @see \Kronika\Date\Year – compare to a year
+     * @see \Kronika\Date\Month – compare to a month
+     * @see \Kronika\Date\DayOfMonth – compare to a day of month
+     * @see \Kronika\Date\DayOfWeek – compare to a day of week
      */
     public function isNotEqualTo(self|DateUnit $other): bool
     {
@@ -485,6 +534,11 @@ final readonly class Date implements Unit
      * // 2025-12-30 vs Year::of(2025)
      * $this->isAfterOrEqualTo($other);  // true
      * ```
+     *
+     * @see \Kronika\Date\Year – compare to a year
+     * @see \Kronika\Date\Month – compare to a month
+     * @see \Kronika\Date\DayOfMonth – compare to a day of month
+     * @see \Kronika\Date\DayOfWeek – compare to a day of week
      */
     public function isAfterOrEqualTo(self|DateUnit $other): bool
     {
@@ -504,6 +558,11 @@ final readonly class Date implements Unit
      * // 2025-12-31 vs Year::of(2025)
      * $this->isAfter($other);  // false
      * ```
+     *
+     * @see \Kronika\Date\Year – compare to a year
+     * @see \Kronika\Date\Month – compare to a month
+     * @see \Kronika\Date\DayOfMonth – compare to a day of month
+     * @see \Kronika\Date\DayOfWeek – compare to a day of week
      */
     public function isAfter(self|DateUnit $other): bool
     {
@@ -527,6 +586,11 @@ final readonly class Date implements Unit
      * $this->compareTo($other)->equal();        // false
      * $this->compareTo($other)->less();         // true
      * ```
+     *
+     * @see \Kronika\Date\Year – compare to a year
+     * @see \Kronika\Date\Month – compare to a month
+     * @see \Kronika\Date\DayOfMonth – compare to a day of month
+     * @see \Kronika\Date\DayOfWeek – compare to a day of week
      */
     public function compareTo(self|DateUnit $other): Compared
     {
@@ -555,7 +619,7 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Returns an instance of Instant with this date.
+     * Returns an instance of `Instant` with this date.
      */
     public function instant(): Instant
     {
