@@ -57,16 +57,16 @@ final readonly class LocalDateTime implements DateTime
     /**
      * Obtains an instance of LocalDateTime from a date-time with a time-zone.
      */
-    public static function ofDateTime(DateTime|Native $dateTime): self
+    public static function ofDateTime(DateTime|Native $datetime): self
     {
-        if ($dateTime instanceof self) {
-            return $dateTime;
+        if ($datetime instanceof self) {
+            return $datetime;
         }
-        if ($dateTime instanceof ZonedDateTime) {
-            return $dateTime->toLocalDateTime();
+        if ($datetime instanceof ZonedDateTime) {
+            return $datetime->toLocalDateTime();
         }
 
-        return self::of(Date::ofDateTime($dateTime), Time::ofDateTime($dateTime));
+        return self::of(Date::ofDateTime($datetime), Time::ofDateTime($datetime));
     }
 
     /**

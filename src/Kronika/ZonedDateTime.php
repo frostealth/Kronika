@@ -110,13 +110,13 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     /**
      * Obtains an instance of ZonedDateTime from a date-time with time-zone.
      */
-    public static function ofDateTime(Native $dateTime): self
+    public static function ofDateTime(Native $datetime): self
     {
-        if ($dateTime instanceof self) {
-            return $dateTime;
+        if ($datetime instanceof self) {
+            return $datetime;
         }
 
-        return self::ofLocal(LocalDateTime::ofDateTime($dateTime), $dateTime->getTimezone());
+        return self::ofLocal(LocalDateTime::ofDateTime($datetime), $datetime->getTimezone());
     }
 
     /**
