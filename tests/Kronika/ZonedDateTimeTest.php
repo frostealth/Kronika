@@ -76,7 +76,7 @@ final class ZonedDateTimeTest extends TestCase
     }
 
     #[Depends('testBasic')]
-    public function testShiftTimezone(): void
+    public function testShift(): void
     {
         $datetime = ZonedDateTime::of(
             date: Date::of(2025, 12, 31),
@@ -84,7 +84,7 @@ final class ZonedDateTimeTest extends TestCase
             timezone: new \DateTimeZone('+01:00'),
         );
 
-        $actual = $datetime->shiftTimezone(new \DateTimeZone('+02:30'));
+        $actual = $datetime->shift(new \DateTimeZone('+02:30'));
 
         self::assertEquals(new \DateTimeZone('+02:30'), $actual->timezone());
         self::assertEquals(Date::of(2025, 12, 31), $actual->date());

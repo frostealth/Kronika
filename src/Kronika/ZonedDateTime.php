@@ -280,10 +280,10 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      *
      * ```
      * // 2025-12-31 12:15:30 +01:00
-     * $this->shiftTimezone(new \DateTimeZone('+02:30'));  // 2025-12-31 13:45:30 +02:30
+     * $this->shift(new \DateTimeZone('+02:30'));  // 2025-12-31 13:45:30 +02:30
      * ```
      */
-    public function shiftTimezone(\DateTimeZone $to): static
+    public function shift(\DateTimeZone $to): static
     {
         return $this->isInTimezone($to) ? $this : self::ofDateTime($this->toNative()->setTimezone($to));
     }
@@ -571,7 +571,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         return self::ofDateTime($this->toNative()->setTimestamp($timestamp));
     }
 
-    /** @see self::shiftTimezone() */
+    /** @see self::shift() */
     #[\Override]
     public function setTimezone(\DateTimeZone $timezone): static
     {
@@ -599,6 +599,6 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
             return $this->with($datetime);
         }
 
-        return self::ofDateTime($datetime)->shiftTimezone($this->timezone());
+        return self::ofDateTime($datetime)->shift($this->timezone());
     }
 }

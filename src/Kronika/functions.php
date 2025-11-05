@@ -35,7 +35,7 @@ if (! \function_exists('\\Kronika\\now')) {
      */
     function now(?\DateTimeZone $timezone = null): ZonedDateTime
     {
-        return \is_null($timezone) ? clock()->now() : clock()->now()->shiftTimezone($timezone);
+        return \is_null($timezone) ? clock()->now() : clock()->now()->shift($timezone);
     }
 }
 

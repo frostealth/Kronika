@@ -34,7 +34,7 @@ final readonly class KronikaClockAdapter implements SymfonyClock
     #[\Override]
     public function now(): ZonedDateTime
     {
-        return $this->clock->now()->shiftTimezone($this->timezone);
+        return $this->clock->now()->shift($this->timezone);
     }
 
     #[\Override]

@@ -238,7 +238,7 @@ $timestamp = $datetime->timestamp();  // float(1767182400.001234)
 $datetime = $datetime->with(Hour::of(18))->with(Minute::of(30));
 echo $datetime->format(\DateTimeInterface::ATOM);  // '2025-12-31T18:30:00+00:00'
 // changing the time-zone doesn't shift the time,
-// to shift the time use "shiftTimezone()" method
+// to shift the time use "shift()" method
 echo $datetime->with(new \DateTimeZone('+01:00'))
               ->format(\DateTimeInterface::ATOM);  // '2025-12-31T18:30:00+01:00
 
@@ -251,7 +251,7 @@ $datetime = $datetime->sub(Duration::of(hours: 12, minutes: 60, seconds: 30));
 echo $datetime->format(\DateTimeInterface::ATOM);  // '2025-12-31T12:00:00+00:00'
 
 // shifting the timezone
-$datetime = $datetime->shiftTimezone(new \DateTimeZone('+01:00'));
+$datetime = $datetime->shift(new \DateTimeZone('+01:00'));
 echo $datetime->format(\DateTimeInterface::ATOM);  // '2025-12-31T13:00:00+01:00'
 
 // getting the duration from one "ZonedDateTime" to another one

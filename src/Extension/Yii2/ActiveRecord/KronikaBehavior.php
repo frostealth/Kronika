@@ -369,7 +369,7 @@ final class KronikaBehavior extends Behavior
                 continue;
             }
 
-            $this->owner->setAttribute($name, $datetime->shiftTimezone($timezone));
+            $this->owner->setAttribute($name, $datetime->shift($timezone));
             if ($this->owner->canSetOldAttribute($name)) {
                 $this->owner->setOldAttribute($name, $oldDatetime);
             }
@@ -399,7 +399,7 @@ final class KronikaBehavior extends Behavior
             $timezone = $datetime->timezone();
         }
 
-        return $datetime->shiftTimezone($timezone);
+        return $datetime->shift($timezone);
     }
 
     /**
