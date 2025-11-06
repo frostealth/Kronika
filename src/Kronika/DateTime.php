@@ -15,6 +15,7 @@ namespace Kronika;
 
 use Kronika\Date\DayOfMonth;
 use Kronika\Date\DayOfWeek;
+use Kronika\Date\DayOfYear;
 use Kronika\Date\Month;
 use Kronika\Date\Year;
 use Kronika\Exception\FormatError;
@@ -53,6 +54,11 @@ interface DateTime extends \Stringable
      * Returns an instance of `DayOfWeek` from this date-time.
      */
     public function dayOfWeek(): DayOfWeek;
+
+    /**
+     * Returns an instance of `DayOfYear` from this date-time.
+     */
+    public function dayOfYear(): DayOfYear;
 
     /**
      * Returns an instance of `Time` from this date-time.

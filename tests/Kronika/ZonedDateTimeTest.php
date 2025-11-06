@@ -55,6 +55,7 @@ final class ZonedDateTimeTest extends TestCase
         self::assertSame($date->month(), $datetime->month());
         self::assertSame($date->day(), $datetime->day());
         self::assertSame($date->dayOfWeek(), $datetime->dayOfWeek());
+        self::assertSame($date->dayOfYear(), $datetime->dayOfYear());
         self::assertSame($time, $datetime->time());
         self::assertSame($time->hour(), $datetime->hour());
         self::assertSame($time->minute(), $datetime->minute());

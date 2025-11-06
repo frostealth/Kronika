@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Kronika\Date;
 
 use Kronika\Date;
-use Kronika\LocalDateTime;
 use Kronika\Utils\Compared;
 use Kronika\Utils\WeakRefsTrait;
 
@@ -28,6 +27,7 @@ final readonly class DayOfMonth implements DateUnit
 {
     /** @use WeakRefsTrait<static,TDayOfMonth> */
     use WeakRefsTrait;
+    use Trait\DateUnit;
 
     /**
      * Obtains an instance of DayOfMonth from a given number.
@@ -53,7 +53,7 @@ final readonly class DayOfMonth implements DateUnit
     private function __construct(
         private int $number,
     ) {
-        self::assertValue($number);
+        self::assertNumber($number);
     }
 
     #[\Override]
@@ -181,10 +181,10 @@ final readonly class DayOfMonth implements DateUnit
     }
 
     /** @throws Exception\InvalidDayOfMonth */
-    private static function assertValue(int $value): void
+    private static function assertNumber(int $number): void
     {
-        if ($value < 1 || $value > 31) {
-            throw new Exception\InvalidDayOfMonth("Day of month must be between 1 and 12, got [$value]");
+        if ($number < 1 || $number > 31) {
+            throw new Exception\InvalidDayOfMonth("Day of month must be between 1 and 12, got [$number]");
         }
     }
 
@@ -197,12 +197,5 @@ final readonly class DayOfMonth implements DateUnit
             month: $date->month(),
             day: $date->month()->_adjustDay($this, $date->year()),
         );
-    }
-
-    /** @internal {@see \Kronika\DateTime::with()} */
-    #[\Override]
-    public function _withinDateTime(LocalDateTime $datetime): LocalDateTime
-    {
-        return $datetime->with($datetime->date()->with($this));
     }
 }

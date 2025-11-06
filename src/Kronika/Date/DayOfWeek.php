@@ -15,7 +15,6 @@ namespace Kronika\Date;
 
 use Kronika\Date;
 use Kronika\Duration;
-use Kronika\LocalDateTime;
 use Kronika\Utils\Compared;
 
 /**
@@ -35,6 +34,8 @@ enum DayOfWeek: int implements DateUnit
     case Friday = 5;
     case Saturday = 6;
     case Sunday = 7;
+
+    use Trait\DateUnit;
 
     /**
      * Obtains an instance of DayOfWeek from a number or name.
@@ -271,12 +272,5 @@ enum DayOfWeek: int implements DateUnit
         $diff = Duration::of(days: \abs($this->number() - $date->dayOfWeek()->number()));
 
         return $this->isBefore($date->dayOfWeek()) ? $date->sub($diff) : $date->add($diff);
-    }
-
-    /** @internal {@see \Kronika\DateTime::with()} */
-    #[\Override]
-    public function _withinDateTime(LocalDateTime $datetime): LocalDateTime
-    {
-        return $datetime->with($datetime->date()->with($this));
     }
 }

@@ -103,6 +103,7 @@ final class LocalDateTimeTest extends TestCase
         self::assertEquals(12, $actual->month()->number());
         self::assertEquals(31, $actual->day()->number());
         self::assertEquals(Date\DayOfWeek::Wednesday, $actual->dayOfWeek());
+        self::assertEquals(Date\DayOfYear::of(365), $actual->dayOfYear());
         self::assertEquals(12, $actual->hour()->value());
         self::assertEquals(15, $actual->minute()->value());
         self::assertEquals(30, $actual->second()->second());

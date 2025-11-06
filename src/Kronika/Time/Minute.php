@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Kronika\Time;
 
-use Kronika\LocalDateTime;
 use Kronika\Time;
 use Kronika\Utils\Compared;
 use Kronika\Utils\WeakRefsTrait;
@@ -28,6 +27,7 @@ final readonly class Minute implements TimeUnit
 {
     /** @use WeakRefsTrait<static,TMinute> */
     use WeakRefsTrait;
+    use Trait\TimeUnit;
 
     /**
      * Obtains an instance of Minute from a value.
@@ -239,12 +239,5 @@ final readonly class Minute implements TimeUnit
     public function _withinTime(Time $time): Time
     {
         return Time::of($time->hour(), $this, $time->second());
-    }
-
-    /** @internal {@see \Kronika\DateTime::with()} */
-    #[\Override]
-    public function _withinDateTime(LocalDateTime $datetime): LocalDateTime
-    {
-        return $datetime->with($datetime->time()->with($this));
     }
 }

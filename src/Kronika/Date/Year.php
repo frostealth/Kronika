@@ -15,7 +15,6 @@ namespace Kronika\Date;
 
 use Kronika\Date;
 use Kronika\Duration;
-use Kronika\LocalDateTime;
 use Kronika\Utils\Compared;
 use Kronika\Utils\WeakRefsTrait;
 
@@ -29,6 +28,7 @@ final readonly class Year implements DateUnit
 {
     /** @use WeakRefsTrait<static,TYear> */
     use WeakRefsTrait;
+    use Trait\DateUnit;
 
     /**
      * Obtains an instance of Year from a number.
@@ -279,12 +279,5 @@ final readonly class Year implements DateUnit
             month: $date->month(),
             day: $date->month()->_adjustDay($date->day(), $this),
         );
-    }
-
-    /** @internal {@see \Kronika\DateTime::with()} */
-    #[\Override]
-    public function _withinDateTime(LocalDateTime $datetime): LocalDateTime
-    {
-        return $datetime->with($datetime->date()->with($this));
     }
 }

@@ -16,6 +16,7 @@ namespace Kronika;
 use DateTimeInterface as Native;
 use Kronika\Date\DayOfMonth;
 use Kronika\Date\DayOfWeek;
+use Kronika\Date\DayOfYear;
 use Kronika\Date\Month;
 use Kronika\Date\Year;
 use Kronika\Exception\MalformedString;
@@ -230,6 +231,12 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     public function dayOfWeek(): DayOfWeek
     {
         return $this->date()->dayOfWeek();
+    }
+
+    #[\Override]
+    public function dayOfYear(): DayOfYear
+    {
+        return $this->date()->dayOfYear();
     }
 
     #[\Override]

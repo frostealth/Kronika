@@ -21,6 +21,7 @@ use Kronika\Exception\MalformedString\DateMalformedString;
 use Kronika\LocalDateTime;
 use Kronika\Tests\Date\DayOfMonthTest;
 use Kronika\Tests\Date\DayOfWeekTest;
+use Kronika\Tests\Date\DayOfYearTest;
 use Kronika\Tests\Date\MonthTest;
 use Kronika\Tests\Date\YearTest;
 use Kronika\Time;
@@ -38,16 +39,16 @@ final class DateTest extends TestCase
     public static function ofProvider(): array
     {
         return [
-            [Date\Year::of(2025), Date\Month::of(1), Date\DayOfMonth::of(1), Date\DayOfWeek::Wednesday],
-            [Date\Year::of(2025), Date\Month::of(1), Date\DayOfMonth::of(31), Date\DayOfWeek::of(5)],
-            [Date\Year::of(2025), Date\Month::February, Date\DayOfMonth::of(28), Date\DayOfWeek::of(5)],
-            [Date\Year::of(2025), Date\Month::of(6), Date\DayOfMonth::of(10), Date\DayOfWeek::of(2)],
-            [Date\Year::of(2025), Date\Month::of(6), Date\DayOfMonth::of(30), Date\DayOfWeek::of(1)],
-            [Date\Year::of(2025), Date\Month::of(10), Date\DayOfMonth::of(20), Date\DayOfWeek::of(1)],
-            [Date\Year::of(2025), Date\Month::of(12), Date\DayOfMonth::of(21), Date\DayOfWeek::of(7)],
-            [Date\Year::of(2025), Date\Month::of(12), Date\DayOfMonth::of(31), Date\DayOfWeek::of(3)],
-            [Date\Year::of(2030), Date\Month::of(12), Date\DayOfMonth::of(31), Date\DayOfWeek::of(2)],
-            [Date\Year::of(1961), Date\Month::of(5), Date\DayOfMonth::of(18), Date\DayOfWeek::of(4)],
+            [Date\Year::of(2025), Date\Month::of(1), Date\DayOfMonth::of(1)],
+            [Date\Year::of(2025), Date\Month::of(1), Date\DayOfMonth::of(31)],
+            [Date\Year::of(2025), Date\Month::February, Date\DayOfMonth::of(28)],
+            [Date\Year::of(2025), Date\Month::of(6), Date\DayOfMonth::of(10)],
+            [Date\Year::of(2025), Date\Month::of(6), Date\DayOfMonth::of(30)],
+            [Date\Year::of(2025), Date\Month::of(10), Date\DayOfMonth::of(20)],
+            [Date\Year::of(2025), Date\Month::of(12), Date\DayOfMonth::of(21)],
+            [Date\Year::of(2025), Date\Month::of(12), Date\DayOfMonth::of(31)],
+            [Date\Year::of(2030), Date\Month::of(12), Date\DayOfMonth::of(31)],
+            [Date\Year::of(1961), Date\Month::of(5), Date\DayOfMonth::of(18)],
         ];
     }
 
@@ -56,14 +57,13 @@ final class DateTest extends TestCase
     #[DependsOnClass(DayOfMonthTest::class)]
     #[DependsOnClass(DayOfWeekTest::class)]
     #[DataProvider('ofProvider')]
-    public function testBasic(Date\Year $year, Date\Month $month, Date\DayOfMonth $day, Date\DayOfWeek $dayOfWeek): void
+    public function testBasic(Date\Year $year, Date\Month $month, Date\DayOfMonth $day): void
     {
         $date = Date::of(year: $year, month: $month, day: $day);
 
         self::assertEquals($year, $date->year());
         self::assertEquals($month, $date->month());
         self::assertEquals($day, $date->day());
-        self::assertEquals($dayOfWeek, $date->dayOfWeek());
         self::assertSame($date, Date::of(year: $year->number(), month: $month->number(), day: $day->number()));
         self::assertNotSame($date, Date::of(year: $year->number() + 1, month: $month->number(), day: $day->number()));
     }
@@ -82,6 +82,61 @@ final class DateTest extends TestCase
     {
         $this->expectException(InvalidDate::class);
         Date::of(year: $year, month: $month, day: $day);
+    }
+
+    public static function dayOfWeekProvider(): array
+    {
+        return [
+            [Date::of(year: 2025, month: 12, day: 31), Date\DayOfWeek::Wednesday],
+            [Date::of(year: 2025, month: 10, day: 30), Date\DayOfWeek::Thursday],
+        ];
+    }
+
+    #[DependsOnClass(DayOfWeekTest::class)]
+    #[Depends('testBasic')]
+    #[DataProvider('dayOfWeekProvider')]
+    public function testDayOfWeek(Date $date, Date\DayOfWeek $expected): void
+    {
+        self::assertEquals($expected, $date->dayOfWeek());
+        self::assertSame($expected, $date->dayOfWeek());
+    }
+
+    public static function dayOfYearProvider(): array
+    {
+        return [
+            [Date::of(year: 2025, month: 1, day: 1), Date\DayOfYear::first()],
+            [Date::of(year: 2025, month: 2, day: 1), Date\DayOfYear::of(32)],
+            [Date::of(year: 2025, month: 3, day: 1), Date\DayOfYear::of(60)],
+            [Date::of(year: 2025, month: 10, day: 30), Date\DayOfYear::of(303)],
+            [Date::of(year: 2025, month: 12, day: 31), Date\DayOfYear::last(Date\Year::of(2025))],
+            [Date::of(year: 2024, month: 1, day: 1), Date\DayOfYear::first()],
+            [Date::of(year: 2024, month: 2, day: 1), Date\DayOfYear::of(32)],
+            [Date::of(year: 2024, month: 2, day: 29), Date\DayOfYear::of(60)],
+            [Date::of(year: 2024, month: 10, day: 30), Date\DayOfYear::of(304)],
+            [Date::of(year: 2024, month: 12, day: 31), Date\DayOfYear::last(Date\Year::of(2024))],
+        ];
+    }
+
+    #[DependsOnClass(DayOfYearTest::class)]
+    #[DependsOnClass(DurationTest::class)]
+    #[Depends('testBasic')]
+    #[DataProvider('dayOfYearProvider')]
+    public function testDayOfYear(Date $date, Date\DayOfYear $expected): void
+    {
+        self::assertEquals($expected, $date->dayOfYear());
+        self::assertSame($expected, $date->dayOfYear());
+    }
+
+    #[TestWith([2025, 12, 30])]
+    #[TestWith([2000, 01, 30])]
+    #[TestWith([2024, 10, 15])]
+    #[Depends('testBasic')]
+    public function testStartAndEndOfYear(int $year, int $month, int $day): void
+    {
+        $date = Date::of(year: $year, month: $month, day: $day);
+
+        self::assertEquals(Date::of(year: $year, month: Date\Month::January, day: 1), $date->toStartOfYear());
+        self::assertEquals(Date::of(year: $year, month: Date\Month::December, day: 31), $date->toEndOfYear());
     }
 
     public static function startAndEndOfMonthProvider(): array
@@ -158,9 +213,20 @@ final class DateTest extends TestCase
             [Date::of(2025, 12, 29), Date\DayOfWeek::of(3), Date::of(2025, 12, 31)],
             [Date::of(2025, 12, 29), Date\DayOfWeek::of(4), Date::of(2026, 1, 1)],
             [Date::of(2025, 12, 29), Date\DayOfWeek::of(7), Date::of(2026, 1, 4)],
+            [Date::of(2025, 12, 29), Date\DayOfYear::first(), Date::of(2025, 1, 1)],
+            [Date::of(2025, 12, 29), Date\DayOfYear::of(32), Date::of(2025, 2, 1)],
+            [Date::of(2025, 12, 29), Date\DayOfYear::of(365), Date::of(2025, 12, 31)],
+            [Date::of(2025, 12, 29), Date\DayOfYear::of(366), Date::of(2025, 12, 31)],
+            [Date::of(2024, 12, 29), Date\DayOfYear::of(366), Date::of(2024, 12, 31)],
         ];
     }
 
+    #[DependsOnClass(YearTest::class)]
+    #[DependsOnClass(MonthTest::class)]
+    #[DependsOnClass(DayOfMonthTest::class)]
+    #[DependsOnClass(DayOfWeekTest::class)]
+    #[DependsOnClass(DayOfYearTest::class)]
+    #[DependsOnClass(DurationTest::class)]
     #[Depends('testBasic')]
     #[DataProvider('withProvider')]
     public function testWith(Date $date, Date\DateUnit $unit, Date $expected): void
@@ -275,10 +341,11 @@ final class DateTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
+    #[Depends('testBasic')]
     public function testToString(): void
     {
         $date = Date::of(2030, 5, 24);
 
-        self::assertEquals('2030-05-24', (string) $date);
+        self::assertEquals('2030-05-24', (string)$date);
     }
 }

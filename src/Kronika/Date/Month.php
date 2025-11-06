@@ -15,7 +15,6 @@ namespace Kronika\Date;
 
 use Kronika\Date;
 use Kronika\Duration;
-use Kronika\LocalDateTime;
 use Kronika\Utils\Compared;
 
 /**
@@ -39,6 +38,8 @@ enum Month: int implements DateUnit
     case October = 10;
     case November = 11;
     case December = 12;
+
+    use Trait\DateUnit;
 
     /**
      * Obtains an instance of Month from a number or name.
@@ -317,13 +318,6 @@ enum Month: int implements DateUnit
             month: $this,
             day: $this->_adjustDay($date->day(), $date->year()),
         );
-    }
-
-    /** @internal {@see \Kronika\DateTime::with()} */
-    #[\Override]
-    public function _withinDateTime(LocalDateTime $datetime): LocalDateTime
-    {
-        return $datetime->with($datetime->date()->with($this));
     }
 
     /** @internal */

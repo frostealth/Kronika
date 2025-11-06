@@ -456,6 +456,24 @@ final class DateTimeTest extends TestCase
                 Precision::Micro,
                 self::GREATER,
             ],
+            'LocalDateTime.Unit.DayOYear.Equal' => [
+                self::localOf(2025, 10, 30, 12, 15, 55, 5555),
+                Date\DayOfYear::of(303),
+                Precision::Micro,
+                self::EQUAL,
+            ],
+            'LocalDateTime.Unit.DayOYear.Less' => [
+                self::localOf(2025, 10, 30, 12, 15, 55, 5555),
+                Date\DayOfYear::of(304),
+                Precision::Micro,
+                self::LESS,
+            ],
+            'LocalDateTime.Unit.DayOYear.Greater' => [
+                self::localOf(2025, 10, 30, 12, 20, 45, 45),
+                Date\DayOfYear::of(302),
+                Precision::Micro,
+                self::GREATER,
+            ],
             // LocalDateTime, Time and TimeUnit
             'LocalDateTime.Time.Equal' => [
                 self::localOf(2025, 10, 30, 12, 15, 55, 5555),
@@ -1056,6 +1074,24 @@ final class DateTimeTest extends TestCase
                 Precision::Micro,
                 self::GREATER,
             ],
+            'ZonedDateTime.Unit.DayOfYear.Equal' => [
+                self::zonedOf(2025, 10, 30, 12, 15, 55, 5555, '+01:00'),
+                Date\DayOfYear::of(303),
+                Precision::Micro,
+                self::EQUAL,
+            ],
+            'ZonedDateTime.Unit.DayOfYear.Less' => [
+                self::zonedOf(2025, 10, 30, 12, 15, 55, 5555, '+01:00'),
+                Date\DayOfYear::of(304),
+                Precision::Micro,
+                self::LESS,
+            ],
+            'ZonedDateTime.Unit.DayOfYear.Greater' => [
+                self::zonedOf(2025, 10, 30, 12, 20, 45, 45, '+01:00'),
+                Date\DayOfYear::of(302),
+                Precision::Micro,
+                self::GREATER,
+            ],
             // ZonedDateTime, Time and TimeUnit
             'ZonedDateTime.Time.Equal' => [
                 self::zonedOf(2025, 10, 30, 12, 15, 55, 5555, '+01:00'),
@@ -1255,6 +1291,11 @@ final class DateTimeTest extends TestCase
                 Date\DayOfWeek::Tuesday,
                 Duration::of(days: 1),
             ],
+            'LocalDateTime.Unit.DayOfYear' => [
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                Date\DayOfYear::of(350),
+                Duration::of(days: 1),
+            ],
             'LocalDateTime.Time' => [
                 self::localOf(2025, 12, 15, 12, 45, 55, 5555),
                 Time::of(12, 45, 59),
@@ -1330,6 +1371,11 @@ final class DateTimeTest extends TestCase
             'ZonedDateTime.Unit.DayOfWeek' => [
                 self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
                 Date\DayOfWeek::Tuesday,
+                Duration::of(days: 1),
+            ],
+            'ZonedDateTime.Unit.DayOfYear' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                Date\DayOfYear::of(350),
                 Duration::of(days: 1),
             ],
             'ZonedDateTime.Time' => [
@@ -1521,6 +1567,11 @@ final class DateTimeTest extends TestCase
                 Date\DayOfWeek::Tuesday,
                 Duration::of(days: 1),
             ],
+            'LocalDateTime.Unit.DayOfYear' => [
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                Date\DayOfYear::of(348),
+                Duration::of(days: 1),
+            ],
             'LocalDateTime.Time' => [
                 self::localOf(2025, 12, 15, 12, 45, 55, 5555),
                 Time::of(12, 45, 59),
@@ -1596,6 +1647,11 @@ final class DateTimeTest extends TestCase
             'ZonedDateTime.Unit.DayOfWeek' => [
                 self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
                 Date\DayOfWeek::Tuesday,
+                Duration::of(days: 1),
+            ],
+            'ZonedDateTime.Unit.DayOfYear' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                Date\DayOfYear::of(348),
                 Duration::of(days: 1),
             ],
             'ZonedDateTime.Time' => [
@@ -1764,6 +1820,18 @@ final class DateTimeTest extends TestCase
                 self::localOf(2025, 3, 24, 23, 59, 59, 999999),
                 Date\DayOfWeek::Sunday,
             ],
+            'LocalDateTime.DayOfYear.First' => [
+                self::localOf(2025, 3, 24, 23, 59, 59, 999999),
+                Date\DayOfYear::first(),
+            ],
+            'LocalDateTime.DayOfYear.Last.NonLeap' => [
+                self::localOf(2025, 3, 24, 23, 59, 59, 999999),
+                Date\DayOfYear::last(),
+            ],
+            'LocalDateTime.DayOfYear.Last.Leap' => [
+                self::localOf(2024, 3, 24, 23, 59, 59, 999999),
+                Date\DayOfYear::last(),
+            ],
             'LocalDateTime.Time' => [
                 self::localOf(2025, 3, 24, 23, 59, 59, 999999),
                 Time::midnight(),
@@ -1817,6 +1885,18 @@ final class DateTimeTest extends TestCase
             'ZonedDateTime.DayOfWeek.Sunday' => [
                 self::zonedOf(2025, 3, 24, 23, 59, 59, 999999, '+01:00'),
                 Date\DayOfWeek::Sunday,
+            ],
+            'ZonedDateTime.DayOfYear.First' => [
+                self::zonedOf(2025, 3, 24, 23, 59, 59, 999999, '+01:00'),
+                Date\DayOfYear::first(),
+            ],
+            'ZonedDateTime.DayOfYear.Last.NonLeap' => [
+                self::zonedOf(2025, 3, 24, 23, 59, 59, 999999, '+01:00'),
+                Date\DayOfYear::last(),
+            ],
+            'ZonedDateTime.DayOfYear.Last.Leap' => [
+                self::zonedOf(2024, 3, 24, 23, 59, 59, 999999, '+01:00'),
+                Date\DayOfYear::last(),
             ],
             'ZonedDateTime.Time' => [
                 self::zonedOf(2025, 3, 24, 23, 59, 59, 999999, '+01:00'),

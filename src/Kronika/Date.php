@@ -17,6 +17,7 @@ use DateTimeInterface as Native;
 use Kronika\Date\DateUnit;
 use Kronika\Date\DayOfMonth;
 use Kronika\Date\DayOfWeek;
+use Kronika\Date\DayOfYear;
 use Kronika\Date\Month;
 use Kronika\Date\Year;
 use Kronika\Exception\MalformedString;
@@ -183,6 +184,16 @@ final readonly class Date implements Unit
     }
 
     /**
+     * Returns an instance of `DayOfYear` from this date.
+     */
+    public function dayOfYear(): DayOfYear
+    {
+        $startOfYear = self::of($this->year(), month: Month::January, day: 1);
+
+        return DayOfYear::of($startOfYear->until($this)->days() + 1);
+    }
+
+    /**
      * Returns an instance of `Date` with a given date unit.
      *
      * If the day of the month of the resulting date is greater than
@@ -203,6 +214,7 @@ final readonly class Date implements Unit
      * @see \Kronika\Date\Month – change only month
      * @see \Kronika\Date\DayOfMonth – change only day of month
      * @see \Kronika\Date\DayOfWeek – change/shift only day of week
+     * @see \Kronika\Date\DayOfYear - change/shift only day of year
      */
     public function with(DateUnit $unit): self
     {
@@ -329,6 +341,7 @@ final readonly class Date implements Unit
      * @see \Kronika\Date\Month
      * @see \Kronika\Date\DayOfMonth
      * @see \Kronika\Date\DayOfWeek
+     * @see \Kronika\Date\DayOfYear
      */
     public function until(self|DateUnit $end): Duration
     {
@@ -352,10 +365,31 @@ final readonly class Date implements Unit
      * @see \Kronika\Date\Month
      * @see \Kronika\Date\DayOfMonth
      * @see \Kronika\Date\DayOfWeek
+     * @see \Kronika\Date\DayOfYear
      */
     public function difference(self|DateUnit $other): Duration
     {
         return $this->instant()->difference($this->normalize($other)->instant());
+    }
+
+    /**
+     * Returns an instance of `Date` with the first day of the year.
+     *
+     * @see self::isStartOfYear()
+     */
+    public function toStartOfYear(): self
+    {
+        return self::of($this->year(), month: Month::January, day: 1);
+    }
+
+    /**
+     * Returns an instance of `Date` with the last day of the year.
+     *
+     * @see self::isEndOfYear()
+     */
+    public function toEndOfYear(): self
+    {
+        return self::of($this->year(), month: Month::December, day: 31);
     }
 
     /**
@@ -389,6 +423,26 @@ final readonly class Date implements Unit
     public function toEndOfMonth(): self
     {
         return $this->with($this->month()->lastDay($this->year()));
+    }
+
+    /**
+     * Checks if the day of this date is the first day of the year.
+     *
+     * @see self::toStartOfYear()
+     */
+    public function isStartOfYear(): bool
+    {
+        return $this->isEqualTo($this->toStartOfYear());
+    }
+
+    /**
+     * Check if the day of this date is the last day of the year.
+     *
+     * @see self::toEndOfYear()
+     */
+    public function isEndOfYear(): bool
+    {
+        return $this->isEqualTo($this->toEndOfYear());
     }
 
     /**
@@ -445,6 +499,7 @@ final readonly class Date implements Unit
      * @see \Kronika\Date\Month – compare to a month
      * @see \Kronika\Date\DayOfMonth – compare to a day of month
      * @see \Kronika\Date\DayOfWeek – compare to a day of week
+     * @see \Kronika\Date\DayOfYear – compare to a day of year
      */
     public function isBefore(self|DateUnit $other): bool
     {
@@ -472,6 +527,7 @@ final readonly class Date implements Unit
      * @see \Kronika\Date\Month – compare to a month
      * @see \Kronika\Date\DayOfMonth – compare to a day of month
      * @see \Kronika\Date\DayOfWeek – compare to a day of week
+     * @see \Kronika\Date\DayOfYear – compare to a day of year
      */
     public function isBeforeOrEqualTo(self|DateUnit $other): bool
     {
@@ -496,6 +552,7 @@ final readonly class Date implements Unit
      * @see \Kronika\Date\Month – compare to a month
      * @see \Kronika\Date\DayOfMonth – compare to a day of month
      * @see \Kronika\Date\DayOfWeek – compare to a day of week
+     * @see \Kronika\Date\DayOfYear – compare to a day of year
      */
     public function isEqualTo(self|DateUnit $other): bool
     {
@@ -520,6 +577,7 @@ final readonly class Date implements Unit
      * @see \Kronika\Date\Month – compare to a month
      * @see \Kronika\Date\DayOfMonth – compare to a day of month
      * @see \Kronika\Date\DayOfWeek – compare to a day of week
+     * @see \Kronika\Date\DayOfYear – compare to a day of year
      */
     public function isNotEqualTo(self|DateUnit $other): bool
     {
@@ -544,6 +602,7 @@ final readonly class Date implements Unit
      * @see \Kronika\Date\Month – compare to a month
      * @see \Kronika\Date\DayOfMonth – compare to a day of month
      * @see \Kronika\Date\DayOfWeek – compare to a day of week
+     * @see \Kronika\Date\DayOfYear – compare to a day of year
      */
     public function isAfterOrEqualTo(self|DateUnit $other): bool
     {
@@ -568,6 +627,7 @@ final readonly class Date implements Unit
      * @see \Kronika\Date\Month – compare to a month
      * @see \Kronika\Date\DayOfMonth – compare to a day of month
      * @see \Kronika\Date\DayOfWeek – compare to a day of week
+     * @see \Kronika\Date\DayOfYear – compare to a day of year
      */
     public function isAfter(self|DateUnit $other): bool
     {
@@ -596,6 +656,7 @@ final readonly class Date implements Unit
      * @see \Kronika\Date\Month – compare to a month
      * @see \Kronika\Date\DayOfMonth – compare to a day of month
      * @see \Kronika\Date\DayOfWeek – compare to a day of week
+     * @see \Kronika\Date\DayOfYear – compare to a day of year
      */
     public function compareTo(self|DateUnit $other): Compared
     {
