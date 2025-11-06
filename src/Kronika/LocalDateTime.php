@@ -189,9 +189,9 @@ final readonly class LocalDateTime implements DateTime
     }
 
     #[\Override]
-    public function with(Unit $unit): static
+    public function with(Unit $unit, bool $rolling = false): static
     {
-        return $unit->_withinDateTime($this);
+        return $unit->_withinDateTime($this, $rolling);
     }
 
     /**

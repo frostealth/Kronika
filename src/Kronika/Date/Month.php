@@ -42,7 +42,7 @@ enum Month: int implements DateUnit
     use Trait\DateUnit;
 
     /**
-     * Obtains an instance of Month from a number or name.
+     * Obtains an instance of `Month` from a number or name.
      *
      * ```
      * // January
@@ -92,8 +92,8 @@ enum Month: int implements DateUnit
      *
      * ```
      * // February
-     * $this->containsDay(DayOfMonth::29, Year::of(2025));  // false
-     * $this->containsDay(DayOfMonth::29, Year::of(2024));  // true - leap year
+     * $this->containsDay(DayOfMonth::of(29), Year::of(2025));  // false
+     * $this->containsDay(DayOfMonth::of(29), Year::of(2024));  // true - leap year
      * ```
      */
     public function containsDay(DayOfMonth $day, Year $year): bool
@@ -145,10 +145,10 @@ enum Month: int implements DateUnit
      * Month::January->next();  // February
      * ```
      */
-    public function next(): self
+    public function next(bool $rolling = false): self
     {
         if ($this === self::December) {
-            return self::January;
+            return $rolling ? self::January : $this;
         }
 
         return self::of($this->number() + 1);
@@ -161,10 +161,10 @@ enum Month: int implements DateUnit
      * Month::January->previous();  // December
      * ```
      */
-    public function previous(): self
+    public function previous(bool $rolling = true): self
     {
         if ($this === self::January) {
-            return self::December;
+            return $rolling ? self::December : $this;
         }
 
         return self::of($this->number() - 1);
@@ -311,13 +311,9 @@ enum Month: int implements DateUnit
 
     /** @internal {@see \Kronika\Date::with()} */
     #[\Override]
-    public function _withinDate(Date $date): Date
+    public function _withinDate(Date $date, bool $rolling): Date
     {
-        return Date::of(
-            year: $date->year(),
-            month: $this,
-            day: $this->_adjustDay($date->day(), $date->year()),
-        );
+        return Date::of($date->year(), $this, DayOfMonth::first())->with($date->day(), $rolling);
     }
 
     /** @internal */

@@ -657,7 +657,7 @@ final readonly class Time implements Unit
 
     /** @internal {@see DateTime::with()} */
     #[\Override]
-    public function _withinDateTime(LocalDateTime $datetime): LocalDateTime
+    public function _withinDateTime(LocalDateTime $datetime, bool $rolling): LocalDateTime
     {
         return $this->at($datetime->date());
     }

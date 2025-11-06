@@ -102,18 +102,24 @@ interface DateTime extends \Stringable
      * $this->with(DayOfMonth::of(31));     // 2025-11-30 12:15:30
      * $this->with(DayOfWeek::Monday);      // 2025-11-24 12:15:30
      * ```
+     * ```
+     * // 2025-11-29 12:15:30 vs DayOfMonth::of(31)
+     * $this->with($day, rolling: false); // 2025-11-30 12:15:30
+     * $this->with($day, rolling: true);  // 2025-12-01 12:15:30
+     * ```
      *
      * @see \Kronika\Date – change only date
      * @see \Kronika\Date\Year – change only year
      * @see \Kronika\Date\Month – change only month
      * @see \Kronika\Date\DayOfMonth – change only day
      * @see \Kronika\Date\DayOfWeek – change/shift only day of week
+     * @see \Kronika\Date\DayOfYear – change/shift only day of year
      * @see \Kronika\Time – change only time
      * @see \Kronika\Time\Hour – change only hour
      * @see \Kronika\Time\Minute – change only minute
      * @see \Kronika\Time\Second – change only second with microsecond
      */
-    public function with(Unit $unit): static;
+    public function with(Unit $unit, bool $rolling = false): static;
 
     /**
      * Resets a microsecond to 0.
@@ -189,6 +195,7 @@ interface DateTime extends \Stringable
      * @see \Kronika\Date\Month
      * @see \Kronika\Date\DayOfMonth
      * @see \Kronika\Date\DayOfWeek
+     * @see \Kronika\Date\DayOfYear
      * @see \Kronika\Time
      * @see \Kronika\Time\Hour
      * @see \Kronika\Time\Minute
@@ -230,6 +237,7 @@ interface DateTime extends \Stringable
      * @see \Kronika\Date\Month
      * @see \Kronika\Date\DayOfMonth
      * @see \Kronika\Date\DayOfWeek
+     * @see \Kronika\Date\DayOfYear
      * @see \Kronika\Time
      * @see \Kronika\Time\Hour
      * @see \Kronika\Time\Minute
@@ -261,6 +269,7 @@ interface DateTime extends \Stringable
      * @see \Kronika\Date\Month – compare to a month
      * @see \Kronika\Date\DayOfMonth – compare to a day
      * @see \Kronika\Date\DayOfWeek – compare to a day of week
+     * @see \Kronika\Date\DayOfYear – compare to a day of year
      * @see \Kronika\Time – compare to a time
      * @see \Kronika\Time\Hour – compare to an hour
      * @see \Kronika\Time\Minute – compare to a minute
@@ -295,6 +304,7 @@ interface DateTime extends \Stringable
      * @see \Kronika\Date\Month – compare to a month
      * @see \Kronika\Date\DayOfMonth – compare to a day
      * @see \Kronika\Date\DayOfWeek – compare to a day of week
+     * @see \Kronika\Date\DayOfYear – compare to a day of year
      * @see \Kronika\Time – compare to a time
      * @see \Kronika\Time\Hour – compare to an hour
      * @see \Kronika\Time\Minute – compare to a minute
@@ -329,6 +339,7 @@ interface DateTime extends \Stringable
      * @see \Kronika\Date\Month – compare to a month
      * @see \Kronika\Date\DayOfMonth – compare to a day
      * @see \Kronika\Date\DayOfWeek – compare to a day of week
+     * @see \Kronika\Date\DayOfYear – compare to a day of year
      * @see \Kronika\Time – compare to a time
      * @see \Kronika\Time\Hour – compare to an hour
      * @see \Kronika\Time\Minute – compare to a minute
@@ -360,6 +371,7 @@ interface DateTime extends \Stringable
      * @see \Kronika\Date\Month – compare to a month
      * @see \Kronika\Date\DayOfMonth – compare to a day
      * @see \Kronika\Date\DayOfWeek – compare to a day of week
+     * @see \Kronika\Date\DayOfYear – compare to a day of year
      * @see \Kronika\Time – compare to a time
      * @see \Kronika\Time\Hour – compare to an hour
      * @see \Kronika\Time\Minute – compare to a minute
@@ -397,6 +409,7 @@ interface DateTime extends \Stringable
      * @see \Kronika\Date\Month – compare to a month
      * @see \Kronika\Date\DayOfMonth – compare to a day
      * @see \Kronika\Date\DayOfWeek – compare to a day of week
+     * @see \Kronika\Date\DayOfYear – compare to a day of year
      * @see \Kronika\Time – compare to a time
      * @see \Kronika\Time\Hour – compare to an hour
      * @see \Kronika\Time\Minute – compare to a minute
@@ -428,6 +441,7 @@ interface DateTime extends \Stringable
      * @see \Kronika\Date\Month – compare to a month
      * @see \Kronika\Date\DayOfMonth – compare to a day
      * @see \Kronika\Date\DayOfWeek – compare to a day of week
+     * @see \Kronika\Date\DayOfYear – compare to a day of year
      * @see \Kronika\Time – compare to a time
      * @see \Kronika\Time\Hour – compare to an hour
      * @see \Kronika\Time\Minute – compare to a minute
@@ -454,6 +468,7 @@ interface DateTime extends \Stringable
      * @see \Kronika\Date\Month – compare to a month
      * @see \Kronika\Date\DayOfMonth – compare to a day
      * @see \Kronika\Date\DayOfWeek – compare to a day of week
+     * @see \Kronika\Date\DayOfYear – compare to a day of year
      * @see \Kronika\Time – compare to a time
      * @see \Kronika\Time\Hour – compare to an hour
      * @see \Kronika\Time\Minute – compare to a minute

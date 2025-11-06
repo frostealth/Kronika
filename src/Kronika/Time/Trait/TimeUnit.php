@@ -26,8 +26,8 @@ trait TimeUnit
 {
     /** @internal {@see \Kronika\DateTime::with()} */
     #[\Override]
-    final public function _withinDateTime(LocalDateTime $datetime): LocalDateTime
+    final public function _withinDateTime(LocalDateTime $datetime, bool $rolling): LocalDateTime
     {
-        return $datetime->with($datetime->time()->with($this));
+        return $datetime->with($datetime->time()->with($this), $rolling);
     }
 }

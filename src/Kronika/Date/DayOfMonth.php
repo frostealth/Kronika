@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Kronika\Date;
 
 use Kronika\Date;
+use Kronika\Duration;
 use Kronika\Utils\Compared;
 use Kronika\Utils\WeakRefsTrait;
 
@@ -30,7 +31,7 @@ final readonly class DayOfMonth implements DateUnit
     use Trait\DateUnit;
 
     /**
-     * Obtains an instance of DayOfMonth from a given number.
+     * Obtains an instance of `DayOfMonth` from a given number.
      *
      * ```
      * $day = DayOfMonth::of(20);
@@ -43,6 +44,20 @@ final readonly class DayOfMonth implements DateUnit
     public static function of(int|self $value): self
     {
         return $value instanceof self ? $value : self::weak(number: $value);
+    }
+
+    /**
+     * Obtains an instance of `DayOfMonth` with the first day of month.
+     *
+     * ```
+     * DayOfMonth::first()->number();  // 1
+     * ```
+     */
+    public static function first(): self
+    {
+        static $first = DayOfMonth::of(1);
+
+        return $first;
     }
 
     /**
@@ -167,6 +182,11 @@ final readonly class DayOfMonth implements DateUnit
         return Compared::of($this->number() <=> $other->number());
     }
 
+    private function difference(self $other): Duration
+    {
+        return Duration::of(days: \abs($this->number() - $other->number()));
+    }
+
     /** @return non-empty-string */
     #[\Override]
     public function __toString(): string
@@ -190,12 +210,16 @@ final readonly class DayOfMonth implements DateUnit
 
     /** @internal {@see \Kronika\Date::with()} */
     #[\Override]
-    public function _withinDate(Date $date): Date
+    public function _withinDate(Date $date, bool $rolling): Date
     {
-        return Date::of(
-            year: $date->year(),
-            month: $date->month(),
-            day: $date->month()->_adjustDay($this, $date->year()),
+        if ($date->month()->containsDay($this, $date->year())) {
+            return Date::of(year: $date->year(), month: $date->month(), day: $this);
+        }
+
+        return $rolling ? $date->add($this->difference($date->day())) : Date::of(
+            year: $year = $date->year(),
+            month: $month = $date->month(),
+            day: $month->lastDay($year),
         );
     }
 }

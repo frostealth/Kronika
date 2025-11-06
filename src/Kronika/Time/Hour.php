@@ -30,7 +30,7 @@ final readonly class Hour implements TimeUnit
     use Trait\TimeUnit;
 
     /**
-     * Obtains an instance of Hour from a value.
+     * Obtains an instance of `Hour` from a value.
      *
      * ```
      * $hour = Hour::of(12);
@@ -46,7 +46,7 @@ final readonly class Hour implements TimeUnit
     }
 
     /**
-     * Obtains an instance of Hour at 0.
+     * Obtains an instance of `Hour` at 0.
      *
      * ```
      * Hour::zero()->value();  // 0
@@ -60,7 +60,7 @@ final readonly class Hour implements TimeUnit
     }
 
     /**
-     * Obtains an instance of Hour at the end of the day.
+     * Obtains an instance of `Hour` at the end of the day.
      *
      * ```
      * Hour::last()->value();  // 23

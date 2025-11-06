@@ -117,7 +117,7 @@ final readonly class DayOfYear implements DateUnit
      * $this->previous(Year::of(2026));  // 365
      * ```
      */
-    public function previous(?Year $ofYear = null, bool $rolling = true): self
+    public function previous(?Year $ofYear = null, bool $rolling = false): self
     {
         $number = $this->adjust($ofYear)->number() - 1;
         if ($number < 1) {
@@ -141,7 +141,7 @@ final readonly class DayOfYear implements DateUnit
      * $this->next(Year::of(2025), rolling: true);  // 1
      * ```
      */
-    public function next(?Year $ofYear = null, bool $rolling = true): self
+    public function next(?Year $ofYear = null, bool $rolling = false): self
     {
         $number = $this->number() + 1;
         if ($number > self::last($ofYear)->number()) {
@@ -300,17 +300,18 @@ final readonly class DayOfYear implements DateUnit
 
     /** @internal {@see \Kronika\Date::with()} */
     #[\Override]
-    public function _withinDate(Date $date): Date
+    public function _withinDate(Date $date, bool $rolling): Date
     {
         if ($this->isFirst()) {
             return $date->toStartOfYear();
         }
-        if ($this->isLast($date->year())) {
+        if (! $rolling && $this->isLast($date->year())) {
             return $date->toEndOfYear();
         }
+        if ($this->isBefore($date->dayOfYear())) {
+            return $date->sub($this->adjust($date->year())->difference($date->dayOfYear()));
+        }
 
-        $diff = $this->difference($current = $date->dayOfYear());
-
-        return $this->isBefore($current) ? $date->sub($diff) : $date->add($diff);
+        return $date->add($this->difference($date->dayOfYear()));
     }
 }

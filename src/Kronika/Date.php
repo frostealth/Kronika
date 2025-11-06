@@ -188,9 +188,7 @@ final readonly class Date implements Unit
      */
     public function dayOfYear(): DayOfYear
     {
-        $startOfYear = self::of($this->year(), month: Month::January, day: 1);
-
-        return DayOfYear::of($startOfYear->until($this)->days() + 1);
+        return DayOfYear::of($this->toStartOfYear()->until($this)->days() + 1);
     }
 
     /**
@@ -209,6 +207,11 @@ final readonly class Date implements Unit
      * $this->with(DayOfMonth::of(31));     // 2025-11-30
      * $this->with(DayOfWeek::Monday);      // 2025-11-24
      * ```
+     * ```
+     * // 2025-11-29 vs DayOfMonth::of(31)
+     * $this->with($day, rolling: false); // 2025-11-30
+     * $this->with($day, rolling: true);  // 2025-12-01
+     * ```
      *
      * @see \Kronika\Date\Year – change only year
      * @see \Kronika\Date\Month – change only month
@@ -216,9 +219,9 @@ final readonly class Date implements Unit
      * @see \Kronika\Date\DayOfWeek – change/shift only day of week
      * @see \Kronika\Date\DayOfYear - change/shift only day of year
      */
-    public function with(DateUnit $unit): self
+    public function with(DateUnit $unit, bool $rolling = false): self
     {
-        return $unit->_withinDate($this);
+        return $unit->_withinDate($this, $rolling);
     }
 
     /**
@@ -379,7 +382,7 @@ final readonly class Date implements Unit
      */
     public function toStartOfYear(): self
     {
-        return self::of($this->year(), month: Month::January, day: 1);
+        return self::of($this->year(), month: Month::January, day: DayOfMonth::first());
     }
 
     /**
@@ -404,7 +407,7 @@ final readonly class Date implements Unit
      */
     public function toStartOfMonth(): self
     {
-        return $this->with(DayOfMonth::of(1));
+        return $this->with(DayOfMonth::first());
     }
 
     /**
@@ -460,7 +463,7 @@ final readonly class Date implements Unit
      */
     public function isStartOfMonth(): bool
     {
-        return $this->day()->isEqualTo(DayOfMonth::of(1));
+        return $this->day()->isEqualTo(DayOfMonth::first());
     }
 
     /**
@@ -707,7 +710,7 @@ final readonly class Date implements Unit
 
     /** @internal {@see DateTime::with()} */
     #[\Override]
-    public function _withinDateTime(LocalDateTime $datetime): LocalDateTime
+    public function _withinDateTime(LocalDateTime $datetime, bool $rolling): LocalDateTime
     {
         return $this->at($datetime->time());
     }

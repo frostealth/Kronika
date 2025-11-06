@@ -90,14 +90,16 @@ final class DayOfWeekTest extends TestCase
             [DayOfWeek::Friday, DayOfWeek::Saturday],
             [DayOfWeek::Saturday, DayOfWeek::Sunday],
             [DayOfWeek::Sunday, DayOfWeek::Monday],
+            [DayOfWeek::Sunday, DayOfWeek::Sunday, 'rolling' => false],
         ];
     }
 
     #[Depends('testBasic')]
     #[DataProvider('nextProvider')]
-    public function testNext(DayOfWeek $day, DayOfWeek $expected): void
+    public function testNext(DayOfWeek $day, DayOfWeek $expected, bool $rolling = true): void
     {
-        self::assertSame($expected, $day->next());
+        self::assertEquals($expected, $day->next(rolling: $rolling));
+        self::assertSame($expected, $day->next(rolling: $rolling));
     }
 
     public static function previousProvider(): array
@@ -110,14 +112,16 @@ final class DayOfWeekTest extends TestCase
             [DayOfWeek::Wednesday, DayOfWeek::Tuesday],
             [DayOfWeek::Tuesday, DayOfWeek::Monday],
             [DayOfWeek::Monday, DayOfWeek::Sunday],
+            [DayOfWeek::Monday, DayOfWeek::Monday, 'rolling' => false],
         ];
     }
 
     #[Depends('testBasic')]
     #[DataProvider('previousProvider')]
-    public function testPrevious(DayOfWeek $day, DayOfWeek $expected): void
+    public function testPrevious(DayOfWeek $day, DayOfWeek $expected, bool $rolling = true): void
     {
-        self::assertSame($expected, $day->previous());
+        self::assertEquals($expected, $day->previous(rolling: $rolling));
+        self::assertSame($expected, $day->previous(rolling: $rolling));
     }
 
     public static function comparisonProvider(): array

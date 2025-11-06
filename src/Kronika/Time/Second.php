@@ -32,7 +32,7 @@ final readonly class Second implements TimeUnit
     use Trait\TimeUnit;
 
     /**
-     * Obtains an instance of Second from given values (second and microsecond).
+     * Obtains an instance of `Second` from given values (second and microsecond).
      *
      * ```
      * // 45 second and 0 microsecond
@@ -57,7 +57,7 @@ final readonly class Second implements TimeUnit
     }
 
     /**
-     * Obtains an instance of Second at 0.000000.
+     * Obtains an instance of `Second` at 0.000000.
      *
      * ```
      * $second = Second::zero();
@@ -74,7 +74,7 @@ final readonly class Second implements TimeUnit
     }
 
     /**
-     * Obtains an instance of Second at the end of the minute.
+     * Obtains an instance of `Second` at the end of the minute.
      *
      * ```
      * $second = Second::lase();

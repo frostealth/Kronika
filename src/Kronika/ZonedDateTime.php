@@ -308,24 +308,15 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      * ```
      *
      * @see self::shift() – change time-zone and shifts time
-     * @see \Kronika\Date – change only date
-     * @see \Kronika\Date\Year – change only year
-     * @see \Kronika\Date\Month – change only month
-     * @see \Kronika\Date\DayOfMonth – change only day
-     * @see \Kronika\Date\DayOfWeek – change/shift only day of week
-     * @see \Kronika\Time – change only time
-     * @see \Kronika\Time\Hour – change only hour
-     * @see \Kronika\Time\Minute – change only minute
-     * @see \Kronika\Time\Second – change only second with microsecond
      */
     #[\Override]
-    public function with(Unit|\DateTimeZone $unit): static
+    public function with(Unit|\DateTimeZone $unit, bool $rolling = false): static
     {
         if ($unit instanceof \DateTimeZone) {
             return self::ofLocal($this->local, timezone: $unit);
         }
 
-        return self::ofLocal($this->local->with($unit), $this->timezone());
+        return self::ofLocal($this->local->with($unit, $rolling), $this->timezone());
     }
 
     #[\Override]

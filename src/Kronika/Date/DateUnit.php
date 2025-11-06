@@ -32,5 +32,5 @@ interface DateUnit extends Unit
     public function number(): int;
 
     /** @internal {@see \Kronika\Date::with()} */
-    public function _withinDate(Date $date): Date;
+    public function _withinDate(Date $date, bool $rolling): Date;
 }

@@ -30,7 +30,7 @@ final readonly class Minute implements TimeUnit
     use Trait\TimeUnit;
 
     /**
-     * Obtains an instance of Minute from a value.
+     * Obtains an instance of `Minute` from a value.
      *
      * ```
      * $minute = Minute::of(30);
@@ -46,7 +46,7 @@ final readonly class Minute implements TimeUnit
     }
 
     /**
-     * Obtains an instance of Minute at 0.
+     * Obtains an instance of `Minute` at 0.
      *
      * ```
      * Minute::zero()->value();  // 0
@@ -60,7 +60,7 @@ final readonly class Minute implements TimeUnit
     }
 
     /**
-     * Obtains an instance of Minute at the end of the hour.
+     * Obtains an instance of `Minute` at the end of the hour.
      *
      * ```
      * Minute::last()->value();  // 23

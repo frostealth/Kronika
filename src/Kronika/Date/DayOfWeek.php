@@ -38,7 +38,7 @@ enum DayOfWeek: int implements DateUnit
     use Trait\DateUnit;
 
     /**
-     * Obtains an instance of DayOfWeek from a number or name.
+     * Obtains an instance of `DayOfWeek` from a number or name.
      *
      * ```
      * // Monday
@@ -111,10 +111,10 @@ enum DayOfWeek: int implements DateUnit
      * DayOfWeek::Monday->next();  // Tuesday
      * ```
      */
-    public function next(): self
+    public function next(bool $rolling = true): self
     {
         if ($this === self::Sunday) {
-            return self::Monday;
+            return $rolling ? self::Monday : $this;
         }
 
         return self::of($this->number() + 1);
@@ -124,13 +124,14 @@ enum DayOfWeek: int implements DateUnit
      * Returns the previous day of week.
      *
      * ```
-     * DayOfWeek::Monday->previous();  // Sunday
+     * DayOfWeek::Monday->previous(rolling: false); // Monday
+     * DayOfWeek::Monday->previous(rolling: true);  // Sunday
      * ```
      */
-    public function previous(): self
+    public function previous(bool $rolling = false): self
     {
         if ($this === self::Monday) {
-            return self::Sunday;
+            return $rolling ? self::Sunday : $this;
         }
 
         return self::of($this->number() - 1);
@@ -267,7 +268,7 @@ enum DayOfWeek: int implements DateUnit
 
     /** @internal {@see \Kronika\Date::with()} */
     #[\Override]
-    public function _withinDate(Date $date): Date
+    public function _withinDate(Date $date, bool $rolling): Date
     {
         $diff = Duration::of(days: \abs($this->number() - $date->dayOfWeek()->number()));
 

@@ -121,14 +121,15 @@ final class MonthTest extends TestCase
             [Month::October, Month::November],
             [Month::November, Month::December],
             [Month::December, Month::January],
+            [Month::December, Month::December, 'rolling' => false],
         ];
     }
 
     #[Depends('testBasic')]
     #[DataProvider('nextProvider')]
-    public function testNext(Month $current, Month $expected): void
+    public function testNext(Month $current, Month $expected, bool $rolling = true): void
     {
-        self::assertSame($expected, $current->next());
+        self::assertSame($expected, $current->next(rolling: $rolling));
     }
 
     public static function previousProvider(): array
@@ -146,14 +147,15 @@ final class MonthTest extends TestCase
             [Month::March, Month::February],
             [Month::February, Month::January],
             [Month::January, Month::December],
+            [Month::January, Month::January, 'rolling' => false],
         ];
     }
 
     #[Depends('testBasic')]
     #[DataProvider('previousProvider')]
-    public function testPrevious(Month $current, Month $expected): void
+    public function testPrevious(Month $current, Month $expected, bool $rolling = true): void
     {
-        self::assertSame($expected, $current->previous());
+        self::assertSame($expected, $current->previous(rolling: $rolling));
     }
 
     public static function lastDayProvider(): array

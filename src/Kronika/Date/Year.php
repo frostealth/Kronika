@@ -31,7 +31,7 @@ final readonly class Year implements DateUnit
     use Trait\DateUnit;
 
     /**
-     * Obtains an instance of Year from a number.
+     * Obtains an instance of `Year` from a number.
      *
      * ```
      * $year = Year::of(2025);
@@ -74,7 +74,7 @@ final readonly class Year implements DateUnit
      */
     public function next(): self
     {
-        return self::of($this->number() + 1);
+        return self::of(\min($this->number() + 1, 9999));
     }
 
     /**
@@ -87,7 +87,7 @@ final readonly class Year implements DateUnit
      */
     public function previous(): self
     {
-        return self::of($this->number() - 1);
+        return self::of(\max($this->number() - 1, -9999));
     }
 
     /**
@@ -272,12 +272,8 @@ final readonly class Year implements DateUnit
 
     /** @internal {@see \Kronika\Date::with()} */
     #[\Override]
-    public function _withinDate(Date $date): Date
+    public function _withinDate(Date $date, bool $rolling): Date
     {
-        return Date::of(
-            year: $this,
-            month: $date->month(),
-            day: $date->month()->_adjustDay($date->day(), $this),
-        );
+        return Date::of($this, $date->month(), DayOfMonth::first())->with($date->day(), $rolling);
     }
 }
