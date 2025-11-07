@@ -378,6 +378,11 @@ final readonly class Date implements Unit
     /**
      * Returns an instance of `Date` with the first day of the year.
      *
+     * ```
+     * // 2025-07-15
+     * $this->toStartOfYear();  // 2025-01-01
+     * ```
+     *
      * @see self::isStartOfYear()
      */
     public function toStartOfYear(): self
@@ -387,6 +392,11 @@ final readonly class Date implements Unit
 
     /**
      * Returns an instance of `Date` with the last day of the year.
+     *
+     * ```
+     * // 2025-07-15
+     * $this->toEndOfYear();  // 2025-12-31
+     * ```
      *
      * @see self::isEndOfYear()
      */
