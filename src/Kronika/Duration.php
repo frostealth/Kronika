@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Kronika;
 
 use Kronika\Utils\Compared;
-use Kronika\Utils\WeakRefsTrait;
+use Kronika\Utils\RefTrait;
 
 /**
  * Represents a duration/interval in days, hours, minutes and seconds.
@@ -22,8 +22,8 @@ use Kronika\Utils\WeakRefsTrait;
  */
 final readonly class Duration
 {
-    /** @use WeakRefsTrait<static, non-negative-int> */
-    use WeakRefsTrait;
+    /** @use RefTrait<static> */
+    use RefTrait;
 
     /**
      * Obtains an instance of `Duration` from days, hours, minutes and seconds.
@@ -50,7 +50,7 @@ final readonly class Duration
         $minutes += $hours * 60;
         $seconds += $minutes * 60;
 
-        return self::weak(seconds: $seconds);
+        return self::ref(seconds: $seconds);
     }
 
     /**
@@ -66,9 +66,9 @@ final readonly class Duration
      */
     public static function zero(): self
     {
-        static $instance = null;
+        static $instance = self::of(seconds: 0);
 
-        return $instance ??= self::of(seconds: 0);
+        return $instance;
     }
 
     /**

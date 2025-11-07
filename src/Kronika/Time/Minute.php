@@ -15,7 +15,7 @@ namespace Kronika\Time;
 
 use Kronika\Time;
 use Kronika\Utils\Compared;
-use Kronika\Utils\WeakRefsTrait;
+use Kronika\Utils\RefTrait;
 
 /**
  * Represents a minute of the hour.
@@ -25,8 +25,8 @@ use Kronika\Utils\WeakRefsTrait;
  */
 final readonly class Minute implements TimeUnit
 {
-    /** @use WeakRefsTrait<static,TMinute> */
-    use WeakRefsTrait;
+    /** @use RefTrait<static> */
+    use RefTrait;
     use Trait\TimeUnit;
 
     /**
@@ -42,7 +42,7 @@ final readonly class Minute implements TimeUnit
      */
     public static function of(int|self $value): self
     {
-        return $value instanceof self ? $value : static::weak(value: $value);
+        return $value instanceof self ? $value : static::ref(value: $value);
     }
 
     /**

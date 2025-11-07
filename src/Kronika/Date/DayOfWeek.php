@@ -74,11 +74,7 @@ enum DayOfWeek: int implements DateUnit
      * DayOfWeek::Sunday->number(iso: false); // 0
      * ```
      *
-     * @template iso of bool
-     *
-     * @param iso $iso
-     *
-     * @return (iso is true ? TDayOfWeek : TDayOfWeekNative)
+     * @return ($iso is true ? TDayOfWeek : TDayOfWeekNative)
      */
     #[\Override]
     public function number(bool $iso = true): int

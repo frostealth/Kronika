@@ -22,10 +22,5 @@
                 <file name="src/Kronika/ZonedDateTime.php"/>
             </errorLevel>
         </MissingImmutableAnnotation>
-        <UndefinedDocblockClass>
-            <errorLevel type="suppress">
-                <file name="src/Utils/WeakRefsTrait.php"/>
-            </errorLevel>
-        </UndefinedDocblockClass>
     </issueHandlers>
 </psalm>

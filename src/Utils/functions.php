@@ -33,44 +33,15 @@ if (! \function_exists('\\Kronika\\Utils\\math')) {
     }
 }
 
-if (! \function_exists('\\Kronika\\Utils\\weak')) {
-    /**
-     * @template TType of object
-     * @template TArgs
-     *
-     * @param class-string<TType> $type
-     * @param callable(TArgs...):TType $factory
-     * @param TArgs ...$args
-     *
-     * @return TType
-     *
-     * @internal
-     */
-    function weak(string $type, callable $factory, mixed ...$args): object
-    {
-        return weak_registry()->get($type, $factory, ...$args);
-    }
-}
-
-if (! \function_exists('\\Kronika\\Utils\\weak_clean_up')) {
-    /**
-     * @internal
-     */
-    function weak_clean_up(): void
-    {
-        weak_registry()->cleanUp();
-    }
-}
-
-if (! \function_exists('\\Kronika\\Utils\\weak_registry')) {
+if (! \function_exists('\\Kronika\\Utils\\references')) {
     /**
      * @psalm-internal Kronika\Utils
      * @internal
      */
-    function weak_registry(): WeakRegistry
+    function references(): References
     {
-        static $registry = new WeakRegistry();
+        static $references = new References();
 
-        return $registry;
+        return $references;
     }
 }

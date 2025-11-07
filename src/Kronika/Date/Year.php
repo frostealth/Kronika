@@ -16,7 +16,7 @@ namespace Kronika\Date;
 use Kronika\Date;
 use Kronika\Duration;
 use Kronika\Utils\Compared;
-use Kronika\Utils\WeakRefsTrait;
+use Kronika\Utils\RefTrait;
 
 /**
  * Represents a year.
@@ -26,8 +26,8 @@ use Kronika\Utils\WeakRefsTrait;
  */
 final readonly class Year implements DateUnit
 {
-    /** @use WeakRefsTrait<static,TYear> */
-    use WeakRefsTrait;
+    /** @use RefTrait<static> */
+    use RefTrait;
     use Trait\DateUnit;
 
     /**
@@ -44,7 +44,7 @@ final readonly class Year implements DateUnit
      */
     public static function of(int|self $value): self
     {
-        return $value instanceof self ? $value : self::weak(number: $value);
+        return $value instanceof self ? $value : self::ref(number: $value);
     }
 
     /**

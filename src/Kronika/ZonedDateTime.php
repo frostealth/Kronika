@@ -26,7 +26,7 @@ use Kronika\Time\Hour;
 use Kronika\Time\Minute;
 use Kronika\Time\Second;
 use Kronika\Utils\Compared;
-use Kronika\Utils\WeakRefsTrait;
+use Kronika\Utils\RefTrait;
 use function Kronika\Utils\Math\double;
 
 /**
@@ -36,8 +36,8 @@ use function Kronika\Utils\Math\double;
  */
 final class ZonedDateTime extends \DateTimeImmutable implements DateTime
 {
-    /** @use WeakRefsTrait<static, LocalDateTime|\DateTimeZone> */
-    use WeakRefsTrait;
+    /** @use RefTrait<static> */
+    use RefTrait;
 
     /**
      * Obtains an instance of `ZonedDateTime` from a date, time and time-zone.
@@ -92,7 +92,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      */
     public static function ofLocal(LocalDateTime $local, \DateTimeZone $timezone): self
     {
-        return self::weak(local: $local, timezone: $timezone);
+        return self::ref(local: $local, timezone: $timezone);
     }
 
     /**
@@ -281,7 +281,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      */
     public function timestamp(): float
     {
-        return double([parent::getTimestamp(), $this->microsecond()]);
+        return $this->remember(fn(): float => double([parent::getTimestamp(), $this->microsecond()]), key: __METHOD__);
     }
 
     /**
@@ -499,7 +499,10 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     #[\Override]
     public function toNative(): \DateTimeImmutable
     {
-        return \DateTimeImmutable::createFromInterface($this);
+        return $this->remember(
+            static fn(self $that): \DateTimeImmutable => \DateTimeImmutable::createFromInterface($that),
+            key: __METHOD__,
+        );
     }
 
     #[\Override]

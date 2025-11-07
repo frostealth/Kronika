@@ -22,7 +22,7 @@ use Kronika\Time\Minute;
 use Kronika\Time\Second;
 use Kronika\Time\TimeUnit;
 use Kronika\Utils\Compared;
-use Kronika\Utils\WeakRefsTrait;
+use Kronika\Utils\RefTrait;
 
 /**
  * Represents a time.
@@ -33,8 +33,8 @@ use Kronika\Utils\WeakRefsTrait;
  */
 final readonly class Time implements Unit
 {
-    /** @use WeakRefsTrait<static,Hour|THour|Minute|TMinute|Second|TSecond> */
-    use WeakRefsTrait;
+    /** @use RefTrait<static> */
+    use RefTrait;
 
     /**
      * Obtains an instance of `Time` from an hour, minute and second.
@@ -56,7 +56,7 @@ final readonly class Time implements Unit
      */
     public static function of(Hour|int $hour, Minute|int $minute, Second|int $second = 0): self
     {
-        return self::weak(hour: Hour::of($hour), minute: Minute::of($minute), second: Second::of($second));
+        return self::ref(hour: Hour::of($hour), minute: Minute::of($minute), second: Second::of($second));
     }
 
     /**
@@ -122,15 +122,11 @@ final readonly class Time implements Unit
      */
     public static function ofInstant(Instant $instant): self
     {
-        /** @var \WeakMap<Instant, self> $references */
-        static $references = new \WeakMap();
-        if (isset($references[$instant])) {
-            return $references[$instant];
-        }
+        return self::map($instant, static function (Instant $instant): self {
+            ['hours' => $hour, 'minutes' => $minute, 'seconds' => $second] = \getdate($instant->second());
 
-        ['hours' => $hour, 'minutes' => $minute, 'seconds' => $second] = \getdate($instant->second());
-
-        return $references[$instant] = self::of($hour, $minute, Second::of($second, $instant->microsecond()));
+            return self::of($hour, $minute, Second::of($second, $instant->microsecond()));
+        }, key: __METHOD__);
     }
 
     /**
@@ -636,10 +632,10 @@ final readonly class Time implements Unit
      */
     public function instant(): Instant
     {
-        return Instant::of(
-            second: ($this->hour()->value() * 3600) + ($this->minute()->value() * 60) + $this->second()->second(),
-            micro: $this->second()->microsecond(),
-        );
+        return $this->remember(static fn(self $time): Instant => Instant::of(
+            second: ($time->hour()->value() * 3600) + ($time->minute()->value() * 60) + $time->second()->second(),
+            micro: $time->second()->microsecond(),
+        ), key: __METHOD__);
     }
 
     /** @return non-empty-string */

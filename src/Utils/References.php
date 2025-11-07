@@ -17,29 +17,30 @@ namespace Kronika\Utils;
  * @psalm-internal Kronika\Utils
  * @internal
  */
-final class WeakRegistry
+final class References
 {
-    /** @var array<non-empty-string, \WeakReference<object>> */
+    /** @var array<non-empty-string, \WeakReference> */
     private array $references = [];
+
+    /** @var array<non-empty-string, \WeakMap> */
+    private array $map = [];
 
     /**
      * @template TType of object
      * @template TArg
      *
      * @param class-string<TType> $type
-     * @param callable(TArg...):TType $factory
+     * @param callable(TArg...): TType $factory
      * @param TArg ...$args
      *
      * @return TType
      */
     public function get(string $type, callable $factory, mixed ...$args): object
     {
-        $this->cleanUp();
-
         $key = $this->key($type, ...$args);
         $reference = $this->references[$key] ?? null;
         $instance = $reference?->get();
-        if ($instance !== null) {
+        if (\is_a($instance, $type, allow_string: true)) {
             return $instance;
         }
 
@@ -49,12 +50,30 @@ final class WeakRegistry
         return $instance;
     }
 
+    /**
+     * @template TType of mixed
+     * @template TArg
+     *
+     * @param non-empty-string $key
+     * @param TType|(callable(TArg...): TType) $held
+     * @param TArg ...$args
+     *
+     * @return TType
+     */
+    public function mapped(string $key, object $holder, callable|object $held, mixed ...$args): mixed
+    {
+        $map = $this->map[$key] ??= new \WeakMap();
+
+        return $map[$holder] ??= \is_callable($held) ? $held(...$args) : $held;
+    }
+
     public function cleanUp(): void
     {
         $this->references = \array_filter(
             $this->references,
-            static fn (\WeakReference $reference): bool => $reference->get() !== null,
+            static fn(\WeakReference $reference): bool => $reference->get() !== null,
         );
+        $this->map = \array_filter($this->map, static fn(\WeakMap $map): bool => count($map) > 0);
     }
 
     private function key(mixed ...$args): string
@@ -65,7 +84,7 @@ final class WeakRegistry
                     return $value;
                 }
                 if (\is_numeric($value)) {
-                    return (string) $value;
+                    return (string)$value;
                 }
                 if (\is_null($value)) {
                     return 'null';
@@ -78,22 +97,22 @@ final class WeakRegistry
                 }
 
                 if ($value instanceof \Stringable) {
-                    return (string) $value;
+                    return (string)$value;
                 }
                 if ($value instanceof \BackedEnum) {
-                    return (string) $value->value;
+                    return (string)$value->value;
                 }
                 if ($value instanceof \UnitEnum) {
                     return $value->name;
                 }
                 if (\method_exists($value, 'value')) {
-                    return (string) $value->value();
+                    return (string)$value->value();
                 }
                 if (\method_exists($value, 'number')) {
-                    return (string) $value->number();
+                    return (string)$value->number();
                 }
 
-                return \var_export($value, true);
+                return \var_export($value, return: true);
             };
 
             return \sprintf('[%s:%s]', $key, $prepareValue($value));

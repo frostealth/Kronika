@@ -26,15 +26,15 @@ use Kronika\Time\Hour;
 use Kronika\Time\Minute;
 use Kronika\Time\Second;
 use Kronika\Utils\Compared;
-use Kronika\Utils\WeakRefsTrait;
+use Kronika\Utils\RefTrait;
 
 /**
  * Represents a local date-time without a time-zone.
  */
 final readonly class LocalDateTime implements DateTime
 {
-    /** @use WeakRefsTrait<static, Date|Time> */
-    use WeakRefsTrait;
+    /** @use RefTrait<static> */
+    use RefTrait;
 
     /**
      * Obtains an instance of `LocalDateTime` from a date and time.
@@ -52,7 +52,7 @@ final readonly class LocalDateTime implements DateTime
      */
     public static function of(Date $date, Time $time): self
     {
-        return self::weak(date: $date, time: $time);
+        return self::ref(date: $date, time: $time);
     }
 
     /**
@@ -340,19 +340,31 @@ final readonly class LocalDateTime implements DateTime
     #[\Override]
     public function toNative(?\DateTimeZone $timezone = null): \DateTimeImmutable
     {
-        return \DateTimeImmutable::createFromFormat('Y-m-d\TH:i:s.u', (string)$this, $timezone);
+        /** @psalm-ignore-falsable-return */
+        return $this->remember(fn(): \DateTimeImmutable => \DateTimeImmutable::createFromFormat(
+            format: 'Y-m-d\TH:i:s.u',
+            datetime: (string)$this,
+            timezone: $timezone,
+        ), key: __METHOD__);
     }
 
     #[\Override]
     public function toNativeMutable(?\DateTimeZone $timezone = null): \DateTime
     {
-        return \DateTime::createFromFormat('Y-m-d\TH:i:s.u', (string)$this, $timezone);
+        /** @psalm-ignore-falsable-return */
+        return \DateTime::createFromFormat(
+            format: 'Y-m-d\TH:i:s.u',
+            datetime: (string)$this,
+            timezone: $timezone,
+        );
     }
 
     #[\Override]
     public function instant(): Instant
     {
-        return $this->date->instant()->join($this->time->instant());
+        return $this->remember(static function (self $that): Instant {
+            return $that->date->instant()->join($that->time->instant());
+        }, key: __METHOD__);
     }
 
     #[\Override]

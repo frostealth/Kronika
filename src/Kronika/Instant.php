@@ -15,7 +15,7 @@ namespace Kronika;
 
 use Kronika\Utils\Compared;
 use Kronika\Utils\Math;
-use Kronika\Utils\WeakRefsTrait;
+use Kronika\Utils\RefTrait;
 use function Kronika\Utils\math;
 use function Kronika\Utils\Math\double;
 use function Kronika\Utils\Math\double_split;
@@ -30,8 +30,8 @@ use function Kronika\Utils\Math\double_split;
  */
 final readonly class Instant
 {
-    /** @use WeakRefsTrait<static, int> */
-    use WeakRefsTrait;
+    /** @use RefTrait<static> */
+    use RefTrait;
 
     /**
      * Obtains an instance of `Instant` from a second and microsecond.
@@ -47,7 +47,7 @@ final readonly class Instant
      */
     public static function of(int $second, int $micro = 0): self
     {
-        return self::weak(second: $second, microsecond: $micro);
+        return self::ref(second: $second, microsecond: $micro);
     }
 
     /**
@@ -117,7 +117,10 @@ final readonly class Instant
      */
     public function value(): float
     {
-        return double([$this->second, $this->microsecond]);
+        return $this->remember(static fn(self $that): float => double([
+            $that->second,
+            $that->microsecond,
+        ]), key: __METHOD__);
     }
 
     /**

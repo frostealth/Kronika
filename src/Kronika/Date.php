@@ -24,7 +24,7 @@ use Kronika\Exception\MalformedString;
 use Kronika\Format\Date\Formatted;
 use Kronika\Format\Date\Formatter;
 use Kronika\Utils\Compared;
-use Kronika\Utils\WeakRefsTrait;
+use Kronika\Utils\RefTrait;
 
 /**
  * Represents a date.
@@ -35,8 +35,8 @@ use Kronika\Utils\WeakRefsTrait;
  */
 final readonly class Date implements Unit
 {
-    /** @use WeakRefsTrait<static,Year|TYear|Month|TMonth|DayOfMonth|TDayOfMonth> */
-    use WeakRefsTrait;
+    /** @use RefTrait<static> */
+    use RefTrait;
 
     /**
      * Obtains an instance of `Date` from a year, month and day of the month.
@@ -55,7 +55,7 @@ final readonly class Date implements Unit
      */
     public static function of(Year|int $year, Month|int $month, DayOfMonth|int $day): self
     {
-        return self::weak(year: Year::of($year), month: Month::of($month)->number(), day: DayOfMonth::of($day));
+        return self::ref(year: Year::of($year), month: Month::of($month)->number(), day: DayOfMonth::of($day));
     }
 
     /**
@@ -85,15 +85,11 @@ final readonly class Date implements Unit
      */
     public static function ofInstant(Instant $instant): self
     {
-        /** @var \WeakMap<Instant, self> $references */
-        static $references = new \WeakMap();
-        if (isset($references[$instant])) {
-            return $references[$instant];
-        }
+        return self::map($instant, static function (Instant $instant): self {
+            ['year' => $year, 'mon' => $month, 'mday' => $day] = \getdate($instant->second());
 
-        ['year' => $year, 'mon' => $month, 'mday' => $day] = \getdate($instant->second());
-
-        return $references[$instant] = self::of($year, $month, $day);
+            return self::of($year, $month, $day);
+        }, key: __METHOD__);
     }
 
     /**
@@ -180,7 +176,9 @@ final readonly class Date implements Unit
      */
     public function dayOfWeek(): DayOfWeek
     {
-        return DayOfWeek::of(\getdate($this->instant()->second())['wday']);
+        return $this->remember(static fn(self $date): DayOfWeek => DayOfWeek::of(
+            \getdate($date->instant()->second())['wday'],
+        ), key: __METHOD__);
     }
 
     /**
@@ -188,7 +186,9 @@ final readonly class Date implements Unit
      */
     public function dayOfYear(): DayOfYear
     {
-        return DayOfYear::of($this->toStartOfYear()->until($this)->days() + 1);
+        return $this->remember(static fn(self $date): DayOfYear => DayOfYear::of(
+            $date->toStartOfYear()->until($date)->days() + 1,
+        ), key: __METHOD__);
     }
 
     /**
@@ -692,7 +692,9 @@ final readonly class Date implements Unit
      */
     public function instant(): Instant
     {
-        return Instant::of(\strtotime((string)$this));
+        return $this->remember(static fn(self $date): Instant => Instant::of(
+            \strtotime((string)$date),
+        ), key: __METHOD__);
     }
 
     /** @return non-empty-string */

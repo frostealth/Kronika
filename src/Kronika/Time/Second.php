@@ -15,7 +15,7 @@ namespace Kronika\Time;
 
 use Kronika\Time;
 use Kronika\Utils\Compared;
-use Kronika\Utils\WeakRefsTrait;
+use Kronika\Utils\RefTrait;
 use function Kronika\Utils\Math\double;
 
 /**
@@ -27,8 +27,8 @@ use function Kronika\Utils\Math\double;
  */
 final readonly class Second implements TimeUnit
 {
-    /** @use WeakRefsTrait<static,TSecond|TMicrosecond> */
-    use WeakRefsTrait;
+    /** @use RefTrait<static> */
+    use RefTrait;
     use Trait\TimeUnit;
 
     /**
@@ -53,7 +53,7 @@ final readonly class Second implements TimeUnit
             return $micro === null ? $second : self::of($second->second(), $micro);
         }
 
-        return self::weak(second: $second, microsecond: $micro ?? 0);
+        return self::ref(second: $second, microsecond: $micro ?? 0);
     }
 
     /**

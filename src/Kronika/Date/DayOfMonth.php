@@ -16,7 +16,7 @@ namespace Kronika\Date;
 use Kronika\Date;
 use Kronika\Duration;
 use Kronika\Utils\Compared;
-use Kronika\Utils\WeakRefsTrait;
+use Kronika\Utils\RefTrait;
 
 /**
  * Represents a day of month.
@@ -26,8 +26,8 @@ use Kronika\Utils\WeakRefsTrait;
  */
 final readonly class DayOfMonth implements DateUnit
 {
-    /** @use WeakRefsTrait<static,TDayOfMonth> */
-    use WeakRefsTrait;
+    /** @use RefTrait<static> */
+    use RefTrait;
     use Trait\DateUnit;
 
     /**
@@ -43,7 +43,7 @@ final readonly class DayOfMonth implements DateUnit
      */
     public static function of(int|self $value): self
     {
-        return $value instanceof self ? $value : self::weak(number: $value);
+        return $value instanceof self ? $value : self::ref(number: $value);
     }
 
     /**
