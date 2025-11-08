@@ -29,7 +29,7 @@ use Kronika\Utils\Compared;
 use Kronika\Utils\RefTrait;
 
 /**
- * Represents a local date-time without a time-zone.
+ * Represents a local date-time without time-zone.
  */
 final readonly class LocalDateTime implements DateTime
 {
@@ -56,7 +56,7 @@ final readonly class LocalDateTime implements DateTime
     }
 
     /**
-     * Obtains an instance of `LocalDateTime` from a date-time with a time-zone.
+     * Obtains an instance of `LocalDateTime` from a given date-time.
      */
     public static function ofDateTime(DateTime|Native $datetime): self
     {
@@ -73,7 +73,7 @@ final readonly class LocalDateTime implements DateTime
     }
 
     /**
-     * Obtain an instance of `LocalDateTime` from a `Instant`.
+     * Obtain an instance of `LocalDateTime` from `Instant`.
      */
     public static function ofInstant(Instant $instant): self
     {

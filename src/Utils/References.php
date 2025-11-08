@@ -71,19 +71,33 @@ final class References
         return $this->map[$holder][$key] ??= \is_callable($held) ? $held(...$args) : $held;
     }
 
-    /** @param non-empty-string|null $type */
-    public function cleanUp(?string $type = null): void
+    public function remove(object $instance): void
     {
-        if ($type !== null && ! isset($this->references[$type])) return;
+        unset($this->map[$instance]);
+        if (! isset($this->references[$instance::class])) {
+            return;
+        }
 
-        $keys = $type !== null ? [$type] : array_keys($this->references);
-        foreach ($keys as $key) {
-            $this->references[$key] = \array_filter(
-                $this->references[$key] ?? [],
-                static fn(\WeakReference $reference): bool => $reference->get() !== null,
-            );
-            if ($this->references[$key] === []) {
-                unset($this->references[$key]);
+        foreach ($this->references[$instance::class] ?? [] as $key => $reference) {
+            if ($reference->get() === $instance) {
+                unset($this->references[$instance::class][$key]);
+            }
+        }
+        if ($this->references[$instance::class] === []) {
+            unset($this->references[$instance::class]);
+        }
+    }
+
+    public function cleanUp(): void
+    {
+        foreach ($this->references as $type => $references) {
+            foreach ($references as $key => $reference) {
+                if ($reference->get() === null) {
+                    unset($this->references[$type][$key]);
+                }
+            }
+            if ($this->references[$type] === []) {
+                unset($this->references[$type]);
             }
         }
     }

@@ -30,7 +30,7 @@ trait RefTrait
      */
     final protected static function ref(?callable $factory = null, mixed ...$args): static
     {
-        $factory ??= static fn (mixed ...$args): object => new static(...$args);
+        $factory ??= static fn(mixed ...$args): object => new static(...$args);
 
         return references()->ref(static::class, $factory, ...$args);
     }
@@ -99,6 +99,6 @@ trait RefTrait
     /** @internal */
     public function __destruct()
     {
-        references()->cleanUp(static::class);
+        references()->remove($this);
     }
 }
