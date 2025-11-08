@@ -32,42 +32,73 @@ trait RefTrait
     {
         $factory ??= static fn (mixed ...$args): object => new static(...$args);
 
-        return references()->get(static::class, $factory, ...$args);
+        return references()->ref(static::class, $factory, ...$args);
     }
 
     /**
-     * @template MType of mixed
-     * @template MArg
+     * @template THolder of object
+     * @template TArg
      *
-     * @param MType|(callable(MArg...): MType) $held
-     * @param non-empty-string $key
-     * @param MArg ...$args
+     * @param THolder $holder
+     * @param TType|(callable(THolder, TArg...): TType) $held
+     * @param (callable(THolder, TArg...): bool)|null $when
+     * @param non-empty-string|null $remember
+     * @param TArg ...$args
      *
-     * @return MType
+     * @return TType
      */
-    final protected static function map(object $holder, object|callable $held, string $key, mixed ...$args): mixed
-    {
-        return references()->mapped(static::class . ':' . $key, $holder, $held, $holder, ...$args);
+    final protected static function map(
+        object $holder,
+        self|callable $held,
+        ?callable $when = null,
+        ?string $remember = null,
+        mixed ...$args,
+    ): static {
+        if ($when !== null && ! $when($holder, ...$args)) {
+            return \is_callable($held) ? $held($holder, ...$args) : $held;
+        }
+
+        $instance = references()->map($holder, static::class, $held, $holder, ...$args);
+        if ($remember !== null) {
+            $instance->remember($holder, self::method($remember));
+        }
+
+        return $instance;
     }
 
     /**
-     * @template MType of mixed
-     * @template MArg
+     * @param non-empty-string $name
      *
-     * @param MType|(callable(MArg...): MType) $held
-     * @param non-empty-string $key
-     * @param MArg ...$args
-     *
-     * @return MType
+     * @return non-empty-string
      */
-    final protected function remember(object|callable $held, string $key, mixed ...$args): mixed
+    private static function method(string $name): string
     {
-        return self::map($this, $held, $key, ...$args);
+        return static::class . '::' . $name;
+    }
+
+    /**
+     * @template RType of mixed
+     * @template RArg
+     *
+     * @param RType|(callable(TType, RArg...): RType) $held
+     * @param non-empty-string $key
+     * @param (callable(): bool)|null $when
+     * @param RArg ...$args
+     *
+     * @return RType
+     */
+    final protected function remember(mixed $held, string $key, ?callable $when = null, mixed ...$args): mixed
+    {
+        if ($when !== null && ! $when()) {
+            return \is_callable($held) ? $held($this, ...$args) : $held;
+        }
+
+        return references()->map($this, $key, $held, $this, ...$args);
     }
 
     /** @internal */
     public function __destruct()
     {
-        references()->cleanUp();
+        references()->cleanUp(static::class);
     }
 }

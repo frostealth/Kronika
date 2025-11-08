@@ -74,7 +74,7 @@ final readonly class Time implements Unit
     /**
      * Obtains an instance of `Time` at the middle of the day ("12:00:00.000000").
      *
-     * @see self::midday()
+     * @see self::isMidday()
      */
     public static function midday(): self
     {
@@ -86,7 +86,7 @@ final readonly class Time implements Unit
     /**
      * Obtains an instance of `Time` at the end of the day ("23:59:59.999999").
      *
-     * @see self::endOfDay()
+     * @see self::isEndOfDay()
      */
     public static function endOfDay(): self
     {
@@ -104,9 +104,11 @@ final readonly class Time implements Unit
             return $datetime->time();
         }
 
-        [$hour, $minute, $second, $micro] = \sscanf($datetime->format('H:i:s.u'), '%u:%u:%u.%u');
+        return self::map($datetime, static function(Native $datetime): self {
+            [$hour, $minute, $second, $micro] = \sscanf($datetime->format('H:i:s.u'), '%u:%u:%u.%u');
 
-        return self::of($hour, $minute, Second::of($second, $micro));
+            return self::of($hour, $minute, Second::of($second, $micro));
+        }, when: static fn(Native $datetime): bool => $datetime instanceof \DateTimeImmutable);
     }
 
     /**
@@ -126,7 +128,7 @@ final readonly class Time implements Unit
             ['hours' => $hour, 'minutes' => $minute, 'seconds' => $second] = \getdate($instant->second());
 
             return self::of($hour, $minute, Second::of($second, $instant->microsecond()));
-        }, key: __METHOD__);
+        });
     }
 
     /**

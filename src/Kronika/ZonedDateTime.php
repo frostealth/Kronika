@@ -119,7 +119,9 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
             return $datetime;
         }
 
-        return self::ofLocal(LocalDateTime::ofDateTime($datetime), $datetime->getTimezone());
+        return self::map($datetime, static function(Native $datetime): self {
+            return self::ofLocal(LocalDateTime::ofDateTime($datetime), $datetime->getTimezone());
+        }, when: static fn(Native $datetime): bool => $datetime instanceof \DateTimeImmutable);
     }
 
     /**

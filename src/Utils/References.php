@@ -19,11 +19,14 @@ namespace Kronika\Utils;
  */
 final class References
 {
-    /** @var array<non-empty-string, \WeakReference> */
+    /** @var array<class-string, array<non-empty-string, \WeakReference>> */
     private array $references = [];
+    private \WeakMap $map;
 
-    /** @var array<non-empty-string, \WeakMap> */
-    private array $map = [];
+    public function __construct()
+    {
+        $this->map = new \WeakMap();
+    }
 
     /**
      * @template TType of object
@@ -35,17 +38,18 @@ final class References
      *
      * @return TType
      */
-    public function get(string $type, callable $factory, mixed ...$args): object
+    public function ref(string $type, callable $factory, mixed ...$args): object
     {
-        $key = $this->key($type, ...$args);
-        $reference = $this->references[$key] ?? null;
-        $instance = $reference?->get();
+        $this->references[$type] ??= [];
+        $key = self::key(...$args);
+
+        $instance = ($this->references[$type][$key] ?? null)?->get();
         if (\is_a($instance, $type, allow_string: true)) {
             return $instance;
         }
 
         $instance = $factory(...$args);
-        $this->references[$key] = \WeakReference::create($instance);
+        $this->references[$type][$key] = \WeakReference::create($instance);
 
         return $instance;
     }
@@ -60,23 +64,37 @@ final class References
      *
      * @return TType
      */
-    public function mapped(string $key, object $holder, callable|object $held, mixed ...$args): mixed
+    public function map(object $holder, string $key, mixed $held, mixed ...$args): mixed
     {
-        $map = $this->map[$key] ??= new \WeakMap();
+        $this->map[$holder] ??= [];
 
-        return $map[$holder] ??= \is_callable($held) ? $held(...$args) : $held;
+        return $this->map[$holder][$key] ??= \is_callable($held) ? $held(...$args) : $held;
     }
 
-    public function cleanUp(): void
+    /** @param non-empty-string|null $type */
+    public function cleanUp(?string $type = null): void
     {
-        $this->references = \array_filter(
-            $this->references,
-            static fn(\WeakReference $reference): bool => $reference->get() !== null,
-        );
-        $this->map = \array_filter($this->map, static fn(\WeakMap $map): bool => count($map) > 0);
+        if ($type !== null && ! isset($this->references[$type])) return;
+
+        $keys = $type !== null ? [$type] : array_keys($this->references);
+        foreach ($keys as $key) {
+            $this->references[$key] = \array_filter(
+                $this->references[$key] ?? [],
+                static fn(\WeakReference $reference): bool => $reference->get() !== null,
+            );
+            if ($this->references[$key] === []) {
+                unset($this->references[$key]);
+            }
+        }
     }
 
-    private function key(mixed ...$args): string
+    public function reset(): void
+    {
+        $this->references = [];
+        $this->map = new \WeakMap();
+    }
+
+    private static function key(mixed ...$args): string
     {
         static $hash = static function (int|string $key, mixed $value): string {
             $prepareValue = static function (mixed $value): string {

@@ -67,7 +67,9 @@ final readonly class LocalDateTime implements DateTime
             return $datetime->toLocalDateTime();
         }
 
-        return self::of(Date::ofDateTime($datetime), Time::ofDateTime($datetime));
+        return self::map($datetime, static function(Native $datetime): self {
+            return self::of(Date::ofDateTime($datetime), Time::ofDateTime($datetime));
+        }, when: static fn(Native $datetime): bool => $datetime instanceof \DateTimeImmutable);
     }
 
     /**
@@ -75,7 +77,9 @@ final readonly class LocalDateTime implements DateTime
      */
     public static function ofInstant(Instant $instant): self
     {
-        return self::of(Date::ofInstant($instant), Time::ofInstant($instant));
+        return self::map($instant, static function(Instant $instant): self {
+            return self::of(Date::ofInstant($instant), Time::ofInstant($instant));
+        }, remember: 'instant');
     }
 
     /**
@@ -341,22 +345,14 @@ final readonly class LocalDateTime implements DateTime
     public function toNative(?\DateTimeZone $timezone = null): \DateTimeImmutable
     {
         /** @psalm-ignore-falsable-return */
-        return $this->remember(fn(): \DateTimeImmutable => \DateTimeImmutable::createFromFormat(
-            format: 'Y-m-d\TH:i:s.u',
-            datetime: (string)$this,
-            timezone: $timezone,
-        ), key: __METHOD__);
+        return \DateTimeImmutable::createFromFormat('Y-m-d\TH:i:s.u', (string)$this, $timezone);
     }
 
     #[\Override]
     public function toNativeMutable(?\DateTimeZone $timezone = null): \DateTime
     {
         /** @psalm-ignore-falsable-return */
-        return \DateTime::createFromFormat(
-            format: 'Y-m-d\TH:i:s.u',
-            datetime: (string)$this,
-            timezone: $timezone,
-        );
+        return \DateTime::createFromFormat('Y-m-d\TH:i:s.u', (string)$this, $timezone);
     }
 
     #[\Override]

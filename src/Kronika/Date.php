@@ -67,9 +67,11 @@ final readonly class Date implements Unit
             return $datetime->date();
         }
 
-        [$year, $month, $day] = \sscanf($datetime->format('Y-m-d'), '%d-%u-%u');
+        return self::map($datetime, static function (Native $datetime): self {
+            [$year, $month, $day] = \sscanf($datetime->format('Y-m-d'), '%d-%u-%u');
 
-        return self::of($year, $month, $day);
+            return self::of($year, $month, $day);
+        }, when: static fn(Native $datetime): bool => $datetime instanceof \DateTimeImmutable);
     }
 
     /**
@@ -89,7 +91,7 @@ final readonly class Date implements Unit
             ['year' => $year, 'mon' => $month, 'mday' => $day] = \getdate($instant->second());
 
             return self::of($year, $month, $day);
-        }, key: __METHOD__);
+        });
     }
 
     /**
