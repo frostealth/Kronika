@@ -35,7 +35,6 @@ use Kronika\Utils\RefTrait;
  */
 final readonly class Date implements Unit
 {
-    /** @use RefTrait<static> */
     use RefTrait;
 
     /**

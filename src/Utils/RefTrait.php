@@ -14,8 +14,6 @@ declare(strict_types=1);
 namespace Kronika\Utils;
 
 /**
- * @template TType of static
- *
  * @internal
  */
 trait RefTrait
@@ -23,10 +21,10 @@ trait RefTrait
     /**
      * @template TArg
      *
-     * @param (callable(TArg...): TType)|null $factory
+     * @param (callable(TArg...): static)|null $factory
      * @param TArg ...$args
      *
-     * @return TType
+     * @return static
      */
     final protected static function ref(?callable $factory = null, mixed ...$args): static
     {
@@ -40,12 +38,12 @@ trait RefTrait
      * @template TArg
      *
      * @param THolder $holder
-     * @param TType|(callable(THolder, TArg...): TType) $held
+     * @param static|(callable(THolder, TArg...): static) $held
      * @param (callable(THolder, TArg...): bool)|null $when
      * @param non-empty-string|null $remember
      * @param TArg ...$args
      *
-     * @return TType
+     * @return static
      */
     final protected static function map(
         object $holder,
@@ -80,7 +78,7 @@ trait RefTrait
      * @template RType of mixed
      * @template RArg
      *
-     * @param RType|(callable(TType, RArg...): RType) $held
+     * @param RType|(callable(static, RArg...): RType) $held
      * @param non-empty-string $key
      * @param (callable(): bool)|null $when
      * @param RArg ...$args

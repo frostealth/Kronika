@@ -25,9 +25,8 @@ use Kronika\Utils\RefTrait;
  */
 final readonly class Minute implements TimeUnit
 {
-    /** @use RefTrait<static> */
-    use RefTrait;
     use Trait\TimeUnit;
+    use RefTrait;
 
     /**
      * Obtains an instance of `Minute` from a value.

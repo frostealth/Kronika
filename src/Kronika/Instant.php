@@ -30,7 +30,6 @@ use function Kronika\Utils\Math\double_split;
  */
 final readonly class Instant
 {
-    /** @use RefTrait<static> */
     use RefTrait;
 
     /**

@@ -26,9 +26,8 @@ use Kronika\Utils\RefTrait;
  */
 final readonly class DayOfYear implements DateUnit
 {
-    /** @use RefTrait<static> */
-    use RefTrait;
     use Trait\DateUnit;
+    use RefTrait;
 
     /**
      * Obtains an instance of `DayOfYear` from a given number.

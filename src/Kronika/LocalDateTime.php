@@ -33,7 +33,6 @@ use Kronika\Utils\RefTrait;
  */
 final readonly class LocalDateTime implements DateTime
 {
-    /** @use RefTrait<static> */
     use RefTrait;
 
     /**

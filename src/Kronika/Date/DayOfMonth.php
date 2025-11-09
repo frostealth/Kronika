@@ -26,9 +26,8 @@ use Kronika\Utils\RefTrait;
  */
 final readonly class DayOfMonth implements DateUnit
 {
-    /** @use RefTrait<static> */
-    use RefTrait;
     use Trait\DateUnit;
+    use RefTrait;
 
     /**
      * Obtains an instance of `DayOfMonth` from a given number.

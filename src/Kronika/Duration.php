@@ -22,7 +22,6 @@ use Kronika\Utils\RefTrait;
  */
 final readonly class Duration
 {
-    /** @use RefTrait<static> */
     use RefTrait;
 
     /**

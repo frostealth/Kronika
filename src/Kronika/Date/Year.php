@@ -26,9 +26,8 @@ use Kronika\Utils\RefTrait;
  */
 final readonly class Year implements DateUnit
 {
-    /** @use RefTrait<static> */
-    use RefTrait;
     use Trait\DateUnit;
+    use RefTrait;
 
     /**
      * Obtains an instance of `Year` from a number.

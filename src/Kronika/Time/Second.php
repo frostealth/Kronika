@@ -27,9 +27,8 @@ use function Kronika\Utils\Math\double;
  */
 final readonly class Second implements TimeUnit
 {
-    /** @use RefTrait<static> */
-    use RefTrait;
     use Trait\TimeUnit;
+    use RefTrait;
 
     /**
      * Obtains an instance of `Second` from given values (second and microsecond).

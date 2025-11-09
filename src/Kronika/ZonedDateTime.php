@@ -36,7 +36,6 @@ use function Kronika\Utils\Math\double;
  */
 final class ZonedDateTime extends \DateTimeImmutable implements DateTime
 {
-    /** @use RefTrait<static> */
     use RefTrait;
 
     /**

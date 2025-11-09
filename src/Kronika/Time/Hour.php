@@ -25,9 +25,8 @@ use Kronika\Utils\RefTrait;
  */
 final readonly class Hour implements TimeUnit
 {
-    /** @use RefTrait<static> */
-    use RefTrait;
     use Trait\TimeUnit;
+    use RefTrait;
 
     /**
      * Obtains an instance of `Hour` from a value.
