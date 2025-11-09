@@ -32,7 +32,7 @@ use function Kronika\Utils\Math\double;
 /**
  * Represents a date-time with time-zone.
  *
- * @psalm-import-type TMicrosecond from Second
+ * @psalm-import-type TMicrosecond from \Kronika\Time\Second
  */
 final class ZonedDateTime extends \DateTimeImmutable implements DateTime
 {

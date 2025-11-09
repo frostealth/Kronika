@@ -16,8 +16,8 @@ namespace Kronika\Utils\Math;
 use Kronika\Utils\Math;
 
 /**
- * @psalm-import-type TFraction from Math
- * @psalm-import-type TPrecision from Math
+ * @psalm-import-type TFraction from \Kronika\Utils\Math
+ * @psalm-import-type TPrecision from \Kronika\Utils\Math
  * @psalm-type TDelimiter=non-negative-int
  *
  * @psalm-internal Kronika\Utils

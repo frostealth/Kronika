@@ -32,17 +32,17 @@ namespace Kronika\Utils;
  * $result->greater();
  * ```
  *
- * @psalm-type Result=int<-1,1>
+ * @psalm-type TResult=int<-1,1>
  */
 final readonly class Compared
 {
-    /** @param Result $result */
+    /** @param TResult $result */
     public static function of(int $result): self
     {
         return new self($result);
     }
 
-    /** @param Result $result */
+    /** @param TResult $result */
     private function __construct(
         private int $result,
     ) {
@@ -51,7 +51,7 @@ final readonly class Compared
 
     public function less(): bool
     {
-        return -1 === $this->result;
+        return $this->result === -1;
     }
 
     public function lessOrEqual(): bool
@@ -61,7 +61,7 @@ final readonly class Compared
 
     public function equal(): bool
     {
-        return 0 === $this->result;
+        return $this->result === 0;
     }
 
     public function notEqual(): bool
@@ -76,10 +76,10 @@ final readonly class Compared
 
     public function greater(): bool
     {
-        return 1 === $this->result;
+        return $this->result === 1;
     }
 
-    /** @return Result */
+    /** @return TResult */
     public function value(): int
     {
         return $this->result;

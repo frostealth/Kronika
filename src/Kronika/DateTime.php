@@ -152,7 +152,7 @@ interface DateTime extends \Stringable
     public function add(Duration $interval): static;
 
     /**
-     * Subtracts an amount of days, hours, minutes and seconds to this date-time.
+     * Subtracts an amount of days, hours, minutes and seconds from this date-time.
      *
      * ```
      * // 2025-12-31 10:15:30 - 2 days and 45 minutes

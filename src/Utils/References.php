@@ -59,7 +59,7 @@ final class References
      * @template TArg
      *
      * @param non-empty-string $key
-     * @param TType|(callable(TArg...): TType) $held
+     * @param (callable(TArg...): TType)|TType $held
      * @param TArg ...$args
      *
      * @return TType

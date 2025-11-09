@@ -29,9 +29,9 @@ use Kronika\Utils\RefTrait;
 /**
  * Represents a date.
  *
- * @psalm-type TYear=int<-9999,9999>
- * @psalm-type TMonth=value-of<Month>
- * @psalm-type TDayOfMonth=int<1,31>
+ * @psalm-import-type TYear from \Kronika\Date\Year
+ * @psalm-import-type TMonth from \Kronika\Date\Month
+ * @psalm-import-type TDayOfMonth from \Kronika\Date\DayOfMonth
  */
 final readonly class Date implements Unit
 {
@@ -305,7 +305,7 @@ final readonly class Date implements Unit
 
 
     /**
-     * Subtracts an amount of days, hours, minutes and seconds to this date.
+     * Subtracts an amount of days from this date.
      *
      * ```
      * // 2025-12-31 - 2 days

@@ -241,7 +241,7 @@ final readonly class Duration
     }
 
     /**
-     * Subtracts other durations to this one.
+     * Subtracts other durations from this one.
      *
      * ```
      * // 2 days, 12 hours, 30 minutes, 45 second

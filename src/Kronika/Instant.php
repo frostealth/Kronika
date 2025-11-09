@@ -140,7 +140,7 @@ final readonly class Instant
     }
 
     /**
-     * Subtracts an amount of days, hours, minutes and seconds to this instant.
+     * Subtracts an amount of days, hours, minutes and seconds from this instant.
      *
      * ```
      * // 1767161730.004545 - 2 days and 45 minutes
