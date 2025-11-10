@@ -2,8 +2,11 @@
 All notable changes to `Kronika` will be documented in this file.
 
 ## [Unreleased]
+### Added
 
-## [0.2.2] – 2025-11-10
+### Changed
+
+## [0.2.2](https://github.com/frostealth/kronika/releases/tag/0.2.2) – 2025-11-10
 ### Added
 - Improvements in working with references.
 
@@ -12,7 +15,7 @@ All notable changes to `Kronika` will be documented in this file.
 - Native format "U"/"U.u" for `LocalDateTime`.
 - `LocalDateTime::toNative()`.
 
-## [0.2.1] – 2025-11-07
+## [0.2.1](https://github.com/frostealth/kronika/releases/tag/0.2.1) – 2025-11-07
 ### Added
 - `Date\DayOfYear`.
 - `Date::dayOfYear()` and `DateTime::dayOfYear()`.
@@ -34,7 +37,7 @@ All notable changes to `Kronika` will be documented in this file.
 ### Fixed
 - Comparison via operators (`<`, `>`, `<=>`).
 
-## [0.2.0] – 2025-11-05
+## [0.2.0](https://github.com/frostealth/kronika/releases/tag/0.2.0) – 2025-11-05
 ### Added
 - Clock implementations.
 - `earliest()` function.
@@ -54,3 +57,5 @@ All notable changes to `Kronika` will be documented in this file.
 - `*::diff()` methods.
 - `Instant::atTimezone()` method.
 - `Duration::between()` method.
+
+[unreleased]: https://github.com/frostealth/kronika/tree/0.x
