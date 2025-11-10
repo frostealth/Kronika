@@ -87,7 +87,7 @@ final readonly class Date implements Unit
     public static function ofInstant(Instant $instant): self
     {
         return self::map($instant, static function (Instant $instant): self {
-            ['year' => $year, 'mon' => $month, 'mday' => $day] = \getdate($instant->second());
+            [$year, $month, $day] = \sscanf(\gmdate('Y-m-d', $instant->second()), '%d-%u-%u');
 
             return self::of($year, $month, $day);
         });
@@ -178,7 +178,7 @@ final readonly class Date implements Unit
     public function dayOfWeek(): DayOfWeek
     {
         return $this->remember(static fn(self $date): DayOfWeek => DayOfWeek::of(
-            \getdate($date->instant()->second())['wday'],
+            (int)\gmdate('N', $date->instant()->second()),
         ), key: __METHOD__);
     }
 
@@ -704,7 +704,7 @@ final readonly class Date implements Unit
     public function instant(): Instant
     {
         return $this->remember(static fn(self $date): Instant => Instant::of(
-            \strtotime((string)$date),
+            \strtotime("$date UTC"),
         ), key: __METHOD__);
     }
 

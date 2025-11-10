@@ -124,7 +124,7 @@ final readonly class Time implements Unit
     public static function ofInstant(Instant $instant): self
     {
         return self::map($instant, static function (Instant $instant): self {
-            ['hours' => $hour, 'minutes' => $minute, 'seconds' => $second] = \getdate($instant->second());
+            [$hour, $minute, $second] = \sscanf(\gmdate('H:i:s', $instant->second()), '%u:%u:%u');
 
             return self::of($hour, $minute, Second::of($second, $instant->microsecond()));
         });

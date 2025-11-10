@@ -6,6 +6,8 @@ All notable changes to `Kronika` will be documented in this file.
 - Improvements in working with references.
 
 ### Fixed
+- `*::instant()` and `*::ofInstant()` methods.
+- Native format "U"/"U.u" for `LocalDateTime`.
 - `LocalDateTime::toNative()`.
 
 ## [0.2.1] – 2025-11-07

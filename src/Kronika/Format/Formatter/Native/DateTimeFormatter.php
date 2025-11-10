@@ -21,6 +21,7 @@ use Kronika\Format\DateTime\Formatter;
 use Kronika\Format\Exception\FormatterError;
 use Kronika\Format\Parsed;
 use Kronika\LocalDateTime;
+use function Kronika\timezone_utc;
 
 final readonly class DateTimeFormatter implements Formatter
 {
@@ -29,7 +30,7 @@ final readonly class DateTimeFormatter implements Formatter
     {
         $this->assertNotEmpty($format, 'Format');
 
-        return $formattable->toNative()->format(
+        return $formattable->toNative(timezone_utc())->format(
             format: $formattable instanceof LocalDateTime ? $this->sanitize($format) : $format,
         );
     }
