@@ -87,7 +87,7 @@ final readonly class Date implements Unit
             return $references[$instant];
         }
 
-        ['year' => $year, 'mon' => $month, 'mday' => $day] = \getdate($instant->second());
+        [$year, $month, $day] = \sscanf(\gmdate('Y-m-d', $instant->second()), '%d-%u-%u');
 
         return $references[$instant] = self::of($year, $month, $day);
     }
@@ -529,7 +529,7 @@ final readonly class Date implements Unit
      */
     public function instant(): Instant
     {
-        return Instant::of(\strtotime((string)$this));
+        return Instant::of(\strtotime("$this UTC"));
     }
 
     /** @return non-empty-string */

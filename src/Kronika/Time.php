@@ -119,7 +119,7 @@ final readonly class Time implements Unit
             return $references[$instant];
         }
 
-        ['hours' => $hour, 'minutes' => $minute, 'seconds' => $second] = \getdate($instant->second());
+        [$hour, $minute, $second] = \sscanf(\gmdate('H:i:s', $instant->second()), '%u:%u:%u');
 
         return $references[$instant] = self::of($hour, $minute, Second::of($second, $instant->microsecond()));
     }

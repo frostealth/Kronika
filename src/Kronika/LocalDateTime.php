@@ -332,7 +332,7 @@ final readonly class LocalDateTime implements DateTime
     #[\Override]
     public function format(string $format): string
     {
-        return $this->toNative()->format(self::quote($format));
+        return $this->toNative(new \DateTimeZone('UTC'))->format(self::quote($format));
     }
 
     /**
