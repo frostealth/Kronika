@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to `Kronika` will be documented in this file.
 
-## [Unreleased]
+## [0.2.2] – 2025-11-10
 ### Added
 - Improvements in working with references.
 
