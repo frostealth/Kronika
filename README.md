@@ -321,15 +321,15 @@ $range = DateTimeRange::of(
     since: ZonedDateTime::parse('2025-12-15 12:30:45 +01:00'),  // inclusive
     till: LocalDateTime::parse('2025-12-18 10:00:30'),          // exclusive
 );
-echo $range->since()->format('Y-m-d');  // 2025-12-15 12:30:45 +01:00
-echo $range->till()->format('Y-m-d');   // 2025-12-18 10:00:30
+echo $range->since()->format('Y-m-d H:i:s P');  // 2025-12-15 12:30:45 +01:00
+echo $range->till()->format('Y-m-d H:i:s');     // 2025-12-18 10:00:30
 
 echo $range->contains(LocalDateTime::parse('2025-12-15 12:30:45'));  // true
 echo $range->contains(LocalDateTime::parse('2025-12-18 10:00:30'));  // false
 
 // getting each item with the specified step
 foreach ($range->each(Duration::of(days: 1)) as $item) {
-    echo $item->format('Y-m-d');
+    echo $item->format('Y-m-d H:i:s P');
 }
 // 2025-12-15 12:30:45 +01:00
 // 2025-12-16 12:30:45 +01:00
