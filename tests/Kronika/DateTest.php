@@ -236,6 +236,127 @@ final class DateTest extends TestCase
         self::assertEquals($expected, $result);
     }
 
+    #[TestWith([[2025, 12, 15], [2025, 11, 15]])]
+    #[TestWith([[2025, 10, 31], [2025, 9, 30]])]
+    #[TestWith([[2025, 6, 1], [2025, 5, 1]])]
+    #[TestWith([[2025, 3, 31], [2025, 2, 28]])]
+    #[TestWith([[2025, 3, 30], [2025, 2, 28]])]
+    #[TestWith([[2025, 3, 29], [2025, 2, 28]])]
+    #[TestWith([[2025, 1, 31], [2024, 12, 31]])]
+    #[TestWith([[2025, 1, 30], [2024, 12, 30]])]
+    #[TestWith([[2025, 1, 1], [2024, 12, 1]])]
+    #[TestWith([[2024, 3, 31], [2024, 2, 29]])]
+    #[TestWith([[2024, 3, 30], [2024, 2, 29]])]
+    #[TestWith([[2024, 3, 29], [2024, 2, 29]])]
+    #[DependsOnClass(YearTest::class)]
+    #[DependsOnClass(MonthTest::class)]
+    #[DependsOnClass(DayOfMonthTest::class)]
+    #[Depends('testWith')]
+    public function testToPreviousMonth(array $date, array $expected): void
+    {
+        $date = Date::of(...$date);
+        $expected = Date::of(...$expected);
+
+        self::assertEquals($expected, $date->toPreviousMonth());
+    }
+
+    #[TestWith([[2024, 12, 15], [2025, 1, 15]])]
+    #[TestWith([[2024, 12, 31], [2025, 1, 31]])]
+    #[TestWith([[2025, 11, 15], [2025, 12, 15]])]
+    #[TestWith([[2025, 9, 30], [2025, 10, 30]])]
+    #[TestWith([[2025, 5, 1], [2025, 6, 1]])]
+    #[TestWith([[2025, 7, 31], [2025, 8, 31]])]
+    #[TestWith([[2025, 1, 29], [2025, 2, 28]])]
+    #[TestWith([[2025, 1, 31], [2025, 2, 28]])]
+    #[TestWith([[2025, 2, 28], [2025, 3, 28]])]
+    #[TestWith([[2025, 1, 1], [2025, 2, 1]])]
+    #[TestWith([[2024, 1, 31], [2024, 2, 29]])]
+    #[TestWith([[2024, 1, 30], [2024, 2, 29]])]
+    #[TestWith([[2024, 1, 29], [2024, 2, 29]])]
+    #[DependsOnClass(YearTest::class)]
+    #[DependsOnClass(MonthTest::class)]
+    #[DependsOnClass(DayOfMonthTest::class)]
+    #[Depends('testWith')]
+    public function testToNextMonth(array $date, array $expected): void
+    {
+        $date = Date::of(...$date);
+        $expected = Date::of(...$expected);
+
+        self::assertEquals($expected, $date->toNextMonth());
+    }
+
+    #[TestWith([[2025, 12, 31], [2025, 12, 24]])]
+    #[TestWith([[2025, 10, 6], [2025, 9, 29]])]
+    #[TestWith([[2025, 9, 5], [2025, 8, 29]])]
+    #[TestWith([[2025, 3, 5], [2025, 2, 26]])]
+    #[TestWith([[2025, 1, 4], [2024, 12, 28]])]
+    #[TestWith([[2024, 3, 4], [2024, 2, 26]])]
+    #[DependsOnClass(DurationTest::class)]
+    #[Depends('testBasic')]
+    public function testToPreviousWeek(array $date, array $expected): void
+    {
+        $date = Date::of(...$date);
+        $expected = Date::of(...$expected);
+
+        self::assertEquals($expected, $date->toPreviousWeek());
+    }
+
+    #[TestWith([[2024, 1, 15], [2024, 1, 22]])]
+    #[TestWith([[2024, 1, 28], [2024, 2, 4]])]
+    #[TestWith([[2024, 2, 21], [2024, 2, 28]])]
+    #[TestWith([[2024, 2, 22], [2024, 2, 29]])]
+    #[TestWith([[2024, 2, 23], [2024, 3, 1]])]
+    #[TestWith([[2024, 5, 25], [2024, 6, 1]])]
+    #[TestWith([[2024, 7, 24], [2024, 7, 31]])]
+    #[TestWith([[2024, 12, 24], [2024, 12, 31]])]
+    #[TestWith([[2024, 12, 27], [2025, 1, 3]])]
+    #[DependsOnClass(DurationTest::class)]
+    #[Depends('testBasic')]
+    public function testToNextWeek(array $date, array $expected): void
+    {
+        $date = Date::of(...$date);
+        $expected = Date::of(...$expected);
+
+        self::assertEquals($expected, $date->toNextWeek());
+    }
+
+    #[TestWith([[2025, 1, 15], [2025, 1, 14]])]
+    #[TestWith([[2025, 5, 30], [2025, 5, 29]])]
+    #[TestWith([[2025, 6, 1], [2025, 5, 31]])]
+    #[TestWith([[2025, 3, 1], [2025, 2, 28]])]
+    #[TestWith([[2025, 12, 31], [2025, 12, 30]])]
+    #[TestWith([[2025, 1, 1], [2024, 12, 31]])]
+    #[TestWith([[2024, 3, 1], [2024, 2, 29]])]
+    #[DependsOnClass(DurationTest::class)]
+    #[Depends('testBasic')]
+    public function testToYesterday(array $date, array $expected): void
+    {
+        $date = Date::of(...$date);
+        $expected = Date::of(...$expected);
+
+        self::assertEquals($expected, $date->toYesterday());
+    }
+
+    #[TestWith([[2024, 12, 30], [2024, 12, 31]])]
+    #[TestWith([[2024, 12, 31], [2025, 1, 1]])]
+    #[TestWith([[2025, 1, 1], [2025, 1, 2]])]
+    #[TestWith([[2025, 1, 31], [2025, 2, 1]])]
+    #[TestWith([[2025, 2, 27], [2025, 2, 28]])]
+    #[TestWith([[2025, 2, 28], [2025, 3, 1]])]
+    #[TestWith([[2025, 3, 30], [2025, 3, 31]])]
+    #[TestWith([[2025, 10, 14], [2025, 10, 15]])]
+    #[TestWith([[2024, 2, 28], [2024, 2, 29]])]
+    #[TestWith([[2024, 2, 29], [2024, 3, 1]])]
+    #[DependsOnClass(DurationTest::class)]
+    #[Depends('testBasic')]
+    public function testToTomorrow(array $date, array $expected): void
+    {
+        $date = Date::of(...$date);
+        $expected = Date::of(...$expected);
+
+        self::assertEquals($expected, $date->toTomorrow());
+    }
+
     #[TestWith(['Y-m-d', '2025-01-15'])]
     #[TestWith(['Y m d', '2025 01 15'])]
     #[TestWith(['Y-n-d', '2025-1-15'])]

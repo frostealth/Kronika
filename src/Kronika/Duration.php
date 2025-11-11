@@ -65,9 +65,39 @@ final readonly class Duration
      */
     public static function zero(): self
     {
-        static $instance = self::of(seconds: 0);
+        static $zero = self::of(seconds: 0);
 
-        return $instance;
+        return $zero;
+    }
+
+    /**
+     * Obtains an instance of `Duration` equaled to the whole week.
+     */
+    public static function ofWeek(): self
+    {
+        static $week = self::of(days: 7);
+
+        return $week;
+    }
+
+    /**
+     * Obtains an instance of `Duration` equaled to the whole day.
+     */
+    public static function ofDay(): self
+    {
+        static $day = self::of(days: 1);
+
+        return $day;
+    }
+
+    /**
+     * Obtains an instance of `Duration` equaled to the whole hour.
+     */
+    public static function ofHour(): self
+    {
+        static $hour = self::of(hours: 1);
+
+        return $hour;
     }
 
     /**
@@ -353,6 +383,8 @@ final readonly class Duration
      * ```
      * Duration::zero()->isZero();  // true
      * ```
+     *
+     * @see self::zero()
      */
     public function isZero(): bool
     {

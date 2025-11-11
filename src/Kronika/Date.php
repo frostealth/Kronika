@@ -243,6 +243,7 @@ final readonly class Date implements Unit
      * ```
      *
      * @see \Kronika\Time::midnight()
+     * @see self::at()
      */
     public function atMidnight(): LocalDateTime
     {
@@ -258,6 +259,7 @@ final readonly class Date implements Unit
      * ```
      *
      * @see \Kronika\Time::midday()
+     * @see self::at()
      */
     public function atMidday(): LocalDateTime
     {
@@ -273,6 +275,7 @@ final readonly class Date implements Unit
      * ```
      *
      * @see \Kronika\Time::endOfDay()
+     * @see self::at()
      */
     public function atEndOfDay(): LocalDateTime
     {
@@ -403,6 +406,48 @@ final readonly class Date implements Unit
     }
 
     /**
+     * Returns an instance of `Date` with the previous month of this date.
+     *
+     * ```
+     * // 2025-03-31
+     * $this->toPreviousMonth();  // 2025-02-28
+     * ```
+     * ```
+     * // 2025-01-30
+     * $this->toPreviousMonth();  // 2024-12-30
+     * ```
+     */
+    public function toPreviousMonth(): self
+    {
+        if ($this->month()->isEqualTo(Month::January)) {
+            return self::of($this->year()->previous(), month: Month::December, day: $this->day());
+        }
+
+        return $this->with($this->month()->previous());
+    }
+
+    /**
+     * Returns an instance of `Date` with the next month of this date.
+     *
+     * ```
+     * // 2025-01-31
+     * $this->nextMonth();  // 2025-02-28
+     * ```
+     * ```
+     * // 2025-12-30
+     * $this->nextMonth();  // 2026-01-30
+     * ```
+     */
+    public function toNextMonth(): self
+    {
+        if ($this->month()->isEqualTo(Month::December)) {
+            return self::of($this->year()->next(), month: Month::January, day: $this->day());
+        }
+
+        return $this->with($this->month()->next());
+    }
+
+    /**
      * Returns an instance of `Date` with the first day of the month.
      *
      * ```
@@ -433,6 +478,58 @@ final readonly class Date implements Unit
     public function toEndOfMonth(): self
     {
         return $this->with($this->month()->lastDay($this->year()));
+    }
+
+    /**
+     * Returns an instance of `Date` with the previous week of this date.
+     *
+     * ```
+     * // 2026-01-07, Wednesday
+     * $this->toPreviousWeek();  // 2025-12-31, Wednesday
+     * ```
+     */
+    public function toPreviousWeek(): self
+    {
+        return $this->sub(Duration::ofWeek());
+    }
+
+    /**
+     * Returns an instance of `Date` with the next week of this date.
+     *
+     * ```
+     * // 2025-12-30, Tuesday
+     * $this->toNextWeek();  // 2026-01-06, Tuesday
+     * ```
+     */
+    public function toNextWeek(): self
+    {
+        return $this->add(Duration::ofWeek());
+    }
+
+    /**
+     * Returns an instance of `Date` with the previous day of this date.
+     *
+     * ```
+     * // 2025-03-01
+     * $this->toYesterday();  // 2025-02-28
+     * ```
+     */
+    public function toYesterday(): self
+    {
+        return $this->sub(Duration::ofDay());
+    }
+
+    /**
+     * Returns an instance of `Date` with the next day of this date.
+     *
+     * ```
+     * // 2025-12-31
+     * $this->toTomorrow();  // 2026-01-01
+     * ```
+     */
+    public function toTomorrow(): self
+    {
+        return $this->add(Duration::ofDay());
     }
 
     /**

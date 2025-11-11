@@ -3,8 +3,17 @@ All notable changes to `Kronika` will be documented in this file.
 
 ## [Unreleased]
 ### Added
+- `Date::toPreviousMonth()` and `Date::toNextMonth()`.
+- `Date::toPreviousWeek()` and `Date::toNextWeek()`.
+- `Date::toYesterday()` and `Date::toTomorrow()`.
+- `DayOfWeek::isWeekday()` and `DayOfWeek::isWeekend()`.
+- `Hour::previous()` and `Hour::next()`.
+- `Duration::ofWeek()` and `Duration::ofDay()`.
+- `Duration::ofHour()`.
 
 ### Changed
+- `Date\Month::previous()` doesn't return December for January anymore by default.
+- `Date\DayOfWeek::next()` doesn't return Monday for Sunday anymore by default.
 
 ## [0.2.2](https://github.com/frostealth/kronika/releases/tag/0.2.2) – 2025-11-10
 ### Added
@@ -30,8 +39,6 @@ All notable changes to `Kronika` will be documented in this file.
 - `rolling` option to `Date\DayOfWeek::next()` method.
 - `rolling` option to `Date\DayOfWeek::previous()` method.
 - `Date\Month::next()` doesn't return January for December anymore by default.
-- `Date\Month::previous()` doesn't return December for January anymore by default.
-- `Date\DayOfWeek::next()` doesn't return Monday for Sunday anymore by default.
 - `Date\DayOfWeek::previous()` doesn't return Sunday for Monday anymore by default.
 
 ### Fixed

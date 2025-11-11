@@ -134,6 +134,30 @@ enum DayOfWeek: int implements DateUnit
     }
 
     /**
+     * Checks if this day of week is weekday (working day).
+     *
+     * @see self::isWeekend()
+     */
+    public function isWeekday(): bool
+    {
+        return ! $this->isWeekend();
+    }
+
+    /**
+     * Checks if this day of week is weekend.
+     *
+     * @see self::isWeekday()
+     */
+    public function isWeekend(): bool
+    {
+        return match ($this) {
+            self::Saturday,
+            self::Sunday => true,
+            default => false,
+        };
+    }
+
+    /**
      * Checks if this day of week is before another one.
      *
      * ```

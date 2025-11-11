@@ -196,49 +196,4 @@ final class MonthTest extends TestCase
         self::assertEquals($expected->number(), $month->length($year));
         self::assertEquals(Duration::of(days: $expected->number()), $month->duration($year));
     }
-
-    public static function adjustDayProvider(): array
-    {
-        return [
-            [Month::January, Year::of(2025), DayOfMonth::of(1), DayOfMonth::of(1)],
-            [Month::January, Year::of(2025), DayOfMonth::of(15), DayOfMonth::of(15)],
-            [Month::January, Year::of(2025), DayOfMonth::of(30), DayOfMonth::of(30)],
-            [Month::January, Year::of(2025), DayOfMonth::of(31), DayOfMonth::of(31)],
-
-            [Month::February, Year::of(2024), DayOfMonth::of(1), DayOfMonth::of(1)],
-            [Month::February, Year::of(2024), DayOfMonth::of(15), DayOfMonth::of(15)],
-            [Month::February, Year::of(2024), DayOfMonth::of(28), DayOfMonth::of(28)],
-            [Month::February, Year::of(2024), DayOfMonth::of(29), DayOfMonth::of(29)],
-            [Month::February, Year::of(2024), DayOfMonth::of(30), DayOfMonth::of(29)],
-            [Month::February, Year::of(2024), DayOfMonth::of(31), DayOfMonth::of(29)],
-
-            [Month::February, Year::of(2025), DayOfMonth::of(1), DayOfMonth::of(1)],
-            [Month::February, Year::of(2025), DayOfMonth::of(15), DayOfMonth::of(15)],
-            [Month::February, Year::of(2025), DayOfMonth::of(28), DayOfMonth::of(28)],
-            [Month::February, Year::of(2025), DayOfMonth::of(29), DayOfMonth::of(28)],
-            [Month::February, Year::of(2025), DayOfMonth::of(30), DayOfMonth::of(28)],
-            [Month::February, Year::of(2025), DayOfMonth::of(31), DayOfMonth::of(28)],
-
-            [Month::March, Year::of(2025), DayOfMonth::of(1), DayOfMonth::of(1)],
-            [Month::March, Year::of(2025), DayOfMonth::of(15), DayOfMonth::of(15)],
-            [Month::March, Year::of(2025), DayOfMonth::of(28), DayOfMonth::of(28)],
-            [Month::March, Year::of(2025), DayOfMonth::of(29), DayOfMonth::of(29)],
-            [Month::March, Year::of(2025), DayOfMonth::of(30), DayOfMonth::of(30)],
-            [Month::March, Year::of(2025), DayOfMonth::of(31), DayOfMonth::of(31)],
-
-            [Month::April, Year::of(2025), DayOfMonth::of(1), DayOfMonth::of(1)],
-            [Month::April, Year::of(2025), DayOfMonth::of(15), DayOfMonth::of(15)],
-            [Month::April, Year::of(2025), DayOfMonth::of(28), DayOfMonth::of(28)],
-            [Month::April, Year::of(2025), DayOfMonth::of(29), DayOfMonth::of(29)],
-            [Month::April, Year::of(2025), DayOfMonth::of(30), DayOfMonth::of(30)],
-            [Month::April, Year::of(2025), DayOfMonth::of(31), DayOfMonth::of(30)],
-        ];
-    }
-
-    #[Depends('testLastDay')]
-    #[DataProvider('adjustDayProvider')]
-    public function testAdjustDay(Month $month, Year $year, DayOfMonth $day, DayOfMonth $expected): void
-    {
-        self::assertEquals($expected, $month->_adjustDay($day, $year));
-    }
 }

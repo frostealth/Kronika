@@ -339,4 +339,25 @@ final class DurationTest extends TestCase
         self::assertEquals($compared->greaterOrEqual(), $a->isGreaterThanOrEqualTo($b));
         self::assertEquals($compared->greater(), $a->isGreaterThan($b));
     }
+
+    #[Depends('testBasic')]
+    public function testOfWeek(): void
+    {
+        self::assertEquals(Duration::of(days: 7), Duration::ofWeek());
+        self::assertSame(Duration::of(days: 7), Duration::ofWeek());
+    }
+
+    #[Depends('testBasic')]
+    public function testOfDay(): void
+    {
+        self::assertEquals(Duration::of(days: 1), Duration::ofDay());
+        self::assertSame(Duration::of(days: 1), Duration::ofDay());
+    }
+
+    #[Depends('testBasic')]
+    public function testOfHour(): void
+    {
+        self::assertEquals(Duration::of(hours: 1), Duration::ofHour());
+        self::assertSame(Duration::of(hours: 1), Duration::ofHour());
+    }
 }

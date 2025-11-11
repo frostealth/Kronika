@@ -315,14 +315,4 @@ enum Month: int implements DateUnit
     {
         return Date::of($date->year(), $this, DayOfMonth::first())->with($date->day(), $rolling);
     }
-
-    /** @internal */
-    public function _adjustDay(DayOfMonth $day, Year $year): DayOfMonth
-    {
-        if (! $this->containsDay($day, $year)) {
-            return $this->lastDay($year);
-        }
-
-        return $day;
-    }
 }

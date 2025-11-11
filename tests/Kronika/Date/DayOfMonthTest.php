@@ -44,6 +44,13 @@ final class DayOfMonthTest extends TestCase
         DayOfMonth::of($value);
     }
 
+    #[Depends('testBasic')]
+    public function testFirst(): void
+    {
+        self::assertEquals(DayOfMonth::of(1), DayOfMonth::first());
+        self::assertSame(DayOfMonth::of(1), DayOfMonth::first());
+    }
+
     public static function toStringProvider(): array
     {
         return [

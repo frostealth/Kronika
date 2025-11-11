@@ -155,4 +155,28 @@ final class DayOfWeekTest extends TestCase
         self::assertEquals($comparison->lessOrEqual(), $a->isBeforeOrEqualTo($b));
         self::assertEquals($comparison->greaterOrEqual(), $a->isAfterOrEqualTo($b));
     }
+
+    #[TestWith([DayOfWeek::Monday, true])]
+    #[TestWith([DayOfWeek::Tuesday, true])]
+    #[TestWith([DayOfWeek::Wednesday, true])]
+    #[TestWith([DayOfWeek::Thursday, true])]
+    #[TestWith([DayOfWeek::Friday, true])]
+    #[TestWith([DayOfWeek::Saturday, false])]
+    #[TestWith([DayOfWeek::Sunday, false])]
+    public function testIsWeekday(DayOfWeek $day, bool $expected): void
+    {
+        self::assertEquals($expected, $day->isWeekday());
+    }
+
+    #[TestWith([DayOfWeek::Monday, false])]
+    #[TestWith([DayOfWeek::Tuesday, false])]
+    #[TestWith([DayOfWeek::Wednesday, false])]
+    #[TestWith([DayOfWeek::Thursday, false])]
+    #[TestWith([DayOfWeek::Friday, false])]
+    #[TestWith([DayOfWeek::Saturday, true])]
+    #[TestWith([DayOfWeek::Sunday, true])]
+    public function testIsWeekend(DayOfWeek $day, bool $expected): void
+    {
+        self::assertEquals($expected, $day->isWeekend());
+    }
 }

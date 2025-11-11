@@ -90,6 +90,49 @@ final readonly class Hour implements TimeUnit
     }
 
     /**
+     * Returns the previous hour from this one.
+     *
+     * ```
+     * // 22
+     * $this->previous();  // 21
+     * ```
+     * ```
+     * // 00
+     * $this->previous(rolling: false);  // 00
+     * $this->previous(rolling: true);   // 23
+     */
+    public function previous(bool $rolling = false): self
+    {
+        if ($this->isZero()) {
+            return $rolling ? self::last() : self::zero();
+        }
+
+        return self::of($this->value() - 1);
+    }
+
+    /**
+     * Returns the next hour from this one.
+     *
+     * ```
+     * // 22
+     * $this->next();  // 23
+     * ```
+     * ```
+     * // 23
+     * $this->next(rolling: false);  // 23
+     * $this->next(rolling: true);   // 00
+     * ```
+     */
+    public function next(bool $rolling = false): self
+    {
+        if ($this->isLast()) {
+            return $rolling ? self::zero() : self::last();
+        }
+
+        return self::of($this->value() + 1);
+    }
+
+    /**
      * Checks if this hour is equal to 0.
      */
     #[\Override]

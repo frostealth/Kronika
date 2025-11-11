@@ -129,4 +129,36 @@ final class HourTest extends TestCase
         self::assertEquals($comparison->lessOrEqual(), $a->isBeforeOrEqualTo($b));
         self::assertEquals($comparison->greaterOrEqual(), $a->isAfterOrEqualTo($b));
     }
+
+    #[TestWith([1, 0])]
+    #[TestWith([1, 0, 'rolling' => false])]
+    #[TestWith([1, 0, 'rolling' => true])]
+    #[TestWith([9, 8])]
+    #[TestWith([15, 14])]
+    #[TestWith([20, 19])]
+    #[TestWith([22, 21])]
+    #[TestWith([23, 22])]
+    #[TestWith([23, 22, 'rolling' => false])]
+    #[TestWith([23, 22, 'rolling' => true])]
+    #[Depends('testBasic')]
+    public function testPrevious(int $hour, int $expected, bool $rolling = false): void
+    {
+        self::assertEquals(Hour::of($expected), Hour::of($hour)->previous(rolling: $rolling));
+    }
+
+    #[TestWith([1, 2])]
+    #[TestWith([1, 2, 'rolling' => false])]
+    #[TestWith([1, 2, 'rolling' => true])]
+    #[TestWith([9, 10])]
+    #[TestWith([15, 16])]
+    #[TestWith([20, 21])]
+    #[TestWith([22, 23])]
+    #[TestWith([23, 23])]
+    #[TestWith([23, 23, 'rolling' => false])]
+    #[TestWith([23, 0, 'rolling' => true])]
+    #[Depends('testBasic')]
+    public function testNext(int $hour, int $expected, bool $rolling = false): void
+    {
+        self::assertEquals(Hour::of($expected), Hour::of($hour)->next(rolling: $rolling));
+    }
 }
