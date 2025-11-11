@@ -95,7 +95,7 @@ final readonly class Time implements Unit
     }
 
     /**
-     * Obtain an instance of `Time` from a date-time.
+     * Obtains an instance of `Time` from a date-time.
      */
     public static function ofDateTime(DateTime|Native $datetime): self
     {
@@ -111,7 +111,7 @@ final readonly class Time implements Unit
     }
 
     /**
-     * Obtain an instance of `Time` from a timestamp.
+     * Obtains an instance of `Time` from a timestamp.
      */
     public static function ofTimestamp(float|int $timestamp): self
     {
@@ -119,7 +119,7 @@ final readonly class Time implements Unit
     }
 
     /**
-     * Obtain an instance of `Time` from a `Kronika\Instant`.
+     * Obtains an instance of `Time` from a `Kronika\Instant`.
      */
     public static function ofInstant(Instant $instant): self
     {
@@ -131,7 +131,7 @@ final readonly class Time implements Unit
     }
 
     /**
-     * Obtain an instance of `Time` from a given format and time string.
+     * Obtains an instance of `Time` from a given format and time string.
      *
      * @param non-empty-string $format
      * @param non-empty-string $time

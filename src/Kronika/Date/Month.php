@@ -161,7 +161,7 @@ enum Month: int implements DateUnit
      * Month::January->previous();  // December
      * ```
      */
-    public function previous(bool $rolling = true): self
+    public function previous(bool $rolling = false): self
     {
         if ($this === self::January) {
             return $rolling ? self::December : $this;

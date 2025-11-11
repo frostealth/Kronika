@@ -72,7 +72,7 @@ final readonly class LocalDateTime implements DateTime
     }
 
     /**
-     * Obtain an instance of `LocalDateTime` from `Instant`.
+     * Obtains an instance of `LocalDateTime` from `Instant`.
      */
     public static function ofInstant(Instant $instant): self
     {
@@ -82,7 +82,7 @@ final readonly class LocalDateTime implements DateTime
     }
 
     /**
-     * Obtain an instance of `LocalDateTime` from a given format and date-time string.
+     * Obtains an instance of `LocalDateTime` from a given format and date-time string.
      *
      * @param non-empty-string $format
      * @param non-empty-string $datetime

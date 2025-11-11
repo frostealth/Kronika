@@ -58,7 +58,7 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Obtain an instance of `Date` from a date-time.
+     * Obtains an instance of `Date` from a date-time.
      */
     public static function ofDateTime(DateTime|Native $datetime): self
     {
@@ -67,14 +67,12 @@ final readonly class Date implements Unit
         }
 
         return self::map($datetime, static function (Native $datetime): self {
-            [$year, $month, $day] = \sscanf($datetime->format('Y-m-d'), '%d-%u-%u');
-
-            return self::of($year, $month, $day);
+            return self::of(...\sscanf($datetime->format('Y-m-d'), '%d-%u-%u'));
         }, when: static fn(Native $datetime): bool => $datetime instanceof \DateTimeImmutable);
     }
 
     /**
-     * Obtain an instance of `Date` from a timestamp.
+     * Obtains an instance of `Date` from a timestamp.
      */
     public static function ofTimestamp(float|int $timestamp): self
     {
@@ -82,19 +80,17 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Obtain an instance of `Date` from a "Kronika\Instant".
+     * Obtains an instance of `Date` from a "Kronika\Instant".
      */
     public static function ofInstant(Instant $instant): self
     {
         return self::map($instant, static function (Instant $instant): self {
-            [$year, $month, $day] = \sscanf(\gmdate('Y-m-d', $instant->second()), '%d-%u-%u');
-
-            return self::of($year, $month, $day);
+            return self::of(...\sscanf(\gmdate('Y-m-d', $instant->second()), '%d-%u-%u'));
         });
     }
 
     /**
-     * Obtain an instance of `Date` from a given format and date string.
+     * Obtains an instance of `Date` from a given format and date string.
      *
      * @param non-empty-string $format
      * @param non-empty-string $date

@@ -107,7 +107,7 @@ enum DayOfWeek: int implements DateUnit
      * DayOfWeek::Monday->next();  // Tuesday
      * ```
      */
-    public function next(bool $rolling = true): self
+    public function next(bool $rolling = false): self
     {
         if ($this === self::Sunday) {
             return $rolling ? self::Monday : $this;

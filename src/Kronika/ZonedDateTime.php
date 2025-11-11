@@ -124,7 +124,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     /**
-     * Obtain an instance of `ZonedDateTime` with UTC time-zone from a given timestamp.
+     * Obtains an instance of `ZonedDateTime` with UTC time-zone from a given timestamp.
      */
     public static function ofTimestamp(float|int $timestamp): self
     {
@@ -132,7 +132,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     /**
-     * Obtain an instance of `ZonedDateTime` from a given `Kronika\Instant` and time-zone.
+     * Obtains an instance of `ZonedDateTime` from a given `Kronika\Instant` and time-zone.
      */
     public static function ofInstant(Instant $instant, \DateTimeZone $timezone): self
     {
@@ -140,7 +140,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     /**
-     * Obtain an instance of `ZonedDateTime` from a given format, date-time string and time-zone.
+     * Obtains an instance of `ZonedDateTime` from a given format, date-time string and time-zone.
      *
      * If the date-time string doesn't contain time-zone, then a given time-zone will be used,
      * otherwise the system's time-zone will be used.
