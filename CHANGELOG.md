@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to `Kronika` will be documented in this file.
 
-## [Unreleased]
+## [0.2.3](https://github.com/frostealth/kronika/releases/tag/0.2.3) – 2025-11-11
 ### Added
 - `Date::toPreviousMonth()` and `Date::toNextMonth()`.
 - `Date::toPreviousWeek()` and `Date::toNextWeek()`.
