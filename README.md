@@ -271,6 +271,15 @@ $immutable = $datetime->toNative();         // "\DateTimeImmutable"
 $mutable   = $datetime->toNativeMutable();  // "\DateTime"
 ```
 
+### Clock
+`Kronika\Clock` decouples your code from the system clock
+and has the following implementations:
+- `SystemClock` returns the current time, this is the same as doing `new \DateTime()`.
+- `InaccurateClock` ignores a second or microsecond of the current time.
+- `PsrClock` implements [PSR-20: Clock](https://www.php-fig.org/psr/psr-20/).
+- `FrozenClock` doesn't move forward on its own, useful in tests.
+- `MutableClock` allows to manipulate with clock, useful in tests.
+
 ### TimeRange
 ```php
 // creating "TimeRange"
@@ -335,12 +344,3 @@ foreach ($range->each(Duration::of(days: 1)) as $item) {
 // 2025-12-16 12:30:45 +01:00
 // 2025-12-17 12:30:45 +01:00
 ```
-
-### Clock
-`Kronika\Clock` decouples your code from the system clock
-and has the following implementations:
-- `SystemClock` returns the current time, this is the same as doing `new \DateTime()`.
-- `InaccurateClock` ignores a second or microsecond of the current time.
-- `PsrClock` implements [PSR-20: Clock](https://www.php-fig.org/psr/psr-20/).
-- `FrozenClock` doesn't move forward on its own, useful in tests.
-- `MutableClock` allows to manipulate with clock, useful in tests.
