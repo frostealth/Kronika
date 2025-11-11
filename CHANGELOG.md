@@ -10,6 +10,9 @@ All notable changes to `Kronika` will be documented in this file.
 - `Hour::previous()` and `Hour::next()`.
 - `Duration::ofWeek()` and `Duration::ofDay()`.
 - `Duration::ofHour()`.
+- `Range\DateRange`.
+- `Range\DateTimeRange`.
+- `Range\TimeRage`.
 
 ### Changed
 - `Date\Month::previous()` doesn't return December for January anymore by default.

@@ -24,6 +24,10 @@ composer require frostealth/kronika
 - [LocalDateTime](#localdatetime)
 - [ZonedDateTime](#zoneddatetime)
 - [Clock](#clock)
+- Range:
+  - [TimeRange](#timerange)
+  - [DateRange](#daterange)
+  - [DateTimeRange](#datetimerange)
 - Extensions:
   - [Doctrine][extension-doctrine]
   - [JMS Serializer][extension-jms-serializer]
@@ -265,6 +269,71 @@ $inHours  = $duration->inHours();  // 336
 // getting the "\DateTimeImmutable" and "\DateTime"
 $immutable = $datetime->toNative();         // "\DateTimeImmutable"
 $mutable   = $datetime->toNativeMutable();  // "\DateTime"
+```
+
+### TimeRange
+```php
+// creating "TimeRange"
+$range = TimeRange::of(
+    since: Time::midday(),   // inclusive
+    till: Time::of(13, 30),  // exclusive
+);
+echo $range->since()->format('H:i:s');  // 12:00:00
+echo $range->till()->format('H:i:s');   // 13:30:00
+
+echo $range->contains(Time::midday());    // true
+echo $range->contains(Time::of(13, 30));  // false
+
+// getting each item with the specified step
+foreach ($range->each(Duration::of(minutes: 30)) as $item) {
+    echo $item->format('H:i:s');
+}
+// 12:00:00
+// 12:30:00
+// 13:00:00
+```
+
+### DateRange
+```php
+// creating "DateRange"
+$range = DateRange::of(
+    since: Date::of(2025, 12, 15),  // inclusive
+    till: Date::of(2025, 12, 18),   // exclusive
+);
+echo $range->since()->format('Y-m-d');  // 2025-12-15
+echo $range->till()->format('Y-m-d');   // 2025-12-18
+
+echo $range->contains(Date::of(2025, 12, 15));  // true
+echo $range->contains(Date::of(2025, 12, 18));  // false
+
+// getting each item with the specified step
+foreach ($range->each(Duration::of(days: 2)) as $item) {
+    echo $item->format('Y-m-d');
+}
+// 2025-12-15
+// 2025-12-17
+```
+
+### DateTimeRange
+```php
+// creating "DateTimeRange"
+$range = DateTimeRange::of(
+    since: ZonedDateTime::parse('2025-12-15 12:30:45 +01:00'),  // inclusive
+    till: LocalDateTime::parse('2025-12-18 10:00:30'),          // exclusive
+);
+echo $range->since()->format('Y-m-d');  // 2025-12-15 12:30:45 +01:00
+echo $range->till()->format('Y-m-d');   // 2025-12-18 10:00:30
+
+echo $range->contains(LocalDateTime::parse('2025-12-15 12:30:45'));  // true
+echo $range->contains(LocalDateTime::parse('2025-12-18 10:00:30'));  // false
+
+// getting each item with the specified step
+foreach ($range->each(Duration::of(days: 1)) as $item) {
+    echo $item->format('Y-m-d');
+}
+// 2025-12-15 12:30:45 +01:00
+// 2025-12-16 12:30:45 +01:00
+// 2025-12-17 12:30:45 +01:00
 ```
 
 ### Clock
