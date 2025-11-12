@@ -234,7 +234,7 @@ final class TimeTest extends TestCase
     {
         $time = Time::of(hour: 17, minute: 5, second: Time\Second::of(second: 39, micro: 4582));
 
-        self::assertEquals('17:05:39.004582', (string) $time);
+        self::assertEquals('17:05:39.004582', (string)$time);
     }
 
     public static function comparisonProvider(): array

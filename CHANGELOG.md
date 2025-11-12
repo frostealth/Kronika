@@ -3,6 +3,10 @@ All notable changes to `Kronika` will be documented in this file.
 
 ### [Unreleased]
 ### Added
+- `Instant::resetMicro()` – resets microsecond.
+- `Instant::resetSecond()` – resets second with microsecond.
+- `Instant::resetMinute()` – resets minute, second and microsecond.
+- `precision` option to comparison methods of `Instant`.
 
 ### Changed
 

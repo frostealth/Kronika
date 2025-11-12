@@ -493,7 +493,7 @@ final readonly class Duration
      */
     public function compareTo(self $other): Compared
     {
-        return Compared::of($this->seconds <=> $other->seconds);
+        return Compared::of($this <=> $other);
     }
 
     /**

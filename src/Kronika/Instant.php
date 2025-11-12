@@ -108,6 +108,30 @@ final readonly class Instant
     }
 
     /**
+     * Resets the microsecond to 0.
+     */
+    public function resetMicro(): self
+    {
+        return self::of(second: $this->second);
+    }
+
+    /**
+     * Resets the second and microsecond to 0.
+     */
+    public function resetSecond(): self
+    {
+        return self::of(second: $this->second - ($this->second % 60));
+    }
+
+    /**
+     * Resets the minute, second and microsecond to 0.
+     */
+    public function resetMinute(): self
+    {
+        return self::of(second: $this->second - ($this->second % 3600));
+    }
+
+    /**
      * Returns the second with microsecond.
      *
      * ```
@@ -220,9 +244,9 @@ final readonly class Instant
      * $this->isBefore($other);  // false
      * ```
      */
-    public function isBefore(self $other): bool
+    public function isBefore(self $other, Precision $precision = Precision::Micro): bool
     {
-        return $this->compareTo($other)->less();
+        return $this->compareTo($other, $precision)->less();
     }
 
     /**
@@ -239,9 +263,9 @@ final readonly class Instant
      * $this->isBeforeOrEqualTo($other);  // false
      * ```
      */
-    public function isBeforeOrEqualTo(self $other): bool
+    public function isBeforeOrEqualTo(self $other, Precision $precision = Precision::Micro): bool
     {
-        return $this->compareTo($other)->lessOrEqual();
+        return $this->compareTo($other, $precision)->lessOrEqual();
     }
 
     /**
@@ -255,9 +279,9 @@ final readonly class Instant
      * $this->isEqualTo($other);  // false
      * ```
      */
-    public function isEqualTo(self $other): bool
+    public function isEqualTo(self $other, Precision $precision = Precision::Micro): bool
     {
-        return $this->compareTo($other)->equal();
+        return $this->compareTo($other, $precision)->equal();
     }
 
     /**
@@ -271,9 +295,9 @@ final readonly class Instant
      * $this->isNotEqualTo($other);  // true
      * ```
      */
-    public function isNotEqualTo(self $other): bool
+    public function isNotEqualTo(self $other, Precision $precision = Precision::Micro): bool
     {
-        return $this->compareTo($other)->notEqual();
+        return $this->compareTo($other, $precision)->notEqual();
     }
 
     /**
@@ -290,9 +314,9 @@ final readonly class Instant
      * $this->isAfterOrEqualTo($other);  // true
      * ```
      */
-    public function isAfterOrEqualTo(self $other): bool
+    public function isAfterOrEqualTo(self $other, Precision $precision = Precision::Micro): bool
     {
-        return $this->compareTo($other)->greaterOrEqual();
+        return $this->compareTo($other, $precision)->greaterOrEqual();
     }
 
     /**
@@ -309,9 +333,9 @@ final readonly class Instant
      * $this->isAfter($other);  // true
      * ```
      */
-    public function isAfter(self $other): bool
+    public function isAfter(self $other, Precision $precision = Precision::Micro): bool
     {
-        return $this->compareTo($other)->greater();
+        return $this->compareTo($other, $precision)->greater();
     }
 
     /**
@@ -324,9 +348,13 @@ final readonly class Instant
      * $this->compareTo($other)->greater();  // false
      * ```
      */
-    public function compareTo(self $other): Compared
+    public function compareTo(self $other, Precision $precision = Precision::Micro): Compared
     {
-        return Compared::of($this->value() <=> $other->value());
+        return match ($precision) {
+            Precision::Micro => Compared::of($this <=> $other),
+            Precision::Second => $this->resetMicro()->compareTo($other->resetMicro()),
+            Precision::Minute => $this->resetSecond()->compareTo($other->resetSecond()),
+        };
     }
 
     /** @return non-empty-string */

@@ -293,11 +293,7 @@ final readonly class LocalDateTime implements DateTime
     #[\Override]
     public function compareTo(DateTime|Unit $other, Precision $precision = Precision::Micro): Compared
     {
-        return match($precision) {
-            Precision::Micro => $this->instant()->compareTo($this->normalize($other)->instant()),
-            Precision::Second => $this->resetMicro()->compareTo($this->normalize($other)->resetMicro()),
-            Precision::Minute => $this->resetSecond()->compareTo($this->normalize($other)->resetSecond()),
-        };
+        return $this->instant()->compareTo($this->normalize($other)->instant(), $precision);
     }
 
     /** @throws Exception\FormatError */
