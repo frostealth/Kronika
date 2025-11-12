@@ -243,15 +243,15 @@ final readonly class LocalDateTime implements DateTime
     }
 
     #[\Override]
-    public function until(DateTime|Unit $end): Duration
+    public function until(DateTime|Unit $end, Precision $precision = Precision::Micro): Duration
     {
-        return $this->instant()->until($this->normalize($end)->instant());
+        return $this->instant()->until($this->normalize($end)->instant(), $precision);
     }
 
     #[\Override]
-    public function difference(DateTime|Unit $other): Duration
+    public function difference(DateTime|Unit $other, Precision $precision = Precision::Micro): Duration
     {
-        return $this->instant()->difference($this->normalize($other)->instant());
+        return $this->instant()->difference($this->normalize($other)->instant(), $precision);
     }
 
     #[\Override]

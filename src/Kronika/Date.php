@@ -184,7 +184,7 @@ final readonly class Date implements Unit
     public function dayOfYear(): DayOfYear
     {
         return $this->remember(static fn(self $date): DayOfYear => DayOfYear::of(
-            $date->toStartOfYear()->until($date)->days() + 1,
+            $date->toStartOfYear()->until($date)->add(Duration::ofDay())->inDays(),
         ), key: __METHOD__);
     }
 

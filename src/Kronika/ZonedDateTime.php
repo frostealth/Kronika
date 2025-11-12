@@ -333,15 +333,15 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     #[\Override]
-    public function until(DateTime|Unit|Native $end): Duration
+    public function until(DateTime|Unit|Native $end, Precision $precision = Precision::Micro): Duration
     {
-        return $this->local->until($this->localize($end));
+        return $this->local->until($this->localize($end), $precision);
     }
 
     #[\Override]
-    public function difference(DateTime|Unit|Native $other): Duration
+    public function difference(DateTime|Unit|Native $other, Precision $precision = Precision::Micro): Duration
     {
-        return $this->local->difference($this->localize($other));
+        return $this->local->difference($this->localize($other), $precision);
     }
 
     #[\Override]

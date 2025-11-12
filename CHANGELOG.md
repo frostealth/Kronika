@@ -22,6 +22,10 @@ All notable changes to `Kronika` will be documented in this file.
 - `Duration::is()` and `Duration::isNot()` methods.
 - `LocalDateTime::is()` and `LocalDateTime::isNot()` methods.
 - `ZonedDateTime::is()` and `ZonedDateTime::isNot()` methods.
+- `precision` option to `Instant::until()` and `Instant::difference()`.
+- `precision` option to `DateTime::until()` and `DateTime::difference()`.
+- `precision` option to `Time::until()` and `Time::difference()`.
+- `Duration::ofMinute()` and `Duration::ofSecond()` methods.
 
 ### Changed
 

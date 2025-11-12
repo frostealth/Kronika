@@ -201,7 +201,7 @@ interface DateTime extends \Stringable
      * @see \Kronika\Time\Minute
      * @see \Kronika\Time\Second
      */
-    public function until(self|Unit $end): Duration;
+    public function until(self|Unit $end, Precision $precision = Precision::Micro): Duration;
 
     /**
      * Calculates the duration between this date-time or its unit and another one.
@@ -243,7 +243,7 @@ interface DateTime extends \Stringable
      * @see \Kronika\Time\Minute
      * @see \Kronika\Time\Second
      */
-    public function difference(self|Unit $other): Duration;
+    public function difference(self|Unit $other, Precision $precision = Precision::Micro): Duration;
 
     /**
      * Checks if this date-time or its unit is equal to another one.

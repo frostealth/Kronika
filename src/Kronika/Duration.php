@@ -101,6 +101,26 @@ final readonly class Duration
     }
 
     /**
+     * Obtains an instance of `Duration` equaled to the whole minute.
+     */
+    public static function ofMinute(): self
+    {
+        static $minute = self::of(minutes: 1);
+
+        return $minute;
+    }
+
+    /**
+     * Obtains an instance of `Duration` equaled to the whole second.
+     */
+    public static function ofSecond(): self
+    {
+        static $second = self::of(seconds: 1);
+
+        return $second;
+    }
+
+    /**
      * @param non-negative-int $seconds
      *
      * @throws Exception\InvalidValue

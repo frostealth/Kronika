@@ -206,9 +206,9 @@ final readonly class Instant
      * $duration->seconds(); // 0
      * ```
      */
-    public function until(self $end): Duration
+    public function until(self $end, Precision $precision = Precision::Micro): Duration
     {
-        return $this->isBefore($end) ? $this->difference($end) : Duration::zero();
+        return $this->isBefore($end, $precision) ? $this->difference($end, $precision) : Duration::zero();
     }
 
     /**
@@ -231,9 +231,12 @@ final readonly class Instant
      * $duration->seconds(); // 0
      * ```
      */
-    public function difference(self $other): Duration
+    public function difference(self $other, Precision $precision = Precision::Micro): Duration
     {
-        return Duration::of(seconds: \abs($other->math()->sub($this->second, $this->microsecond)->integer()));
+        $that = $this->applyPrecision($precision);
+        $other = $other->applyPrecision($precision);
+
+        return Duration::of(seconds: \abs($other->math()->sub($that->second, $that->microsecond)->integer()));
     }
 
     /**
@@ -368,11 +371,7 @@ final readonly class Instant
      */
     public function compareTo(self $other, Precision $precision = Precision::Micro): Compared
     {
-        return match ($precision) {
-            Precision::Micro => Compared::of($this <=> $other),
-            Precision::Second => $this->resetMicro()->compareTo($other->resetMicro()),
-            Precision::Minute => $this->resetSecond()->compareTo($other->resetSecond()),
-        };
+        return Compared::of($this->applyPrecision($precision) <=> $other->applyPrecision($precision));
     }
 
     /** @return non-empty-string */
@@ -400,6 +399,15 @@ final readonly class Instant
     public function _join(self $other): self
     {
         return self::of(...$this->math()->add($other->second, $other->microsecond)->parts());
+    }
+
+    private function applyPrecision(Precision $precision): self
+    {
+        return match ($precision) {
+            Precision::Micro => $this,
+            Precision::Second => $this->resetMicro(),
+            Precision::Minute => $this->resetSecond(),
+        };
     }
 
     private function math(): Math

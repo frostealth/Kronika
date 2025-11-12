@@ -327,9 +327,9 @@ final readonly class Time implements Unit
      * @see \Kronika\Time\Minute
      * @see \Kronika\Time\Second
      */
-    public function until(self|TimeUnit $end): Duration
+    public function until(self|TimeUnit $end, Precision $precision = Precision::Micro): Duration
     {
-        return $this->instant()->until($this->normalize($end)->instant());
+        return $this->instant()->until($this->normalize($end)->instant(), $precision);
     }
 
     /**
@@ -354,9 +354,9 @@ final readonly class Time implements Unit
      * @see \Kronika\Time\Minute
      * @see \Kronika\Time\Second
      */
-    public function difference(self|TimeUnit $other): Duration
+    public function difference(self|TimeUnit $other, Precision $precision = Precision::Micro): Duration
     {
-        return $this->instant()->difference($this->normalize($other)->instant());
+        return $this->instant()->difference($this->normalize($other)->instant(), $precision);
     }
 
     /**

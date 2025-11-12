@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Kronika\Tests;
 
 use Kronika\Date;
+use Kronika\Duration;
 use Kronika\Exception\FormatError;
 use Kronika\Exception\InvalidTime;
 use Kronika\Exception\MalformedString\TimeMalformedString;
@@ -405,5 +406,69 @@ final class TimeTest extends TestCase
         self::assertEquals($comparison->notEqual(), $a->isNot($b, $precision));
         self::assertEquals($comparison->lessOrEqual(), $a->isBeforeOrEqualTo($b, $precision));
         self::assertEquals($comparison->greaterOrEqual(), $a->isAfterOrEqualTo($b, $precision));
+    }
+
+    #[TestWith([[11, 0, 0, 0], [12, 0, 0, 999], ['hours' => 1]])]
+    #[TestWith([[11, 0, 0, 999], [12, 0, 0, 0], ['minutes' => 59, 'seconds' => 59]])]
+    #[TestWith([[11, 0, 0, 999], [12, 0, 0, 0], ['hours' => 1], Precision::Second])]
+    #[TestWith([[9, 15, 30, 999], [12, 10, 45, 0], ['hours' => 2, 'minutes' => 55, 'seconds' => 14]])]
+    #[TestWith([[9, 15, 30, 999], [12, 10, 45, 0], ['hours' => 2, 'minutes' => 55, 'seconds' => 15], Precision::Second])]
+    #[TestWith([[9, 15, 30, 999], [12, 10, 15, 0], ['hours' => 2, 'minutes' => 54, 'seconds' => 44]])]
+    #[TestWith([[9, 15, 30, 999], [12, 10, 15, 0], ['hours' => 2, 'minutes' => 55], Precision::Minute])]
+    #[TestWith([[9, 15, 30, 999], [9, 15, 35, 0], ['seconds' => 4]])]
+    #[TestWith([[9, 15, 30, 999], [9, 15, 35, 0], ['seconds' => 5], Precision::Second])]
+    #[TestWith([[9, 15, 30, 999], [9, 15, 35, 0], ['seconds' => 0], Precision::Minute])]
+    #[TestWith([[9, 15, 30, 0], [9, 15, 30, 0], ['seconds' => 0]])]
+    #[TestWith([[12, 0, 35, 999], [12, 0, 35, 0], ['seconds' => 0]])]
+    #[TestWith([[12, 0, 35, 999], [12, 0, 35, 0], ['seconds' => 0], Precision::Second])]
+    #[TestWith([[12, 0, 35, 999], [12, 0, 35, 0], ['seconds' => 0], Precision::Minute])]
+    #[TestWith([[12, 0, 35, 999], [12, 0, 30, 0], ['seconds' => 0]])]
+    #[DependsOnClass(DurationTest::class)]
+    #[Depends('testBasic')]
+    public function testUntil(array $since, array $till, array $expected, Precision $precision = Precision::Micro): void
+    {
+        $expected = Duration::of(...$expected);
+        $since = Time::of($since[0], $since[1], Time\Second::of($since[2], $since[3]));
+        $till = Time::of($till[0], $till[1], Time\Second::of($till[2], $till[3]));
+
+        $actual = $since->until($till, $precision);
+
+        self::assertEquals($expected, $actual);
+    }
+
+    #[TestWith([[11, 0, 0, 0], [12, 0, 0, 999], ['hours' => 1]])]
+    #[TestWith([[11, 0, 0, 999], [12, 0, 0, 0], ['minutes' => 59, 'seconds' => 59]])]
+    #[TestWith([[11, 0, 0, 999], [12, 0, 0, 0], ['hours' => 1], Precision::Second])]
+    #[TestWith([[9, 15, 30, 999], [12, 10, 45, 0], ['hours' => 2, 'minutes' => 55, 'seconds' => 14]])]
+    #[TestWith([[9, 15, 30, 999], [12, 10, 45, 0], ['hours' => 2, 'minutes' => 55, 'seconds' => 15], Precision::Second])]
+    #[TestWith([[9, 15, 30, 999], [12, 10, 15, 0], ['hours' => 2, 'minutes' => 54, 'seconds' => 44]])]
+    #[TestWith([[9, 15, 30, 999], [12, 10, 15, 0], ['hours' => 2, 'minutes' => 55], Precision::Minute])]
+    #[TestWith([[9, 15, 30, 999], [9, 15, 35, 0], ['seconds' => 4]])]
+    #[TestWith([[9, 15, 30, 999], [9, 15, 35, 0], ['seconds' => 5], Precision::Second])]
+    #[TestWith([[9, 15, 30, 999], [9, 15, 35, 0], ['seconds' => 0], Precision::Minute])]
+    #[TestWith([[9, 15, 30, 0], [9, 15, 30, 0], ['seconds' => 0]])]
+    #[TestWith([[12, 0, 35, 999], [12, 0, 35, 0], ['seconds' => 0]])]
+    #[TestWith([[12, 0, 35, 999], [12, 0, 35, 0], ['seconds' => 0], Precision::Second])]
+    #[TestWith([[12, 0, 35, 999], [12, 0, 35, 0], ['seconds' => 0], Precision::Minute])]
+    #[TestWith([[12, 0, 35, 999], [12, 0, 30, 0], ['seconds' => 5]])]
+    #[TestWith([[12, 10, 15, 0], [12, 0, 30, 999], ['minutes' => 9, 'seconds' => 44]])]
+    #[TestWith([[12, 10, 15, 0], [12, 0, 30, 999], ['minutes' => 9, 'seconds' => 45], Precision::Second])]
+    #[TestWith([[12, 10, 15, 0], [12, 0, 30, 999], ['minutes' => 10], Precision::Minute])]
+    #[TestWith([[12, 10, 15, 0], [6, 0, 30, 999], ['hours' => 6, 'minutes' => 10], Precision::Minute])]
+    #[DependsOnClass(DurationTest::class)]
+    #[Depends('testBasic')]
+    public function testDifference(
+        array $since,
+        array $till,
+        array $expected,
+        Precision $precision = Precision::Micro,
+    ): void {
+        $expected = Duration::of(...$expected);
+        $since = Time::of($since[0], $since[1], Time\Second::of($since[2], $since[3]));
+        $till = Time::of($till[0], $till[1], Time\Second::of($till[2], $till[3]));
+
+        $actual = $since->difference($till, $precision);
+
+        self::assertEquals($expected, $actual);
     }
 }

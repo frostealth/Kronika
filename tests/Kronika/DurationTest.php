@@ -360,4 +360,18 @@ final class DurationTest extends TestCase
         self::assertEquals(Duration::of(hours: 1), Duration::ofHour());
         self::assertSame(Duration::of(hours: 1), Duration::ofHour());
     }
+
+    #[Depends('testBasic')]
+    public function testOfMinute(): void
+    {
+        self::assertEquals(Duration::of(minutes: 1), Duration::ofMinute());
+        self::assertSame(Duration::of(minutes: 1), Duration::ofMinute());
+    }
+
+    #[Depends('testBasic')]
+    public function testOfSecond(): void
+    {
+        self::assertEquals(Duration::of(seconds: 1), Duration::ofSecond());
+        self::assertSame(Duration::of(seconds: 1), Duration::ofSecond());
+    }
 }

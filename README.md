@@ -345,7 +345,7 @@ echo $range->contains(LocalDateTime::parse('2025-12-18 10:00:30'));  // false
 
 // getting each item with the specified step
 // the type of each item will be the same as "since"
-foreach ($range->each(Duration::of(days: 1)) as $item) {
+foreach ($range->each(Duration::ofDay()) as $item) {
     echo $item->format('Y-m-d H:i:s P');
 }
 // 2025-12-15 12:30:45 +01:00

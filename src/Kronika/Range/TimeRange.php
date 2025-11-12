@@ -87,11 +87,7 @@ final readonly class TimeRange implements Range
     public function duration(): Duration
     {
         return $this->remember(
-            static fn(self $that): Duration => match ($that->precision) {
-                Precision::Micro => $that->since->until($that->till),
-                Precision::Second => $that->since->resetMicro()->until($that->till->resetMicro()),
-                Precision::Minute => $that->since->resetSecond()->until($that->till->resetSecond()),
-            },
+            static fn(self $that): Duration => $that->since->until($that->till, $that->precision),
             key: __METHOD__,
         );
     }
@@ -113,7 +109,7 @@ final readonly class TimeRange implements Range
     #[\Override]
     public function each(Duration $step): \Iterator
     {
-        $step = $step->isZero() ? Duration::of(seconds: 1) : $step;
+        $step = $step->isZero() ? Duration::ofSecond() : $step;
         $current = $this->since();
 
         do {

@@ -1241,15 +1241,27 @@ final class DateTimeTest extends TestCase
                 self::localOf(2025, 12, 15, 12, 45, 50, 5555),
                 Duration::zero(),
             ],
-            'LocalDateTime.LocalDateTime.Seconds' => [
+            'LocalDateTime.LocalDateTime.Seconds.0' => [
                 self::localOf(2025, 12, 15, 12, 45, 55, 5555),
                 self::localOf(2025, 12, 15, 12, 45, 59, 0),
                 Duration::of(seconds: 3),
             ],
-            'LocalDateTime.LocalDateTime.Minutes' => [
+            'LocalDateTime.LocalDateTime.Seconds.1' => [
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                self::localOf(2025, 12, 15, 12, 45, 59, 0),
+                Duration::of(seconds: 4),
+                Precision::Second,
+            ],
+            'LocalDateTime.LocalDateTime.Minutes.0' => [
                 self::localOf(2025, 12, 15, 12, 45, 55, 5555),
                 self::localOf(2025, 12, 15, 12, 50, 55, 5555),
                 Duration::of(minutes: 5),
+            ],
+            'LocalDateTime.LocalDateTime.Minutes.1' => [
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                self::localOf(2025, 12, 15, 12, 50, 50, 5555),
+                Duration::of(minutes: 5),
+                Precision::Minute,
             ],
             'LocalDateTime.LocalDateTime.Hours' => [
                 self::localOf(2025, 12, 15, 12, 45, 55, 5555),
@@ -1296,10 +1308,16 @@ final class DateTimeTest extends TestCase
                 Date\DayOfYear::of(350),
                 Duration::of(days: 1),
             ],
-            'LocalDateTime.Time' => [
+            'LocalDateTime.Time.0' => [
                 self::localOf(2025, 12, 15, 12, 45, 55, 5555),
                 Time::of(12, 45, 59),
                 Duration::of(seconds: 3),
+            ],
+            'LocalDateTime.Time.1' => [
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                Time::of(12, 45, 59),
+                Duration::of(seconds: 4),
+                Precision::Second,
             ],
             'LocalDateTime.Unit.Hour' => [
                 self::localOf(2025, 12, 15, 12, 45, 55, 5555),
@@ -1311,10 +1329,22 @@ final class DateTimeTest extends TestCase
                 Time\Minute::of(50),
                 Duration::of(minutes: 5),
             ],
-            'LocalDateTime.Unit.Second' => [
+            'LocalDateTime.Unit.Second.0' => [
                 self::localOf(2025, 12, 15, 12, 45, 55, 5555),
                 Time\Second::of(57, 5555),
                 Duration::of(seconds: 2),
+            ],
+            'LocalDateTime.Unit.Second.1' => [
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                Time\Second::of(57),
+                Duration::of(seconds: 2),
+                Precision::Second,
+            ],
+            'LocalDateTime.Unit.Second.2' => [
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                Time\Second::of(57),
+                Duration::zero(),
+                Precision::Minute,
             ],
 
             // ZonedDateTime
@@ -1323,10 +1353,16 @@ final class DateTimeTest extends TestCase
                 self::zonedOf(2025, 12, 15, 12, 45, 50, 5555, '+01:00'),
                 Duration::zero(),
             ],
-            'ZonedDateTime.ZonedDateTime.Seconds' => [
+            'ZonedDateTime.ZonedDateTime.Seconds.0' => [
                 self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
                 self::zonedOf(2025, 12, 15, 12, 45, 59, 0, '+01:00'),
                 Duration::of(seconds: 3),
+            ],
+            'ZonedDateTime.ZonedDateTime.Seconds.1' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                self::zonedOf(2025, 12, 15, 12, 45, 59, 0, '+01:00'),
+                Duration::of(seconds: 4),
+                Precision::Second,
             ],
             'ZonedDateTime.ZonedDateTime.Minutes' => [
                 self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
@@ -1378,10 +1414,22 @@ final class DateTimeTest extends TestCase
                 Date\DayOfYear::of(350),
                 Duration::of(days: 1),
             ],
-            'ZonedDateTime.Time' => [
+            'ZonedDateTime.Time.0' => [
                 self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
                 Time::of(12, 45, 59),
                 Duration::of(seconds: 3),
+            ],
+            'ZonedDateTime.Time.1' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                Time::of(12, 45, 59),
+                Duration::of(seconds: 4),
+                Precision::Second,
+            ],
+            'ZonedDateTime.Time.2' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                Time::of(12, 45, 59),
+                Duration::zero(),
+                Precision::Minute,
             ],
             'ZonedDateTime.Unit.Hour' => [
                 self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
@@ -1393,10 +1441,22 @@ final class DateTimeTest extends TestCase
                 Time\Minute::of(50),
                 Duration::of(minutes: 5),
             ],
-            'ZonedDateTime.Unit.Second' => [
+            'ZonedDateTime.Unit.Second.0' => [
                 self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
                 Time\Second::of(57, 5555),
                 Duration::of(seconds: 2),
+            ],
+            'ZonedDateTime.Unit.Second.1' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                Time\Second::of(57),
+                Duration::of(seconds: 2),
+                Precision::Second,
+            ],
+            'ZonedDateTime.Unit.Second.2' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                Time\Second::of(57),
+                Duration::zero(),
+                Precision::Minute,
             ],
 
             // ZonedDateTime vs LocalDateTime
@@ -1405,10 +1465,22 @@ final class DateTimeTest extends TestCase
                 self::localOf(2025, 12, 15, 12, 45, 50, 5555),
                 Duration::zero(),
             ],
-            'ZonedDateTime.LocalDateTime.Seconds' => [
+            'ZonedDateTime.LocalDateTime.Seconds.0' => [
                 self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
                 self::localOf(2025, 12, 15, 12, 45, 59, 0),
                 Duration::of(seconds: 3),
+            ],
+            'ZonedDateTime.LocalDateTime.Seconds.1' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                self::localOf(2025, 12, 15, 12, 45, 59, 0),
+                Duration::of(seconds: 4),
+                Precision::Second,
+            ],
+            'ZonedDateTime.LocalDateTime.Seconds.2' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                self::localOf(2025, 12, 15, 12, 45, 59, 0),
+                Duration::zero(),
+                Precision::Minute,
             ],
             'ZonedDateTime.LocalDateTime.Minutes' => [
                 self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
@@ -1437,10 +1509,16 @@ final class DateTimeTest extends TestCase
                 self::zonedOf(2025, 12, 15, 12, 45, 50, 5555, '+01:00'),
                 Duration::zero(),
             ],
-            'LocalDateTime.ZonedDateTime.Seconds' => [
+            'LocalDateTime.ZonedDateTime.Seconds.0' => [
                 self::localOf(2025, 12, 15, 12, 45, 55, 5555),
                 self::zonedOf(2025, 12, 15, 12, 45, 59, 5555, '+01:00'),
                 Duration::of(seconds: 4),
+            ],
+            'LocalDateTime.ZonedDateTime.Seconds.1' => [
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                self::zonedOf(2025, 12, 15, 12, 45, 59, 5555, '+01:00'),
+                Duration::zero(),
+                Precision::Minute,
             ],
             'LocalDateTime.ZonedDateTime.Minutes' => [
                 self::localOf(2025, 12, 15, 12, 45, 55, 5555),
@@ -1469,10 +1547,16 @@ final class DateTimeTest extends TestCase
                 new \DateTime('2025-12-15 12:45:50.005555 +01:00'),
                 Duration::zero(),
             ],
-            'ZonedDateTime.Native.Seconds' => [
+            'ZonedDateTime.Native.Seconds.0' => [
                 self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
                 new \DateTimeImmutable('2025-12-15 12:45:59.005555 +01:00'),
                 Duration::of(seconds: 4),
+            ],
+            'ZonedDateTime.Native.Seconds.1' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                new \DateTimeImmutable('2025-12-15 12:45:59.005555 +01:00'),
+                Duration::zero(),
+                Precision::Minute,
             ],
             'ZonedDateTime.Native.Minutes' => [
                 self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
@@ -1501,9 +1585,13 @@ final class DateTimeTest extends TestCase
     #[DependsExternal(LocalDateTimeTest::class, 'testBasic')]
     #[DependsOnClass(DurationTest::class)]
     #[DataProvider('untilProvider')]
-    public function testUntil(DateTime $datetime, DateTime|Unit|\DateTimeInterface $end, Duration $expected): void
-    {
-        $actual = $datetime->until($end);
+    public function testUntil(
+        DateTime $datetime,
+        DateTime|Unit|\DateTimeInterface $end,
+        Duration $expected,
+        Precision $precision = Precision::Micro,
+    ): void {
+        $actual = $datetime->until($end, $precision);
 
         self::assertEquals($expected->inSeconds(), $actual->inSeconds());
     }
@@ -1517,10 +1605,22 @@ final class DateTimeTest extends TestCase
                 self::localOf(2025, 12, 15, 12, 45, 55, 5555),
                 Duration::zero(),
             ],
-            'LocalDateTime.LocalDateTime.Seconds' => [
+            'LocalDateTime.LocalDateTime.Seconds.0' => [
                 self::localOf(2025, 12, 15, 12, 45, 59, 0000),
                 self::localOf(2025, 12, 15, 12, 45, 55, 5555),
                 Duration::of(seconds: 3),
+            ],
+            'LocalDateTime.LocalDateTime.Seconds.1' => [
+                self::localOf(2025, 12, 15, 12, 45, 59, 0000),
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                Duration::of(seconds: 4),
+                Precision::Second,
+            ],
+            'LocalDateTime.LocalDateTime.Seconds.2' => [
+                self::localOf(2025, 12, 15, 12, 45, 59, 0000),
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                Duration::zero(),
+                Precision::Minute,
             ],
             'LocalDateTime.LocalDateTime.Minutes' => [
                 self::localOf(2025, 12, 15, 12, 45, 55, 5555),
@@ -1572,10 +1672,22 @@ final class DateTimeTest extends TestCase
                 Date\DayOfYear::of(348),
                 Duration::of(days: 1),
             ],
-            'LocalDateTime.Time' => [
+            'LocalDateTime.Time.0' => [
                 self::localOf(2025, 12, 15, 12, 45, 55, 5555),
                 Time::of(12, 45, 59),
                 Duration::of(seconds: 3),
+            ],
+            'LocalDateTime.Time.1' => [
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                Time::of(12, 45, 59),
+                Duration::of(seconds: 4),
+                Precision::Second,
+            ],
+            'LocalDateTime.Time.2' => [
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                Time::of(12, 45, 59),
+                Duration::zero(),
+                Precision::Minute,
             ],
             'LocalDateTime.Unit.Hour' => [
                 self::localOf(2025, 12, 15, 12, 45, 55, 5555),
@@ -1587,10 +1699,16 @@ final class DateTimeTest extends TestCase
                 Time\Minute::of(50),
                 Duration::of(minutes: 5),
             ],
-            'LocalDateTime.Unit.Second' => [
+            'LocalDateTime.Unit.Second.0' => [
                 self::localOf(2025, 12, 15, 12, 45, 55, 5555),
                 Time\Second::of(57, 5555),
                 Duration::of(seconds: 2),
+            ],
+            'LocalDateTime.Unit.Second.1' => [
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                Time\Second::of(57, 5555),
+                Duration::zero(),
+                Precision::Minute,
             ],
 
             // ZonedDateTime
@@ -1599,10 +1717,22 @@ final class DateTimeTest extends TestCase
                 self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
                 Duration::zero(),
             ],
-            'ZonedDateTime.ZonedDateTime.Seconds' => [
+            'ZonedDateTime.ZonedDateTime.Seconds.0' => [
                 self::zonedOf(2025, 12, 15, 12, 45, 59, 0000, '+01:00'),
                 self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
                 Duration::of(seconds: 3),
+            ],
+            'ZonedDateTime.ZonedDateTime.Seconds.1' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 59, 0000, '+01:00'),
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                Duration::of(seconds: 4),
+                Precision::Second,
+            ],
+            'ZonedDateTime.ZonedDateTime.Seconds.2' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 59, 0000, '+01:00'),
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                Duration::zero(),
+                Precision::Minute,
             ],
             'ZonedDateTime.ZonedDateTime.Minutes' => [
                 self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
@@ -1654,10 +1784,22 @@ final class DateTimeTest extends TestCase
                 Date\DayOfYear::of(348),
                 Duration::of(days: 1),
             ],
-            'ZonedDateTime.Time' => [
+            'ZonedDateTime.Time.0' => [
                 self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
                 Time::of(12, 45, 59),
                 Duration::of(seconds: 3),
+            ],
+            'ZonedDateTime.Time.1' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                Time::of(12, 45, 59),
+                Duration::of(seconds: 4),
+                Precision::Second,
+            ],
+            'ZonedDateTime.Time.2' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                Time::of(12, 45, 59),
+                Duration::zero(),
+                Precision::Minute,
             ],
             'ZonedDateTime.Unit.Hour' => [
                 self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
@@ -1669,10 +1811,16 @@ final class DateTimeTest extends TestCase
                 Time\Minute::of(50),
                 Duration::of(minutes: 5),
             ],
-            'ZonedDateTime.Unit.Second' => [
+            'ZonedDateTime.Unit.Second.0' => [
                 self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
                 Time\Second::of(57, 5555),
                 Duration::of(seconds: 2),
+            ],
+            'ZonedDateTime.Unit.Second.1' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
+                Time\Second::of(57),
+                Duration::of(seconds: 2),
+                Precision::Second,
             ],
 
             // ZonedDateTime vs LocalDateTime
@@ -1681,10 +1829,22 @@ final class DateTimeTest extends TestCase
                 self::localOf(2025, 12, 15, 12, 45, 55, 5555),
                 Duration::zero(),
             ],
-            'ZonedDateTime.LocalDateTime.Seconds' => [
+            'ZonedDateTime.LocalDateTime.Seconds.0' => [
                 self::zonedOf(2025, 12, 15, 12, 45, 59, 0000, '+01:00'),
                 self::localOf(2025, 12, 15, 12, 45, 55, 5555),
                 Duration::of(seconds: 3),
+            ],
+            'ZonedDateTime.LocalDateTime.Seconds.1' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 59, 0000, '+01:00'),
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                Duration::of(seconds: 4),
+                Precision::Second,
+            ],
+            'ZonedDateTime.LocalDateTime.Seconds.2' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 59, 0000, '+01:00'),
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                Duration::zero(),
+                Precision::Minute,
             ],
             'ZonedDateTime.LocalDateTime.Minutes' => [
                 self::zonedOf(2025, 12, 15, 12, 50, 55, 5555, '+01:00'),
@@ -1713,10 +1873,22 @@ final class DateTimeTest extends TestCase
                 self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
                 Duration::zero(),
             ],
-            'LocalDateTime.ZonedDateTime.Seconds' => [
+            'LocalDateTime.ZonedDateTime.Seconds.0' => [
                 self::localOf(2025, 12, 15, 12, 45, 55, 5555),
                 self::zonedOf(2025, 12, 15, 12, 45, 59, 5555, '+01:00'),
                 Duration::of(seconds: 4),
+            ],
+            'LocalDateTime.ZonedDateTime.Seconds.1' => [
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                self::zonedOf(2025, 12, 15, 12, 45, 59, 0, '+01:00'),
+                Duration::of(seconds: 4),
+                Precision::Second,
+            ],
+            'LocalDateTime.ZonedDateTime.Seconds.2' => [
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                self::zonedOf(2025, 12, 15, 12, 45, 59, 0, '+01:00'),
+                Duration::zero(),
+                Precision::Minute,
             ],
             'LocalDateTime.ZonedDateTime.Minutes' => [
                 self::localOf(2025, 12, 15, 12, 45, 55, 5555),
@@ -1745,10 +1917,22 @@ final class DateTimeTest extends TestCase
                 new \DateTime('2025-12-15 12:45:55.005555 +01:00'),
                 Duration::zero(),
             ],
-            'ZonedDateTime.Native.Seconds' => [
+            'ZonedDateTime.Native.Seconds.0' => [
                 self::zonedOf(2025, 12, 15, 12, 45, 59, 5555, '+01:00'),
                 new \DateTimeImmutable('2025-12-15 12:45:55.005555 +01:00'),
                 Duration::of(seconds: 4),
+            ],
+            'ZonedDateTime.Native.Seconds.1' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 59, 5555, '+01:00'),
+                new \DateTimeImmutable('2025-12-15 12:45:55.000000 +01:00'),
+                Duration::of(seconds: 4),
+                Precision::Second,
+            ],
+            'ZonedDateTime.Native.Seconds.2' => [
+                self::zonedOf(2025, 12, 15, 12, 45, 59, 5555, '+01:00'),
+                new \DateTimeImmutable('2025-12-15 12:45:55.000000 +01:00'),
+                Duration::zero(),
+                Precision::Minute,
             ],
             'ZonedDateTime.Native.Minutes' => [
                 self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
@@ -1777,9 +1961,13 @@ final class DateTimeTest extends TestCase
     #[DependsExternal(LocalDateTimeTest::class, 'testBasic')]
     #[DependsOnClass(DurationTest::class)]
     #[DataProvider('differenceProvider')]
-    public function testDifference(DateTime $datetime, DateTime|Unit|\DateTimeInterface $end, Duration $expected): void
-    {
-        $actual = $datetime->difference($end);
+    public function testDifference(
+        DateTime $datetime,
+        DateTime|Unit|\DateTimeInterface $end,
+        Duration $expected,
+        Precision $precision = Precision::Micro,
+    ): void {
+        $actual = $datetime->difference($end, $precision);
 
         self::assertEquals($expected->inSeconds(), $actual->inSeconds());
     }
