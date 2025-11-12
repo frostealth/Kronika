@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to `Kronika` will be documented in this file.
 
-### [Unreleased]
+## [0.2.4](https://github.com/frostealth/kronika/releases/tag/0.2.4) – 2025-11-12
 ### Added
 - `Instant::resetMicro()` – resets microsecond.
 - `Instant::resetSecond()` – resets second with microsecond.
@@ -26,8 +26,6 @@ All notable changes to `Kronika` will be documented in this file.
 - `precision` option to `DateTime::until()` and `DateTime::difference()`.
 - `precision` option to `Time::until()` and `Time::difference()`.
 - `Duration::ofMinute()` and `Duration::ofSecond()` methods.
-
-### Changed
 
 ### Deprecated
 - `Date::isEqualTo()` and `Date::isNotEqualTo()` methods.
