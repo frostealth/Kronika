@@ -152,7 +152,7 @@ final readonly class Second implements TimeUnit
     #[\Override]
     public function isZero(): bool
     {
-        return $this->isEqualTo(self::zero());
+        return $this->is(self::zero());
     }
 
     /**
@@ -161,22 +161,43 @@ final readonly class Second implements TimeUnit
     #[\Override]
     public function isLast(): bool
     {
-        return $this->isEqualTo(self::last());
+        return $this->is(self::last());
     }
 
     /**
-     * Checks if this second's value equal to a given one.
+     * Checks if this second is equal to another one.
      *
-     * @param TSecond|numeric $value
-     *
-     * @deprecated
+     * ```
+     * // 45.004545
+     * $this->is(Second::of(45, 4545));  // true
+     * $this->is(Second::zero());        // false
+     * $this->is(Second::of(50));        // false
+     * ```
      */
     #[\Override]
-    public function is(int|string|float $value): bool
+    public function is(self|int|string|float $other): bool
     {
-        [$second, $micro] = double_split($value);
+        if (! $other instanceof self) {
+            \trigger_error('Scalar option is deprecated', \E_USER_DEPRECATED);
+            return [$this->second, $this->microsecond] === double_split($other);
+        }
 
-        return $this->second === $second && $this->microsecond === $micro;
+        return $this->compareTo($other)->equal();
+    }
+
+    /**
+     * Checks if this second is not equal to another one.
+     *
+     * ```
+     * // 45.004545
+     * $this->isNot(Second::of(45, 4545));  // false
+     * $this->isNot(Second::zero());        // true
+     * $this->isNot(Second::of(50));        // true
+     * ```
+     */
+    public function isNot(self $other): bool
+    {
+        return $this->compareTo($other)->notEqual();
     }
 
     /**
@@ -209,31 +230,13 @@ final readonly class Second implements TimeUnit
         return $this->compareTo($other)->lessOrEqual();
     }
 
-    /**
-     * Checks if this second is equal to another one.
-     *
-     * ```
-     * // 45.004545
-     * $this->isEqualTo(Second::of(45, 4545));  // true
-     * $this->isEqualTo(Second::zero());        // false
-     * $this->isEqualTo(Second::of(50));        // false
-     * ```
-     */
+    /** @deprecated {@see self::is()} */
     public function isEqualTo(self $other): bool
     {
         return $this->compareTo($other)->equal();
     }
 
-    /**
-     * Checks if this second is not equal to another one.
-     *
-     * ```
-     * // 45.004545
-     * $this->isNotEqualTo(Second::of(45, 4545));  // false
-     * $this->isNotEqualTo(Second::zero());        // true
-     * $this->isNotEqualTo(Second::of(50));        // true
-     * ```
-     */
+    /** @deprecated {@see self::isNot()} */
     public function isNotEqualTo(self $other): bool
     {
         return $this->compareTo($other)->notEqual();

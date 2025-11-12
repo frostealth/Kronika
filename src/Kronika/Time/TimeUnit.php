@@ -37,11 +37,11 @@ interface TimeUnit extends Unit
     /**
      * Checks if this time unit's value is equal to a given one.
      *
-     * @param TTimeUnit $value
+     * @param TTimeUnit $other
      *
      * @deprecated
      */
-    public function is(int $value): bool;
+    public function is(int $other): bool;
 
     /** @internal {@see Time::with()} */
     public function _withinTime(Time $time): Time;

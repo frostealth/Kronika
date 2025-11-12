@@ -200,6 +200,51 @@ interface DateTime extends \Stringable
     public function difference(self|Unit $other): Duration;
 
     /**
+     * Checks if this date-time or its unit is equal to another one.
+     *
+     * ```
+     * // 2025-12-31 10:15:30.000000 vs 2025-12-31 10:15:30.000000
+     * $this->is($other);  // true
+     *
+     * // 2025-12-31 10:15:30.000000 vs 2025-12-31 10:15:30.999999
+     * $this->is($other);  // false
+     * $this->is($other, Precision::Second);  // true
+     *
+     * // 2025-12-31 10:15:30.000000 vs 2025-12-31 10:15:59.999999
+     * $this->is($other, Precision::Second);  // false
+     * $this->is($other, Precision::Minute);  // true
+     *
+     * // 2025-12-31 10:30:00.000000 vs 2025-12-31 10:15:59.999999
+     * $this->is($other, Precision::Minute);  // false
+     *
+     * // 2025-12-31 10:30:00.000000 vs Date::of(2025, 12, 31)
+     * $this->is($other);  // true
+     * ```
+     */
+    public function is(self|Unit $other, Precision $precision = Precision::Micro): bool;
+
+    /**
+     * Checks if this date-time or its unit is not equal to another one.
+     *
+     * ```
+     * // 2025-12-31 10:15:30.000000 vs 2025-12-31 10:15:30.999999
+     * $this->isNot($other);  // true
+     * $this->isNot($other, Precision::Second);  // false
+     *
+     * // 2025-12-31 10:15:30.000000 vs 2025-12-31 10:15:59.999999
+     * $this->isNot($other, Precision::Second);  // true
+     * $this->isNot($other, Precision::Minute);  // false
+     *
+     * // 2026-01-01 00:00:00.000000 vs 2025-12-31 10:15:59.999999
+     * $this->isNot($other, Precision::Minute);  // true
+     *
+     * // 2026-01-01 00:00:00.000000 vs Date::of(2025, 12, 31)
+     * $this->isNot($other);  // true
+     * ```
+     */
+    public function isNot(self|Unit $other, Precision $precision = Precision::Micro): bool;
+
+    /**
      * Checks if this date-time or its unit is before another one.
      *
      * ```
@@ -244,49 +289,10 @@ interface DateTime extends \Stringable
      */
     public function isBeforeOrEqualTo(self|Unit $other, Precision $precision = Precision::Micro): bool;
 
-    /**
-     * Checks if this date-time or its unit is equal to another one.
-     *
-     * ```
-     * // 2025-12-31 10:15:30.000000 vs 2025-12-31 10:15:30.000000
-     * $this->isEqualTo($other);  // true
-     *
-     * // 2025-12-31 10:15:30.000000 vs 2025-12-31 10:15:30.999999
-     * $this->isEqualTo($other);  // false
-     * $this->isEqualTo($other, Precision::Second);  // true
-     *
-     * // 2025-12-31 10:15:30.000000 vs 2025-12-31 10:15:59.999999
-     * $this->isEqualTo($other, Precision::Second);  // false
-     * $this->isEqualTo($other, Precision::Minute);  // true
-     *
-     * // 2025-12-31 10:30:00.000000 vs 2025-12-31 10:15:59.999999
-     * $this->isEqualTo($other, Precision::Minute);  // false
-     *
-     * // 2025-12-31 10:30:00.000000 vs Date::of(2025, 12, 31)
-     * $this->isEqualTo($other);  // true
-     * ```
-     */
+    /** @deprecated {@see self::is()} */
     public function isEqualTo(self|Unit $other, Precision $precision = Precision::Micro): bool;
 
-    /**
-     * Checks if this date-time or its unit is not equal to another one.
-     *
-     * ```
-     * // 2025-12-31 10:15:30.000000 vs 2025-12-31 10:15:30.999999
-     * $this->isNotEqualTo($other);  // true
-     * $this->isNotEqualTo($other, Precision::Second);  // false
-     *
-     * // 2025-12-31 10:15:30.000000 vs 2025-12-31 10:15:59.999999
-     * $this->isNotEqualTo($other, Precision::Second);  // true
-     * $this->isNotEqualTo($other, Precision::Minute);  // false
-     *
-     * // 2026-01-01 00:00:00.000000 vs 2025-12-31 10:15:59.999999
-     * $this->isNotEqualTo($other, Precision::Minute);  // true
-     *
-     * // 2026-01-01 00:00:00.000000 vs Date::of(2025, 12, 31)
-     * $this->isNotEqualTo($other);  // true
-     * ```
-     */
+    /** @deprecated {@see self::isNot()} */
     public function isNotEqualTo(self|Unit $other, Precision $precision = Precision::Micro): bool;
 
     /**

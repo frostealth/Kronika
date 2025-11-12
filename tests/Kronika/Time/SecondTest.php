@@ -32,15 +32,6 @@ final class SecondTest extends TestCase
         self::assertEquals(7788, $second->microsecond());
         self::assertEquals(45.007788, $second->value());
 
-        self::assertTrue($second->is(45.007788));
-        self::assertTrue($second->is('45.007788'));
-        self::assertFalse($second->is(45));
-        self::assertFalse($second->is('45'));
-        self::assertFalse($second->is(40));
-        self::assertFalse($second->is('40'));
-        self::assertFalse($second->is(40.000031));
-        self::assertFalse($second->is('40.000031'));
-
         self::assertNotSame($second, Second::of(50, 7788));
         self::assertSame($second, Second::of(45, 7788));
 
@@ -114,7 +105,6 @@ final class SecondTest extends TestCase
         self::assertEquals(45, $second->second());
         self::assertEquals(0, $second->microsecond());
         self::assertEquals(45.0, $second->value());
-        self::assertTrue($second->is(45));
     }
 
     public static function toStringProvider(): array
@@ -155,8 +145,8 @@ final class SecondTest extends TestCase
     #[DataProvider('comparisonProvider')]
     public function testComparison(Second $a, Second $b, int $expected): void
     {
-        self::assertTrue($a->isEqualTo($a));
-        self::assertFalse($a->isNotEqualTo($a));
+        self::assertTrue($a->is($a));
+        self::assertFalse($a->isNot($a));
         self::assertFalse($a->isBefore($a));
         self::assertFalse($a->isAfter($a));
         self::assertTrue($a->isBeforeOrEqualTo($a));
@@ -166,8 +156,8 @@ final class SecondTest extends TestCase
         self::assertEquals($expected, $comparison->value());
         self::assertEquals($comparison->less(), $a->isBefore($b));
         self::assertEquals($comparison->greater(), $a->isAfter($b));
-        self::assertEquals($comparison->equal(), $a->isEqualTo($b));
-        self::assertEquals($comparison->notEqual(), $a->isNotEqualTo($b));
+        self::assertEquals($comparison->equal(), $a->is($b));
+        self::assertEquals($comparison->notEqual(), $a->isNot($b));
         self::assertEquals($comparison->lessOrEqual(), $a->isBeforeOrEqualTo($b));
         self::assertEquals($comparison->greaterOrEqual(), $a->isAfterOrEqualTo($b));
     }

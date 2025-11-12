@@ -67,16 +67,39 @@ enum DayOfWeek: int implements DateUnit
     }
 
     /**
-     * Checks if the number of this day of week is equal to a given one.
+     * Checks if this day of week is equal to another one.
      *
-     * @deprecated
+     * ```
+     * // Wednesday
+     * $this->is(DayOfWeek::Wednesday);  // true
+     * $this->is(DayOfWeek::Monday);     // false
+     * $this->is(DayOfWeek::Friday);     // false
+     * ```
      */
     #[\Override]
-    public function is(self|int $number): bool
+    public function is(self|int $other): bool
     {
-        $number = $number instanceof self ? $number->value : $number;
+        if (! $other instanceof self) {
+            \trigger_error('Integer option is deprecated', \E_USER_DEPRECATED);
+            return $this->value === $other;
+        }
 
-        return $this->value === $number;
+        return $this->compareTo($other)->equal();
+    }
+
+    /**
+     * Checks if this day of week is not equal to another one.
+     *
+     * ```
+     * // Wednesday
+     * $this->isNot(DayOfWeek::Wednesday);  // false
+     * $this->isNot(DayOfWeek::Monday);     // true
+     * $this->isNot(DayOfWeek::Friday);     // true
+     * ```
+     */
+    public function isNot(self $other): bool
+    {
+        return $this->compareTo($other)->notEqual();
     }
 
     /**
@@ -179,31 +202,13 @@ enum DayOfWeek: int implements DateUnit
         return $this->compareTo($other)->lessOrEqual();
     }
 
-    /**
-     * Checks if this day of week is equal to another one.
-     *
-     * ```
-     * // Wednesday
-     * $this->isEqualTo(DayOfWeek::Wednesday);  // true
-     * $this->isEqualTo(DayOfWeek::Monday);     // false
-     * $this->isEqualTo(DayOfWeek::Friday);     // false
-     * ```
-     */
+    /** @deprecated {@see self::is()} */
     public function isEqualTo(self $other): bool
     {
         return $this->compareTo($other)->equal();
     }
 
-    /**
-     * Checks if this day of week is not equal to another one.
-     *
-     * ```
-     * // Wednesday
-     * $this->isNotEqualTo(DayOfWeek::Wednesday);  // false
-     * $this->isNotEqualTo(DayOfWeek::Monday);     // true
-     * $this->isNotEqualTo(DayOfWeek::Friday);     // true
-     * ```
-     */
+    /** @deprecated {@see self::isNot()} */
     public function isNotEqualTo(self $other): bool
     {
         return $this->compareTo($other)->notEqual();

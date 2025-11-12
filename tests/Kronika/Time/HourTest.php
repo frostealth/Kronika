@@ -29,7 +29,6 @@ final class HourTest extends TestCase
         $hour = Hour::of(12);
 
         self::assertEquals(12, $hour->value());
-        self::assertTrue($hour->is(12));
 
         self::assertNotSame($hour, Hour::of(2));
         self::assertSame($hour, Hour::of(12));
@@ -115,8 +114,8 @@ final class HourTest extends TestCase
     #[DataProvider('comparisonProvider')]
     public function testComparison(Hour $a, Hour $b, int $expected): void
     {
-        self::assertTrue($a->isEqualTo($a));
-        self::assertFalse($a->isNotEqualTo($a));
+        self::assertTrue($a->is($a));
+        self::assertFalse($a->isNot($a));
         self::assertFalse($a->isBefore($a));
         self::assertFalse($a->isAfter($a));
         self::assertTrue($a->isBeforeOrEqualTo($a));
@@ -126,8 +125,8 @@ final class HourTest extends TestCase
         self::assertEquals($expected, $comparison->value());
         self::assertEquals($comparison->less(), $a->isBefore($b));
         self::assertEquals($comparison->greater(), $a->isAfter($b));
-        self::assertEquals($comparison->equal(), $a->isEqualTo($b));
-        self::assertEquals($comparison->notEqual(), $a->isNotEqualTo($b));
+        self::assertEquals($comparison->equal(), $a->is($b));
+        self::assertEquals($comparison->notEqual(), $a->isNot($b));
         self::assertEquals($comparison->lessOrEqual(), $a->isBeforeOrEqualTo($b));
         self::assertEquals($comparison->greaterOrEqual(), $a->isAfterOrEqualTo($b));
     }

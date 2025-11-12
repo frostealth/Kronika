@@ -100,16 +100,39 @@ enum Month: int implements DateUnit
     }
 
     /**
-     * Checks if the number of this month is equal to a given one.
+     * Checks if this month is equal to another one.
      *
-     * @deprecated
+     * ```
+     * // July
+     * $this->is(Month::July);      // true
+     * $this->is(Month::January);   // false
+     * $this->is(Month::December);  // false
+     * ```
      */
     #[\Override]
-    public function is(int|self $number): bool
+    public function is(int|self $other): bool
     {
-        $number = $number instanceof self ? $number->value : $number;
+        if (! $other instanceof self) {
+            \trigger_error('Integer option is deprecated', \E_USER_DEPRECATED);
+            return $other === $this->value;
+        }
 
-        return $number === $this->value;
+        return $this->compareTo($other)->equal();
+    }
+
+    /**
+     * Checks if this month is not equal to another one.
+     *
+     * ```
+     * // July
+     * $this->isNot(Month::July);      // false
+     * $this->isNot(Month::January);   // true
+     * $this->isNot(Month::December);  // true
+     * ```
+     */
+    public function isNot(self $other): bool
+    {
+        return $this->compareTo($other)->notEqual();
     }
 
     /**
@@ -225,31 +248,13 @@ enum Month: int implements DateUnit
         return $this->compareTo($other)->lessOrEqual();
     }
 
-    /**
-     * Checks if this month is equal to another one.
-     *
-     * ```
-     * // July
-     * $this->isEqualTo(Month::July);      // true
-     * $this->isEqualTo(Month::January);   // false
-     * $this->isEqualTo(Month::December);  // false
-     * ```
-     */
+    /** @deprecated {@see self::is()} */
     public function isEqualTo(self $other): bool
     {
         return $this->compareTo($other)->equal();
     }
 
-    /**
-     * Checks if this month is not equal to another one.
-     *
-     * ```
-     * // July
-     * $this->isNotEqualTo(Month::July);      // false
-     * $this->isNotEqualTo(Month::January);   // true
-     * $this->isNotEqualTo(Month::December);  // true
-     * ```
-     */
+    /** @deprecated {@see self::isNot()} */
     public function isNotEqualTo(self $other): bool
     {
         return $this->compareTo($other)->notEqual();

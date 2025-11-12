@@ -109,9 +109,9 @@ echo $time->format('H:i:s');  // '12:30:00'
 
 // comparison
 $other = $time->with(Second::of(0, micro: 999999));
-echo $time->isEqualTo($other);                     // false
-echo $time->isEqualTo($other, Precision::Second);  // true
-echo $time->isEqualTo(                             // true
+echo $time->is($other);                     // false
+echo $time->is($other, Precision::Second);  // true
+echo $time->is(                             // true
     $other->with(Second::of(59)),
     Precision::Minute,
 );

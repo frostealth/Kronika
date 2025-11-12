@@ -63,12 +63,40 @@ final readonly class Year implements DateUnit
     {
         return $this->number;
     }
-
-    /** @deprecated */
+    /**
+     * Checks if this year is equal to another one.
+     *
+     * ```
+     * // 2025
+     * $this->is(Year::of(2025));  // true
+     * $this->is(Year::of(2000));  // false
+     * $this->is(Year::of(2050));  // false
+     * ```
+     */
     #[\Override]
-    public function is(int $number): bool
+    public function is(self|int $other): bool
     {
-        return $this->number() === $number;
+        if (! $other instanceof self) {
+            \trigger_error('Integer option is deprecated', \E_USER_DEPRECATED);
+            return $this->number() === $other;
+        }
+
+        return $this->compareTo($other)->equal();
+    }
+
+    /**
+     * Checks if this year is not equal to another one.
+     *
+     * ```
+     * // 2025
+     * $this->isNot(Year::of(2025));  // false
+     * $this->isNot(Year::of(2000));  // true
+     * $this->isNot(Year::of(2050));  // true
+     * ```
+     */
+    public function isNot(self $other): bool
+    {
+        return $this->compareTo($other)->notEqual();
     }
 
     /**
@@ -181,31 +209,13 @@ final readonly class Year implements DateUnit
         return $this->compareTo($other)->lessOrEqual();
     }
 
-    /**
-     * Checks if this year is equal to another one.
-     *
-     * ```
-     * // 2025
-     * $this->isEqualTo(Year::of(2025));  // true
-     * $this->isEqualTo(Year::of(2000));  // false
-     * $this->isEqualTo(Year::of(2050));  // false
-     * ```
-     */
+    /** @deprecated {@see self::is()} */
     public function isEqualTo(self $other): bool
     {
         return $this->compareTo($other)->equal();
     }
 
-    /**
-     * Checks if this year is not equal to another one.
-     *
-     * ```
-     * // 2025
-     * $this->isNotEqualTo(Year::of(2025));  // false
-     * $this->isNotEqualTo(Year::of(2000));  // true
-     * $this->isNotEqualTo(Year::of(2050));  // true
-     * ```
-     */
+    /** @deprecated {@see self::isNot()} */
     public function isNotEqualTo(self $other): bool
     {
         return $this->compareTo($other)->notEqual();

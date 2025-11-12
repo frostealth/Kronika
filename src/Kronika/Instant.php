@@ -219,6 +219,38 @@ final readonly class Instant
     }
 
     /**
+     * Checks if this instant is equal to another one.
+     *
+     * ```
+     * // 1767161730.004545 vs 1767161730.004545
+     * $this->is($other);  // true
+     *
+     * // 1767161730.004545 vs 1767337230.004545
+     * $this->is($other);  // false
+     * ```
+     */
+    public function is(self $other): bool
+    {
+        return $this->compareTo($other)->equal();
+    }
+
+    /**
+     * Checks if this instant is not equal to another one.
+     *
+     * ```
+     * // 1767161730.004545 vs 1767161730.004545
+     * $this->isNot($other);  // false
+     *
+     * // 1767161730.004545 vs 1767337230.004545
+     * $this->isNot($other);  // true
+     * ```
+     */
+    public function isNot(self $other): bool
+    {
+        return $this->compareTo($other)->notEqual();
+    }
+
+    /**
      * Checks if this instant is before another one.
      *
      * ```
@@ -256,33 +288,13 @@ final readonly class Instant
         return $this->compareTo($other)->lessOrEqual();
     }
 
-    /**
-     * Checks if this instant is equal to another one.
-     *
-     * ```
-     * // 1767161730.004545 vs 1767161730.004545
-     * $this->isEqualTo($other);  // true
-     *
-     * // 1767161730.004545 vs 1767337230.004545
-     * $this->isEqualTo($other);  // false
-     * ```
-     */
+    /** @deprecated {@see self::is()} */
     public function isEqualTo(self $other): bool
     {
         return $this->compareTo($other)->equal();
     }
 
-    /**
-     * Checks if this instant is not equal to another one.
-     *
-     * ```
-     * // 1767161730.004545 vs 1767161730.004545
-     * $this->isNotEqualTo($other);  // false
-     *
-     * // 1767161730.004545 vs 1767337230.004545
-     * $this->isNotEqualTo($other);  // true
-     * ```
-     */
+    /** @deprecated {@see self::isNot()} */
     public function isNotEqualTo(self $other): bool
     {
         return $this->compareTo($other)->notEqual();

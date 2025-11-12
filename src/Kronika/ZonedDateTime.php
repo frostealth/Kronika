@@ -371,6 +371,18 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     #[\Override]
+    public function is(DateTime|Unit|Native $other, Precision $precision = Precision::Micro): bool
+    {
+        return $this->compareTo($other, $precision)->equal();
+    }
+
+    #[\Override]
+    public function isNot(DateTime|Unit|Native $other, Precision $precision = Precision::Micro): bool
+    {
+        return $this->compareTo($other, $precision)->notEqual();
+    }
+
+    #[\Override]
     public function isBefore(DateTime|Unit|Native $other, Precision $precision = Precision::Micro): bool
     {
         return $this->compareTo($other, $precision)->less();
@@ -382,12 +394,14 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         return $this->compareTo($other, $precision)->lessOrEqual();
     }
 
+    /** @deprecated {@see self::is()} */
     #[\Override]
     public function isEqualTo(DateTime|Unit|Native $other, Precision $precision = Precision::Micro): bool
     {
         return $this->compareTo($other, $precision)->equal();
     }
 
+    /** @deprecated {@see self::isNot()} */
     #[\Override]
     public function isNotEqualTo(DateTime|Unit|Native $other, Precision $precision = Precision::Micro): bool
     {

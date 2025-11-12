@@ -34,11 +34,11 @@ interface DateUnit extends Unit
     /**
      * Checks if this date unit's number is equal to a given one.
      *
-     * @param TDateUnit $number
+     * @param TDateUnit $other
      *
      * @deprecated
      */
-    public function is(int $number): bool;
+    public function is(int $other): bool;
 
     /** @internal {@see Date::with()} */
     public function _withinDate(Date $date): Date;

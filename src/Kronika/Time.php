@@ -343,7 +343,7 @@ final readonly class Time implements Unit
      */
     public function isMidnight(Precision $precision = Precision::Second): bool
     {
-        return $this->isEqualTo(self::midnight(), $precision);
+        return $this->is(self::midnight(), $precision);
     }
 
     /**
@@ -361,7 +361,7 @@ final readonly class Time implements Unit
      */
     public function isMidday(Precision $precision = Precision::Second): bool
     {
-        return $this->isEqualTo(self::midday(), $precision);
+        return $this->is(self::midday(), $precision);
     }
 
     /**
@@ -379,7 +379,53 @@ final readonly class Time implements Unit
      */
     public function isEndOfDay(Precision $precision = Precision::Second): bool
     {
-        return $this->isEqualTo(self::endOfDay(), $precision);
+        return $this->is(self::endOfDay(), $precision);
+    }
+
+    /**
+     * Checks if this time or its unit is equal to another one.
+     *
+     * ```
+     * // 10:15:30.000000 vs 10:15:30.000000
+     * $this->is($other);  // true
+     *
+     * // 10:15:30.000000 vs 10:15:30.999999
+     * $this->is($other);  // false
+     * $this->is($other, Precision::Second);  // true
+     *
+     * // 10:15:30.000000 vs 10:15:59.999999
+     * $this->is($other, Precision::Second);  // false
+     * $this->is($other, Precision::Minute);  // true
+     *
+     * // 10:15:30.000000 vs Minute::of(15)
+     * $this->is($other);  // true
+     * ```
+     */
+    public function is(self|TimeUnit $other, Precision $precision = Precision::Micro): bool
+    {
+        return $this->compareTo($other, $precision)->equal();
+    }
+
+    /**
+     * Checks if this time or its unit is not equal to another one.
+     *
+     * ```
+     * // 10:15:30.000000 vs 10:15:30.999999
+     * $this->isNot($other);  // true
+     * $this->isNot($other, Precision::Second);  // false
+     *
+     * // 10:15:30.000000 vs 10:15:59.999999
+     * $this->isNot($other, Precision::Second);  // true
+     * $this->isNot($other, Precision::Minute);  // false
+     *
+     * // 10:15:30.000000 vs Second::of(45)
+     * $this->isNot($other, Precision::Second);  // true
+     * $this->isNot($other, Precision::Minute);  // false
+     * ```
+     */
+    public function isNot(self|TimeUnit $other, Precision $precision = Precision::Micro): bool
+    {
+        return $this->compareTo($other, $precision)->notEqual();
     }
 
     /**
@@ -427,47 +473,13 @@ final readonly class Time implements Unit
         return $this->compareTo($other, $precision)->lessOrEqual();
     }
 
-    /**
-     * Checks if this time or its unit is equal to another one.
-     *
-     * ```
-     * // 10:15:30.000000 vs 10:15:30.000000
-     * $this->isEqualTo($other);  // true
-     *
-     * // 10:15:30.000000 vs 10:15:30.999999
-     * $this->isEqualTo($other);  // false
-     * $this->isEqualTo($other, Precision::Second);  // true
-     *
-     * // 10:15:30.000000 vs 10:15:59.999999
-     * $this->isEqualTo($other, Precision::Second);  // false
-     * $this->isEqualTo($other, Precision::Minute);  // true
-     *
-     * // 10:15:30.000000 vs Minute::of(15)
-     * $this->isEqualTo($other);  // true
-     * ```
-     */
+    /** @deprecated {@see self::is()} */
     public function isEqualTo(self|TimeUnit $other, Precision $precision = Precision::Micro): bool
     {
         return $this->compareTo($other, $precision)->equal();
     }
 
-    /**
-     * Checks if this time or its unit is not equal to another one.
-     *
-     * ```
-     * // 10:15:30.000000 vs 10:15:30.999999
-     * $this->isNotEqualTo($other);  // true
-     * $this->isNotEqualTo($other, Precision::Second);  // false
-     *
-     * // 10:15:30.000000 vs 10:15:59.999999
-     * $this->isNotEqualTo($other, Precision::Second);  // true
-     * $this->isNotEqualTo($other, Precision::Minute);  // false
-     *
-     * // 10:15:30.000000 vs Second::of(45)
-     * $this->isNotEqualTo($other, Precision::Second);  // true
-     * $this->isNotEqualTo($other, Precision::Minute);  // false
-     * ```
-     */
+    /** @deprecated {@see self::isNot()} */
     public function isNotEqualTo(self|TimeUnit $other, Precision $precision = Precision::Micro): bool
     {
         return $this->compareTo($other, $precision)->notEqual();

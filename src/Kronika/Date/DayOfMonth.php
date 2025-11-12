@@ -62,11 +62,40 @@ final readonly class DayOfMonth implements DateUnit
         return $this->number;
     }
 
-    /** @deprecated */
+    /**
+     * Checks if this day of month is equal to another one.
+     *
+     * ```
+     * // 20
+     * $this->is(DayOfMonth::of(20));  // true
+     * $this->is(DayOfMonth::of(1));   // false
+     * $this->is(DayOfMonth::of(31));  // false
+     * ```
+     */
     #[\Override]
-    public function is(int $number): bool
+    public function is(self|int $other): bool
     {
-        return $this->number() === $number;
+        if (! $other instanceof self) {
+            \trigger_error('Integer option is deprecated', \E_USER_DEPRECATED);
+            return $this->number() === $other;
+        }
+
+        return $this->compareTo($other)->equal();
+    }
+
+    /**
+     * Checks if this day of month is not equal to another one.
+     *
+     * ```
+     * // 20
+     * $this->isNot(DayOfMonth::of(20));  // false
+     * $this->isNot(DayOfMonth::of(1));   // true
+     * $this->isNot(DayOfMonth::of(31));  // true
+     * ```
+     */
+    public function isNot(self $other): bool
+    {
+        return $this->compareTo($other)->notEqual();
     }
 
     /**
@@ -99,31 +128,13 @@ final readonly class DayOfMonth implements DateUnit
         return $this->compareTo($other)->lessOrEqual();
     }
 
-    /**
-     * Checks if this day of month is equal to another one.
-     *
-     * ```
-     * // 20
-     * $this->isEqualTo(DayOfMonth::of(20));  // true
-     * $this->isEqualTo(DayOfMonth::of(1));   // false
-     * $this->isEqualTo(DayOfMonth::of(31));  // false
-     * ```
-     */
+    /** @deprecated {@see self::is()} */
     public function isEqualTo(self $other): bool
     {
         return $this->compareTo($other)->equal();
     }
 
-    /**
-     * Checks if this day of month is not equal to another one.
-     *
-     * ```
-     * // 20
-     * $this->isNotEqualTo(DayOfMonth::of(20));  // false
-     * $this->isNotEqualTo(DayOfMonth::of(1));   // true
-     * $this->isNotEqualTo(DayOfMonth::of(31));  // true
-     * ```
-     */
+    /** @deprecated {@see self::isNot()} */
     public function isNotEqualTo(self $other): bool
     {
         return $this->compareTo($other)->notEqual();

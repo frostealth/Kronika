@@ -355,7 +355,7 @@ final readonly class Date implements Unit
      */
     public function isStartOfMonth(): bool
     {
-        return $this->day()->isEqualTo(DayOfMonth::of(1));
+        return $this->day()->is(DayOfMonth::of(1));
     }
 
     /**
@@ -371,7 +371,45 @@ final readonly class Date implements Unit
      */
     public function isEndOfMonth(): bool
     {
-        return $this->day()->isEqualTo($this->month()->lastDay($this->year()));
+        return $this->day()->is($this->month()->lastDay($this->year()));
+    }
+
+    /**
+     * Checks if this date or its unit is equal to another one.
+     *
+     * ```
+     * // 2025-12-30 vs 2025-12-30
+     * $this->is($other);  // true
+     *
+     * // 2025-12-30 vs 2025-12-31
+     * $this->is($other);  // false
+     *
+     * // 2025-12-30 vs Month::December
+     * $this->is($other);  // true
+     * ```
+     */
+    public function is(self|DateUnit $other): bool
+    {
+        return $this->compareTo($other)->equal();
+    }
+
+    /**
+     * Checks if this date or its unit is not equal to another one.
+     *
+     * ```
+     * // 2025-12-30 vs 2025-12-31
+     * $this->isNot($other);  // true
+     *
+     * // 2025-12-30 vs 2025-12-30
+     * $this->isNot($other);  // false
+     *
+     * // 2025-12-30 vs Month::December
+     * $this->isNot($other);  // false
+     * ```
+     */
+    public function isNot(self|DateUnit $other): bool
+    {
+        return $this->compareTo($other)->notEqual();
     }
 
     /**
@@ -415,39 +453,13 @@ final readonly class Date implements Unit
         return $this->compareTo($other)->lessOrEqual();
     }
 
-    /**
-     * Checks if this date or its unit is equal to another one.
-     *
-     * ```
-     * // 2025-12-30 vs 2025-12-30
-     * $this->isEqualTo($other);  // true
-     *
-     * // 2025-12-30 vs 2025-12-31
-     * $this->isEqualTo($other);  // false
-     *
-     * // 2025-12-30 vs Month::December
-     * $this->isEqualTo($other);  // true
-     * ```
-     */
+    /** @deprecated {@see self::is()} */
     public function isEqualTo(self|DateUnit $other): bool
     {
         return $this->compareTo($other)->equal();
     }
 
-    /**
-     * Checks if this date or its unit is not equal to another one.
-     *
-     * ```
-     * // 2025-12-30 vs 2025-12-31
-     * $this->isNotEqualTo($other);  // true
-     *
-     * // 2025-12-30 vs 2025-12-30
-     * $this->isNotEqualTo($other);  // false
-     *
-     * // 2025-12-30 vs Month::December
-     * $this->isNotEqualTo($other);  // false
-     * ```
-     */
+    /** @deprecated {@see self::isNot()} */
     public function isNotEqualTo(self|DateUnit $other): bool
     {
         return $this->compareTo($other)->notEqual();
