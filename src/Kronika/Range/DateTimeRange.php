@@ -120,7 +120,7 @@ final readonly class DateTimeRange implements Range
     public function isZero(): bool
     {
         return $this->remember(
-            static fn(self $that): bool => $that->since->isEqualTo($that->till, $that->precision),
+            static fn(self $that): bool => $that->since->is($that->till, $that->precision),
             key: __METHOD__,
         );
     }
@@ -146,7 +146,7 @@ final readonly class DateTimeRange implements Range
     public function contains(DateTime $datetime): bool
     {
         if ($this->isZero()) {
-            return $this->since->isEqualTo($datetime, $this->precision);
+            return $this->since->is($datetime, $this->precision);
         }
 
         return $this->till->isAfter($datetime, $this->precision)

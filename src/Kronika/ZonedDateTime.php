@@ -195,7 +195,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         private readonly LocalDateTime $local,
         \DateTimeZone $timezone,
     ){
-        parent::__construct(\sprintf('%s %s', $local->date(), $local->time()), $timezone);
+        parent::__construct((string)$local, $timezone);
     }
 
     #[\Override]
@@ -401,6 +401,18 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     #[\Override]
+    public function is(DateTime|Unit|Native $other, Precision $precision = Precision::Micro): bool
+    {
+        return $this->compareTo($other, $precision)->equal();
+    }
+
+    #[\Override]
+    public function isNot(DateTime|Unit|Native $other, Precision $precision = Precision::Micro): bool
+    {
+        return $this->compareTo($other, $precision)->notEqual();
+    }
+
+    #[\Override]
     public function isBefore(DateTime|Unit|Native $other, Precision $precision = Precision::Micro): bool
     {
         return $this->compareTo($other, $precision)->less();
@@ -412,16 +424,16 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         return $this->compareTo($other, $precision)->lessOrEqual();
     }
 
-    #[\Override]
+    /** @deprecated {@see self::is()} */
     public function isEqualTo(DateTime|Unit|Native $other, Precision $precision = Precision::Micro): bool
     {
-        return $this->compareTo($other, $precision)->equal();
+        return $this->is($other, $precision);
     }
 
-    #[\Override]
+    /** @deprecated {@see self::isNot()} */
     public function isNotEqualTo(DateTime|Unit|Native $other, Precision $precision = Precision::Micro): bool
     {
-        return $this->compareTo($other, $precision)->notEqual();
+        return $this->isNot($other, $precision);
     }
 
     #[\Override]
@@ -552,7 +564,9 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         string $datetime,
         ?\DateTimeZone $timezone = null,
     ): static|false {
-        return self::ofNativeOrFalse(\DateTimeImmutable::createFromFormat($format, $datetime, $timezone));
+        $native = \DateTimeImmutable::createFromFormat($format, $datetime, $timezone);
+
+        return $native instanceof Native ? self::ofDateTime($native) : false;
     }
 
     /**
@@ -611,11 +625,6 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     public function setMicrosecond(int $microsecond): static
     {
         return self::ofDateTime($this->toNative()->setMicrosecond($microsecond));
-    }
-
-    private static function ofNativeOrFalse(Native|false $native): self|false
-    {
-        return $native instanceof Native ? self::ofDateTime($native) : false;
     }
 
     private function localize(DateTime|Unit|Native $datetime): DateTime

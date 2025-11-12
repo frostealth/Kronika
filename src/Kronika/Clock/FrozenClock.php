@@ -28,12 +28,12 @@ use Kronika\ZonedDateTime;
  * );
  * $clock = new FrozenClock($time);
  *
- * $clock->now()->isEqualTo($time);  // true
+ * $clock->now()->is($time);  // true
  * sleep(10);
- * $clock->now()->isEqualTo($time);  // true
+ * $clock->now()->is($time);  // true
  *
  * $clock->sleep(Duration::of(seconds: 5));
- * $clock->now()->isEqualTo($time);  // false
+ * $clock->now()->is($time);  // false
  * ```
  */
 final class FrozenClock implements Clock

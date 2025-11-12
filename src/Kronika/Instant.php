@@ -77,7 +77,7 @@ final readonly class Instant
     }
 
     /**
-     * Returns an instance of `ZonedDateTime` from this instant and a given time-zone.
+     * Combines this instant with a given time-zone to create an instance of `ZonedDateTime`.
      *
      * ```
      * // 1767161730.004545
@@ -112,7 +112,7 @@ final readonly class Instant
      */
     public function resetMicro(): self
     {
-        return self::of(second: $this->second);
+        return $this->remember(static fn(self $that): self => self::of(second: $that->second), key: __METHOD__);
     }
 
     /**
@@ -120,7 +120,10 @@ final readonly class Instant
      */
     public function resetSecond(): self
     {
-        return self::of(second: $this->second - ($this->second % 60));
+        return $this->remember(
+            static fn(self $that): self => self::of(second: $that->second - ($that->second % 60)),
+            key: __METHOD__,
+        );
     }
 
     /**
@@ -128,7 +131,10 @@ final readonly class Instant
      */
     public function resetMinute(): self
     {
-        return self::of(second: $this->second - ($this->second % 3600));
+        return $this->remember(
+            static fn(self $that): self => self::of(second: $that->second - ($that->second % 3600)),
+            key: __METHOD__,
+        );
     }
 
     /**
@@ -181,7 +187,7 @@ final readonly class Instant
     }
 
     /**
-     * Returns an amount of days, hours, minutes and seconds from this instant to another one.
+     * Calculates the duration from this instant to another one.
      *
      * ```
      * // 1767161730.004545 vs 1767337230.004545
@@ -206,7 +212,7 @@ final readonly class Instant
     }
 
     /**
-     * Returns an amount of days, hours, minutes and seconds between this instant and another one.
+     * Calculates the duration between this instant and another one.
      *
      * ```
      * // 1767161730.004545 vs 1767337230.004545
@@ -228,6 +234,38 @@ final readonly class Instant
     public function difference(self $other): Duration
     {
         return Duration::of(seconds: \abs($other->math()->sub($this->second, $this->microsecond)->integer()));
+    }
+
+    /**
+     * Checks if this instant is equal to another one.
+     *
+     * ```
+     * // 1767161730.004545 vs 1767161730.004545
+     * $this->is($other);  // true
+     *
+     * // 1767161730.004545 vs 1767337230.004545
+     * $this->is($other);  // false
+     * ```
+     */
+    public function is(self $other, Precision $precision = Precision::Micro): bool
+    {
+        return $this->compareTo($other, $precision)->equal();
+    }
+
+    /**
+     * Checks if this instant is not equal to another one.
+     *
+     * ```
+     * // 1767161730.004545 vs 1767161730.004545
+     * $this->isNot($other);  // false
+     *
+     * // 1767161730.004545 vs 1767337230.004545
+     * $this->isNot($other);  // true
+     * ```
+     */
+    public function isNot(self $other, Precision $precision = Precision::Micro): bool
+    {
+        return $this->compareTo($other, $precision)->notEqual();
     }
 
     /**
@@ -268,36 +306,16 @@ final readonly class Instant
         return $this->compareTo($other, $precision)->lessOrEqual();
     }
 
-    /**
-     * Checks if this instant is equal to another one.
-     *
-     * ```
-     * // 1767161730.004545 vs 1767161730.004545
-     * $this->isEqualTo($other);  // true
-     *
-     * // 1767161730.004545 vs 1767337230.004545
-     * $this->isEqualTo($other);  // false
-     * ```
-     */
+    /** @deprecated {@see self::is()} */
     public function isEqualTo(self $other, Precision $precision = Precision::Micro): bool
     {
-        return $this->compareTo($other, $precision)->equal();
+        return $this->is($other, $precision);
     }
 
-    /**
-     * Checks if this instant is not equal to another one.
-     *
-     * ```
-     * // 1767161730.004545 vs 1767161730.004545
-     * $this->isNotEqualTo($other);  // false
-     *
-     * // 1767161730.004545 vs 1767337230.004545
-     * $this->isNotEqualTo($other);  // true
-     * ```
-     */
+    /** @deprecated {@see self::isNot()} */
     public function isNotEqualTo(self $other, Precision $precision = Precision::Micro): bool
     {
-        return $this->compareTo($other, $precision)->notEqual();
+        return $this->isNot($other, $precision);
     }
 
     /**
@@ -379,7 +397,7 @@ final readonly class Instant
     }
 
     /** @internal */
-    public function join(self $other): self
+    public function _join(self $other): self
     {
         return self::of(...$this->math()->add($other->second, $other->microsecond)->parts());
     }

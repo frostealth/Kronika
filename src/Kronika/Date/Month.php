@@ -88,21 +88,9 @@ enum Month: int implements DateUnit
     }
 
     /**
-     * Checks if this month contains a given day in a given year.
-     *
-     * ```
-     * // February
-     * $this->containsDay(DayOfMonth::of(29), Year::of(2025));  // false
-     * $this->containsDay(DayOfMonth::of(29), Year::of(2024));  // true - leap year
-     * ```
-     */
-    public function containsDay(DayOfMonth $day, Year $year): bool
-    {
-        return $day->number() <= $this->length($year);
-    }
-
-    /**
      * Returns the number of this month.
+     *
+     * @return TMonth
      */
     #[\Override]
     public function number(): int
@@ -139,6 +127,20 @@ enum Month: int implements DateUnit
     }
 
     /**
+     * Checks if this month contains a given day in a given year.
+     *
+     * ```
+     * // February
+     * $this->containsDay(DayOfMonth::of(29), Year::of(2025));  // false
+     * $this->containsDay(DayOfMonth::of(29), Year::of(2024));  // true - leap year
+     * ```
+     */
+    public function containsDay(DayOfMonth $day, Year $year): bool
+    {
+        return $day->number() <= $this->length($year);
+    }
+
+    /**
      * Returns the next month.
      *
      * ```
@@ -147,7 +149,7 @@ enum Month: int implements DateUnit
      */
     public function next(bool $rolling = false): self
     {
-        if ($this === self::December) {
+        if ($this->is(self::December)) {
             return $rolling ? self::January : $this;
         }
 
@@ -163,7 +165,7 @@ enum Month: int implements DateUnit
      */
     public function previous(bool $rolling = false): self
     {
-        if ($this === self::January) {
+        if ($this->is(self::January)) {
             return $rolling ? self::December : $this;
         }
 
@@ -182,6 +184,36 @@ enum Month: int implements DateUnit
     public function duration(Year $year): Duration
     {
         return Duration::of(days: $this->length($year));
+    }
+
+    /**
+     * Checks if this month is equal to another one.
+     *
+     * ```
+     * // July
+     * $this->is(Month::July);      // true
+     * $this->is(Month::January);   // false
+     * $this->is(Month::December);  // false
+     * ```
+     */
+    public function is(self $other): bool
+    {
+        return $this->compareTo($other)->equal();
+    }
+
+    /**
+     * Checks if this month is not equal to another one.
+     *
+     * ```
+     * // July
+     * $this->isNot(Month::July);      // false
+     * $this->isNot(Month::January);   // true
+     * $this->isNot(Month::December);  // true
+     * ```
+     */
+    public function isNot(self $other): bool
+    {
+        return $this->compareTo($other)->notEqual();
     }
 
     /**
@@ -214,34 +246,16 @@ enum Month: int implements DateUnit
         return $this->compareTo($other)->lessOrEqual();
     }
 
-    /**
-     * Checks if this month is equal to another one.
-     *
-     * ```
-     * // July
-     * $this->isEqualTo(Month::July);      // true
-     * $this->isEqualTo(Month::January);   // false
-     * $this->isEqualTo(Month::December);  // false
-     * ```
-     */
+    /** @deprecated {@see self::is()} */
     public function isEqualTo(self $other): bool
     {
-        return $this->compareTo($other)->equal();
+        return $this->is($other);
     }
 
-    /**
-     * Checks if this month is not equal to another one.
-     *
-     * ```
-     * // July
-     * $this->isNotEqualTo(Month::July);      // false
-     * $this->isNotEqualTo(Month::January);   // true
-     * $this->isNotEqualTo(Month::December);  // true
-     * ```
-     */
+    /** @deprecated {@see self::isNot()} */
     public function isNotEqualTo(self $other): bool
     {
-        return $this->compareTo($other)->notEqual();
+        return $this->isNot($other);
     }
 
     /**
@@ -286,7 +300,7 @@ enum Month: int implements DateUnit
      */
     public function compareTo(self $other): Compared
     {
-        return Compared::of($this->number() <=> $other->number());
+        return Compared::of($this->value <=> $other->value);
     }
 
     /** @throws Exception\InvalidMonth */

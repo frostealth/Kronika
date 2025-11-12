@@ -96,6 +96,11 @@ final readonly class DayOfYear implements DateUnit
         self::assertNumber($number);
     }
 
+    /**
+     * Returns the number of this day of year.
+     *
+     * @return TDayOfYear
+     */
     #[\Override]
     public function number(): int
     {
@@ -151,6 +156,36 @@ final readonly class DayOfYear implements DateUnit
     }
 
     /**
+     * Checks if this day of year is equal to another one.
+     *
+     * ```
+     * // 32
+     * $this->is(DayOfYear::of(32));  // true
+     * $this->is(DayOfYear::of(1));   // false
+     * $this->is(DayOfYear::of(36));  // false
+     * ```
+     */
+    public function is(self $other): bool
+    {
+        return $this->compareTo($other)->equal();
+    }
+
+    /**
+     * Checks if this day of year is not equal to another one.
+     *
+     * ```
+     * // 32
+     * $this->isNot(DayOfYear::of(32));  // false
+     * $this->isNot(DayOfYear::of(1));   // true
+     * $this->isNot(DayOfYear::of(36));  // true
+     * ```
+     */
+    public function isNot(self $other): bool
+    {
+        return $this->compareTo($other)->notEqual();
+    }
+
+    /**
      * Checks if this day of year is before another one.
      *
      * ```
@@ -180,34 +215,16 @@ final readonly class DayOfYear implements DateUnit
         return $this->compareTo($other)->lessOrEqual();
     }
 
-    /**
-     * Checks if this day of year is equal to another one.
-     *
-     * ```
-     * // 32
-     * $this->isEqualTo(DayOfYear::of(32));  // true
-     * $this->isEqualTo(DayOfYear::of(1));   // false
-     * $this->isEqualTo(DayOfYear::of(36));  // false
-     * ```
-     */
+    /** @deprecated {@see self::is()} */
     public function isEqualTo(self $other): bool
     {
-        return $this->compareTo($other)->equal();
+        return $this->is($other);
     }
 
-    /**
-     * Checks if this day of year is not equal to another one.
-     *
-     * ```
-     * // 32
-     * $this->isNotEqualTo(DayOfYear::of(32));  // false
-     * $this->isNotEqualTo(DayOfYear::of(1));   // true
-     * $this->isNotEqualTo(DayOfYear::of(36));  // true
-     * ```
-     */
+    /** @deprecated {@see self::isNot()} */
     public function isNotEqualTo(self $other): bool
     {
-        return $this->compareTo($other)->notEqual();
+        return $this->isNot($other);
     }
 
     /**
@@ -253,7 +270,7 @@ final readonly class DayOfYear implements DateUnit
      */
     public function compareTo(self $other): Compared
     {
-        return Compared::of($this->number() <=> $other->number());
+        return Compared::of($this <=> $other);
     }
 
     /** @return non-empty-string */
@@ -284,12 +301,12 @@ final readonly class DayOfYear implements DateUnit
 
     private function isFirst(): bool
     {
-        return $this->isEqualTo(self::first());
+        return $this->is(self::first());
     }
 
     private function isLast(?Year $ofYear): bool
     {
-        return $this->adjust($ofYear)->isEqualTo(self::last($ofYear));
+        return $this->adjust($ofYear)->is(self::last($ofYear));
     }
 
     private function adjust(?Year $year): self

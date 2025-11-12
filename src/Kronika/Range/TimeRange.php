@@ -78,7 +78,7 @@ final readonly class TimeRange implements Range
     public function isZero(): bool
     {
         return $this->remember(
-            static fn(self $that): bool => $that->since->isEqualTo($that->till, $that->precision),
+            static fn(self $that): bool => $that->since->is($that->till, $that->precision),
             key: __METHOD__,
         );
     }
@@ -102,7 +102,7 @@ final readonly class TimeRange implements Range
     public function contains(Time $time): bool
     {
         if ($this->isZero()) {
-            return $this->since->isEqualTo($time, $this->precision);
+            return $this->since->is($time, $this->precision);
         }
 
         return $this->till->isAfter($time, $this->precision)

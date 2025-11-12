@@ -6,9 +6,44 @@ All notable changes to `Kronika` will be documented in this file.
 - `Instant::resetMicro()` – resets microsecond.
 - `Instant::resetSecond()` – resets second with microsecond.
 - `Instant::resetMinute()` – resets minute, second and microsecond.
+- `Instant::is()` and `Instant::isNot()` methods.
 - `precision` option to comparison methods of `Instant`.
+- `Date::is()` and `Date::isNot()` methods.
+- `Year::is()` and `Year::isNot()` methods.
+- `DayOfYear::is()` and `DayOfYear::isNot()` methods.
+- `Month::is()` and `Month::isNot()` methods.
+- `DayOfWeek::is()` and `DayOfWeek::isNot()` methods.
+- `DayOfMonth::is()` and `DayOfMonth::isNot()` methods.
+- `Time::is()` and `Time::isNot()` methods.
+- `Hour::is()` and `Hour::isNot()` methods.
+- `Minute::is()` and `Minute::isNot()` methods.
+- `Second::is()` and `Second::isNot()` methods.
+- `DateTime::is()` and `DateTime::isNot()` methods.
+- `Duration::is()` and `Duration::isNot()` methods.
+- `LocalDateTime::is()` and `LocalDateTime::isNot()` methods.
+- `ZonedDateTime::is()` and `ZonedDateTime::isNot()` methods.
 
 ### Changed
+
+### Deprecated
+- `Date::isEqualTo()` and `Date::isNotEqualTo()` methods.
+- `Year::isEqualTo()` and `Year::isNotEqualTo()` methods.
+- `DayOfYear::isEqualTo()` and `DayOfYear::isNotEqualTo()` methods.
+- `Month::isEqualTo()` and `Month::isNotEqualTo()` methods.
+- `DayOfWeek::isEqualTo()` and `DayOfWeek::isNotEqualTo()` methods.
+- `DayOfMonth::isEqualTo()` and `DayOfMonth::isNotEqualTo()` methods.
+- `Time::isEqualTo()` and `Time::isNotEqualTo()` methods.
+- `Hour::isEqualTo()` and `Hour::isNotEqualTo()` methods.
+- `Minute::isEqualTo()` and `Minute::isNotEqualTo()` methods.
+- `Second::isEqualTo()` and `Second::isNotEqualTo()` methods.
+- `DateTime::isEqualTo()` and `DateTime::isNotEqualTo()` methods.
+- `Duration::isEqualTo()` and `Duration::isNotEqualTo()` methods.
+- `Instant::isEqualTo()` and `Instant::isNotEqualTo()` methods.
+- `LocalDateTime::isEqualTo()` and `LocalDateTime::isNotEqualTo()` methods.
+- `ZonedDateTime::isEqualTo()` and `ZonedDateTime::isNotEqualTo()` methods.
+
+### Removed
+- `DateTime::isEqualTo()` and `DateTime::isNotEqualTo()` methods.
 
 ## [0.2.3](https://github.com/frostealth/kronika/releases/tag/0.2.3) – 2025-11-11
 ### Added

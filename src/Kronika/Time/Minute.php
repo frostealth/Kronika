@@ -95,7 +95,7 @@ final readonly class Minute implements TimeUnit
     #[\Override]
     public function isZero(): bool
     {
-        return $this->isEqualTo(self::zero());
+        return $this->is(self::zero());
     }
 
     /**
@@ -104,7 +104,37 @@ final readonly class Minute implements TimeUnit
     #[\Override]
     public function isLast(): bool
     {
-        return $this->isEqualTo(self::last());
+        return $this->is(self::last());
+    }
+
+    /**
+     * Checks if this minute is equal to another one.
+     *
+     * ```
+     * // 30
+     * $this->is(Minute::of(30));   // true
+     * $this->is(Minute::zero());  // false
+     * $this->is(Minute::of(50));  // false
+     * ```
+     */
+    public function is(self $other): bool
+    {
+        return $this->compareTo($other)->equal();
+    }
+
+    /**
+     * Checks if this minute is not equal to another one.
+     *
+     * ```
+     * // 30
+     * $this->isNot(Minute::of(30);   // false
+     * $this->isNot(Minute::zero());  // true
+     * $this->isNot(Minute::of(50));  // true
+     * ```
+     */
+    public function isNot(self $other): bool
+    {
+        return $this->compareTo($other)->notEqual();
     }
 
     /**
@@ -137,34 +167,16 @@ final readonly class Minute implements TimeUnit
         return $this->compareTo($other)->lessOrEqual();
     }
 
-    /**
-     * Checks if this minute is equal to another one.
-     *
-     * ```
-     * // 30
-     * $this->isEqualTo(Minute::of(30));   // true
-     * $this->isEqualTo(Minute::zero());  // false
-     * $this->isEqualTo(Minute::of(50));  // false
-     * ```
-     */
+    /** @deprecated {@see self::is()} */
     public function isEqualTo(self $other): bool
     {
-        return $this->compareTo($other)->equal();
+        return $this->is($other);
     }
 
-    /**
-     * Checks if this minute is not equal to another one.
-     *
-     * ```
-     * // 30
-     * $this->isNotEqualTo(Minute::of(30);   // false
-     * $this->isNotEqualTo(Minute::zero());  // true
-     * $this->isNotEqualTo(Minute::of(50));  // true
-     * ```
-     */
+    /** @deprecated {@see self::isNot()} */
     public function isNotEqualTo(self $other): bool
     {
-        return $this->compareTo($other)->notEqual();
+        return $this->isNot($other);
     }
 
     /**
@@ -209,7 +221,7 @@ final readonly class Minute implements TimeUnit
      */
     public function compareTo(self $other): Compared
     {
-        return Compared::of($this->value() <=> $other->value());
+        return Compared::of($this <=> $other);
     }
 
     /** @return non-empty-string */

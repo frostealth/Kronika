@@ -138,7 +138,7 @@ final readonly class Hour implements TimeUnit
     #[\Override]
     public function isZero(): bool
     {
-        return $this->isEqualTo(self::zero());
+        return $this->is(self::zero());
     }
 
     /**
@@ -147,7 +147,37 @@ final readonly class Hour implements TimeUnit
     #[\Override]
     public function isLast(): bool
     {
-        return $this->isEqualTo(self::last());
+        return $this->is(self::last());
+    }
+
+    /**
+     * Checks if this hour is equal to another one.
+     *
+     * ```
+     * // 12
+     * $this->is(Hour::of(12));  // true
+     * $this->is(Hour::zero());  // false
+     * $this->is(Hour::of(21));  // false
+     * ```
+     */
+    public function is(self $other): bool
+    {
+        return $this->compareTo($other)->equal();
+    }
+
+    /**
+     * Checks if this hour is not equal to another one.
+     *
+     * ```
+     * // 12
+     * $this->isNot(Hour::of(12));  // false
+     * $this->isNot(Hour::zero());  // true
+     * $this->isNot(Hour::of(21));  // true
+     * ```
+     */
+    public function isNot(self $other): bool
+    {
+        return $this->compareTo($other)->notEqual();
     }
 
     /**
@@ -180,34 +210,16 @@ final readonly class Hour implements TimeUnit
         return $this->compareTo($other)->lessOrEqual();
     }
 
-    /**
-     * Checks if this hour is equal to another one.
-     *
-     * ```
-     * // 12
-     * $this->isEqualTo(Hour::of(12));  // true
-     * $this->isEqualTo(Hour::zero());  // false
-     * $this->isEqualTo(Hour::of(21));  // false
-     * ```
-     */
+    /** @deprecated {@see self::is()} */
     public function isEqualTo(self $other): bool
     {
-        return $this->compareTo($other)->equal();
+        return $this->is($other);
     }
 
-    /**
-     * Checks if this hour is not equal to another one.
-     *
-     * ```
-     * // 12
-     * $this->isNotEqualTo(Hour::of(12));  // false
-     * $this->isNotEqualTo(Hour::zero());  // true
-     * $this->isNotEqualTo(Hour::of(21));  // true
-     * ```
-     */
+    /** @deprecated {@see self::isNot()} */
     public function isNotEqualTo(self $other): bool
     {
-        return $this->compareTo($other)->notEqual();
+        return $this->isNot($other);
     }
 
     /**
@@ -252,7 +264,7 @@ final readonly class Hour implements TimeUnit
      */
     public function compareTo(self $other): Compared
     {
-        return Compared::of($this->value() <=> $other->value());
+        return Compared::of($this <=> $other);
     }
 
     /** @return non-empty-string */

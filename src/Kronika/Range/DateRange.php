@@ -88,10 +88,7 @@ final readonly class DateRange implements Range
     #[\Override]
     public function isZero(): bool
     {
-        return $this->remember(
-            static fn(self $that): bool => $that->since->isEqualTo($that->till),
-            key: __METHOD__,
-        );
+        return $this->since->is($this->till);
     }
 
     #[\Override]
@@ -109,7 +106,7 @@ final readonly class DateRange implements Range
     public function contains(Date $date): bool
     {
         if ($this->isZero()) {
-            return $this->since->isEqualTo($date);
+            return $this->since->is($date);
         }
 
         return $this->till->isAfter($date) && $this->since->isBeforeOrEqualTo($date);

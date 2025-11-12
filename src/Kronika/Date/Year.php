@@ -57,6 +57,11 @@ final readonly class Year implements DateUnit
         self::assertValue($number);
     }
 
+    /**
+     * Returns the number of this year.
+     *
+     * @return TYear
+     */
     #[\Override]
     public function number(): int
     {
@@ -90,7 +95,7 @@ final readonly class Year implements DateUnit
     }
 
     /**
-     * Returns the number of days in this year.
+     * Returns the count of days in this year.
      *
      * ```
      * // 2025
@@ -144,6 +149,36 @@ final readonly class Year implements DateUnit
     }
 
     /**
+     * Checks if this year is equal to another one.
+     *
+     * ```
+     * // 2025
+     * $this->is(Year::of(2025));  // true
+     * $this->is(Year::of(2000));  // false
+     * $this->is(Year::of(2050));  // false
+     * ```
+     */
+    public function is(self $other): bool
+    {
+        return $this->compareTo($other)->equal();
+    }
+
+    /**
+     * Checks if this year is not equal to another one.
+     *
+     * ```
+     * // 2025
+     * $this->isNot(Year::of(2025));  // false
+     * $this->isNot(Year::of(2000));  // true
+     * $this->isNot(Year::of(2050));  // true
+     * ```
+     */
+    public function isNot(self $other): bool
+    {
+        return $this->compareTo($other)->notEqual();
+    }
+
+    /**
      * Checks if this year is before another one.
      *
      * ```
@@ -173,34 +208,16 @@ final readonly class Year implements DateUnit
         return $this->compareTo($other)->lessOrEqual();
     }
 
-    /**
-     * Checks if this year is equal to another one.
-     *
-     * ```
-     * // 2025
-     * $this->isEqualTo(Year::of(2025));  // true
-     * $this->isEqualTo(Year::of(2000));  // false
-     * $this->isEqualTo(Year::of(2050));  // false
-     * ```
-     */
+    /** @deprecated {@see self::is()} */
     public function isEqualTo(self $other): bool
     {
-        return $this->compareTo($other)->equal();
+        return $this->is($other);
     }
 
-    /**
-     * Checks if this year is not equal to another one.
-     *
-     * ```
-     * // 2025
-     * $this->isNotEqualTo(Year::of(2025));  // false
-     * $this->isNotEqualTo(Year::of(2000));  // true
-     * $this->isNotEqualTo(Year::of(2050));  // true
-     * ```
-     */
+    /** @deprecated {@see self::isNot()} */
     public function isNotEqualTo(self $other): bool
     {
-        return $this->compareTo($other)->notEqual();
+        return $this->isNot($other);
     }
 
     /**
@@ -245,7 +262,7 @@ final readonly class Year implements DateUnit
      */
     public function compareTo(self $other): Compared
     {
-        return Compared::of($this->number() <=> $other->number());
+        return Compared::of($this <=> $other);
     }
 
     /** @return non-empty-string */

@@ -388,7 +388,37 @@ final readonly class Duration
      */
     public function isZero(): bool
     {
-        return $this->isEqualTo(self::zero());
+        return $this->is(self::zero());
+    }
+
+    /**
+     * Checks if this duration is equal to another one.
+     *
+     * ```
+     * // 2 days
+     * $this->is(Duration::of(days: 2));  // true
+     * $this->is(Duration::zero());       // false
+     * $this->is(Duration::of(days: 3));  // false
+     * ```
+     */
+    public function is(self $other): bool
+    {
+        return $this->compareTo($other)->equal();
+    }
+
+    /**
+     * Checks if this duration is not equal to another one.
+     *
+     * ```
+     * // 2 days
+     * $this->isNot(Duration::of(days: 2));  // false
+     * $this->isNot(Duration::zero());       // true
+     * $this->isNot(Duration::of(days: 3));  // true
+     * ```
+     */
+    public function isNot(self $other): bool
+    {
+        return $this->compareTo($other)->notEqual();
     }
 
     /**
@@ -421,34 +451,16 @@ final readonly class Duration
         return $this->compareTo($other)->lessOrEqual();
     }
 
-    /**
-     * Checks if this duration is equal to another one.
-     *
-     * ```
-     * // 2 days
-     * $this->isEqualTo(Duration::of(days: 2));  // true
-     * $this->isEqualTo(Duration::zero());       // false
-     * $this->isEqualTo(Duration::of(days: 3));  // false
-     * ```
-     */
+    /** @deprecated {@see self::is()} */
     public function isEqualTo(self $other): bool
     {
-        return $this->compareTo($other)->equal();
+        return $this->is($other);
     }
 
-    /**
-     * Checks if this duration is not equal to another one.
-     *
-     * ```
-     * // 2 days
-     * $this->isNotEqualTo(Duration::of(days: 2));  // false
-     * $this->isNotEqualTo(Duration::zero());       // true
-     * $this->isNotEqualTo(Duration::of(days: 3));  // true
-     * ```
-     */
+    /** @deprecated {@see self::isNot()} */
     public function isNotEqualTo(self $other): bool
     {
-        return ! $this->isEqualTo($other);
+        return $this->isNot($other);
     }
 
     /**

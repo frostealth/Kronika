@@ -390,8 +390,8 @@ final class TimeTest extends TestCase
     #[DataProvider('comparisonProvider')]
     public function testComparison(Time $a, Time $b, Precision $precision, int $expected): void
     {
-        self::assertTrue($a->isEqualTo($a));
-        self::assertFalse($a->isNotEqualTo($a));
+        self::assertTrue($a->is($a));
+        self::assertFalse($a->isNot($a));
         self::assertFalse($a->isBefore($a));
         self::assertFalse($a->isAfter($a));
         self::assertTrue($a->isBeforeOrEqualTo($a));
@@ -401,8 +401,8 @@ final class TimeTest extends TestCase
         self::assertEquals($expected, $comparison->value());
         self::assertEquals($comparison->less(), $a->isBefore($b, $precision));
         self::assertEquals($comparison->greater(), $a->isAfter($b, $precision));
-        self::assertEquals($comparison->equal(), $a->isEqualTo($b, $precision));
-        self::assertEquals($comparison->notEqual(), $a->isNotEqualTo($b, $precision));
+        self::assertEquals($comparison->equal(), $a->is($b, $precision));
+        self::assertEquals($comparison->notEqual(), $a->isNot($b, $precision));
         self::assertEquals($comparison->lessOrEqual(), $a->isBeforeOrEqualTo($b, $precision));
         self::assertEquals($comparison->greaterOrEqual(), $a->isAfterOrEqualTo($b, $precision));
     }

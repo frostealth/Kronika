@@ -222,7 +222,7 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Returns an instance of `LocalDateTime` with this date and a given time.
+     * Combines this date with a given time to create an instance of `LocalDateTime`.
      *
      * ```
      * // 2025-12-31
@@ -235,7 +235,7 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Returns an instance of `LocalDateTime` with this date and midnight time.
+     * Combines this date with the time of midnight to create an instance of `LocalDateTime`.
      *
      * ```
      * // 2025-12-31
@@ -251,7 +251,7 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Returns an instance of `LocalDateTime` with this date and midday/noon time.
+     * Combines this date with the time of midday/noon to create an instance of `LocalDateTime`.
      *
      * ```
      * // 2025-12-31
@@ -267,7 +267,7 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Returns an instance of `LocalDateTime` with this date and time of the end of the day.
+     * Combines this date with the time of the end of the day to create an instance of `LocalDateTime`.
      *
      * ```
      * // 2025-12-31
@@ -324,7 +324,7 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Returns a duration from this date or its unit to another one.
+     * Calculates the duration from this date or its unit to another one.
      *
      * ```
      * // 2025-12-31 vs 2026-01-02
@@ -352,7 +352,7 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Returns a duration between this date or its unit and another one.
+     * Calculates the duration between this date or its unit and another one.
      *
      * ```
      * // 2025-12-31 vs 2026-01-02
@@ -419,7 +419,7 @@ final readonly class Date implements Unit
      */
     public function toPreviousMonth(): self
     {
-        if ($this->month()->isEqualTo(Month::January)) {
+        if ($this->month()->is(Month::January)) {
             return self::of($this->year()->previous(), month: Month::December, day: $this->day());
         }
 
@@ -440,7 +440,7 @@ final readonly class Date implements Unit
      */
     public function toNextMonth(): self
     {
-        if ($this->month()->isEqualTo(Month::December)) {
+        if ($this->month()->is(Month::December)) {
             return self::of($this->year()->next(), month: Month::January, day: $this->day());
         }
 
@@ -539,7 +539,7 @@ final readonly class Date implements Unit
      */
     public function isStartOfYear(): bool
     {
-        return $this->isEqualTo($this->toStartOfYear());
+        return $this->is($this->toStartOfYear());
     }
 
     /**
@@ -549,7 +549,7 @@ final readonly class Date implements Unit
      */
     public function isEndOfYear(): bool
     {
-        return $this->isEqualTo($this->toEndOfYear());
+        return $this->is($this->toEndOfYear());
     }
 
     /**
@@ -567,7 +567,7 @@ final readonly class Date implements Unit
      */
     public function isStartOfMonth(): bool
     {
-        return $this->day()->isEqualTo(DayOfMonth::first());
+        return $this->day()->is(DayOfMonth::first());
     }
 
     /**
@@ -585,7 +585,57 @@ final readonly class Date implements Unit
      */
     public function isEndOfMonth(): bool
     {
-        return $this->day()->isEqualTo($this->month()->lastDay($this->year()));
+        return $this->day()->is($this->month()->lastDay($this->year()));
+    }
+
+    /**
+     * Checks if this date or its unit is equal to another one.
+     *
+     * ```
+     * // 2025-12-30 vs 2025-12-30
+     * $this->is($other);  // true
+     *
+     * // 2025-12-30 vs 2025-12-31
+     * $this->is($other);  // false
+     *
+     * // 2025-12-30 vs Month::December
+     * $this->is($other);  // true
+     * ```
+     *
+     * @see \Kronika\Date\Year – compare to a year
+     * @see \Kronika\Date\Month – compare to a month
+     * @see \Kronika\Date\DayOfMonth – compare to a day of month
+     * @see \Kronika\Date\DayOfWeek – compare to a day of week
+     * @see \Kronika\Date\DayOfYear – compare to a day of year
+     */
+    public function is(self|DateUnit $other): bool
+    {
+        return $this->compareTo($other)->equal();
+    }
+
+    /**
+     * Checks if this date or its unit is not equal to another one.
+     *
+     * ```
+     * // 2025-12-30 vs 2025-12-31
+     * $this->isNot($other);  // true
+     *
+     * // 2025-12-30 vs 2025-12-30
+     * $this->isNot($other);  // false
+     *
+     * // 2025-12-30 vs Month::December
+     * $this->isNot($other);  // false
+     * ```
+     *
+     * @see \Kronika\Date\Year – compare to a year
+     * @see \Kronika\Date\Month – compare to a month
+     * @see \Kronika\Date\DayOfMonth – compare to a day of month
+     * @see \Kronika\Date\DayOfWeek – compare to a day of week
+     * @see \Kronika\Date\DayOfYear – compare to a day of year
+     */
+    public function isNot(self|DateUnit $other): bool
+    {
+        return $this->compareTo($other)->notEqual();
     }
 
     /**
@@ -641,54 +691,16 @@ final readonly class Date implements Unit
         return $this->compareTo($other)->lessOrEqual();
     }
 
-    /**
-     * Checks if this date or its unit is equal to another one.
-     *
-     * ```
-     * // 2025-12-30 vs 2025-12-30
-     * $this->isEqualTo($other);  // true
-     *
-     * // 2025-12-30 vs 2025-12-31
-     * $this->isEqualTo($other);  // false
-     *
-     * // 2025-12-30 vs Month::December
-     * $this->isEqualTo($other);  // true
-     * ```
-     *
-     * @see \Kronika\Date\Year – compare to a year
-     * @see \Kronika\Date\Month – compare to a month
-     * @see \Kronika\Date\DayOfMonth – compare to a day of month
-     * @see \Kronika\Date\DayOfWeek – compare to a day of week
-     * @see \Kronika\Date\DayOfYear – compare to a day of year
-     */
+    /** @deprecated {@see self::is()} */
     public function isEqualTo(self|DateUnit $other): bool
     {
-        return $this->compareTo($other)->equal();
+        return $this->is($other);
     }
 
-    /**
-     * Checks if this date or its unit is not equal to another one.
-     *
-     * ```
-     * // 2025-12-30 vs 2025-12-31
-     * $this->isNotEqualTo($other);  // true
-     *
-     * // 2025-12-30 vs 2025-12-30
-     * $this->isNotEqualTo($other);  // false
-     *
-     * // 2025-12-30 vs Month::December
-     * $this->isNotEqualTo($other);  // false
-     * ```
-     *
-     * @see \Kronika\Date\Year – compare to a year
-     * @see \Kronika\Date\Month – compare to a month
-     * @see \Kronika\Date\DayOfMonth – compare to a day of month
-     * @see \Kronika\Date\DayOfWeek – compare to a day of week
-     * @see \Kronika\Date\DayOfYear – compare to a day of year
-     */
+    /** @deprecated {@see self::isNot()} */
     public function isNotEqualTo(self|DateUnit $other): bool
     {
-        return $this->compareTo($other)->notEqual();
+        return $this->isNot($other);
     }
 
     /**
@@ -792,7 +804,7 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Returns an instance of `Instant` with this date.
+     * Obtains an instance of `Instant` with this date.
      */
     public function instant(): Instant
     {

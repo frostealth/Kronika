@@ -1176,8 +1176,8 @@ final class DateTimeTest extends TestCase
     {
         self::assertFalse($a->isBefore($a, $precision));
         self::assertTrue($a->isBeforeOrEqualTo($a, $precision));
-        self::assertTrue($a->isEqualTo($a, $precision));
-        self::assertFalse($a->isNotEqualTo($a, $precision));
+        self::assertTrue($a->is($a, $precision));
+        self::assertFalse($a->isNot($a, $precision));
         self::assertTrue($a->isAfterOrEqualTo($a, $precision));
         self::assertFalse($a->isAfter($a, $precision));
 
@@ -1186,10 +1186,10 @@ final class DateTimeTest extends TestCase
         self::assertEquals($comparison->less(), $a->isBefore($b, $precision));
         self::assertEquals($comparison->lessOrEqual(), $a->isBeforeOrEqualTo($b, $precision));
         self::assertEquals($comparison->greater(), $a->isAfter($b, $precision));
-        self::assertEquals($comparison->equal(), $a->isEqualTo($b, $precision));
-        self::assertEquals($comparison->notEqual(), $a->isNotEqualTo($b, $precision));
+        self::assertEquals($comparison->equal(), $a->is($b, $precision));
+        self::assertEquals($comparison->notEqual(), $a->isNot($b, $precision));
         self::assertEquals($comparison->greaterOrEqual(), $a->isAfterOrEqualTo($b, $precision));
-        self::assertEquals($comparison->notEqual(), $a->isNotEqualTo($b, $precision));
+        self::assertEquals($comparison->notEqual(), $a->isNot($b, $precision));
     }
 
     public static function resetProvider(): array

@@ -198,7 +198,7 @@ final readonly class LocalDateTime implements DateTime
     }
 
     /**
-     * Returns an instance of `ZonedDateTime` from this date-time and a given time-zone.
+     * Combines this date-time with a given time-zone to create an instance of `ZonedDateTime`.
      *
      * ```
      * // 2025-12-31 12:15:30
@@ -255,6 +255,18 @@ final readonly class LocalDateTime implements DateTime
     }
 
     #[\Override]
+    public function is(DateTime|Unit $other, Precision $precision = Precision::Micro): bool
+    {
+        return $this->compareTo($other, $precision)->equal();
+    }
+
+    #[\Override]
+    public function isNot(DateTime|Unit $other, Precision $precision = Precision::Micro): bool
+    {
+        return $this->compareTo($other, $precision)->notEqual();
+    }
+
+    #[\Override]
     public function isBefore(DateTime|Unit $other, Precision $precision = Precision::Micro): bool
     {
         return $this->compareTo($other, $precision)->less();
@@ -266,16 +278,16 @@ final readonly class LocalDateTime implements DateTime
         return $this->compareTo($other, $precision)->lessOrEqual();
     }
 
-    #[\Override]
+    /** @deprecated {@see self::is()} */
     public function isEqualTo(DateTime|Unit $other, Precision $precision = Precision::Micro): bool
     {
-        return $this->compareTo($other, $precision)->equal();
+        return $this->is($other, $precision);
     }
 
-    #[\Override]
+    /** @deprecated {@see self::isNot()} */
     public function isNotEqualTo(DateTime|Unit $other, Precision $precision = Precision::Micro): bool
     {
-        return $this->compareTo($other, $precision)->notEqual();
+        return $this->isNot($other, $precision);
     }
 
     #[\Override]
@@ -354,7 +366,7 @@ final readonly class LocalDateTime implements DateTime
     public function instant(): Instant
     {
         return $this->remember(static function (self $that): Instant {
-            return $that->date->instant()->join($that->time->instant());
+            return $that->date->instant()->_join($that->time->instant());
         }, key: __METHOD__);
     }
 

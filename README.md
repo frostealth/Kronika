@@ -64,9 +64,11 @@ $dayOfWeek = $date->dayOfWeek();  // DayOfWeek::of(3)
 // changing the year, month, day, weekday
 $date = $date->with(Year::of(2026));
 echo $date->format('l, F jS, Y.');  // 'Thursday, December 31st, 2026.'
+echo $date->is(Year::of(2026));     // true
 
 $date = $date->with(Month::January)->with(DayOfMonth::of(12));
 echo $date->format('l, F jS, Y.');  // 'Monday, January 12th, 2026.'
+echo $date->is(DayOfMonth::of(12)); // true
 
 $date = $date->toStartOfMonth();
 echo $date->format('l, F jS, Y.');  // 'Thursday, January 1st, 2026.'
@@ -74,6 +76,7 @@ echo $date->format('l, F jS, Y.');  // 'Thursday, January 1st, 2026.'
 // changing the day of week
 $date = $date->with(DayOfWeek::Friday);
 echo $date->format('l, F jS, Y.');  // 'Friday, January 2nd, 2026.'
+echo $date->is(DayOfWeek::Friday);  // true
 
 // adding an amount of days
 $date = $date->add(Duration::of(days: 3));
@@ -112,15 +115,16 @@ $second = $time->second();  // Second::of(30)
 // changing the hour, minute and second
 $time = $time->with(Hour::of(12));
 echo $time->format('H:i:s');  // '12:10:30'
+echo $time->is(Hour::of(12)); // true
 
 $time = $time->with(Minute::of(30))->with(Second::zero());
 echo $time->format('H:i:s');  // '12:30:00'
 
 // comparing time or its unit to another one
 $other = $time->with(Second::of(0, micro: 999999));
-echo $time->isEqualTo($other);                     // false
-echo $time->isEqualTo($other, Precision::Second);  // true
-echo $time->isEqualTo(                             // true
+echo $time->is($other);                     // false
+echo $time->is($other, Precision::Second);  // true
+echo $time->is(                             // true
     $other->with(Second::of(59)),
     Precision::Minute,
 );
@@ -171,6 +175,7 @@ $time   = $datetime->time();    // Time::of(12, 0, 0)
 // changing the year, month, day, hour, minute and second is similar to "Date" and "Time"
 $datetime = $datetime->with(Hour::of(18))->with(Minute::of(30));
 echo $datetime->format('Y-m-d H:i:s');  // '2025-12-31 18:30:00'
+echo $datetime->is(Hour::of(18));       // true
 
 // adding and subtracting an amount of days, hours,
 // minutes and seconds are similar to "Date" and "Time"
@@ -190,7 +195,7 @@ echo $duration->minutes();  // 0
 echo $duration->second();   // 0
 echo $duration->inHours();  // 324
 
-// getting the "\DateTimeImmutable" and "\DateTime"
+// getting "\DateTimeImmutable" and "\DateTime"
 $immutable = $datetime->toNative(new \DateTimeZone('UTC'));         // "\DateTimeImmutable"
 $mutable   = $datetime->toNativeMutable(new \DateTimeZone('UTC'));  // "\DateTime"
 ```
@@ -241,6 +246,8 @@ $timestamp = $datetime->timestamp();  // float(1767182400.001234)
 // changing the year, month, day, hour, minute and second is similar to "LocalDateTime"
 $datetime = $datetime->with(Hour::of(18))->with(Minute::of(30));
 echo $datetime->format(\DateTimeInterface::ATOM);  // '2025-12-31T18:30:00+00:00'
+echo $datetime->is(Hour::of(18));                  // true
+
 // changing the time-zone doesn't shift the time,
 // to shift the time use "shift()" method
 echo $datetime->with(new \DateTimeZone('+01:00'))
@@ -266,7 +273,7 @@ $minutes  = $duration->minutes();  // 30
 $seconds  = $duration->second();   // 15
 $inHours  = $duration->inHours();  // 336
 
-// getting the "\DateTimeImmutable" and "\DateTime"
+// getting "\DateTimeImmutable" and "\DateTime"
 $immutable = $datetime->toNative();         // "\DateTimeImmutable"
 $mutable   = $datetime->toNativeMutable();  // "\DateTime"
 ```
@@ -337,6 +344,7 @@ echo $range->contains(LocalDateTime::parse('2025-12-15 12:30:45'));  // true
 echo $range->contains(LocalDateTime::parse('2025-12-18 10:00:30'));  // false
 
 // getting each item with the specified step
+// the type of each item will be the same as "since"
 foreach ($range->each(Duration::of(days: 1)) as $item) {
     echo $item->format('Y-m-d H:i:s P');
 }

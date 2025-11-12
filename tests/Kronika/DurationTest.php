@@ -334,8 +334,8 @@ final class DurationTest extends TestCase
         self::assertEquals($expected, $compared->value());
         self::assertEquals($compared->less(), $a->isLessThan($b));
         self::assertEquals($compared->lessOrEqual(), $a->isLessThanOrEqualTo($b));
-        self::assertEquals($compared->equal(), $a->isEqualTo($b));
-        self::assertEquals($compared->notEqual(), $a->isNotEqualTo($b));
+        self::assertEquals($compared->equal(), $a->is($b));
+        self::assertEquals($compared->notEqual(), $a->isNot($b));
         self::assertEquals($compared->greaterOrEqual(), $a->isGreaterThanOrEqualTo($b));
         self::assertEquals($compared->greater(), $a->isGreaterThan($b));
     }
