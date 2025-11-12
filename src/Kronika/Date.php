@@ -296,12 +296,11 @@ final readonly class Date implements Unit
     public function add(Duration|\DateInterval $duration): self
     {
         if ($duration instanceof \DateInterval) {
-            return self::ofDateTime($this->at(Time::midnight())->add($duration));
+            return self::ofDateTime($this->atMidnight()->add($duration));
         }
 
         return self::ofInstant($this->instant()->add($duration->roundToDays()));
     }
-
 
     /**
      * Subtracts an amount of days from this date.
@@ -317,7 +316,7 @@ final readonly class Date implements Unit
     public function sub(Duration|\DateInterval $duration): self
     {
         if ($duration instanceof \DateInterval) {
-            return self::ofDateTime($this->at(Time::endOfDay())->sub($duration));
+            return self::ofDateTime($this->atEndOfDay()->sub($duration));
         }
 
         return self::ofInstant($this->instant()->sub($duration->roundToDays()));
