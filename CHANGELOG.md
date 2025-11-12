@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to `Kronika` will be documented in this file.
 
+## [Unreleased]
+### Added
+
+### Changed
+
 ## [0.2.4](https://github.com/frostealth/kronika/releases/tag/0.2.4) – 2025-11-12
 ### Added
 - `Instant::resetMicro()` – resets microsecond.
