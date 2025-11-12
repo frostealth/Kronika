@@ -44,6 +44,13 @@ composer require frostealth/kronika
 ### Date
 `Kronika\Date` represents a date without specifying a time of day.
 
+The following units of date are available:
+- `Year`
+- `Month`
+- `DayOfMonth`
+- `DayOfWeek`
+- `DayOfYear`
+
 ```php
 // creating the "Date" instance
 $date = Date::of(year: 2025, month: 12, day:31);
@@ -95,6 +102,11 @@ echo $duration->minutes();  // 0
 
 ### Time
 `Kronika\Time` represents a time of day without specifying a date.
+
+The following units of time are available:
+- `Hour`
+- `Minute`
+- `Second`
 
 ```php
 // creating the "Time" instance
@@ -202,9 +214,10 @@ $mutable   = $datetime->toNativeMutable(new \DateTimeZone('UTC'));  // "\DateTim
 
 ### ZonedDateTime
 `Kronika\ZonedDateTime` represents a date-time with time-zone.
-This class extends the native `\DateTimeImmutable`.
 
 The API of `Kronika\ZonedDateTime` is similar to `Kronika\LocalDateTime`.
+
+`Kronika\ZonedDateTime` class extends `\DateTimeImmutable`.
 
 ```php
 // creating the "ZonedDateTime" instance
@@ -338,6 +351,7 @@ foreach ($range->each(Duration::of(days: 2)) as $item) {
 
 ### DateTimeRange
 `Kronika\Range\DateTimeRange` represents a range between two moments of time.
+
 Both `Kronika\ZonedDateTime` and `Kronika\LocalDateTime` are supported.
 
 ```php
