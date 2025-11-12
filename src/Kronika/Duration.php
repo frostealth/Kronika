@@ -313,7 +313,7 @@ final readonly class Duration
             initial: $this->seconds,
         );
 
-        return 0 < $seconds ? self::of(seconds: $seconds) : self::zero();
+        return $seconds > 0 ? self::of(seconds: $seconds) : self::zero();
     }
 
     /**
