@@ -508,8 +508,4 @@ interface DateTime extends \Stringable
      * Obtains an instance of `\Kronika\Instant` from this date-time.
      */
     public function instant(): Instant;
-
-    /** @return non-empty-string */
-    #[\Override]
-    public function __toString(): string;
 }

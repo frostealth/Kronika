@@ -32,10 +32,9 @@ use Kronika\Utils\RefTrait;
  * $range->contains($till);   // false
  * ```
  *
- * @template-covariant TFirstDateTime of DateTime
- * @template-covariant TSecondDateTime of DateTime
+ * @template-covariant TDateTime of DateTime
  *
- * @implements Range<TFirstDateTime|TSecondDateTime>
+ * @implements Range<TDateTime>
  */
 final readonly class DateTimeRange implements Range
 {
@@ -43,14 +42,6 @@ final readonly class DateTimeRange implements Range
 
     /**
      * Obtains an instance of `DateTimeRange`.
-     *
-     * @template TSinceDateTime of DateTime
-     * @template TTillDateTime of DateTime
-     *
-     * @param TSinceDateTime $since
-     * @param TTillDateTime|null $till
-     *
-     * @return self<TSinceDateTime, ($till is null ? TSinceDateTime : TTillDateTime)>
      *
      * @throws Exception\InvalidDateTimeRange
      */
@@ -70,13 +61,6 @@ final readonly class DateTimeRange implements Range
      * $range = DateTimeRange::around($middle, $duration);
      * $range->since();  // 2025-12-29 08:00:00
      * $range->till();   // 2025-12-31 17:00:00
-     * ```
-     *
-     * @template TDateTime of DateTime
-     *
-     * @param TDateTime $middle
-     *
-     * @return self<TDateTime, TDateTime>
      */
     public static function around(DateTime $middle, Duration $duration, Precision $precision = Precision::Second): self
     {
@@ -84,8 +68,8 @@ final readonly class DateTimeRange implements Range
     }
 
     /**
-     * @param TFirstDateTime $since
-     * @param TSecondDateTime $till
+     * @param TDateTime $since
+     * @param TDateTime $till
      *
      * @throws Exception\InvalidDateTimeRange
      */
@@ -97,14 +81,14 @@ final readonly class DateTimeRange implements Range
         $this->assertRange();
     }
 
-    /** @returns TFirstDateTime */
+    /** @returns TDateTime */
     #[\Override]
     public function since(): DateTime
     {
         return $this->since;
     }
 
-    /** @returns TSecondDateTime */
+    /** @returns TDateTime */
     #[\Override]
     public function till(): DateTime
     {
@@ -136,8 +120,6 @@ final readonly class DateTimeRange implements Range
 
     /**
      * Checks if this date-time range contains a given another one.
-     *
-     * @param TFirstDateTime|TSecondDateTime $datetime
      */
     public function contains(DateTime $datetime): bool
     {
@@ -150,7 +132,6 @@ final readonly class DateTimeRange implements Range
         ;
     }
 
-    /** @return \Iterator<non-negative-int, TFirstDateTime> */
     #[\Override]
     public function each(Duration $step): \Iterator
     {

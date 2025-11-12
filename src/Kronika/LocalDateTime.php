@@ -351,14 +351,12 @@ final readonly class LocalDateTime implements DateTime
     #[\Override]
     public function toNative(?\DateTimeZone $timezone = null): \DateTimeImmutable
     {
-        /** @psalm-ignore-falsable-return */
         return \DateTimeImmutable::createFromFormat('Y-m-d\TH:i:s.u', (string)$this, $timezone);
     }
 
     #[\Override]
     public function toNativeMutable(?\DateTimeZone $timezone = null): \DateTime
     {
-        /** @psalm-ignore-falsable-return */
         return \DateTime::createFromFormat('Y-m-d\TH:i:s.u', (string)$this, $timezone);
     }
 

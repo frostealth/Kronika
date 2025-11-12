@@ -36,6 +36,10 @@ namespace Kronika\Utils;
  */
 final readonly class Compared
 {
+    private const int LESS = -1;
+    private const int EQUAL = 0;
+    private const int GREATER = 1;
+
     /** @param TResult $result */
     public static function of(int $result): self
     {
@@ -46,42 +50,49 @@ final readonly class Compared
     private function __construct(
         private int $result,
     ) {
-        \assert(-1 <= $result && $result <= 1);
+        self::assertValue($result);
     }
 
     public function less(): bool
     {
-        return $this->result === -1;
+        return $this->result === self::LESS;
     }
 
     public function lessOrEqual(): bool
     {
-        return $this->less() || $this->equal();
+        return $this->result !== self::GREATER;
     }
 
     public function equal(): bool
     {
-        return $this->result === 0;
+        return $this->result === self::EQUAL;
     }
 
     public function notEqual(): bool
     {
-        return ! $this->equal();
+        return $this->result !== self::EQUAL;
     }
 
     public function greaterOrEqual(): bool
     {
-        return $this->greater() || $this->equal();
+        return $this->result !== self::LESS;
     }
 
     public function greater(): bool
     {
-        return $this->result === 1;
+        return $this->result === self::GREATER;
     }
 
     /** @return TResult */
     public function value(): int
     {
         return $this->result;
+    }
+
+    private static function assertValue(int $value): void
+    {
+        if ($value < self::LESS || $value > self::GREATER) {
+            throw new \RuntimeException("Comparison result must be equal to -1, 0 or 1, got [$value]");
+        }
     }
 }

@@ -42,7 +42,7 @@ composer require frostealth/kronika
 [extension-yii2]: src/Extension/Yii2/README.md
 
 ### Date
-`Kronika\Date` represents a date without specifying a time.
+`Kronika\Date` represents a date without specifying a time of day.
 
 ```php
 // creating the "Date" instance
@@ -94,7 +94,7 @@ echo $duration->minutes();  // 0
 ```
 
 ### Time
-`Kronika\Time` represents a time without specifying a date.
+`Kronika\Time` represents a time of day without specifying a date.
 
 ```php
 // creating the "Time" instance
@@ -146,7 +146,7 @@ echo $duration->inMinutes();  // 390
 ```
 
 ### LocalDateTime
-`Kronika\LocalDateTime` represents a local date-time without a time-zone.
+`Kronika\LocalDateTime` represents a local date-time without time-zone.
 
 ```php
 // creating the "LocalDateTime" instance
@@ -201,7 +201,7 @@ $mutable   = $datetime->toNativeMutable(new \DateTimeZone('UTC'));  // "\DateTim
 ```
 
 ### ZonedDateTime
-`Kronika\ZonedDateTime` represents a date-time with a time-zone.
+`Kronika\ZonedDateTime` represents a date-time with time-zone.
 This class extends the native `\DateTimeImmutable`.
 
 The API of `Kronika\ZonedDateTime` is similar to `Kronika\LocalDateTime`.
@@ -288,6 +288,8 @@ and has the following implementations:
 - `MutableClock` allows to manipulate with clock, useful in tests.
 
 ### TimeRange
+`Kronika\Range\TimeRange` represents a range between two moments of day.
+
 ```php
 // creating "TimeRange"
 $range = TimeRange::of(
@@ -300,7 +302,8 @@ echo $range->till()->format('H:i:s');   // 13:30:00
 echo $range->contains(Time::midday());    // true
 echo $range->contains(Time::of(13, 30));  // false
 
-// getting each item with the specified step
+// getting each item of this range with the specified step
+// minimal step is 1 second
 foreach ($range->each(Duration::of(minutes: 30)) as $item) {
     echo $item->format('H:i:s');
 }
@@ -310,6 +313,8 @@ foreach ($range->each(Duration::of(minutes: 30)) as $item) {
 ```
 
 ### DateRange
+`Kronika\Range\DateRange` represents a range between two dates.
+
 ```php
 // creating "DateRange"
 $range = DateRange::of(
@@ -322,7 +327,8 @@ echo $range->till()->format('Y-m-d');   // 2025-12-18
 echo $range->contains(Date::of(2025, 12, 15));  // true
 echo $range->contains(Date::of(2025, 12, 18));  // false
 
-// getting each item with the specified step
+// getting each item of this range with the specified step
+// minimal step is 1 day
 foreach ($range->each(Duration::of(days: 2)) as $item) {
     echo $item->format('Y-m-d');
 }
@@ -331,6 +337,9 @@ foreach ($range->each(Duration::of(days: 2)) as $item) {
 ```
 
 ### DateTimeRange
+`Kronika\Range\DateTimeRange` represents a range between two moments of time.
+Both `Kronika\ZonedDateTime` and `Kronika\LocalDateTime` are supported.
+
 ```php
 // creating "DateTimeRange"
 $range = DateTimeRange::of(
@@ -343,8 +352,9 @@ echo $range->till()->format('Y-m-d H:i:s');     // 2025-12-18 10:00:30
 echo $range->contains(LocalDateTime::parse('2025-12-15 12:30:45'));  // true
 echo $range->contains(LocalDateTime::parse('2025-12-18 10:00:30'));  // false
 
-// getting each item with the specified step
+// getting each item of this range with the specified step
 // the type of each item will be the same as "since"
+// minimal step is 1 second
 foreach ($range->each(Duration::ofDay()) as $item) {
     echo $item->format('Y-m-d H:i:s P');
 }

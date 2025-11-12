@@ -18,17 +18,17 @@ namespace Kronika;
  *
  * @template-covariant TUnit of DateTime|Date|Time
  */
-interface Range extends \Stringable
+interface Range
 {
     /**
-     * Returns the start of the range, inclusive.
+     * Returns the start of this range, inclusive.
      *
      * @return TUnit
      */
     public function since(): object;
 
     /**
-     * Returns the end of the range, exclusive.
+     * Returns the end of this range, exclusive.
      *
      * @return TUnit
      */
@@ -47,7 +47,7 @@ interface Range extends \Stringable
     /**
      * Returns all items of this range with a given step.
      *
-     * @return \Traversable<non-negative-int, TUnit>
+     * @return \Traversable<int, TUnit>
      */
     public function each(Duration $step): \Traversable;
 }

@@ -39,7 +39,7 @@ final readonly class SystemClock implements Clock
     #[\Override]
     public function now(): ZonedDateTime
     {
-        return ZonedDateTime::ofDateTime(new \DateTime(timezone: $this->timezone()));
+        return ZonedDateTime::ofDateTime(new \DateTimeImmutable(datetime: 'now', timezone: $this->timezone()));
     }
 
     #[\Override]
