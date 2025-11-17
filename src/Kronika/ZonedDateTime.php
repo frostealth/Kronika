@@ -30,6 +30,9 @@ use function Kronika\Utils\Math\double;
  * Represents a date-time with time-zone.
  *
  * @psalm-import-type TMicrosecond from Second
+ *
+ * @method static static|null tryOfFormat(string $format, ?string $datetime, ?\DateTimeZone $timezone = null)
+ * @method static static|null tryParse(?string $datetime, ?\DateTimeZone $timezone = null)
  */
 final class ZonedDateTime extends \DateTimeImmutable implements DateTime
 {

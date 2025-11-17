@@ -20,6 +20,7 @@ use Kronika\Date\DayOfWeek;
 use Kronika\Date\Month;
 use Kronika\Date\Year;
 use Kronika\Utils\Compared;
+use Kronika\Utils\RescueTrait;
 use Kronika\Utils\WeakRefsTrait;
 
 /**
@@ -28,11 +29,15 @@ use Kronika\Utils\WeakRefsTrait;
  * @psalm-type TYear=int<-9999,9999>
  * @psalm-type TMonth=value-of<Month>
  * @psalm-type TDayOfMonth=int<1,31>
+ *
+ * @method static static|null tryOf(mixed $year, mixed $month, mixed $day)
+ * @method static static|null tryOfFormat(string $format, ?string $date)
  */
 final readonly class Date implements Unit
 {
     /** @use WeakRefsTrait<static,Year|TYear|Month|TMonth|DayOfMonth|TDayOfMonth> */
     use WeakRefsTrait;
+    use RescueTrait;
 
     /**
      * Obtains an instance of Date from a year, month and day of the month.

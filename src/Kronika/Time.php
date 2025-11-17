@@ -27,6 +27,9 @@ use Kronika\Utils\WeakRefsTrait;
  * @psalm-import-type THour from Hour
  * @psalm-import-type TMinute from Minute
  * @psalm-import-type TSecond from Second
+ *
+ * @method static static|null tryOf(mixed $hour, mixed $minute, mixed $second = 0)
+ * @method static static|null tryOfFormat(string $format, ?string $time)
  */
 final readonly class Time implements Unit
 {

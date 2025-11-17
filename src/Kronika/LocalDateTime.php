@@ -27,6 +27,9 @@ use Kronika\Utils\WeakRefsTrait;
 
 /**
  * Represents a local date-time without a time-zone.
+ *
+ * @method static static|null tryOfFormat(string $format, ?string $datetime)
+ * @method static static|null tryParse(?string $datetime)
  */
 final readonly class LocalDateTime implements DateTime
 {
