@@ -45,9 +45,9 @@ final class ZonedDateTimeType extends Type
 
         try {
             \assert(\is_string($value));
-            $datetime = \DateTimeImmutable::createFromFormat($platform->getDateTimeFormatString(), $value);
 
-            return ZonedDateTime::ofDateTime($datetime ?: new \DateTimeImmutable($value));
+            return ZonedDateTime::tryOfFormat($platform->getDateTimeTzFormatString(), $value)
+                ?? ZonedDateTime::parse($value);
         } catch (\Throwable $e) {
             throw ValueNotConvertible::new($value, $this->getName(), previous: $e);
         }
