@@ -21,6 +21,8 @@ use function Kronika\Utils\Math\double;
 /**
  * Represents a second with a microsecond of the minute.
  *
+ * @method static static|null tryOf(mixed $second, mixed $micro = 0)
+ *
  * @psalm-type TSecond=int<0,59>
  * @psalm-type TMicrosecond=int<0,999999>
  * @implements TimeUnit<float>
@@ -67,9 +69,9 @@ final readonly class Second implements TimeUnit
      */
     public static function zero(): self
     {
-        static $instance = self::of(second: 0, micro: 0);
+        static $zero = self::of(second: 0, micro: 0);
 
-        return $instance;
+        return $zero;
     }
 
     /**
@@ -84,9 +86,9 @@ final readonly class Second implements TimeUnit
      */
     public static function last(): self
     {
-        static $instance = self::of(second: 59, micro: 999_999);
+        static $last = self::of(second: 59, micro: 999_999);
 
-        return $instance;
+        return $last;
     }
 
     /**

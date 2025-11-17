@@ -53,9 +53,9 @@ final readonly class Minute implements TimeUnit
      */
     public static function zero(): self
     {
-        static $instance = self::of(0);
+        static $zero = self::of(0);
 
-        return $instance;
+        return $zero;
     }
 
     /**
@@ -67,9 +67,9 @@ final readonly class Minute implements TimeUnit
      */
     public static function last(): self
     {
-        static $instance = self::of(59);
+        static $last = self::of(59);
 
-        return $instance;
+        return $last;
     }
 
     /**

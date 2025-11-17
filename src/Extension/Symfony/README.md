@@ -1,4 +1,4 @@
-# Symfony Serializer Extension
+# Symfony Extension
 This extension allows you to serialize/deserialize Kronika objects 
 with [Symfony Serializer](https://github.com/symfony/serializer).
 

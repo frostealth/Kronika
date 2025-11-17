@@ -49,11 +49,11 @@ if (! \function_exists('\\Kronika\\clock')) {
      * @see \Kronika\Clock
      * @see \Kronika\now()
      */
-    function clock(?Clock $clock = null): Clock
+    function clock(?Clock $asGlobal = null): Clock
     {
-        static $instance = $clock ?? new Clock\SystemClock();
+        static $global = $asGlobal ?? new Clock\SystemClock();
 
-        return $instance = $clock ?? $instance;
+        return $global = $asGlobal ?? $global;
     }
 }
 

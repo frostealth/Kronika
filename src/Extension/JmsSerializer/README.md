@@ -1,4 +1,4 @@
-# Kronika support for JMS Serializer
+# JMS Serializer Extension
 This extension allows you to serialize/deserialize Kronika objects in a more effective
 and flexible way with [JMS Serializer](https://github.com/schmittjoh/serializer).
 

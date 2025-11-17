@@ -33,8 +33,8 @@ use function Kronika\Utils\Math\double;
 /**
  * Represents a date-time with time-zone.
  *
- * @method static static|null tryOfFormat(string $format, ?string $datetime, ?Formatter $formatter = null)
- * @method static static|null tryParse(?string $datetime)
+ * @method static static|null tryOfFormat(string $format, ?string $datetime, ?\DateTimeZone $timezone = null, ?Formatter $formatter = null)
+ * @method static static|null tryParse(?string $datetime, ?\DateTimeZone $timezone = null)
  *
  * @psalm-import-type TMicrosecond from \Kronika\Time\Second
  */

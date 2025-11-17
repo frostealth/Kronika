@@ -28,7 +28,7 @@ use Kronika\Utils\RescueTrait;
 /**
  * Represents a time of day.
  *
- * @method static static|null tryOf(mixed $hour, mixed $minute, mixed $second)
+ * @method static static|null tryOf(mixed $hour, mixed $minute, mixed $second = 0)
  * @method static static|null tryOfFormat(string $format, ?string $time, ?Formatter $formatter = null)
  * @method static static|null tryParse(?string $time)
  *
@@ -71,9 +71,9 @@ final readonly class Time implements Unit
      */
     public static function midnight(): self
     {
-        static $instance = self::of(Hour::zero(), Minute::zero(), Second::zero());
+        static $midnight = self::of(Hour::zero(), Minute::zero(), Second::zero());
 
-        return $instance;
+        return $midnight;
     }
 
     /**
@@ -83,9 +83,9 @@ final readonly class Time implements Unit
      */
     public static function midday(): self
     {
-        static $instance = self::of(Hour::of(12), Minute::zero(), Second::zero());
+        static $midday = self::of(Hour::of(12), Minute::zero(), Second::zero());
 
-        return $instance;
+        return $midday;
     }
 
     /**
@@ -95,9 +95,9 @@ final readonly class Time implements Unit
      */
     public static function endOfDay(): self
     {
-        static $instance = self::of(Hour::last(), Minute::last(), Second::last());
+        static $endOfDay = self::of(Hour::last(), Minute::last(), Second::last());
 
-        return $instance;
+        return $endOfDay;
     }
 
     /**

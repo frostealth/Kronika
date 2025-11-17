@@ -27,7 +27,7 @@ use function Kronika\Utils\Math\double_split;
  *
  * This is not the unix timestamp due to the representation of local time without a timezone.
  *
- * @method static static|null tryOf(?int $second, ?int $micro = 0)
+ * @method static static|null tryOf(mixed $second, mixed $micro = 0)
  * @method static static|null tryOfValue(mixed $value)
  *
  * @psalm-type TMicrosecond=int<0,999999>

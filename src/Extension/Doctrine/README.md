@@ -1,4 +1,4 @@
-# Kronika support for Doctrine
+# Doctrine Extension
 This extension allows you to store Kronika objects in a database
 with [Doctrine](https://www.doctrine-project.org/).
 
