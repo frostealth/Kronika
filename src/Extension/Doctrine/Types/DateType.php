@@ -46,7 +46,7 @@ final class DateType extends Type
         try {
             \assert(\is_string($value));
 
-            return Date::ofFormat(format: $platform->getDateFormatString(), date: $value);
+            return Date::tryOfFormat($platform->getDateTimeFormatString(), $value) ?? Date::parse($value);
         } catch (\Throwable $e) {
             throw ValueNotConvertible::new($value, $this->getName(), previous: $e);
         }

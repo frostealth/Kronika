@@ -46,7 +46,8 @@ final class ZonedDateTimeType extends Type
         try {
             \assert(\is_string($value));
 
-            return ZonedDateTime::ofFormat($platform->getDateTimeTzFormatString(), $value);
+            return ZonedDateTime::tryOfFormat($platform->getDateTimeTzFormatString(), $value)
+                ?? ZonedDateTime::parse($value);
         } catch (\Throwable $e) {
             throw ValueNotConvertible::new($value, $this->getName(), previous: $e);
         }

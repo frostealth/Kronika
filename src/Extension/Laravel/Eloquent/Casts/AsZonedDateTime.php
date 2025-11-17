@@ -30,6 +30,9 @@ final readonly class AsZonedDateTime extends CastsFormattableUnit
     #[\Override]
     protected static function factory(): callable
     {
-        return ZonedDateTime::ofFormat(...);
+        return static fn(string $format, string $value): ZonedDateTime => ZonedDateTime::tryOfFormat(
+            format: $format,
+            datetime: $value,
+        ) ?? ZonedDateTime::parse($value);
     }
 }

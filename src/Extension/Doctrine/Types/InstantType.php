@@ -33,7 +33,7 @@ final class InstantType extends Type
             throw InvalidType::new($value, $this->getName(), ['null', Instant::class]);
         }
 
-        return (float) $value->value();
+        return $value->value();
     }
 
     #[\Override]

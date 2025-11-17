@@ -45,12 +45,8 @@ final class TimeType extends Type
 
         try {
             \assert(\is_string($value));
-            $datetime = \DateTimeImmutable::createFromFormat($platform->getTimeFormatString(), $value);
-            if ($datetime !== false) {
-                return Time::ofDateTime($datetime);
-            }
 
-            return Time::ofDateTime(new \DateTimeImmutable($value));
+            return Time::tryOfFormat($platform->getTimeFormatString(), $value) ?? Time::parse($value);
         } catch (\Throwable $e) {
             throw ValueNotConvertible::new($value, $this->getName(), previous: $e);
         }

@@ -30,6 +30,9 @@ final readonly class AsTime extends CastsFormattableUnit
     #[\Override]
     protected static function factory(): callable
     {
-        return Time::ofFormat(...);
+        return static fn(string $format, string $value): Time => Time::tryOfFormat(
+            format: $format,
+            time: $value,
+        ) ?? Time::parse($value);
     }
 }

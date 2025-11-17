@@ -329,25 +329,31 @@ final class KronikaBehavior extends Behavior
     private function toObject(string $attributeName, float|int|string $value): object
     {
         return match ($this->getTypeOf($attributeName)) {
-            Date::class            => Date::ofFormat(format: $this->getFormatFor(Date::class), date: (string)$value),
+            Date::class            => Date::tryOfFormat(
+                format: $this->getFormatFor(Date::class),
+                date: (string)$value,
+            ) ?? Date::parse((string)$value),
             Date\Year::class       => Date\Year::of((int)$value),
             Date\Month::class      => Date\Month::of((int)$value),
             Date\DayOfMonth::class => Date\DayOfMonth::of((int)$value),
             Date\DayOfWeek::class  => Date\DayOfWeek::of((int)$value),
-            Time::class            => Time::ofFormat(format: $this->getFormatFor(Time::class), time: (string)$value),
+            Time::class            => Time::tryOfFormat(
+                format: $this->getFormatFor(Time::class),
+                time: (string)$value,
+            ) ?? Time::parse((string)$value),
             Time\Hour::class       => Time\Hour::of((int)$value),
             Time\Minute::class     => Time\Minute::of((int)$value),
             Time\Second::class     => Time\Second::of(...double_split((string)$value)),
             Duration::class        => Duration::of(seconds: (int)$value),
             Instant::class         => Instant::ofValue($value),
-            LocalDateTime::class   => LocalDateTime::ofFormat(
+            LocalDateTime::class   => LocalDateTime::tryOfFormat(
                 format: $this->getFormatFor(LocalDateTime::class),
                 datetime: (string)$value,
-            ),
-            ZonedDateTime::class   => $this->adjustTimezone($attributeName, ZonedDateTime::ofFormat(
+            ) ?? LocalDateTime::parse((string)$value),
+            ZonedDateTime::class   => $this->adjustTimezone($attributeName, ZonedDateTime::tryOfFormat(
                 format: $this->getFormatFor(ZonedDateTime::class),
                 datetime: (string)$value,
-            )),
+            ) ?? ZonedDateTime::parse((string)$value)),
             \DateTimeZone::class   => new \DateTimeZone((string)$value),
         };
     }
