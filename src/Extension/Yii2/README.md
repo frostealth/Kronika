@@ -1,4 +1,4 @@
-# Kronika support for Yii2
+# Yii2 Extension
 This extension allows you to automatically store Kronika objects
 in a database with Yii2 ActiveRecord.
 
@@ -41,7 +41,7 @@ final class Foo extends ActiveRecord
 ```
 Database column type for:
 - `Date`            -> string
-- `Date\Year`       -> integer (unsigned tiny int)
+- `Date\Year`       -> integer (small int)
 - `Date\Month`      -> integer (unsigned tiny int)
 - `Date\DayOfMonth` -> integer (unsigned tiny int)
 - `Date\DayOfWeek`  -> integer (unsigned tiny int)
@@ -51,8 +51,8 @@ Database column type for:
 - `Time\Second`     -> float (unsigned tiny float)
 - `Duration`        -> integer (unsigned int)
 - `Instant`         -> float
-- `LocalDateTime`   -> string (datetime without time-zone)
-- `ZonedDateTime`   -> string (datetime with time-zone)
+- `LocalDateTime`   -> string or datetime without time-zone
+- `ZonedDateTime`   -> string or datetime with time-zone
 - `\DateTimeZone`   -> string
 
 ## Usage

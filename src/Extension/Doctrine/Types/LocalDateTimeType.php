@@ -46,11 +46,8 @@ final class LocalDateTimeType extends Type
         try {
             \assert(\is_string($value));
             $datetime = \DateTimeImmutable::createFromFormat($platform->getDateTimeFormatString(), $value);
-            if ($datetime !== false) {
-                return LocalDateTime::ofDateTime($datetime);
-            }
 
-            return LocalDateTime::ofDateTime(new \DateTimeImmutable($value));
+            return LocalDateTime::ofDateTime($datetime ?: new \DateTimeImmutable($value));
         } catch (\Throwable $e) {
             throw ValueNotConvertible::new($value, $this->getName(), previous: $e);
         }

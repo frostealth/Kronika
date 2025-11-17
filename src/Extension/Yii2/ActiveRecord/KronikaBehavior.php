@@ -328,26 +328,40 @@ final class KronikaBehavior extends Behavior
      */
     private function toObject(string $attributeName, float|int|string $value): object
     {
+        static $try = function (callable $func) {
+            try {
+                return $func();
+            } catch (\Throwable) {
+                return null;
+            }
+        };
+
         return match ($this->getTypeOf($attributeName)) {
-            Date::class            => Date::ofFormat(format: $this->getFormatFor(Date::class), date: (string)$value),
+            Date::class            => $try(fn(): Date => Date::ofFormat(
+                format: $this->getFormatFor(Date::class),
+                date: (string)$value),
+            ) ?? Date::ofDateTime(new \DateTimeImmutable((string)$value)),
             Date\Year::class       => Date\Year::of((int)$value),
             Date\Month::class      => Date\Month::of((int)$value),
             Date\DayOfMonth::class => Date\DayOfMonth::of((int)$value),
             Date\DayOfWeek::class  => Date\DayOfWeek::of((int)$value),
-            Time::class            => Time::ofFormat(format: $this->getFormatFor(Time::class), time: (string)$value),
+            Time::class            => $try(fn(): Time => Time::ofFormat(
+                format: $this->getFormatFor(Time::class),
+                time: (string)$value),
+            ) ?? Time::ofDateTime(new \DateTimeImmutable((string)$value)),
             Time\Hour::class       => Time\Hour::of((int)$value),
             Time\Minute::class     => Time\Minute::of((int)$value),
             Time\Second::class     => Time\Second::of(...double_split((string)$value)),
             Duration::class        => Duration::of(seconds: (int)$value),
             Instant::class         => Instant::ofValue($value),
-            LocalDateTime::class   => LocalDateTime::ofFormat(
+            LocalDateTime::class   => $try(fn(): LocalDateTime => LocalDateTime::ofFormat(
                 format: $this->getFormatFor(LocalDateTime::class),
                 datetime: (string)$value,
-            ),
-            ZonedDateTime::class   => $this->adjustTimezone($attributeName, ZonedDateTime::ofFormat(
+            )) ?? LocalDateTime::parse((string)$value),
+            ZonedDateTime::class   => $this->adjustTimezone($attributeName, $try(fn(): ZonedDateTime => ZonedDateTime::ofFormat(
                 format: $this->getFormatFor(ZonedDateTime::class),
                 datetime: (string)$value,
-            )),
+            )) ?? LocalDateTime::parse((string)$value)),
             \DateTimeZone::class   => new \DateTimeZone((string)$value),
         };
     }

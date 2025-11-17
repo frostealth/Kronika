@@ -30,6 +30,12 @@ final readonly class AsTime extends CastsFormattableUnit
     #[\Override]
     protected static function factory(): callable
     {
-        return Time::ofFormat(...);
+        return static function (string $format, string $value): Time {
+            try {
+                return Time::ofFormat($format, $value);
+            } catch (\Throwable) {
+                return Time::ofDateTime(new \DateTimeImmutable($value));
+            }
+        };
     }
 }

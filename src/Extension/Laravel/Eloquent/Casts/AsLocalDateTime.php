@@ -30,6 +30,12 @@ final readonly class AsLocalDateTime extends CastsFormattableUnit
     #[\Override]
     protected static function factory(): callable
     {
-        return LocalDateTime::ofFormat(...);
+        return static function (string $format, string $value): LocalDateTime {
+            try {
+                return LocalDateTime::ofFormat($format, $value);
+            } catch (\Throwable) {
+                return LocalDateTime::parse($value);
+            }
+        };
     }
 }
