@@ -44,7 +44,7 @@ final class References
         $key = self::key(...$args);
 
         $instance = ($this->references[$type][$key] ?? null)?->get();
-        if (\is_a($instance, $type, allow_string: true)) {
+        if ($instance instanceof $type) {
             return $instance;
         }
 
@@ -67,8 +67,14 @@ final class References
     public function map(object $holder, string $key, mixed $held, mixed ...$args): mixed
     {
         $this->map[$holder] ??= [];
+        if (! \array_key_exists($key, $this->map[$holder])) {
+            $value = \is_callable($held) ? $held(...$args) : $held;
+            $this->map[$holder][$key] = $value === $holder ? \WeakReference::create($holder) : $value;
+        }
 
-        return $this->map[$holder][$key] ??= \is_callable($held) ? $held(...$args) : $held;
+        $value = $this->map[$holder][$key];
+
+        return $value instanceof \WeakReference ? $value->get() : $value;
     }
 
     public function remove(object $instance): void
