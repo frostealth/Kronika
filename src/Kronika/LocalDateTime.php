@@ -27,13 +27,18 @@ use Kronika\Time\Minute;
 use Kronika\Time\Second;
 use Kronika\Utils\Compared;
 use Kronika\Utils\RefTrait;
+use Kronika\Utils\RescueTrait;
 
 /**
  * Represents a local date-time without time-zone.
+ *
+ * @method static static|null tryOfFormat(string $format, ?string $datetime, ?Formatter $formatter = null)
+ * @method static static|null tryParse(?string $datetime)
  */
 final readonly class LocalDateTime implements DateTime
 {
     use RefTrait;
+    use RescueTrait;
 
     /**
      * Obtains an instance of `LocalDateTime` from a date and time.

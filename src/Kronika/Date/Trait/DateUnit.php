@@ -15,15 +15,20 @@ namespace Kronika\Date\Trait;
 
 use Kronika\Date\DateUnit as Unit;
 use Kronika\LocalDateTime;
+use Kronika\Utils\RescueTrait;
 
 /**
  * @psalm-require-implements Unit
  *
  * @psalm-internal Kronika\Date
  * @internal
+ *
+ * @method static static|null tryOf(mixed $value)
  */
 trait DateUnit
 {
+    use RescueTrait;
+
     /** @internal {@see \Kronika\DateTime::with()} */
     #[\Override]
     final public function _withinDateTime(LocalDateTime $datetime, bool $rolling): LocalDateTime

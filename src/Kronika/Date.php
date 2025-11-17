@@ -25,9 +25,14 @@ use Kronika\Format\Date\Formatted;
 use Kronika\Format\Date\Formatter;
 use Kronika\Utils\Compared;
 use Kronika\Utils\RefTrait;
+use Kronika\Utils\RescueTrait;
 
 /**
  * Represents a date.
+ *
+ * @method static static|null tryOf(mixed $year, mixed $month, mixed $day)
+ * @method static static|null tryOfFormat(string $format, ?string $date, ?Formatter $formatter = null)
+ * @method static static|null tryParse(?string $date)
  *
  * @psalm-import-type TYear from \Kronika\Date\Year
  * @psalm-import-type TMonth from \Kronika\Date\Month
@@ -36,6 +41,7 @@ use Kronika\Utils\RefTrait;
 final readonly class Date implements Unit
 {
     use RefTrait;
+    use RescueTrait;
 
     /**
      * Obtains an instance of `Date` from a year, month and day of the month.

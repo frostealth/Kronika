@@ -27,16 +27,21 @@ use Kronika\Time\Minute;
 use Kronika\Time\Second;
 use Kronika\Utils\Compared;
 use Kronika\Utils\RefTrait;
+use Kronika\Utils\RescueTrait;
 use function Kronika\Utils\Math\double;
 
 /**
  * Represents a date-time with time-zone.
+ *
+ * @method static static|null tryOfFormat(string $format, ?string $datetime, ?Formatter $formatter = null)
+ * @method static static|null tryParse(?string $datetime)
  *
  * @psalm-import-type TMicrosecond from \Kronika\Time\Second
  */
 final class ZonedDateTime extends \DateTimeImmutable implements DateTime
 {
     use RefTrait;
+    use RescueTrait;
 
     /**
      * Obtains an instance of `ZonedDateTime` from a date, time and time-zone.

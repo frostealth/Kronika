@@ -16,6 +16,7 @@ namespace Kronika;
 use Kronika\Utils\Compared;
 use Kronika\Utils\Math;
 use Kronika\Utils\RefTrait;
+use Kronika\Utils\RescueTrait;
 use function Kronika\Utils\math;
 use function Kronika\Utils\Math\double;
 use function Kronika\Utils\Math\double_split;
@@ -26,11 +27,15 @@ use function Kronika\Utils\Math\double_split;
  *
  * This is not the unix timestamp due to the representation of local time without a timezone.
  *
+ * @method static static|null tryOf(?int $second, ?int $micro = 0)
+ * @method static static|null tryOfValue(mixed $value)
+ *
  * @psalm-type TMicrosecond=int<0,999999>
  */
 final readonly class Instant
 {
     use RefTrait;
+    use RescueTrait;
 
     /**
      * Obtains an instance of `Instant` from a second and microsecond.

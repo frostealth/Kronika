@@ -3,6 +3,19 @@ All notable changes to `Kronika` will be documented in this file.
 
 ## [Unreleased]
 ### Added
+- `LocalDateTime::tryOfFormat()` and `LocalDateTime::tryParse()` methods.
+- `ZonedDateTime::tryOfFormat()` and `ZonedDateTime::tryParse()` methods.
+- `Date::tryOf()`, `Date::tryOfFormat()` and `Date::tryParse()` methods.
+- `Time::tryOf()`, `Time::tryOfFormat()` and `Time::tryParse()` methods.
+- `Year::tryOf()` method.
+- `Month::tryOf()` method.
+- `DayOfMonth::tryOf()` method.
+- `DayOfWeek::tryOf()` method.
+- `DayOfYear::tryOf()` method.
+- `Hour::tryOf()` method.
+- `Minute::tryOf()` method.
+- `Second::tryOf()` method.
+- `Instant::tryOf()` and `Instant::tryOfValue()` methods.
 
 ### Changed
 

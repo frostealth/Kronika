@@ -23,9 +23,14 @@ use Kronika\Time\Second;
 use Kronika\Time\TimeUnit;
 use Kronika\Utils\Compared;
 use Kronika\Utils\RefTrait;
+use Kronika\Utils\RescueTrait;
 
 /**
  * Represents a time of day.
+ *
+ * @method static static|null tryOf(mixed $hour, mixed $minute, mixed $second)
+ * @method static static|null tryOfFormat(string $format, ?string $time, ?Formatter $formatter = null)
+ * @method static static|null tryParse(?string $time)
  *
  * @psalm-import-type THour from \Kronika\Time\Hour
  * @psalm-import-type TMinute from \Kronika\Time\Minute
@@ -34,6 +39,7 @@ use Kronika\Utils\RefTrait;
 final readonly class Time implements Unit
 {
     use RefTrait;
+    use RescueTrait;
 
     /**
      * Obtains an instance of `Time` from an hour, minute and second.
