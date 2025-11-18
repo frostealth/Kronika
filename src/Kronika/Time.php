@@ -19,6 +19,7 @@ use Kronika\Time\Minute;
 use Kronika\Time\Second;
 use Kronika\Time\TimeUnit;
 use Kronika\Utils\Compared;
+use Kronika\Utils\RescueTrait;
 use Kronika\Utils\WeakRefsTrait;
 
 /**
@@ -35,6 +36,7 @@ final readonly class Time implements Unit
 {
     /** @use WeakRefsTrait<static,Hour|THour|Minute|TMinute|Second|TSecond> */
     use WeakRefsTrait;
+    use RescueTrait;
 
     /**
      * Obtains an instance of Time from an hour, minute and second.

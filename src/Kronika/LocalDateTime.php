@@ -23,6 +23,7 @@ use Kronika\Time\Hour;
 use Kronika\Time\Minute;
 use Kronika\Time\Second;
 use Kronika\Utils\Compared;
+use Kronika\Utils\RescueTrait;
 use Kronika\Utils\WeakRefsTrait;
 
 /**
@@ -35,6 +36,7 @@ final readonly class LocalDateTime implements DateTime
 {
     /** @use WeakRefsTrait<static, Date|Time> */
     use WeakRefsTrait;
+    use RescueTrait;
 
     /**
      * Obtains an instance of LocalDateTime from a date and time.

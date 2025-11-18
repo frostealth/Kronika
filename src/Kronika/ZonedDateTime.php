@@ -23,6 +23,7 @@ use Kronika\Time\Hour;
 use Kronika\Time\Minute;
 use Kronika\Time\Second;
 use Kronika\Utils\Compared;
+use Kronika\Utils\RescueTrait;
 use Kronika\Utils\WeakRefsTrait;
 use function Kronika\Utils\Math\double;
 
@@ -38,6 +39,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
 {
     /** @use WeakRefsTrait<static, LocalDateTime|\DateTimeZone> */
     use WeakRefsTrait;
+    use RescueTrait;
 
     /**
      * Obtains an instance of ZonedDateTime from a date, time and time-zone.
