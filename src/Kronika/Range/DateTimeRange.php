@@ -43,6 +43,8 @@ final readonly class DateTimeRange implements Range
     /**
      * Obtains an instance of `DateTimeRange`.
      *
+     * @param Precision $precision {@DEPRECATED since 0.2.5}
+     *
      * @throws Exception\InvalidDateTimeRange
      */
     public static function of(DateTime $since, ?DateTime $till, Precision $precision = Precision::Second): self
@@ -53,6 +55,8 @@ final readonly class DateTimeRange implements Range
     /**
      * Obtains an instance of `DateTimeRange` where a given duration
      * is simultaneously subtracted from and added to a given date-time.
+     *
+     * @param Precision $precision {@DEPRECATED since 0.2.5}
      *
      * ```
      * $middle = ZonedDateTime::parse('2025-12-30 12:30:00 +01:00');
@@ -95,6 +99,7 @@ final readonly class DateTimeRange implements Range
         return $this->till;
     }
 
+    /** @deprecated since 0.2.5 */
     public function precision(): Precision
     {
         return $this->precision;

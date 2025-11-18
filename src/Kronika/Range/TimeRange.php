@@ -41,6 +41,8 @@ final readonly class TimeRange implements Range
     /**
      * Obtains an instance of `TimeRange`.
      *
+     * @param Precision $precision {@DEPRECATED since 0.2.5}
+     *
      * @throws Exception\InvalidTimeRange
      */
     public static function of(Time $since, ?Time $till, Precision $precision = Precision::Second): self
@@ -69,6 +71,7 @@ final readonly class TimeRange implements Range
         return $this->till;
     }
 
+    /** @deprecated */
     public function precision(): Precision
     {
         return $this->precision;
