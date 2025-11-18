@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to `Kronika` will be documented in this file.
 
-## [Unreleased]
+## [0.2.5](https://github.com/frostealth/kronika/releases/tag/0.2.5) – 2025-11-18
 ### Added
 - `LocalDateTime::tryOfFormat()` and `LocalDateTime::tryParse()` methods.
 - `ZonedDateTime::tryOfFormat()` and `ZonedDateTime::tryParse()` methods.
