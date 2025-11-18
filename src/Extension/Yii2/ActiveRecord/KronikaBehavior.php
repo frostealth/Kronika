@@ -353,7 +353,7 @@ final class KronikaBehavior extends Behavior
             ZonedDateTime::class   => $this->adjustTimezone($attributeName, ZonedDateTime::tryOfFormat(
                 format: $this->getFormatFor(ZonedDateTime::class),
                 datetime: (string)$value,
-            ) ?? LocalDateTime::parse((string)$value)),
+            ) ?? ZonedDateTime::parse((string)$value)),
             \DateTimeZone::class   => new \DateTimeZone((string)$value),
         };
     }
