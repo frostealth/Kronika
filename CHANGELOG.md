@@ -3,8 +3,21 @@ All notable changes to `Kronika` will be documented in this file.
 
 ## [Unreleased]
 ### Added
+- `Date::previousYear()` and `Date::nextYear()`.
+- `Date::startOfYear()` and `Date::endOfYear()`.
+- `Date::previousMonth()` and `Date::nextMonth()`.
+- `Date::startOfMonth()` and `Date::endOfMonth()`.
+- `Date::previousWeek()` and `Date::nextWeek()`.
+- `Date::previousDay()` and `Date::nextDay()`.
 
-### Changed
+### Deprecated
+- `Date::toStartOfYear()` and `Date::toEndOfYear()`.
+- `Date::toPreviousMonth()` and `Date::toNextMonth()`.
+- `Date::toStartOfMonth()` and `Date::toEndOfMonth()`.
+- `Date::toPreviousWeek()` and `Date::toNextWeek()`.
+- `Date::toYesterday()` and `Date::toTomorrow()`.
+- `LocalDateTime::toStartOfMonth()` and `LocalDateTime::toEndOfMonth()`.
+- `ZonedDateTime::toStartOfMonty()` and `ZonedDateTime::toEndOfMonth()`.
 
 ## [0.2.5](https://github.com/frostealth/kronika/releases/tag/0.2.5) – 2025-11-18
 ### Added

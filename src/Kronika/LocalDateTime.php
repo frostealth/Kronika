@@ -18,6 +18,7 @@ use Kronika\Date\DayOfMonth;
 use Kronika\Date\DayOfWeek;
 use Kronika\Date\DayOfYear;
 use Kronika\Date\Month;
+use Kronika\Date\Trait\HasDate;
 use Kronika\Date\Year;
 use Kronika\Exception\MalformedString;
 use Kronika\Format\DateTime\FormattedLocal as Formatted;
@@ -37,6 +38,7 @@ use Kronika\Utils\RescueTrait;
  */
 final readonly class LocalDateTime implements DateTime
 {
+    use HasDate;
     use RefTrait;
     use RescueTrait;
 
@@ -320,37 +322,16 @@ final readonly class LocalDateTime implements DateTime
         return ($formatter ?? formatter())->format($this, $format);
     }
 
-    /**
-     * Returns an instance of `LocalDateTime` with the first day of the month.
-     *
-     * ```
-     * // 2025-12-31 12:15:30
-     * $this->toStartOfMonth();  // 2025-12-01 12:15:30
-     * ```
-     *
-     * @see \Kronika\Date::toStartOfMonth()
-     */
-    public function toStartOfMonth(): static
+    /** @deprecated {@see self::startOfMonth()} */
+    public function toStartOfMonth(): self
     {
-        return $this->with($this->date()->toStartOfMonth());
+        return $this->startOfMonth();
     }
 
-    /**
-     * Returns an instance of `LocalDateTime` with the last day of the month.
-     *
-     * ```
-     * // 2025-02-01 12:15:30
-     * $this->toEndOfMonth();  // 2025-02-28 12:15:30
-     *
-     * // 2024-02-01 12:15:30 – leap year
-     * $this->toEndOfMonth();  // 2025-02-29 12:15:30
-     * ```
-     *
-     * @see \Kronika\Date::toEndOfMonth()
-     */
-    public function toEndOfMonth(): static
+    /** @deprecated {@see self::endOfMonth()} */
+    public function toEndOfMonth(): self
     {
-        return $this->with($this->date()->toEndOfMonth());
+        return $this->endOfMonth();
     }
 
     #[\Override]

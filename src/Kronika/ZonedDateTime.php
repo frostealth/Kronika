@@ -18,6 +18,7 @@ use Kronika\Date\DayOfMonth;
 use Kronika\Date\DayOfWeek;
 use Kronika\Date\DayOfYear;
 use Kronika\Date\Month;
+use Kronika\Date\Trait\HasDate;
 use Kronika\Date\Year;
 use Kronika\Exception\MalformedString;
 use Kronika\Format\DateTime\FormattedZoned as Formatted;
@@ -40,6 +41,7 @@ use function Kronika\Utils\Math\double;
  */
 final class ZonedDateTime extends \DateTimeImmutable implements DateTime
 {
+    use HasDate;
     use RefTrait;
     use RescueTrait;
 
@@ -210,12 +212,6 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     #[\Override]
-    public function time(): Time
-    {
-        return $this->local->time();
-    }
-
-    #[\Override]
     public function year(): Year
     {
         return $this->date()->year();
@@ -243,6 +239,12 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     public function dayOfYear(): DayOfYear
     {
         return $this->date()->dayOfYear();
+    }
+
+    #[\Override]
+    public function time(): Time
+    {
+        return $this->local->time();
     }
 
     #[\Override]
@@ -479,39 +481,16 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         return $this->local;
     }
 
-    /**
-     * Returns an instance of `ZonedDateTime` with the first day of the month.
-     *
-     * ```
-     * // 2025-12-31 12:15:30 +01:00
-     * $this->toStartOfMonth();  // 2025-12-01 12:15:30 +01:00
-     * ```
-     *
-     * @see \Kronika\Date::toStartOfMonth()
-     * @see \Kronika\Date::isStartOfMonth()
-     */
-    public function toStartOfMonth(): static
+    /** @deprecated {@see self::startOfMonth()} */
+    public function toStartOfMonth(): self
     {
-        return $this->with($this->date()->toStartOfMonth());
+        return $this->startOfMonth();
     }
 
-    /**
-     * Returns an instance of `ZonedDateTime` with the last day of the month.
-     *
-     * ```
-     * // 2025-02-01 12:15:30 +01:00
-     * $this->toEndOfMonth();  // 2025-02-28 12:15:30 +01:00
-     *
-     * // 2024-02-01 – leap year
-     * $this->toEndOfMonth();  // 2025-02-29 12:15:30 +01:00
-     * ```
-     *
-     * @see \Kronika\Date::toEndOfMonth()
-     * @see \Kronika\Date::isEndOfMonth()
-     */
-    public function toEndOfMonth(): static
+    /** @deprecated {@see self::endOfMonth()} */
+    public function toEndOfMonth(): self
     {
-        return $this->with($this->date()->toEndOfMonth());
+        return $this->endOfMonth();
     }
 
     #[\Override]

@@ -190,7 +190,7 @@ final readonly class Date implements Unit
     public function dayOfYear(): DayOfYear
     {
         return $this->remember(static fn(self $date): DayOfYear => DayOfYear::of(
-            $date->toStartOfYear()->until($date)->add(Duration::ofDay())->inDays(),
+            $date->startOfYear()->until($date)->add(Duration::ofDay())->inDays(),
         ), key: __METHOD__);
     }
 
@@ -381,48 +381,74 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Returns an instance of `Date` with the first day of the year.
+     * Moves backward to the previous year.
+     *
+     * ```
+     * // 2025-02-28
+     * $this->previousYear();  // 2024-02-28
+     * ```
+     */
+    public function previousYear(): self
+    {
+        return $this->with($this->year()->previous());
+    }
+
+    /**
+     * Moves forward to the next year.
+     *
+     * ```
+     * // 2025-12-15
+     * $this->nextYear();  // 2026-12-15
+     * ```
+     */
+    public function nextYear(): self
+    {
+        return $this->with($this->year()->next());
+    }
+
+    /**
+     * Moves to the first day of the current year.
      *
      * ```
      * // 2025-07-15
-     * $this->toStartOfYear();  // 2025-01-01
+     * $this->startOfYear();  // 2025-01-01
      * ```
      *
      * @see self::isStartOfYear()
      */
-    public function toStartOfYear(): self
+    public function startOfYear(): self
     {
         return self::of($this->year(), month: Month::January, day: DayOfMonth::first());
     }
 
     /**
-     * Returns an instance of `Date` with the last day of the year.
+     * Moves to the last day of the current year.
      *
      * ```
      * // 2025-07-15
-     * $this->toEndOfYear();  // 2025-12-31
+     * $this->endOfYear();  // 2025-12-31
      * ```
      *
      * @see self::isEndOfYear()
      */
-    public function toEndOfYear(): self
+    public function endOfYear(): self
     {
         return self::of($this->year(), month: Month::December, day: 31);
     }
 
     /**
-     * Returns an instance of `Date` with the previous month of this date.
+     * Moves backward to the previous month.
      *
      * ```
      * // 2025-03-31
-     * $this->toPreviousMonth();  // 2025-02-28
+     * $this->previousMonth();  // 2025-02-28
      * ```
      * ```
      * // 2025-01-30
-     * $this->toPreviousMonth();  // 2024-12-30
+     * $this->previousMonth();  // 2024-12-30
      * ```
      */
-    public function toPreviousMonth(): self
+    public function previousMonth(): self
     {
         if ($this->month()->is(Month::January)) {
             return self::of($this->year()->previous(), month: Month::December, day: $this->day());
@@ -432,7 +458,7 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Returns an instance of `Date` with the next month of this date.
+     * Moves forward to the next month.
      *
      * ```
      * // 2025-01-31
@@ -443,7 +469,7 @@ final readonly class Date implements Unit
      * $this->nextMonth();  // 2026-01-30
      * ```
      */
-    public function toNextMonth(): self
+    public function nextMonth(): self
     {
         if ($this->month()->is(Month::December)) {
             return self::of($this->year()->next(), month: Month::January, day: $this->day());
@@ -453,108 +479,168 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Returns an instance of `Date` with the first day of the month.
+     * Moves to the first day of the current month.
      *
      * ```
      * // 2025-12-31
-     * $this->toStartOfMonth();  // 2025-12-01
+     * $this->startOfMonth();  // 2025-12-01
      * ```
      *
      * @see self::isStartOfMonth()
      */
-    public function toStartOfMonth(): self
+    public function startOfMonth(): self
     {
         return $this->with(DayOfMonth::first());
     }
 
     /**
-     * Returns an instance of `Date` with the last day of the month.
+     * Moves to the last day of the current month.
      *
      * ```
      * // 2025-02-01
-     * $this->toEndOfMonth();  // 2025-02-28
+     * $this->endOfMonth();  // 2025-02-28
      *
      * // 2024-02-01 – leap year
-     * $this->toEndOfMonth();  // 2025-02-29
+     * $this->endOfMonth();  // 2025-02-29
      * ```
      *
      * @see self::isEndOfMonth()
      */
-    public function toEndOfMonth(): self
+    public function endOfMonth(): self
     {
         return $this->with($this->month()->lastDay($this->year()));
     }
 
     /**
-     * Returns an instance of `Date` with the previous week of this date.
+     * Moves backward to the previous week.
      *
      * ```
      * // 2026-01-07, Wednesday
-     * $this->toPreviousWeek();  // 2025-12-31, Wednesday
+     * $this->previousWeek();  // 2025-12-31, Wednesday
      * ```
      */
-    public function toPreviousWeek(): self
+    public function previousWeek(): self
     {
         return $this->sub(Duration::ofWeek());
     }
 
     /**
-     * Returns an instance of `Date` with the next week of this date.
+     * Moves forward to the next week.
      *
      * ```
      * // 2025-12-30, Tuesday
-     * $this->toNextWeek();  // 2026-01-06, Tuesday
+     * $this->nextWeek();  // 2026-01-06, Tuesday
      * ```
      */
-    public function toNextWeek(): self
+    public function nextWeek(): self
     {
         return $this->add(Duration::ofWeek());
     }
 
     /**
-     * Returns an instance of `Date` with the previous day of this date.
+     * Moves backward to the previous day.
      *
      * ```
      * // 2025-03-01
-     * $this->toYesterday();  // 2025-02-28
+     * $this->previousDay();  // 2025-02-28
      * ```
      */
-    public function toYesterday(): self
+    public function previousDay(): self
     {
         return $this->sub(Duration::ofDay());
     }
 
     /**
-     * Returns an instance of `Date` with the next day of this date.
+     * Moves forward to the next day.
      *
      * ```
      * // 2025-12-31
-     * $this->toTomorrow();  // 2026-01-01
+     * $this->nextDay();  // 2026-01-01
      * ```
      */
-    public function toTomorrow(): self
+    public function nextDay(): self
     {
         return $this->add(Duration::ofDay());
+    }
+
+    /** @deprecated {@see self::startOfYear()} */
+    public function toStartOfYear(): self
+    {
+        return $this->startOfYear();
+    }
+
+    /** @deprecated {@see self::endOfYear()} */
+    public function toEndOfYear(): self
+    {
+        return $this->endOfYear();
+    }
+
+    /** @deprecated {@see self::previousMonth()} */
+    public function toPreviousMonth(): self
+    {
+        return $this->previousMonth();
+    }
+
+    /** @deprecated {@see self::nextMonth()} */
+    public function toNextMonth(): self
+    {
+        return $this->nextMonth();
+    }
+
+    /** @deprecated {@see self::startOfMonth()} */
+    public function toStartOfMonth(): self
+    {
+        return $this->startOfMonth();
+    }
+
+    /** @deprecated {@see self::endOfMonth()} */
+    public function toEndOfMonth(): self
+    {
+        return $this->endOfMonth();
+    }
+
+    /** @deprecated {@see self::previousWeek()} */
+    public function toPreviousWeek(): self
+    {
+        return $this->previousWeek();
+    }
+
+    /** @deprecated {@see self::nextWeek()} */
+    public function toNextWeek(): self
+    {
+        return $this->nextWeek();
+    }
+
+    /** @deprecated {@see self::previousDay()} */
+    public function toYesterday(): self
+    {
+        return $this->previousDay();
+    }
+
+    /** @deprecated {@see self::nextDay()} */
+    public function toTomorrow(): self
+    {
+        return $this->nextDay();
     }
 
     /**
      * Checks if the day of this date is the first day of the year.
      *
-     * @see self::toStartOfYear()
+     * @see self::startOfYear()
      */
     public function isStartOfYear(): bool
     {
-        return $this->is($this->toStartOfYear());
+        return $this->is($this->startOfYear());
     }
 
     /**
      * Check if the day of this date is the last day of the year.
      *
-     * @see self::toEndOfYear()
+     * @see self::endOfYear()
      */
     public function isEndOfYear(): bool
     {
-        return $this->is($this->toEndOfYear());
+        return $this->is($this->endOfYear());
     }
 
     /**
@@ -568,7 +654,7 @@ final readonly class Date implements Unit
      * $this->isStartOfMonth();  // false
      * ```
      *
-     * @see self::toStartOfMonth()
+     * @see self::startOfMonth()
      */
     public function isStartOfMonth(): bool
     {
@@ -586,7 +672,7 @@ final readonly class Date implements Unit
      * $this->isEndOfMonth();  // false
      * ```
      *
-     * @see self::isEndOfMonth()
+     * @see self::endOfMonth()
      */
     public function isEndOfMonth(): bool
     {

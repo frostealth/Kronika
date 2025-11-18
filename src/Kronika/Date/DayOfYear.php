@@ -319,10 +319,10 @@ final readonly class DayOfYear implements DateUnit
     public function _withinDate(Date $date, bool $rolling): Date
     {
         if ($this->isFirst()) {
-            return $date->toStartOfYear();
+            return $date->startOfYear();
         }
         if (! $rolling && $this->isLast($date->year())) {
-            return $date->toEndOfYear();
+            return $date->endOfYear();
         }
         if ($this->isBefore($date->dayOfYear())) {
             return $date->sub($this->adjust($date->year())->difference($date->dayOfYear()));

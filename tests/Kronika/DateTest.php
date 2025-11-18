@@ -127,6 +127,32 @@ final class DateTest extends TestCase
         self::assertSame($expected, $date->dayOfYear());
     }
 
+    #[TestWith([[2025, 12, 30], [2024, 12, 30]])]
+    #[TestWith([[2000, 10, 31], [1999, 10, 31]])]
+    #[TestWith([[2025, 2, 28], [2024, 2, 28]])]
+    #[TestWith([[2024, 2, 29], [2023, 2, 28]])]
+    #[Depends('testBasic')]
+    public function testPreviousYear(array $date, array $expected): void
+    {
+        $date = Date::of(...$date);
+        $expected = Date::of(...$expected);
+
+        self::assertEquals($expected, $date->previousYear());
+    }
+
+    #[TestWith([[2025, 12, 30], [2026, 12, 30]])]
+    #[TestWith([[1999, 10, 31], [2000, 10, 31]])]
+    #[TestWith([[2025, 2, 28], [2026, 2, 28]])]
+    #[TestWith([[2024, 2, 29], [2025, 2, 28]])]
+    #[Depends('testBasic')]
+    public function testNextYear(array $date, array $expected): void
+    {
+        $date = Date::of(...$date);
+        $expected = Date::of(...$expected);
+
+        self::assertEquals($expected, $date->nextYear());
+    }
+
     #[TestWith([2025, 12, 30])]
     #[TestWith([2000, 01, 30])]
     #[TestWith([2024, 10, 15])]
@@ -135,8 +161,8 @@ final class DateTest extends TestCase
     {
         $date = Date::of(year: $year, month: $month, day: $day);
 
-        self::assertEquals(Date::of(year: $year, month: Date\Month::January, day: 1), $date->toStartOfYear());
-        self::assertEquals(Date::of(year: $year, month: Date\Month::December, day: 31), $date->toEndOfYear());
+        self::assertEquals(Date::of(year: $year, month: Date\Month::January, day: 1), $date->startOfYear());
+        self::assertEquals(Date::of(year: $year, month: Date\Month::December, day: 31), $date->endOfYear());
     }
 
     public static function startAndEndOfMonthProvider(): array
@@ -165,8 +191,8 @@ final class DateTest extends TestCase
     #[DataProvider('startAndEndOfMonthProvider')]
     public function testStartAndEndOfMonth(Date $date, Date\DayOfMonth $lastDayOfMonth): void
     {
-        $startOfMonth = $date->toStartOfMonth();
-        $endOfMonth = $date->toEndOfMonth();
+        $startOfMonth = $date->startOfMonth();
+        $endOfMonth = $date->endOfMonth();
 
         self::assertEquals(Date\DayOfMonth::of(1), $startOfMonth->day());
         $date->day() === Date\DayOfMonth::of(1)
@@ -257,7 +283,7 @@ final class DateTest extends TestCase
         $date = Date::of(...$date);
         $expected = Date::of(...$expected);
 
-        self::assertEquals($expected, $date->toPreviousMonth());
+        self::assertEquals($expected, $date->previousMonth());
     }
 
     #[TestWith([[2024, 12, 15], [2025, 1, 15]])]
@@ -282,7 +308,7 @@ final class DateTest extends TestCase
         $date = Date::of(...$date);
         $expected = Date::of(...$expected);
 
-        self::assertEquals($expected, $date->toNextMonth());
+        self::assertEquals($expected, $date->nextMonth());
     }
 
     #[TestWith([[2025, 12, 31], [2025, 12, 24]])]
@@ -298,7 +324,7 @@ final class DateTest extends TestCase
         $date = Date::of(...$date);
         $expected = Date::of(...$expected);
 
-        self::assertEquals($expected, $date->toPreviousWeek());
+        self::assertEquals($expected, $date->previousWeek());
     }
 
     #[TestWith([[2024, 1, 15], [2024, 1, 22]])]
@@ -317,7 +343,7 @@ final class DateTest extends TestCase
         $date = Date::of(...$date);
         $expected = Date::of(...$expected);
 
-        self::assertEquals($expected, $date->toNextWeek());
+        self::assertEquals($expected, $date->nextWeek());
     }
 
     #[TestWith([[2025, 1, 15], [2025, 1, 14]])]
@@ -334,7 +360,7 @@ final class DateTest extends TestCase
         $date = Date::of(...$date);
         $expected = Date::of(...$expected);
 
-        self::assertEquals($expected, $date->toYesterday());
+        self::assertEquals($expected, $date->previousDay());
     }
 
     #[TestWith([[2024, 12, 30], [2024, 12, 31]])]
@@ -354,7 +380,7 @@ final class DateTest extends TestCase
         $date = Date::of(...$date);
         $expected = Date::of(...$expected);
 
-        self::assertEquals($expected, $date->toTomorrow());
+        self::assertEquals($expected, $date->nextDay());
     }
 
     #[TestWith(['Y-m-d', '2025-01-15'])]

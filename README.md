@@ -77,7 +77,7 @@ $date = $date->with(Month::January)->with(DayOfMonth::of(12));
 echo $date->format('l, F jS, Y.');  // 'Monday, January 12th, 2026.'
 echo $date->is(DayOfMonth::of(12)); // true
 
-$date = $date->toStartOfMonth();
+$date = $date->startOfMonth();
 echo $date->format('l, F jS, Y.');  // 'Thursday, January 1st, 2026.'
 
 // changing the day of week
