@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to `Kronika` will be documented in this file.
 
-## [Unreleased]
+## [0.2.6](https://github.com/frostealth/kronika/releases/tag/0.2.6) – 2025-11-19
 ### Added
 - `Date::previousYear()` and `Date::nextYear()`.
 - `Date::startOfYear()` and `Date::endOfYear()`.
