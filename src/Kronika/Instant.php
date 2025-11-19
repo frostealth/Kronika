@@ -63,6 +63,8 @@ final readonly class Instant
      * ```
      *
      * @param numeric $value
+     *
+     * @throws Exception\InvalidValue
      */
     public static function ofValue(float|int|string $value): self
     {
