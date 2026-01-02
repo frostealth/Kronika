@@ -1,10 +1,9 @@
 # Changelog
 All notable changes to `Kronika` will be documented in this file.
 
-## [Unreleased]
-### Added
-
-### Changed
+## [0.2.7](https://github.com/frostealth/kronika/releases/tag/0.2.7) – 2026-01-02
+### Fixed
+- Formatter tests
 
 ## [0.2.6](https://github.com/frostealth/kronika/releases/tag/0.2.6) – 2025-11-19
 ### Added

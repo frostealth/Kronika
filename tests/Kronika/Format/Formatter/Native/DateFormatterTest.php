@@ -71,7 +71,7 @@ final class DateFormatterTest extends TestCase
     // 2025-07-09, Friday
     #[TestWith(['Y-m-d', '2025-07-09'])]
     #[TestWith(['Y m d', '2025 07 09'])]
-    #[TestWith(['d m \Y', '09 07 Y'])]
+    #[TestWith(['d m Y \Y', '09 07 2025 Y'])]
     #[TestWith(['l, d-M-Y', 'Wednesday, 09-Jul-2025'])]
     #[TestWith(['D, d M y', 'Wed, 09 Jul 25'])]
     #[TestWith(['Y-m-d\TH:i:s.uP', '2025-07-09TH:i:s.uP'])]
