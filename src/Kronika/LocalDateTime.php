@@ -350,7 +350,10 @@ final readonly class LocalDateTime implements DateTime
     public function instant(): Instant
     {
         return $this->remember(static function (self $that): Instant {
-            return $that->date->instant()->_join($that->time->instant());
+            return Instant::of(
+                second: $that->date->instant()->second() + $that->time->instant()->second(),
+                micro: $that->time->instant()->microsecond(),
+            );
         }, key: __METHOD__);
     }
 

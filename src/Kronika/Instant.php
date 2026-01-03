@@ -402,12 +402,6 @@ final readonly class Instant
         }
     }
 
-    /** @internal */
-    public function _join(self $other): self
-    {
-        return self::of(...$this->math()->add($other->second, $other->microsecond)->parts());
-    }
-
     private function applyPrecision(Precision $precision): self
     {
         return match ($precision) {
