@@ -11,8 +11,10 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Kronika\Exception;
+namespace Kronika\Range\Exception;
 
-class InvalidRange extends InvalidValue
+use Kronika\Exception\RuntimeException;
+
+final class Overlap extends RuntimeException implements RangeError
 {
 }

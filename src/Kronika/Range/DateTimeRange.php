@@ -15,159 +15,338 @@ namespace Kronika\Range;
 
 use Kronika\DateTime;
 use Kronika\Duration;
-use Kronika\Precision;
 use Kronika\Range;
-use Kronika\Utils\RefTrait;
 
 /**
- * Represents a date-time range with inclusive "since" and exclusive "till".
- *
- * ```
- * $since = ZonedDateTime::parse('2025-12-30 12:15:30 +01:00');
- * $till = LocalDateTime::parse('2025-12-31 20:15:39');
- * $range = DateTimeRange::of($since, $till);
- *
- * $duration = $range->duration();  // 1 day, 8 hours
- * $range->contains($since);  // true
- * $range->contains($till);   // false
- * ```
+ * Represents a date-time range with inclusive "start" and exclusive "end".
  *
  * @template-covariant TDateTime of DateTime
- *
  * @implements Range<TDateTime>
+ *
+ * @psalm-inheritors LocalDateTimeRange|ZonedDateTimeRange
  */
-final readonly class DateTimeRange implements Range
+abstract readonly class DateTimeRange implements Range
 {
-    use RefTrait;
-
-    /**
-     * Obtains an instance of `DateTimeRange`.
-     *
-     * @param Precision $precision {@DEPRECATED since 0.2.5}
-     *
-     * @throws Exception\InvalidDateTimeRange
-     */
-    public static function of(DateTime $since, ?DateTime $till, Precision $precision = Precision::Second): self
+    /** @throws Exception\InvalidRange */
+    protected function __construct()
     {
-        return self::ref(since: $since, till: $till ?? $since, precision: $precision);
+        if ($this->from()->isAfter($this->to())) {
+            throw new Exception\InvalidRange(\sprintf('Invalid range: [%s] – [%s]', $this->from(), $this->to()));
+        }
+    }
+
+    #[\Override]
+    abstract public function from(): DateTime;
+
+    #[\Override]
+    abstract public function to(): DateTime;
+
+    #[\Override]
+    final public function duration(): Duration
+    {
+        return $this->from()->until($this->to());
+    }
+
+    #[\Override]
+    final public function isZero(): bool
+    {
+        return $this->from()->is($this->to());
     }
 
     /**
-     * Obtains an instance of `DateTimeRange` where a given duration
-     * is simultaneously subtracted from and added to a given date-time.
-     *
-     * @param Precision $precision {@DEPRECATED since 0.2.5}
+     * Resets the microsecond to 0.
+     */
+    final public function resetMicro(): static
+    {
+        return $this->instantiate(
+            start: $this->from()->resetMicro(),
+            end: $this->to()->resetMicro(),
+        );
+    }
+
+    /**
+     * Resets the second and microsecond to 0.
+     */
+    final public function resetSecond(): static
+    {
+        return $this->instantiate(
+            start: $this->from()->resetSecond(),
+            end: $this->to()->resetSecond(),
+        );
+    }
+
+    /**
+     * Checks if this date-time range contains another one or a date-time.
      *
      * ```
-     * $middle = ZonedDateTime::parse('2025-12-30 12:30:00 +01:00');
-     * $duration = Duration::of(days: 1, hours: 4, minutes: 30);
+     * // $this: 2025-12-15 12:15 – 2025-12-20 20:15
+     * // $other: 2025-12-15 12:15 – 2025-12-20 14:30
+     * $this->contains($other);  // true
      *
-     * $range = DateTimeRange::around($middle, $duration);
-     * $range->since();  // 2025-12-29 08:00:00
-     * $range->till();   // 2025-12-31 17:00:00
-     */
-    public static function around(DateTime $middle, Duration $duration, Precision $precision = Precision::Second): self
-    {
-        return self::of(since: $middle->sub($duration), till: $middle->add($duration), precision: $precision);
-    }
-
-    /**
-     * @param TDateTime $since
-     * @param TDateTime $till
+     * // $other: 2025-12-20 14:30 – 2025-12-25 21:30
+     * $this->contains($other);  // false
      *
-     * @throws Exception\InvalidDateTimeRange
+     * // $datetime: 2025-12-18 15:00
+     * $this->contains($datetime);  // true
+     *
+     * // $datetime: 2025-12-20 21:30
+     * $this->contains($datetime);  // false
+     * ```
      */
-    private function __construct(
-        private DateTime $since,
-        private DateTime $till,
-        private Precision $precision,
-    ) {
-        $this->assertRange();
-    }
-
-    /** @returns TDateTime */
-    #[\Override]
-    public function since(): DateTime
+    final public function contains(DateTimeRange|DateTime $other): bool
     {
-        return $this->since;
-    }
-
-    /** @returns TDateTime */
-    #[\Override]
-    public function till(): DateTime
-    {
-        return $this->till;
-    }
-
-    /** @deprecated since 0.2.5 */
-    public function precision(): Precision
-    {
-        return $this->precision;
-    }
-
-    #[\Override]
-    public function isZero(): bool
-    {
-        return $this->remember(
-            static fn(self $that): bool => $that->since->is($that->till, $that->precision),
-            key: __METHOD__,
-        );
-    }
-
-    #[\Override]
-    public function duration(): Duration
-    {
-        return $this->remember(
-            static fn(self $that): Duration => $that->since->until($that->till, $that->precision),
-            key: __METHOD__,
-        );
-    }
-
-    /**
-     * Checks if this date-time range contains a given another one.
-     */
-    public function contains(DateTime $datetime): bool
-    {
+        if ($other instanceof self) {
+            return $this->contains($other->start())
+                && $this->contains($other->end())
+            ;
+        }
         if ($this->isZero()) {
-            return $this->since->is($datetime, $this->precision);
+            return $this->start()->is($other);
         }
 
-        return $this->till->isAfter($datetime, $this->precision)
-            && $this->since->isBeforeOrEqualTo($datetime, $this->precision)
-        ;
+        return $this->start()->isBeforeOrEqualTo($other)
+            && $this->end()->isAfter($other);
+    }
+
+    /**
+     * Checks if this date-time range overlaps with another one.
+     *
+     * ```
+     * // $this: 2025-12-15 12:15 – 2025-12-20 20:15
+     * // $other: 2025-12-20 16:30 – 2025-12-25 22:00
+     * $this->overlaps($foo);  // true
+     *
+     * // $other: 2025-12-20 22:00 – 2025-12-25 23:30
+     * $this->overlaps($bar);  // false
+     * ```
+     */
+    final public function overlaps(DateTimeRange $other): bool
+    {
+        return $this->start()->isBefore($other->end())
+            && $this->end()->isAfter($other->start());
+    }
+
+    /**
+     * Checks if this date-time range abuts with another one.
+     *
+     * ```
+     * // $this: 2025-12-15 12:15 - 2025-12-20 20:15
+     * // $other: 2025-12-20 20:15 - 2025-12-25 22:00
+     * $this->abuts($other);  // true
+     *
+     * // $other: 2025-12-20 20:20 - 2025-12-25 22:00
+     * $this->abuts($other);  // false
+     * ```
+     */
+    final public function abuts(DateTimeRange $other): bool
+    {
+        return $this->start()->is($other->end())
+            || $this->end()->is($other->start());
+    }
+
+    /**
+     * Checks if this date-time range is fully contained by another one.
+     *
+     * ```
+     * // $this: 2025-12-15 12:15 – 2025-12-20 20:15
+     * // $other: 2025-12-10 10:00 – 2025-12-25 22:00
+     * $this->isDuring($other);  // true
+     *
+     * // $other: 2025-12-15 14:00 – 2025-12-25 23:00
+     * $this->isDuring($other);  // false
+     * ```
+     */
+    final public function isDuring(DateTimeRange $other): bool
+    {
+        return $other->contains($this);
+    }
+
+    /**
+     * Checks if this date-time range is equal to another one.
+     *
+     * ```
+     * // $this: 2025-12-20 12:15 – 2025-12-20 20:15
+     * // $other: 2025-12-20 12:15 – 2025-12-20 20:15
+     * $this->is($other);  // true
+     *
+     * // $other: 2025-12-21 16:30 – 2025-12-25 20:15
+     * $this->is($other);  // false
+     * ```
+     */
+    final public function is(DateTimeRange $other): bool
+    {
+        return $this->start()->is($other->start())
+            && $this->end()->is($other->end());
+    }
+
+    /**
+     * Checks if this date-time range is not equal to another one.
+     *
+     * ```
+     * // $this: 2025-12-20 12:15 – 2025-12-20 20:15
+     * // $other: 2025-12-20 12:15 – 2025-12-20 20:15
+     * $this->isNot($other);  // true
+     *
+     * // $other: 2025-12-21 16:30 – 2025-12-25 20:15
+     * $this->isNot($other);  // false
+     * ```
+     */
+    final public function isNot(DateTimeRange $other): bool
+    {
+        return ! $this->is($other);
+    }
+
+    /**
+     * Checks if this date-time range is before another one or a date-time.
+     *
+     * ```
+     * // $this: 2025-12-15 12:15 – 2025-12-20 20:15
+     * // $other: 2025-12-25 21:30 – 2025-12-30 23:30
+     * $this->isBefore($other);  // true
+     *
+     * // $other: 2025-12-20 16:00 – 2025-12-25 21:00
+     * $this->isBefore($other);  // false
+     *
+     * // $datetime: 2025-12-25 21:30
+     * $this->isBefore($datetime);  // true
+     * ```
+     */
+    final public function isBefore(DateTimeRange|DateTime $other): bool
+    {
+        $other = $other instanceof self ? $other->start() : $other;
+
+        return $this->end()->isBefore($other);
+    }
+
+    /**
+     * Checks if this date-time range is after another one or a date-time.
+     *
+     * ```
+     * // $this: 2025-12-15 12:15 – 2025-12-20 20:15
+     * // $other: 2025-12-01 10:00 – 2025-12-15 11:00
+     * $this->isAfter($other);  // true
+     *
+     * // $other: 2025-12-15 12:00 – 2025-12-15 13:00
+     * $this->isAfter($other);  // false
+     *
+     * // $datetime: 2025-12-25 10:00
+     * $this->isAfter($datetime);  // true
+     * ```
+     */
+    final public function isAfter(DateTimeRange|DateTime $other): bool
+    {
+        $other = $other instanceof self ? $other->end() : $other;
+
+        return $this->start()->isAfter($other);
+    }
+
+    /**
+     * Computes the intersection between this date-time range and another one.
+     *
+     * ```
+     * // $this: 2025-12-15 12:15 – 2025-12-20 20:15
+     * // $other: 2025-12-20 16:30 – 2025-12-25 22:00
+     * $this->intersection($other);
+     * // result: 2025-12-20 16:30 – 2025-12-20 20:15
+     * ```
+     *
+     * @throws Exception\NoOverlap if the ranges don't intersect each other
+     */
+    final public function intersection(DateTimeRange $other): static
+    {
+        if (! $this->overlaps($other)) {
+            throw new Exception\NoOverlap('Ranges do not intersect each other');
+        }
+
+        return $this->instantiate(
+            $this->start()->add($this->start()->until($other->start())),
+            $this->end()->sub($other->end()->until($this->end())),
+        );
+    }
+
+    /**
+     * Computes the gap between this date-time range and another one.
+     *
+     * ```
+     * // $this: 2025-12-15 12:15 – 2025-12-20 20:15
+     * // $other: 2025-12-20 22:00 – 2025-12-25 23:30
+     * $this->gap($other);
+     * // result: 2025-12-20 20:15 – 2025-12-20 22:00
+     * ```
+     *
+     * @throws Exception\Overlap if the ranges intersect each other
+     */
+    final public function gap(DateTimeRange $other): static
+    {
+        if ($this->overlaps($other)) {
+            throw new Exception\Overlap('Ranges intersect each other');
+        }
+
+        return $this->end()->isBeforeOrEqualTo($other->start())
+            ? $this->instantiate($this->end(), $this->end()->add($this->end()->until($other->start())))
+            : $this->instantiate($this->start()->sub($other->end()->until($this->start())), $this->start());
+    }
+
+    /** @return iterable<static> */
+    #[\Override]
+    final public function split(Duration $step): iterable
+    {
+        $start = $this->start();
+        if ($step->isZero() || $step->isGreaterThanOrEqualTo($this->duration())) {
+            yield $this;
+            return;
+        }
+
+        do {
+            $end = $this->end()->isAfter($end = $start->add($step)) ? $end : $this->end();
+            yield $this->instantiate($start, $end);
+        } while ($this->contains($start = $end));
     }
 
     #[\Override]
-    public function each(Duration $step): \Iterator
+    final public function each(Duration $step): iterable
     {
-        $step = $step->isZero() ? Duration::ofSecond() : $step;
-        $current = $this->since();
+        $current = $this->start();
+        if ($step->isZero()) {
+            yield $current;
+            return;
+        }
 
         do {
             yield $current;
         } while ($this->contains($current = $current->add($step)));
     }
 
-    #[\Override]
-    public function __toString(): string
+    /**
+     * Returns an instance of `DateRange` from this range.
+     */
+    final public function toDateRange(): DateRange
     {
-        return \sprintf('%s – %s', $this->since(), $this->till());
+        return DateRange::of(
+            from: $this->start()->date(),
+            to: $this->end()->date(),
+        );
     }
 
-    /** @internal */
-    public function __debugInfo(): array
+    /**
+     * Returns the normalized start of the range.
+     *
+     * @return TDateTime
+     */
+    protected function start(): DateTime
     {
-        return [
-            'since' => (string)$this->since(),
-            'till' => (string)$this->till(),
-        ];
+        return $this->from();
     }
 
-    /** @throws Exception\InvalidDateTimeRange */
-    private function assertRange(): void
+    /**
+     * Returns the normalized end of the range.
+     *
+     * @return TDateTime
+     */
+    protected function end(): DateTime
     {
-        if ($this->since->isAfter($this->till)) {
-            throw new Exception\InvalidDateTimeRange("Invalid range: [$this->since] – [$this->till]");
-        }
+        return $this->to();
     }
+
+    abstract protected function instantiate(mixed $start, mixed $end): static;
 }

@@ -3,8 +3,19 @@ All notable changes to `Kronika` will be documented in this file.
 
 ## [Unreleased]
 ### Added
+- `LocalDateTimeRange` and `ZonedDateTimeRange`.
+- `Range::from()` and `Range::to()` methods.
+- `split()`, `overlaps()`, `abuts()`, `intersection()` and `gap()` methods for ranges.
+- `is()`, `isNot()`, `isDuring()`, `isBefore()` and `isAfter()` methods for ranges.
 
 ### Changed
+- `Range::each()` return type to `iterable`.
+
+### Removed
+- `DateTimeRange::of()` and `DateTimeRange::around()` methods.
+- `Range::since()` and `Range::till()` methods.
+- The precision options from ranges.
+- `__toString()` method from ranges.
 
 ### Fixed
 - Microsecond in `LocalDateTime::instant()`.

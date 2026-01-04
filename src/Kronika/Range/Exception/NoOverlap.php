@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Kronika\Range\Exception;
 
-use Kronika\Exception\InvalidRange;
+use Kronika\Exception\RuntimeException;
 
-final class InvalidDateRange extends InvalidRange
+final class NoOverlap extends RuntimeException implements RangeError
 {
 }

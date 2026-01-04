@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Kronika\Range\Exception;
 
-use Kronika\Exception\InvalidRange;
+use Kronika\Exception\InvalidValue;
 
-final class InvalidDateTimeRange extends InvalidRange
+final class InvalidRange extends InvalidValue implements RangeError
 {
 }

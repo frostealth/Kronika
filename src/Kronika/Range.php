@@ -14,9 +14,9 @@ declare(strict_types=1);
 namespace Kronika;
 
 /**
- * Represents a range of date-time, date or time.
+ * Represents a range of date-time, date, time.
  *
- * @template-covariant TUnit of DateTime|Date|Time
+ * @template-covariant TUnit of object
  */
 interface Range
 {
@@ -25,14 +25,14 @@ interface Range
      *
      * @return TUnit
      */
-    public function since(): object;
+    public function from(): object;
 
     /**
      * Returns the end of this range, exclusive.
      *
      * @return TUnit
      */
-    public function till(): object;
+    public function to(): object;
 
     /**
      * Checks if this range's boundaries coincide with the same point.
@@ -45,9 +45,16 @@ interface Range
     public function duration(): Duration;
 
     /**
-     * Returns all items of this range with a given step.
+     * Splits this range into smaller ranges according to a given step.
      *
-     * @return \Traversable<int, TUnit>
+     * @return iterable<static>
      */
-    public function each(Duration $step): \Traversable;
+    public function split(Duration $step): iterable;
+
+    /**
+     * Returns all items of this range according to a given step.
+     *
+     * @return iterable<TUnit>
+     */
+    public function each(Duration $step): iterable;
 }

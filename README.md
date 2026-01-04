@@ -9,10 +9,11 @@ composer require frostealth/kronika
 ```
 
 ## Version Guidance
-| Version | Status   |      Branch       | PHP Version |
-|:-------:|:---------|:-----------------:|:-----------:|
-|   0.2   | latest   | [0.x][branch-0.x] |    ^8.4     |
-|   0.1   | support  | [0.1][branch-0.1] | >=8.3,<=8.5 |
+| Version | Status |      Branch       | PHP Version |
+|:-------:|:-------|:-----------------:|:-----------:|
+|   0.3   | Dev    | [0.x][branch-0.x] |    ^8.4     |
+|   0.2   | Latest |         -         |    ^8.4     |
+|   0.1   | EOL    | [0.1][branch-0.1] | >=8.3,<=8.5 |
 
 [branch-0.x]: https://github.com/frostealth/kronika/tree/0.x
 [branch-0.1]: https://github.com/frostealth/kronika/tree/0.1
@@ -306,23 +307,41 @@ and has the following implementations:
 ```php
 // creating "TimeRange"
 $range = TimeRange::of(
-    since: Time::midday(),   // inclusive
-    till: Time::of(13, 30),  // exclusive
+    from: Time::midday(),   // inclusive
+    to: Time::of(13, 30),   // exclusive
 );
-echo $range->since()->format('H:i:s');  // 12:00:00
-echo $range->till()->format('H:i:s');   // 13:30:00
+echo $range->from()->format('H:i:s');  // 12:00:00
+echo $range->to()->format('H:i:s');    // 13:30:00
 
 echo $range->contains(Time::midday());    // true
 echo $range->contains(Time::of(13, 30));  // false
 
 // getting each item of this range with the specified step
-// minimal step is 1 second
 foreach ($range->each(Duration::of(minutes: 30)) as $item) {
     echo $item->format('H:i:s');
 }
 // 12:00:00
 // 12:30:00
 // 13:00:00
+
+// splitting the range into smaller ranges
+foreach ($range->split(Duration::ofHour()) as $item) {
+    echo $item->from() . ' - ' . $item->to();
+}
+// 12:00:00 - 13:00:00
+// 13:00:00 - 13:30:00
+
+// getting an intersection between ranges
+$foo = TimeRange::of(Time::of(13, 0), Time::of(14, 0));
+if ($range->overlaps($foo)) {
+    $bar = $range->intersection($foo);  // 13:00:00 - 13:30:00
+}
+
+// getting a gap between ranges
+$foo = TimeRange::of(Time::of(14, 0), Time::of(15, 0));
+if (! $range->overlaps($foo)) {
+    $bar = $range->gap($foo);  // 13:30:00 - 14:00:00
+}
 ```
 
 ### DateRange
@@ -331,11 +350,11 @@ foreach ($range->each(Duration::of(minutes: 30)) as $item) {
 ```php
 // creating "DateRange"
 $range = DateRange::of(
-    since: Date::of(2025, 12, 15),  // inclusive
-    till: Date::of(2025, 12, 18),   // exclusive
+    from: Date::of(2025, 12, 15),  // inclusive
+    to: Date::of(2025, 12, 18),    // exclusive
 );
-echo $range->since()->format('Y-m-d');  // 2025-12-15
-echo $range->till()->format('Y-m-d');   // 2025-12-18
+echo $range->from()->format('Y-m-d');  // 2025-12-15
+echo $range->to()->format('Y-m-d');    // 2025-12-18
 
 echo $range->contains(Date::of(2025, 12, 15));  // true
 echo $range->contains(Date::of(2025, 12, 18));  // false
@@ -347,32 +366,77 @@ foreach ($range->each(Duration::of(days: 2)) as $item) {
 }
 // 2025-12-15
 // 2025-12-17
+
+// splitting the range into smaller ranges
+foreach ($range->split(Duration::of(days: 2)) as $item) {
+    echo $item->from() . ' - ' . $item->to();
+}
+// 2025-12-15 - 2025-12-17
+// 2025-12-17 - 2025-12-18
+
+// getting an intersection between ranges
+$foo = DateRange::of(Date::of(2025, 12, 17), Date::of(2025, 12, 20));
+if ($range->overlaps($foo)) {
+    $bar = $range->intersection($foo);  // 2025-12-17 - 2025-12-18
+}
+
+// getting a gap between ranges
+$foo = DateRange::of(Date::of(2025, 12, 20), Date::of(2025, 12, 22));
+if (! $range->overlaps($foo)) {
+    $bar = $range->gap($foo);  // 2025-12-18 - 2025-12-20
+}
 ```
 
 ### DateTimeRange
-`Kronika\Range\DateTimeRange` represents a range between two moments of time.
-
-Both `Kronika\ZonedDateTime` and `Kronika\LocalDateTime` are supported.
+- `Kronika\Range\LocalDateTimeRange` represents a range between two instances of `LocalDateTime`.
+- `Kronika\Range\ZonedDateTimeRange` represents a range between two instances of `ZonedDateTime`.
 
 ```php
-// creating "DateTimeRange"
-$range = DateTimeRange::of(
-    since: ZonedDateTime::parse('2025-12-15 12:30:45 +01:00'),  // inclusive
-    till: LocalDateTime::parse('2025-12-18 10:00:30'),          // exclusive
+// creating "ZonedDateTimeRange"
+$range = ZonedDateTimeRange::of(
+    from: ZonedDateTime::parse('2025-12-15 12:30:45 +01:00'),  // inclusive
+    to: ZonedDateTime::parse('2025-12-18 10:00:30 +01:00'),    // exclusive
 );
-echo $range->since()->format('Y-m-d H:i:s P');  // 2025-12-15 12:30:45 +01:00
-echo $range->till()->format('Y-m-d H:i:s');     // 2025-12-18 10:00:30
+echo $range->from()->format('Y-m-d H:i:s P');  // 2025-12-15 12:30:45 +01:00
+echo $range->to()->format('Y-m-d H:i:s P');    // 2025-12-18 10:00:30 +01:00
 
-echo $range->contains(LocalDateTime::parse('2025-12-15 12:30:45'));  // true
-echo $range->contains(LocalDateTime::parse('2025-12-18 10:00:30'));  // false
+echo $range->contains(ZonedDateTime::parse('2025-12-15 12:30:45 +01:00'));  // true
+echo $range->contains(ZonedDateTime::parse('2025-12-18 10:00:30 +01:00'));  // false
 
 // getting each item of this range with the specified step
 // the type of each item will be the same as "since"
-// minimal step is 1 second
 foreach ($range->each(Duration::ofDay()) as $item) {
     echo $item->format('Y-m-d H:i:s P');
 }
 // 2025-12-15 12:30:45 +01:00
 // 2025-12-16 12:30:45 +01:00
 // 2025-12-17 12:30:45 +01:00
+
+// splitting the range into smaller ranges
+foreach ($range->split(Duration::ofDay()) as $item) {
+    echo $item->from() . ' - ' . $item->to();
+}
+// 2025-12-15 12:30:45 +01:00 - 2025-12-16 12:30:45 +01:00
+// 2025-12-16 12:30:45 +01:00 - 2025-12-17 12:30:45 +01:00
+// 2025-12-17 12:30:45 +01:00 - 2025-12-18 10:00:30 +01:00
+
+// getting an intersection between ranges
+$foo = ZonedDateTimeRange::of(
+    ZonedDateTime::parse('2025-12-17 20:15:10 +01:00'),
+    ZonedDateTime::parse('2025-12-20 12:00:00 +01:00'),
+);
+if ($range->overlaps($foo)) {
+    $bar = $range->intersection($foo);
+    // 2025-12-17 20:15:10 +01:00 - 2025-12-18 10:00:30 +01:00
+}
+
+// getting a gap between ranges
+$foo = ZonedDateTimeRange::of(
+    ZonedDateTime::parse('2025-12-20 12:00:00 +01:00'),
+    ZonedDateTime::parse('2025-12-12 10:00:00 +01:00'),
+);
+if (! $range->overlaps($foo)) {
+    $bar = $range->gap($foo);
+    // 2025-12-18 10:00:30 +01:00 - 2025-12-20 12:00:00 +01:00
+}
 ```

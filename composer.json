@@ -55,10 +55,6 @@
         "psr/clock-implementation": "^1.0"
     },
     "extra": {
-        "branch-alias": {
-            "dev-0.x": "0.2-dev",
-            "dev-0.1": "0.1-dev"
-        },
         "laravel": {
             "providers": [
                 "Kronika\\Extension\\Laravel\\Clock\\ClockServiceProvider"
