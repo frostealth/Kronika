@@ -14,12 +14,9 @@ declare(strict_types=1);
 namespace Kronika;
 
 use Kronika\Utils\Compared;
-use Kronika\Utils\Math;
+use Kronika\Utils\Number;
 use Kronika\Utils\RefTrait;
 use Kronika\Utils\RescueTrait;
-use function Kronika\Utils\math;
-use function Kronika\Utils\Math\double;
-use function Kronika\Utils\Math\double_split;
 
 /**
  * Represents the number of seconds counted from epoch of
@@ -41,7 +38,7 @@ final readonly class Instant
      * Obtains an instance of `Instant` from a second and microsecond.
      *
      * ```
-     * // 1767161730.004545
+     * // 1767161730 seconds, 4545 microseconds
      * $instant = Instant::of(1767161730, 4545);
      * ```
      *
@@ -58,8 +55,14 @@ final readonly class Instant
      * Obtains an instance of `Instant` from a value of a second with microsecond.
      *
      * ```
-     * // 1767161730.004545
+     * // 1767161730 seconds, 4545 microseconds
      * $instant = Instant::ofValue('1767161730.004545');
+     *
+     * // 0 seconds, 4545 microseconds
+     * $instant = Instant::ofValue('0.004545');
+     *
+     * // -1 second, 4545 microseconds
+     * $instant = Instant::ofValue('-0.996565');
      * ```
      *
      * @param numeric $value
@@ -68,7 +71,7 @@ final readonly class Instant
      */
     public static function ofValue(float|int|string $value): self
     {
-        return self::of(...double_split($value));
+        return self::ofNumber(Number::ofNumber($value));
     }
 
     /**
@@ -153,10 +156,7 @@ final readonly class Instant
      */
     public function value(): float
     {
-        return $this->remember(static fn(self $that): float => double([
-            $that->second,
-            $that->microsecond,
-        ]), key: __METHOD__);
+        return $this->remember(static fn(self $that): float => $that->number()->toFloat(), key: __METHOD__);
     }
 
     /**
@@ -173,7 +173,7 @@ final readonly class Instant
             return $this;
         }
 
-        return self::of(...$this->math()->add($duration->inSeconds())->parts());
+        return self::ofNumber($this->number()->add(Number::of($duration->inSeconds(), fraction: 0)));
     }
 
     /**
@@ -190,7 +190,7 @@ final readonly class Instant
             return $this;
         }
 
-        return self::of(...$this->math()->sub($duration->inSeconds())->parts());
+        return self::ofNumber($this->number()->sub(Number::of($duration->inSeconds(), fraction: 0)));
     }
 
     /**
@@ -242,8 +242,9 @@ final readonly class Instant
     {
         $that = $this->applyPrecision($precision);
         $other = $other->applyPrecision($precision);
+        $result = $other->number()->sub($that->number())->abs();
 
-        return Duration::of(seconds: \abs($other->math()->sub($that->second, $that->microsecond)->integer()));
+        return Duration::of(seconds: $result->integer());
     }
 
     /**
@@ -385,13 +386,16 @@ final readonly class Instant
     #[\Override]
     public function __toString(): string
     {
-        return \sprintf('%06f', $this->value());
+        return (string)$this->number();
     }
 
     /** @internal */
     public function __debugInfo(): array
     {
-        return ['second' => $this->value()];
+        return [
+            'second' => $this->second,
+            'micro' => $this->microsecond,
+        ];
     }
 
     /** @throws Exception\InvalidValue */
@@ -400,6 +404,11 @@ final readonly class Instant
         if ($microsecond < 0 || $microsecond > 999_999) {
             throw new Exception\InvalidValue("Microsecond must be between 0 and 999_999, got [$microsecond]");
         }
+    }
+
+    private static function ofNumber(Number $number): self
+    {
+        return self::of(second: $number->integer(), micro: $number->fraction());
     }
 
     private function applyPrecision(Precision $precision): self
@@ -411,8 +420,11 @@ final readonly class Instant
         };
     }
 
-    private function math(): Math
+    private function number(): Number
     {
-        return math($this->second, $this->microsecond, precision: 6);
+        return $this->remember(
+            static fn(self $that): Number => Number::of($that->second, $that->microsecond),
+            key: __METHOD__,
+        );
     }
 }

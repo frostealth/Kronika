@@ -18,7 +18,6 @@ use Symfony\Component\Serializer\Exception\InvalidArgumentException;
 use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface as Denormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface as Normalizer;
-use function Kronika\Utils\Math\double_split;
 
 final readonly class SecondNormalizer implements Normalizer, Denormalizer
 {
@@ -62,6 +61,6 @@ final readonly class SecondNormalizer implements Normalizer, Denormalizer
             );
         }
 
-        return Second::of(...double_split($data));
+        return Second::of(...\sscanf((string)$data, '%d.%6d'));
     }
 }

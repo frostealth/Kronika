@@ -16,7 +16,6 @@ namespace Kronika\Time;
 use Kronika\Time;
 use Kronika\Utils\Compared;
 use Kronika\Utils\RefTrait;
-use function Kronika\Utils\Math\double;
 
 /**
  * Represents a second with a microsecond of the minute.
@@ -78,7 +77,7 @@ final readonly class Second implements TimeUnit
      * Obtains an instance of `Second` at the end of the minute.
      *
      * ```
-     * $second = Second::lase();
+     * $second = Second::last();
      * $second->value();        // 59.999999
      * $second->second();       // 59
      * $second->microsecond();  // 999999
@@ -127,7 +126,7 @@ final readonly class Second implements TimeUnit
     #[\Override]
     public function value(): float
     {
-        return double([$this->second, $this->microsecond]);
+        return (float)(string)$this;
     }
 
     /**

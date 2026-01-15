@@ -22,7 +22,6 @@ use Kronika\Time;
 use Kronika\ZonedDateTime;
 use yii\base\Behavior;
 use yii\db\BaseActiveRecord;
-use function Kronika\Utils\Math\double_split;
 
 /**
  * KronikaBehavior automatically serializes/deserializes Kronika objects into/from Database types.
@@ -344,7 +343,7 @@ final class KronikaBehavior extends Behavior
             ) ?? Time::parse((string)$value),
             Time\Hour::class       => Time\Hour::of((int)$value),
             Time\Minute::class     => Time\Minute::of((int)$value),
-            Time\Second::class     => Time\Second::of(...double_split((string)$value)),
+            Time\Second::class     => Time\Second::of(\sscanf((string)$value, '%d.%6d')),
             Duration::class        => Duration::of(seconds: (int)$value),
             Instant::class         => Instant::ofValue($value),
             LocalDateTime::class   => LocalDateTime::tryOfFormat(

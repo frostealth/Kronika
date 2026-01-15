@@ -69,8 +69,6 @@ final class ZonedDateTimeNormalizerTest extends TestCase
 
         if ($format === 'U') {
             self::assertIsInt($actual);
-        } elseif ($format === 'U.u') {
-            self::assertIsFloat($actual);
         } else {
             self::assertIsString($actual);
         }

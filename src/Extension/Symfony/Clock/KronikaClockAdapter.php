@@ -18,7 +18,6 @@ use Kronika\Duration;
 use Kronika\Instant;
 use Kronika\ZonedDateTime;
 use Symfony\Component\Clock\ClockInterface as SymfonyClock;
-use function Kronika\Utils\Math\double_split;
 
 final readonly class KronikaClockAdapter implements SymfonyClock
 {
@@ -45,7 +44,7 @@ final readonly class KronikaClockAdapter implements SymfonyClock
             return;
         }
         if (\is_float($seconds)) {
-            [$seconds, $micro] = double_split($seconds);
+            [$seconds, $micro] = \sscanf((string)$seconds, '%d.%6d');
         }
 
         $this->clock->sleep(Duration::of(seconds: $seconds));

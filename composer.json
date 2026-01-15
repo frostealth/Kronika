@@ -18,8 +18,6 @@
         "php": "^8.4"
     },
     "require-dev": {
-        "ext-bcmath": "*",
-        "ext-gmp": "*",
         "doctrine/dbal": "^4.3",
         "illuminate/config": "^12.0",
         "illuminate/database": "^12.0",
@@ -40,8 +38,7 @@
         "files": [
             "src/Kronika/functions.php",
             "src/Kronika/Format/functions.php",
-            "src/Utils/functions.php",
-            "src/Utils/Math/functions.php"
+            "src/Utils/functions.php"
         ]
     },
     "autoload-dev": {

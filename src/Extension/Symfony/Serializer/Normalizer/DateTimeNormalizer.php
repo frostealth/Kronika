@@ -20,7 +20,6 @@ use Symfony\Component\Serializer\Exception\InvalidArgumentException;
 use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface as Denormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface as Normalizer;
-use function Kronika\Utils\Math\double;
 
 final readonly class DateTimeNormalizer implements Normalizer, Denormalizer
 {
@@ -72,7 +71,6 @@ final readonly class DateTimeNormalizer implements Normalizer, Denormalizer
 
         return match ($format) {
             'U' => (int)$data->format($format),
-            'U.u' => double($data->format($format)),
             default => $data->format($format),
         };
     }

@@ -64,6 +64,7 @@ abstract readonly class CastsSimpleUnit implements CastsAttributes
             throw new \InvalidArgumentException('Invalid type.');
         }
 
+        /** @psalm-suppress InaccessibleMethod Cannot access private method Kronika\Instant::number() */
         return match(true) {
             $value instanceof DateUnit => $value->number(),
             default => $value->value(),

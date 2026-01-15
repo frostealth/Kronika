@@ -29,7 +29,6 @@ use Kronika\Time\Second;
 use Kronika\Utils\Compared;
 use Kronika\Utils\RefTrait;
 use Kronika\Utils\RescueTrait;
-use function Kronika\Utils\Math\double;
 
 /**
  * Represents a date-time with time-zone.
@@ -289,7 +288,10 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      */
     public function timestamp(): float
     {
-        return $this->remember(fn(): float => double([parent::getTimestamp(), $this->microsecond()]), key: __METHOD__);
+        return $this->remember(
+            fn(): float => Instant::of(parent::getTimestamp(), $this->microsecond())->value(),
+            key: __METHOD__,
+        );
     }
 
     /**
