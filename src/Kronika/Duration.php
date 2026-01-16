@@ -50,7 +50,7 @@ final readonly class Duration
         $hours += $days * 24;
         $minutes += $hours * 60;
         $seconds += $minutes * 60;
-        $seconds += intdiv($micros, 1_000_000);
+        $seconds += \intdiv($micros, 1_000_000);
         $micros = $micros % 1_000_000;
 
         return self::ref(seconds: $seconds, micro: $micros);
@@ -218,7 +218,7 @@ final readonly class Duration
      * ```
      * // 2 days, 12 hours, 30 minutes, 45 second
      * $this->inDays();  // 2
-     * $this->inDays(\RoundingMode::HalfAwayFromZero);  // 3
+     * $this->inDays(\RoundingMode::AwayFromZero);  // 3
      * ```
      *
      * @return non-negative-int
@@ -234,7 +234,7 @@ final readonly class Duration
      * ```
      * // 2 days, 12 hours, 30 minutes, 45 second
      * $this->inHours();  // 60
-     * $this->inHours(\RoundingMode::HalfAwayFromZero);  // 61
+     * $this->inHours(\RoundingMode::AwayFromZero);  // 61
      * ```
      *
      * @return non-negative-int
@@ -250,7 +250,7 @@ final readonly class Duration
      * ```
      * // 2 days, 12 hours, 30 minutes, 45 second
      * $this->inMinutes();  // 3630
-     * $this->inMinutes(\RoundingMode::HalfAwayFromZero);  // 3631
+     * $this->inMinutes(\RoundingMode::AwayFromZero);  // 3631
      * ```
      *
      * @return non-negative-int
@@ -264,7 +264,7 @@ final readonly class Duration
      * Returns an amount of seconds in this duration.
      *
      * ```
-     * // 2 days, 12 hours, 30 minutes, 45 seconds, 1 micros
+     * // 2 days, 12 hours, 30 minutes, 45 seconds, 3 microseconds
      * $this->inSeconds();  // 217845
      * $this->inSeconds(\RoundingMode::AwayFromZero);  // 217846
      * ```
