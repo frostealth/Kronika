@@ -46,6 +46,7 @@ final readonly class SystemClock implements Clock
     public function sleep(Duration $duration): void
     {
         \sleep($duration->inSeconds());
+        \usleep($duration->microseconds());
     }
 
     private function timezone(): ?\DateTimeZone

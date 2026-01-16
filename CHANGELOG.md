@@ -3,6 +3,7 @@ All notable changes to `Kronika` will be documented in this file.
 
 ## [Unreleased]
 ### Added
+- Microseconds support for `Duration`.
 - `LocalDateTimeRange` and `ZonedDateTimeRange`.
 - `Range::from()` and `Range::to()` methods.
 - `split()`, `overlaps()`, `abuts()`, `intersection()` and `gap()` methods for ranges.

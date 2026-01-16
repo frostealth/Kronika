@@ -70,7 +70,6 @@ final readonly class Number
         return $this->fraction;
     }
 
-    /** @no-named-arguments */
     public function add(self ...$others): self
     {
         $integer = $this->integer;
@@ -83,7 +82,6 @@ final readonly class Number
         return self::of($integer, $fraction);
     }
 
-    /** @no-named-arguments */
     public function sub(self ...$others): self
     {
         $integer = $this->integer;

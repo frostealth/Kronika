@@ -2266,7 +2266,7 @@ final class DateTimeRangeTest extends TestCase
                     ),
                     to: LocalDateTime::of(
                         Date::of(2025, 12, 15),
-                        Time::of(23, 59, 59),
+                        Time::endOfDay(),
                     ),
                 ),
                 LocalDateTimeRange::of(
@@ -2298,7 +2298,7 @@ final class DateTimeRangeTest extends TestCase
                     ),
                     to: LocalDateTime::of(
                         Date::of(2025, 12, 15),
-                        Time::of(23, 59, 59),
+                        Time::endOfDay(),
                     ),
                 ),
                 LocalDateTimeRange::of(
@@ -2415,6 +2415,38 @@ final class DateTimeRangeTest extends TestCase
                     to: LocalDateTime::of(
                         Date::of(2025, 12, 15),
                         Time::of(12, 30),
+                    ),
+                ),
+            ],
+            'Local.Local.intersection.6' => [
+                LocalDateTimeRange::of(
+                    from: LocalDateTime::of(
+                        Date::of(2025, 12, 15),
+                        Time::of(10, 15),
+                    ),
+                    to: LocalDateTime::of(
+                        Date::of(2025, 12, 15),
+                        Time::endOfDay(),
+                    ),
+                ),
+                LocalDateTimeRange::of(
+                    from: LocalDateTime::of(
+                        Date::of(2025, 12, 15),
+                        Time::midday(),
+                    ),
+                    to: LocalDateTime::of(
+                        Date::of(2025, 12, 16),
+                        Time::midnight(),
+                    ),
+                ),
+                'intersection' => LocalDateTimeRange::of(
+                    from: LocalDateTime::of(
+                        Date::of(2025, 12, 15),
+                        Time::midday(),
+                    ),
+                    to: LocalDateTime::of(
+                        Date::of(2025, 12, 15),
+                        Time::endOfDay(),
                     ),
                 ),
             ],
@@ -2546,6 +2578,38 @@ final class DateTimeRangeTest extends TestCase
                     ),
                 ),
             ],
+            'Local.Local.gap.4' => [
+                LocalDateTimeRange::of(
+                    from: LocalDateTime::of(
+                        Date::of(2025, 12, 15),
+                        Time::midnight(),
+                    ),
+                    to: LocalDateTime::of(
+                        Date::of(2025, 12, 15),
+                        Time::of(13, 10, Time\Second::of(35, 500_001)),
+                    ),
+                ),
+                LocalDateTimeRange::of(
+                    from: LocalDateTime::of(
+                        Date::of(2025, 12, 15),
+                        Time::of(13, 10, Time\Second::of(35, 600_010)),
+                    ),
+                    to: LocalDateTime::of(
+                        Date::of(2025, 12, 15),
+                        Time::endOfDay(),
+                    ),
+                ),
+                'gap' => LocalDateTimeRange::of(
+                    from: LocalDateTime::of(
+                        Date::of(2025, 12, 15),
+                        Time::of(13, 10, Time\Second::of(35, 500_001)),
+                    ),
+                    to: LocalDateTime::of(
+                        Date::of(2025, 12, 15),
+                        Time::of(13, 10, Time\Second::of(35, 600_010)),
+                    ),
+                ),
+            ],
 
             // ZonedDateTimeRange vs ZonedDateTimeRange
             'Zoned.Zoned.intersection.0' => [
@@ -2595,7 +2659,7 @@ final class DateTimeRangeTest extends TestCase
                     ),
                     to: ZonedDateTime::of(
                         Date::of(2025, 12, 15),
-                        Time::of(23, 59, 59),
+                        Time::endOfDay(),
                         new \DateTimeZone('+01:00'),
                     ),
                 ),
@@ -2633,7 +2697,7 @@ final class DateTimeRangeTest extends TestCase
                     ),
                     to: ZonedDateTime::of(
                         Date::of(2025, 12, 15),
-                        Time::of(23, 59, 59),
+                        Time::endOfDay(),
                         new \DateTimeZone('+01:00'),
                     ),
                 ),
@@ -2780,7 +2844,7 @@ final class DateTimeRangeTest extends TestCase
                 ZonedDateTimeRange::of(
                     from: ZonedDateTime::of(
                         Date::of(2025, 12, 15),
-                        Time::of(10, 15),
+                        Time::of(10, 15, Time\Second::of(0, 123)),
                         new \DateTimeZone('+01:00'),
                     ),
                     to: ZonedDateTime::of(
@@ -2797,19 +2861,19 @@ final class DateTimeRangeTest extends TestCase
                     ),
                     to: ZonedDateTime::of(
                         Date::of(2025, 12, 15),
-                        Time::of(17, 0),
+                        Time::of(12, 0, Time\Second::of(15, 999_999)),
                         new \DateTimeZone('+01:00'),
                     ),
                 ),
                 'intersection' => ZonedDateTimeRange::of(
                     from: ZonedDateTime::of(
                         Date::of(2025, 12, 15),
-                        Time::of(10, 15),
+                        Time::of(10, 15, Time\Second::of(0, 123)),
                         new \DateTimeZone('+01:00'),
                     ),
                     to: ZonedDateTime::of(
                         Date::of(2025, 12, 15),
-                        Time::of(12, 10),
+                        Time::of(12, 0, Time\Second::of(15, 999_999)),
                         new \DateTimeZone('+01:00'),
                     ),
                 ),
@@ -3042,6 +3106,44 @@ final class DateTimeRangeTest extends TestCase
                     ),
                 ),
             ],
+            'Zoned.Zoned.gap.6' => [
+                ZonedDateTimeRange::of(
+                    from: ZonedDateTime::of(
+                        Date::of(2025, 12, 15),
+                        Time::midday(),
+                        new \DateTimeZone('+01:00'),
+                    ),
+                    to: ZonedDateTime::of(
+                        Date::of(2025, 12, 15),
+                        Time::of(14, 10, Time\Second::of(15, 123456)),
+                        new \DateTimeZone('+02:00'),
+                    ),
+                ),
+                ZonedDateTimeRange::of(
+                    from: ZonedDateTime::of(
+                        Date::of(2025, 12, 15),
+                        Time::of(16, 15, Time\Second::of(10, 999_999)),
+                        new \DateTimeZone('+03:00'),
+                    ),
+                    to: ZonedDateTime::of(
+                        Date::of(2025, 12, 15),
+                        Time::of(19, 0),
+                        new \DateTimeZone('+04:00'),
+                    ),
+                ),
+                'gap' => ZonedDateTimeRange::of(
+                    from: ZonedDateTime::of(
+                        Date::of(2025, 12, 15),
+                        Time::of(13, 10, Time\Second::of(15, 123456)),
+                        new \DateTimeZone('+01:00'),
+                    ),
+                    to: ZonedDateTime::of(
+                        Date::of(2025, 12, 15),
+                        Time::of(14, 15, Time\Second::of(10, 999_999)),
+                        new \DateTimeZone('+01:00'),
+                    ),
+                ),
+            ],
 
             // ZonedDateTimeRange vs LocalDateTimeRange
             'Zoned.Local.intersection.0' => [
@@ -3064,7 +3166,7 @@ final class DateTimeRangeTest extends TestCase
                     ),
                     to: LocalDateTime::of(
                         Date::of(2025, 12, 15),
-                        Time::of(12, 30),
+                        Time::of(12, 30, Time\Second::of(15, 123456)),
                     ),
                 ),
                 'intersection' => ZonedDateTimeRange::of(
@@ -3075,7 +3177,7 @@ final class DateTimeRangeTest extends TestCase
                     ),
                     to: ZonedDateTime::of(
                         Date::of(2025, 12, 15),
-                        Time::of(12, 30),
+                        Time::of(12, 30, Time\Second::of(15, 123456)),
                         new \DateTimeZone('+01:00'),
                     ),
                 ),
@@ -3089,7 +3191,7 @@ final class DateTimeRangeTest extends TestCase
                     ),
                     to: ZonedDateTime::of(
                         Date::of(2025, 12, 15),
-                        Time::of(13, 0),
+                        Time::of(13, 0, Time\Second::of(15, 123456)),
                         new \DateTimeZone('+01:00'),
                     ),
                 ),
@@ -3111,7 +3213,7 @@ final class DateTimeRangeTest extends TestCase
                     ),
                     to: ZonedDateTime::of(
                         Date::of(2025, 12, 15),
-                        Time::of(14, 0),
+                        Time::of(14, 0, Time\Second::of(15, 123456)),
                         new \DateTimeZone('+02:00'),
                     ),
                 ),
@@ -3136,7 +3238,7 @@ final class DateTimeRangeTest extends TestCase
                     ),
                     to: LocalDateTime::of(
                         Date::of(2025, 12, 15),
-                        Time::of(13, 15),
+                        Time::of(13, 15, Time\Second::of(15, 123456)),
                     ),
                 ),
                 'intersection' => ZonedDateTimeRange::of(
@@ -3147,7 +3249,7 @@ final class DateTimeRangeTest extends TestCase
                     ),
                     to: ZonedDateTime::of(
                         Date::of(2025, 12, 15),
-                        Time::of(13, 15),
+                        Time::of(13, 15, Time\Second::of(15, 123456)),
                         new \DateTimeZone('+02:00'),
                     ),
                 ),
@@ -3168,7 +3270,7 @@ final class DateTimeRangeTest extends TestCase
                 LocalDateTimeRange::of(
                     from: LocalDateTime::of(
                         Date::of(2025, 12, 15),
-                        Time::of(13, 30),
+                        Time::of(13, 30, Time\Second::of(15, 123456)),
                     ),
                     to: LocalDateTime::of(
                         Date::of(2025, 12, 15),
@@ -3183,7 +3285,7 @@ final class DateTimeRangeTest extends TestCase
                     ),
                     to: ZonedDateTime::of(
                         Date::of(2025, 12, 15),
-                        Time::of(13, 30),
+                        Time::of(13, 30, Time\Second::of(15, 123456)),
                         new \DateTimeZone('+02:00'),
                     ),
                 ),
@@ -3208,13 +3310,13 @@ final class DateTimeRangeTest extends TestCase
                     ),
                     to: LocalDateTime::of(
                         Date::of(2025, 12, 15),
-                        Time::of(11, 30),
+                        Time::of(11, 30, Time\Second::of(15, 123456)),
                     ),
                 ),
                 'gap' => ZonedDateTimeRange::of(
                     from: ZonedDateTime::of(
                         Date::of(2025, 12, 15),
-                        Time::of(11, 30),
+                        Time::of(11, 30, Time\Second::of(15, 123456)),
                         new \DateTimeZone('+02:00'),
                     ),
                     to: ZonedDateTime::of(
@@ -3280,7 +3382,7 @@ final class DateTimeRangeTest extends TestCase
                     ),
                     to: LocalDateTime::of(
                         Date::of(2025, 12, 15),
-                        Time::of(14, 0),
+                        Time::of(14, 0, Time\Second::of(15, 123456)),
                     ),
                 ),
                 'gap' => ZonedDateTimeRange::of(
@@ -3306,7 +3408,7 @@ final class DateTimeRangeTest extends TestCase
                     ),
                     to: LocalDateTime::of(
                         Date::of(2025, 12, 15),
-                        Time::of(14, 0),
+                        Time::of(14, 0, Time\Second::of(15, 123456)),
                     ),
                 ),
                 ZonedDateTimeRange::of(
@@ -3328,7 +3430,7 @@ final class DateTimeRangeTest extends TestCase
                     ),
                     to: LocalDateTime::of(
                         Date::of(2025, 12, 15),
-                        Time::of(14, 0),
+                        Time::of(14, 0, Time\Second::of(15, 123456)),
                     ),
                 ),
             ],
@@ -3351,7 +3453,7 @@ final class DateTimeRangeTest extends TestCase
                     ),
                     to: ZonedDateTime::of(
                         Date::of(2025, 12, 15),
-                        Time::of(11, 15),
+                        Time::of(11, 15, Time\Second::of(15, 123456)),
                         new \DateTimeZone('+01:00'),
                     ),
                 ),
@@ -3362,7 +3464,7 @@ final class DateTimeRangeTest extends TestCase
                     ),
                     to: LocalDateTime::of(
                         Date::of(2025, 12, 15),
-                        Time::of(12, 15),
+                        Time::of(12, 15, Time\Second::of(15, 123456)),
                     ),
                 ),
             ],
@@ -3370,7 +3472,7 @@ final class DateTimeRangeTest extends TestCase
                 LocalDateTimeRange::of(
                     from: LocalDateTime::of(
                         Date::of(2025, 12, 15),
-                        Time::midday(),
+                        Time::of(12, 0, Time\Second::of(15, 123456)),
                     ),
                     to: LocalDateTime::of(
                         Date::of(2025, 12, 15),
@@ -3419,14 +3521,14 @@ final class DateTimeRangeTest extends TestCase
                     ),
                     to: ZonedDateTime::of(
                         Date::of(2025, 12, 15),
-                        Time::of(12, 30),
+                        Time::of(12, 30, Time\Second::of(15, 123456)),
                         new \DateTimeZone('+02:00'),
                     ),
                 ),
                 'gap' => LocalDateTimeRange::of(
                     from: LocalDateTime::of(
                         Date::of(2025, 12, 15),
-                        Time::of(11, 30),
+                        Time::of(11, 30, Time\Second::of(15, 123456)),
                     ),
                     to: LocalDateTime::of(
                         Date::of(2025, 12, 15),
@@ -3510,13 +3612,13 @@ final class DateTimeRangeTest extends TestCase
                     ),
                     to: LocalDateTime::of(
                         Date::of(2025, 12, 15),
-                        Time::of(14, 0),
+                        Time::of(14, 0, Time\Second::of(15, 123456)),
                     ),
                 ),
                 ZonedDateTimeRange::of(
                     from: ZonedDateTime::of(
                         Date::of(2025, 12, 15),
-                        Time::of(14, 0),
+                        Time::of(14, 0, Time\Second::of(15, 123456)),
                         new \DateTimeZone('+02:00'),
                     ),
                     to: ZonedDateTime::of(
@@ -3528,11 +3630,11 @@ final class DateTimeRangeTest extends TestCase
                 'gap' => LocalDateTimeRange::of(
                     from: LocalDateTime::of(
                         Date::of(2025, 12, 15),
-                        Time::of(14, 0),
+                        Time::of(14, 0, Time\Second::of(15, 123456)),
                     ),
                     to: LocalDateTime::of(
                         Date::of(2025, 12, 15),
-                        Time::of(14, 0),
+                        Time::of(14, 0, Time\Second::of(15, 123456)),
                     ),
                 ),
             ],

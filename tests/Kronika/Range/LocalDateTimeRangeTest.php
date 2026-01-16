@@ -52,6 +52,10 @@ final class LocalDateTimeRangeTest extends TestCase
                 LocalDateTime::of(Date::of(2026, 1, 5), Time::midday()),
                 LocalDateTime::of(Date::of(2026, 1, 5), Time::midday()),
             ],
+            [
+                LocalDateTime::of(Date::of(2026, 1, 5), Time::midday()),
+                LocalDateTime::of(Date::of(2026, 1, 5), Time::endOfDay()),
+            ],
         ];
     }
 
@@ -81,6 +85,10 @@ final class LocalDateTimeRangeTest extends TestCase
             ],
             [
                 LocalDateTime::of(Date::of(2025, 12, 15), Time::midday()),
+                LocalDateTime::of(Date::of(2025, 12, 15), Time::midnight()),
+            ],
+            [
+                LocalDateTime::of(Date::of(2025, 12, 15), Time::of(0, 0, Time\Second::of(0, 1))),
                 LocalDateTime::of(Date::of(2025, 12, 15), Time::midnight()),
             ],
         ];

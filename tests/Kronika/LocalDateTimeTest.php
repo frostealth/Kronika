@@ -135,6 +135,7 @@ final class LocalDateTimeTest extends TestCase
     }
 
     #[TestWith(['Y-m-d\TH:i:s.u', '2025-12-31T12:15:59.999999'])]
+    #[TestWith(['Y-m-d\TH:i:s.u', '1969-12-31T23:59:59.999999'])]
     #[TestWith(['Y-m-d\TH:i:sP', '2025-12-31T12:15:59'])]
     #[TestWith(['Y-m-d H:i:sP', '2025-12-31 12:15:59'])]
     #[TestWith(['\Y-m-d H:i:sP', 'Y-12-31 12:15:59'])]
@@ -173,6 +174,8 @@ final class LocalDateTimeTest extends TestCase
     #[TestWith(['2025-12-31 12:15', [2025, 12, 31, 12, 15, 0]])]
     #[TestWith(['12:15 31-12-2025', [2025, 12, 31, 12, 15, 0]])]
     #[TestWith(['15 Jan 25, 12:15:59', [2025, 1, 15, 12, 15, 59]])]
+    #[TestWith(['1970-01-01 00:00:00.999999', [1970, 1, 1, 0, 0, 0, 999_999]])]
+    #[TestWith(['1969-12-31 23:59:59.999999', [1969, 12, 31, 23, 59, 59, 999_999]])]
     #[Depends('testBasic')]
     public function testParse(string $str, array $expected): void
     {

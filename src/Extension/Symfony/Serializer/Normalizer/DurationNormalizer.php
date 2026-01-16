@@ -70,6 +70,7 @@ final readonly class DurationNormalizer implements Normalizer, Denormalizer
                 'hours' => $data->hours(),
                 'minutes' => $data->minutes(),
                 'seconds' => $data->seconds(),
+                'micros' => $data->microseconds(),
             ],
         };
     }

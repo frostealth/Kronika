@@ -53,6 +53,7 @@ final readonly class DurationHandler implements Handler
                 'hours' => $duration->hours(),
                 'minutes' => $duration->minutes(),
                 'seconds' => $duration->seconds(),
+                'micros' => $duration->microseconds(),
             ],
         };
     }

@@ -29,7 +29,13 @@ final class DurationTest extends TestCase
     public static function basicProvider(): array
     {
         return [
-            'Seconds:Zero' => [['seconds' => 0], ['seconds' => 0]],
+            'Micros:Zero' => [['micros' => 0], ['seconds' => 0, 'micros' => 0]],
+            'Micros:1' => [['micros' => 1], ['seconds' => 0, 'micros' => 1]],
+            'Micros:123' => [['micros' => 123], ['micros' => 123]],
+            'Micros:500' => [['micros' => 500], ['micros' => 500]],
+            'Micros:500123' => [['micros' => 500123], ['micros' => 500123]],
+            'Micros:1500123' => [['micros' => 1500123], ['seconds' => 1, 'micros' => 500123]],
+            'Seconds:Zero' => [['seconds' => 0], ['seconds' => 0, 'micros' => 0]],
             'Seconds:30' => [['seconds' => 30], ['seconds' => 30]],
             'Seconds:60' => [['seconds' => 60], ['minutes' => 1]],
             'Seconds:90' => [['seconds' => 90], ['minutes' => 1, 'seconds' => 30]],
@@ -65,6 +71,14 @@ final class DurationTest extends TestCase
                 ['hours' => 23, 'minutes' => 59, 'seconds' => 59],
             ],
             'Hours:23.Minutes:59.Seconds:60' => [['hours' => 23, 'minutes' => 59, 'seconds' => 60], ['days' => 1]],
+            'Hours:23.Minutes:59.Seconds:59.Micros:1_000_000' => [
+                ['hours' => 23, 'minutes' => 59, 'seconds' => 59, 'micros' => 1_000_000],
+                ['days' => 1],
+            ],
+            'Hours:23.Minutes:59.Seconds:59.Micros:1_000_001' => [
+                ['hours' => 23, 'minutes' => 59, 'seconds' => 59, 'micros' => 1_000_001],
+                ['days' => 1, 'micros' => 1],
+            ],
             'Days:1' => [['days' => 1], ['days' => 1]],
             'Days:5' => [['days' => 5], ['days' => 5]],
             'Days:7' => [['days' => 7], ['days' => 7]],
@@ -104,8 +118,8 @@ final class DurationTest extends TestCase
     }
 
     /**
-     * @param array{days?: int, hours?: int, minutes?: int, seconds?: int} $args
-     * @param array{days?: int, hours?: int, minutes?: int, seconds?: int} $expected
+     * @param array{days?: int, hours?: int, minutes?: int, seconds?: int, micros?: int} $args
+     * @param array{days?: int, hours?: int, minutes?: int, seconds?: int, micros?: int} $expected
      */
     #[DataProvider('basicProvider')]
     public function testBasic(array $args, array $expected): void
@@ -116,6 +130,7 @@ final class DurationTest extends TestCase
         self::assertEquals($expected['hours'] ?? 0, $duration->hours());
         self::assertEquals($expected['minutes'] ?? 0, $duration->minutes());
         self::assertEquals($expected['seconds'] ?? 0, $duration->seconds());
+        self::assertEquals($expected['micros'] ?? 0, $duration->microseconds());
         self::assertEquals(\array_sum($args) === 0, $duration->isZero());
         self::assertSame(Duration::of(...$args), $duration);
         self::assertNotSame(Duration::of(
@@ -125,11 +140,12 @@ final class DurationTest extends TestCase
     }
 
     /**
-     * @param array{days?: int, hours?: int, minutes?: int, seconds?: int} $args
-     * @param array{days?: int, hours?: int, minutes?: int, seconds?: int} $expected
+     * @param array{days?: int, hours?: int, minutes?: int, seconds?: int, micros?: int} $args
+     * @param array{days?: int, hours?: int, minutes?: int, seconds?: int, micros?: int} $expected
      */
+    #[Depends('testBasic')]
     #[DataProvider('basicProvider')]
-    public function testRoundMethods(array $args, array $expected): void
+    public function testInMethods(array $args, array $expected): void
     {
         $duration = Duration::of(...$args);
 
@@ -142,24 +158,78 @@ final class DurationTest extends TestCase
         self::assertEquals($inHours, $duration->inHours());
         self::assertEquals($inMinutes, $duration->inMinutes());
         self::assertEquals($inSeconds, $duration->inSeconds());
+    }
+
+    /**
+     * @param array{days?: int, hours?: int, minutes?: int, seconds?: int, micros?: int} $args
+     * @param array{days?: int, hours?: int, minutes?: int, seconds?: int, micros?: int} $expected
+     */
+    #[Depends('testInMethods')]
+    #[DataProvider('basicProvider')]
+    public function testRoundMethods(array $args, array $expected): void
+    {
+        $duration = Duration::of(...$args);
+
+        $actual = $duration->roundToSeconds();
+        self::assertEquals($expected['days'] ?? 0, $actual->days());
+        self::assertEquals($expected['hours'] ?? 0, $actual->hours());
+        self::assertEquals($expected['minutes'] ?? 0, $actual->minutes());
+        self::assertEquals($expected['seconds'] ?? 0, $actual->seconds());
+        self::assertEquals(0, $actual->microseconds());
+
+        $actual = $duration->roundToMinutes();
+        self::assertEquals($expected['days'] ?? 0, $actual->days());
+        self::assertEquals($expected['hours'] ?? 0, $actual->hours());
+        self::assertEquals($expected['minutes'] ?? 0, $actual->minutes());
+        self::assertEquals(0, $actual->seconds());
+        self::assertEquals(0, $actual->microseconds());
+
+        $actual = $duration->roundToHours();
+        self::assertEquals($expected['days'] ?? 0, $actual->days());
+        self::assertEquals($expected['hours'] ?? 0, $actual->hours());
+        self::assertEquals(0, $actual->minutes());
+        self::assertEquals(0, $actual->seconds());
+        self::assertEquals(0, $actual->microseconds());
+
+        $actual = $duration->roundToDays();
+        self::assertEquals($expected['days'] ?? 0, $actual->days());
+        self::assertEquals(0, $actual->hours());
+        self::assertEquals(0, $actual->minutes());
+        self::assertEquals(0, $actual->seconds());
+        self::assertEquals(0, $actual->microseconds());
+    }
+
+    /**
+     * @param array{days?: int, hours?: int, minutes?: int, seconds?: int, micros?: int} $args
+     * @param array{days?: int, hours?: int, minutes?: int, seconds?: int, micros?: int} $expected
+     */
+    #[Depends('testBasic')]
+    #[Depends('testRoundMethods')]
+    #[DataProvider('basicProvider')]
+    public function testDropMethods(array $args, array $expected): void
+    {
+        $duration = Duration::of(...$args);
 
         $actual = $duration->dropToHours();
         self::assertEquals(0, $actual->days());
         self::assertEquals($expected['hours'] ?? 0, $actual->hours());
         self::assertEquals($expected['minutes'] ?? 0, $actual->minutes());
         self::assertEquals($expected['seconds'] ?? 0, $actual->seconds());
+        self::assertEquals($expected['micros'] ?? 0, $actual->microseconds());
 
         $actual = $duration->dropToMinutes();
         self::assertEquals(0, $actual->days());
         self::assertEquals(0, $actual->hours());
         self::assertEquals($expected['minutes'] ?? 0, $actual->minutes());
         self::assertEquals($expected['seconds'] ?? 0, $actual->seconds());
+        self::assertEquals($expected['micros'] ?? 0, $actual->microseconds());
 
         $actual = $duration->dropToSeconds();
         self::assertEquals(0, $actual->days());
         self::assertEquals(0, $actual->hours());
         self::assertEquals(0, $actual->minutes());
         self::assertEquals($expected['seconds'] ?? 0, $actual->seconds());
+        self::assertEquals($expected['micros'] ?? 0, $actual->microseconds());
     }
 
     public static function addProvider(): array
@@ -170,15 +240,35 @@ final class DurationTest extends TestCase
                 ['seconds' => 0],
             ],
             [
+                Duration::zero(), Duration::zero(), Duration::of(micros: 999_999),
+                ['micros' => 999_999],
+            ],
+            [
+                Duration::zero(), Duration::of(micros: 2), Duration::of(micros: 999_999),
+                ['seconds' => 1, 'micros' => 1],
+            ],
+            [
                 Duration::zero(), Duration::zero(), Duration::of(seconds: 14),
                 ['seconds' => 14],
+            ],
+            [
+                Duration::zero(), Duration::of(seconds: 45), Duration::of(micros: 550_000),
+                ['seconds' => 45, 'micros' => 550_000],
             ],
             [
                 Duration::zero(), Duration::of(seconds: 45), Duration::of(seconds: 14),
                 ['seconds' => 59],
             ],
             [
+                Duration::zero(), Duration::of(seconds: 45), Duration::of(seconds: 14, micros: 555),
+                ['seconds' => 59, 'micros' => 555],
+            ],
+            [
                 Duration::of(seconds: 45), Duration::of(seconds: 10), Duration::of(seconds: 5),
+                ['minutes' => 1],
+            ],
+            [
+                Duration::of(seconds: 45), Duration::of(seconds: 10, micros: 999_999), Duration::of(seconds: 4, micros: 1),
                 ['minutes' => 1],
             ],
             [
@@ -219,7 +309,7 @@ final class DurationTest extends TestCase
     }
 
     /**
-     * @param array{days?: int, hours?: int, minutes?: int, seconds?: int} $expected
+     * @param array{days?: int, hours?: int, minutes?: int, seconds?: int, micros?: int} $expected
      */
     #[Depends('testBasic')]
     #[DataProvider('addProvider')]
@@ -231,6 +321,7 @@ final class DurationTest extends TestCase
         self::assertEquals($expected['hours'] ?? 0, $actual->hours());
         self::assertEquals($expected['minutes'] ?? 0, $actual->minutes());
         self::assertEquals($expected['seconds'] ?? 0, $actual->seconds());
+        self::assertEquals($expected['micros'] ?? 0, $actual->microseconds());
     }
 
     public static function subProvider(): array
@@ -238,6 +329,10 @@ final class DurationTest extends TestCase
         return [
             [
                 Duration::zero(), Duration::zero(), Duration::zero(),
+                ['seconds' => 0],
+            ],
+            [
+                Duration::zero(), Duration::zero(), Duration::of(micros: 1),
                 ['seconds' => 0],
             ],
             [
@@ -249,8 +344,24 @@ final class DurationTest extends TestCase
                 ['seconds' => 0],
             ],
             [
+                Duration::of(seconds: 14), Duration::of(micros: 1), Duration::zero(),
+                ['seconds' => 13, 'micros' => 999_999],
+            ],
+            [
+                Duration::of(seconds: 14), Duration::of(seconds: 13), Duration::zero(),
+                ['seconds' => 1],
+            ],
+            [
+                Duration::of(seconds: 14), Duration::of(seconds: 13), Duration::of(micros: 1),
+                ['seconds' => 0, 'micros' => 999_999],
+            ],
+            [
                 Duration::of(seconds: 45), Duration::of(seconds: 10), Duration::of(seconds: 5),
                 ['seconds' => 30],
+            ],
+            [
+                Duration::of(seconds: 45), Duration::of(seconds: 10), Duration::of(seconds: 5, micros: 1),
+                ['seconds' => 29, 'micros' => 999_999],
             ],
             [
                 Duration::of(minutes: 1, seconds: 10), Duration::of(seconds: 10), Duration::of(seconds: 5),
@@ -268,11 +379,17 @@ final class DurationTest extends TestCase
                 Duration::of(hours: 23, seconds: 30),
                 ['days' => 28, 'hours' => 0, 'minutes' => 1],
             ],
+            [
+                Duration::of(days: 29, seconds: 75, micros: 500_000),
+                Duration::of(minutes: 59, seconds: 45, micros: 200_000),
+                Duration::of(hours: 23, seconds: 30, micros: 250_050),
+                ['days' => 28, 'hours' => 0, 'minutes' => 1, 'micros' => 49_950],
+            ],
         ];
     }
 
     /**
-     * @param array{days?: int, hours?: int, minutes?: int, seconds?: int} $expected
+     * @param array{days?: int, hours?: int, minutes?: int, seconds?: int, micros?: int} $expected
      */
     #[Depends('testBasic')]
     #[DataProvider('subProvider')]
@@ -284,36 +401,7 @@ final class DurationTest extends TestCase
         self::assertEquals($expected['hours'] ?? 0, $actual->hours());
         self::assertEquals($expected['minutes'] ?? 0, $actual->minutes());
         self::assertEquals($expected['seconds'] ?? 0, $actual->seconds());
-    }
-
-    /**
-     * @param array{days?: int, hours?: int, minutes?: int, seconds?: int} $args
-     * @param array{days?: int, hours?: int, minutes?: int, seconds?: int} $expected
-     */
-    #[Depends('testBasic')]
-    #[Depends('testRoundMethods')]
-    #[DataProvider('basicProvider')]
-    public function testDropMethods(array $args, array $expected): void
-    {
-        $duration = Duration::of(...$args);
-
-        $actual = $duration->dropToHours();
-        self::assertEquals(0, $actual->days());
-        self::assertEquals($expected['hours'] ?? 0, $actual->hours());
-        self::assertEquals($expected['minutes'] ?? 0, $actual->minutes());
-        self::assertEquals($expected['seconds'] ?? 0, $actual->seconds());
-
-        $actual = $duration->dropToMinutes();
-        self::assertEquals(0, $actual->days());
-        self::assertEquals(0, $actual->hours());
-        self::assertEquals($expected['minutes'] ?? 0, $actual->minutes());
-        self::assertEquals($expected['seconds'] ?? 0, $actual->seconds());
-
-        $actual = $duration->dropToSeconds();
-        self::assertEquals(0, $actual->days());
-        self::assertEquals(0, $actual->hours());
-        self::assertEquals(0, $actual->minutes());
-        self::assertEquals($expected['seconds'] ?? 0, $actual->seconds());
+        self::assertEquals($expected['micros'] ?? 0, $actual->microseconds());
     }
 
     public static function comparisonProvider(): array
@@ -322,6 +410,8 @@ final class DurationTest extends TestCase
             [Duration::zero(), Duration::zero(), self::EQUAL],
             [Duration::zero(), Duration::of(seconds: 1), self::LESS],
             [Duration::of(seconds: 1), Duration::zero(), self::GREATER],
+            [Duration::zero(), Duration::of(micros: 1), self::LESS],
+            [Duration::of(micros: 1), Duration::zero(), self::GREATER],
         ];
     }
 

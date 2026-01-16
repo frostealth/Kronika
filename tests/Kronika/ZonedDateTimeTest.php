@@ -294,6 +294,28 @@ final class ZonedDateTimeTest extends TestCase
     }
 
     #[Depends('testBasic')]
+    public function testCreateFromNegativeTimestamp(): void
+    {
+        $datetime = ZonedDateTime::createFromTimestamp(-0.000001);
+
+        self::assertEquals('1969-12-31T23:59:59.999999+0000', $datetime->format('Y-m-d\TH:i:s.uO'));
+
+        self::assertEquals(1969, $datetime->year()->number());
+        self::assertEquals(12, $datetime->month()->number());
+        self::assertEquals(31, $datetime->day()->number());
+
+        self::assertEquals(23, $datetime->hour()->value());
+        self::assertEquals(59, $datetime->minute()->value());
+        self::assertEquals(59.999999, $datetime->second()->value());
+        self::assertEquals(999999, $datetime->microsecond());
+        self::assertEquals(999999, $datetime->getMicrosecond());
+        self::assertEquals(-0.000001, $datetime->timestamp());
+
+        self::assertEquals('UTC', $datetime->timezone()->getName());
+        self::assertEquals('UTC', $datetime->getTimezone()->getName());
+    }
+
+    #[Depends('testBasic')]
     public function testNativeMethods(): void
     {
         $native = new \DateTimeImmutable('2025-03-24T23:09:59.123456+01:30');

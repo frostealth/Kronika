@@ -83,6 +83,18 @@ final class ZonedDateTimeRangeTest extends TestCase
                     new \DateTimeZone('Europe/Berlin'),
                 ),
             ],
+            [
+                ZonedDateTime::of(
+                    Date::of(2026, 1, 5),
+                    Time::midday(),
+                    new \DateTimeZone('Europe/Berlin'),
+                ),
+                ZonedDateTime::of(
+                    Date::of(2026, 1, 5),
+                    Time::endOfDay(),
+                    new \DateTimeZone('Europe/Berlin'),
+                ),
+            ],
         ];
     }
 
@@ -122,6 +134,18 @@ final class ZonedDateTimeRangeTest extends TestCase
                 ZonedDateTime::of(
                     Date::of(2025, 12, 15),
                     Time::midday(),
+                    new \DateTimeZone('Europe/Berlin'),
+                ),
+                ZonedDateTime::of(
+                    Date::of(2025, 12, 15),
+                    Time::midnight(),
+                    new \DateTimeZone('Europe/Berlin'),
+                ),
+            ],
+            [
+                ZonedDateTime::of(
+                    Date::of(2025, 12, 15),
+                    Time::of(0, 0, Time\Second::of(0, 1)),
                     new \DateTimeZone('Europe/Berlin'),
                 ),
                 ZonedDateTime::of(

@@ -173,7 +173,7 @@ final readonly class Instant
             return $this;
         }
 
-        return self::ofNumber($this->number()->add(Number::of($duration->inSeconds(), fraction: 0)));
+        return self::ofNumber($this->number()->add(Number::of($duration->inSeconds(), $duration->microseconds())));
     }
 
     /**
@@ -190,7 +190,7 @@ final readonly class Instant
             return $this;
         }
 
-        return self::ofNumber($this->number()->sub(Number::of($duration->inSeconds(), fraction: 0)));
+        return self::ofNumber($this->number()->sub(Number::of($duration->inSeconds(), $duration->microseconds())));
     }
 
     /**
@@ -244,7 +244,7 @@ final readonly class Instant
         $other = $other->applyPrecision($precision);
         $result = $other->number()->sub($that->number())->abs();
 
-        return Duration::of(seconds: $result->integer());
+        return Duration::of(seconds: $result->integer(), micros: $result->fraction());
     }
 
     /**

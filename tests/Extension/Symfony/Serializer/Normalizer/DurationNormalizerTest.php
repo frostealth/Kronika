@@ -35,7 +35,7 @@ final class DurationNormalizerTest extends TestCase
 
     private static function duration(): Duration
     {
-        static $duration = Duration::of(days: 28, hours: 23, minutes: 35, seconds: 15);
+        static $duration = Duration::of(days: 28, hours: 23, minutes: 35, seconds: 15, micros: 999_999);
 
         return $duration;
     }
@@ -64,7 +64,7 @@ final class DurationNormalizerTest extends TestCase
     public static function denormalizeIntegerProvider(): array
     {
         return [
-            [DurationNormalizer::FORMAT_IN_SECONDS, self::duration()->inSeconds(), self::duration()],
+            [DurationNormalizer::FORMAT_IN_SECONDS, self::duration()->inSeconds(), self::duration()->roundToSeconds()],
             [DurationNormalizer::FORMAT_IN_MINUTES, self::duration()->inMinutes(), self::duration()->roundToMinutes()],
             [DurationNormalizer::FORMAT_IN_HOURS,   self::duration()->inHours(),   self::duration()->roundToHours()],
             [DurationNormalizer::FORMAT_IN_DAYS,    self::duration()->inDays(),    self::duration()->roundToDays()],
@@ -94,6 +94,7 @@ final class DurationNormalizerTest extends TestCase
             'hours' => self::duration()->hours(),
             'minutes' => self::duration()->minutes(),
             'seconds' => self::duration()->seconds(),
+            'micros' => self::duration()->microseconds(),
         ], $actual);
     }
 
@@ -104,6 +105,7 @@ final class DurationNormalizerTest extends TestCase
             'hours' => self::duration()->hours(),
             'minutes' => self::duration()->minutes(),
             'seconds' => self::duration()->seconds(),
+            'micros' => self::duration()->microseconds(),
         ], Duration::class, context: [DurationNormalizer::KEY_FORMAT => DurationNormalizer::FORMAT_ARRAY]);
 
         self::assertInstanceOf(Duration::class, $actual);

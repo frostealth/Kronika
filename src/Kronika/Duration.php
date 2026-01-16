@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Kronika;
 
 use Kronika\Utils\Compared;
+use Kronika\Utils\Number;
 use Kronika\Utils\RefTrait;
 
 /**
@@ -37,19 +38,22 @@ final readonly class Duration
      * @param non-negative-int $hours
      * @param non-negative-int $minutes
      * @param non-negative-int $seconds
+     * @param non-negative-int $micros
      *
      * @throws Exception\InvalidValue
      */
-    public static function of(int $days = 0, int $hours = 0, int $minutes = 0, int $seconds = 0): self
+    public static function of(int $days = 0, int $hours = 0, int $minutes = 0, int $seconds = 0, int $micros = 0): self
     {
-        self::assertValues(days: $days, hours: $hours, minutes: $minutes, seconds: $seconds);
+        self::assertValues(days: $days, hours: $hours, minutes: $minutes, seconds: $seconds, micros: $micros);
 
         // total duration in seconds
         $hours += $days * 24;
         $minutes += $hours * 60;
         $seconds += $minutes * 60;
+        $seconds += intdiv($micros, 1_000_000);
+        $micros = $micros % 1_000_000;
 
-        return self::ref(seconds: $seconds);
+        return self::ref(seconds: $seconds, micro: $micros);
     }
 
     /**
@@ -122,13 +126,15 @@ final readonly class Duration
 
     /**
      * @param non-negative-int $seconds
+     * @param int<0,999999>    $micro
      *
      * @throws Exception\InvalidValue
      */
     private function __construct(
         private int $seconds,
+        private int $micro,
     ) {
-        self::assertValues(duration: $seconds);
+        self::assertValues(seconds: $seconds, microseconds: $micro);
     }
 
     /**
@@ -192,6 +198,21 @@ final readonly class Duration
     }
 
     /**
+     * Returns microseconds of this duration.
+     *
+     * ```
+     * // 2 days, 26 hours, 65 minutes, 100 seconds, 1234 microseconds
+     * $this->microseconds();  // 1234
+     * ```
+     *
+     * @return int<0,999999>
+     */
+    public function microseconds(): int
+    {
+        return $this->micro;
+    }
+
+    /**
      * Returns a rounded amount of days in this duration.
      *
      * ```
@@ -236,22 +257,27 @@ final readonly class Duration
      */
     public function inMinutes(\RoundingMode $mode = \RoundingMode::TowardsZero): int
     {
-        return (int)\round($this->inSeconds() / 60, mode: $mode);
+        return (int)\round($this->inSeconds(mode: $mode) / 60, mode: $mode);
     }
 
     /**
      * Returns an amount of seconds in this duration.
      *
      * ```
-     * // 2 days, 12 hours, 30 minutes, 45 second
+     * // 2 days, 12 hours, 30 minutes, 45 seconds, 1 micros
      * $this->inSeconds();  // 217845
+     * $this->inSeconds(\RoundingMode::AwayFromZero);  // 217846
      * ```
      *
      * @return non-negative-int
      */
-    public function inSeconds(): int
+    public function inSeconds(\RoundingMode $mode = \RoundingMode::TowardsZero): int
     {
-        return $this->seconds;
+        if ($mode === \RoundingMode::TowardsZero) {
+            return $this->seconds;
+        }
+
+        return (int)\round($this->number()->toFloat(), mode: $mode);
     }
 
     /**
@@ -261,9 +287,7 @@ final readonly class Duration
      */
     public function format(string $format): string
     {
-        return $this->toDateInterval()->format(
-            \preg_replace('/%([^DdHhIiSs])/', '$1', $format),
-        );
+        return $this->toDateInterval()->format($format);
     }
 
     /**
@@ -283,11 +307,10 @@ final readonly class Duration
      */
     public function add(self ...$others): self
     {
-        return self::of(seconds: \array_reduce(
+        return self::ofNumber($this->number()->add(...\array_map(
+            static fn(self $other): Number => $other->number(),
             $others,
-            static fn(int $total, self $other): int => $total + $other->seconds,
-            initial: $this->seconds,
-        ));
+        )));
     }
 
     /**
@@ -307,13 +330,12 @@ final readonly class Duration
      */
     public function sub(self ...$others): self
     {
-        $seconds = \array_reduce(
+        $result = $this->number()->sub(...\array_map(
+            static fn(self $other): Number => $other->number(),
             $others,
-            static fn(int $total, self $other): int => $total - $other->seconds,
-            initial: $this->seconds,
-        );
+        ));
 
-        return $seconds > 0 ? self::of(seconds: $seconds) : self::zero();
+        return $result->isPositive() ? self::ofNumber($result) : self::zero();
     }
 
     /**
@@ -344,6 +366,16 @@ final readonly class Duration
     public function roundToMinutes(\RoundingMode $mode = \RoundingMode::TowardsZero): self
     {
         return self::of(minutes: $this->inMinutes(mode: $mode));
+    }
+
+    /**
+     * Returns an instance of `Duration` with rounded amount of seconds in this duration.
+     *
+     * @see self::inSeconds()
+     */
+    public function roundToSeconds(\RoundingMode $mode = \RoundingMode::TowardsZero): self
+    {
+        return self::of(seconds: $this->inSeconds(mode: $mode));
     }
 
     /**
@@ -538,7 +570,7 @@ final readonly class Duration
      */
     public function toDateInterval(): \DateInterval
     {
-        return new \DateInterval("P{$this->days()}DT{$this->hours()}H{$this->minutes()}M{$this->seconds()}S");
+        return \DateInterval::createFromDateString((string)$this);
     }
 
     /** @return non-empty-string */
@@ -546,11 +578,12 @@ final readonly class Duration
     public function __toString(): string
     {
         return \sprintf(
-            '%02d days, %02d hours, %02d minutes, %02d seconds',
+            '%02d days, %02d hours, %02d minutes, %02d seconds, %06d microseconds',
             $this->days(),
             $this->hours(),
             $this->minutes(),
             $this->seconds(),
+            $this->microseconds(),
         );
     }
 
@@ -558,11 +591,12 @@ final readonly class Duration
     public function __debugInfo(): array
     {
         return [
-            'days' => \sprintf('%02d', $this->days()),
-            'hours' => \sprintf('%02d', $this->hours()),
-            'minutes' => \sprintf('%02d', $this->minutes()),
-            'seconds' => \sprintf('%02d', $this->seconds()),
-            'inSeconds' => \sprintf('%02d', $this->inSeconds()),
+            'days' => $this->days(),
+            'hours' => $this->hours(),
+            'minutes' => $this->minutes(),
+            'seconds' => $this->seconds(),
+            'microseconds' => $this->microseconds(),
+            'inSeconds' => $this->inSeconds(),
         ];
     }
 
@@ -576,5 +610,19 @@ final readonly class Duration
                 );
             }
         }
+    }
+
+    /** @throws Exception\InvalidValue */
+    private static function ofNumber(Number $number): self
+    {
+        return self::ref(seconds: $number->integer(), micro: $number->fraction());
+    }
+
+    private function number(): Number
+    {
+        return $this->remember(
+            static fn(self $that): Number => Number::of($that->seconds, $that->micro),
+            key: __METHOD__,
+        );
     }
 }

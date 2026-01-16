@@ -51,7 +51,7 @@ final class FrozenClockTest extends TestCase
     public function testSleep(): void
     {
         $before = $this->clock->now();
-        $duration = Duration::of(seconds: 5);
+        $duration = Duration::of(seconds: 5, micros: 1);
 
         $this->clock->sleep($duration);
 

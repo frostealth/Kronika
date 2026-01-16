@@ -88,7 +88,7 @@ final class KronikaSubscribingHandlerTest extends TestCase
             secondAlias: Time\Second::of(40, 5555),
             duration: Duration::of(days: 1, hours: 2, minutes: 25, seconds: 99),
             durationInHours: Duration::of(days: 1, hours: 2, minutes: 25, seconds: 99),
-            durationArray: Duration::of(days: 1, hours: 2, minutes: 25, seconds: 99),
+            durationArray: Duration::of(days: 1, hours: 2, minutes: 25, seconds: 99, micros: 123),
             durationAlias: Duration::of(days: 1, hours: 1, minutes: 25, seconds: 80),
             instant: Instant::of(123456789, 54321),
             instantAlias: Instant::of(123456780, 54310),
@@ -150,6 +150,7 @@ final class KronikaSubscribingHandlerTest extends TestCase
             'hours' => $this->entry->durationArray->hours(),
             'minutes' => $this->entry->durationArray->minutes(),
             'seconds' => $this->entry->durationArray->seconds(),
+            'micros' => $this->entry->durationArray->microseconds(),
         ], $serialized['durationArray']);
         self::assertSame($this->entry->durationAlias, $unserialized->durationAlias);
 
