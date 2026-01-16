@@ -563,66 +563,6 @@ final readonly class Date implements Unit
         return $this->add(Duration::ofDay());
     }
 
-    /** @deprecated {@see self::startOfYear()} */
-    public function toStartOfYear(): self
-    {
-        return $this->startOfYear();
-    }
-
-    /** @deprecated {@see self::endOfYear()} */
-    public function toEndOfYear(): self
-    {
-        return $this->endOfYear();
-    }
-
-    /** @deprecated {@see self::previousMonth()} */
-    public function toPreviousMonth(): self
-    {
-        return $this->previousMonth();
-    }
-
-    /** @deprecated {@see self::nextMonth()} */
-    public function toNextMonth(): self
-    {
-        return $this->nextMonth();
-    }
-
-    /** @deprecated {@see self::startOfMonth()} */
-    public function toStartOfMonth(): self
-    {
-        return $this->startOfMonth();
-    }
-
-    /** @deprecated {@see self::endOfMonth()} */
-    public function toEndOfMonth(): self
-    {
-        return $this->endOfMonth();
-    }
-
-    /** @deprecated {@see self::previousWeek()} */
-    public function toPreviousWeek(): self
-    {
-        return $this->previousWeek();
-    }
-
-    /** @deprecated {@see self::nextWeek()} */
-    public function toNextWeek(): self
-    {
-        return $this->nextWeek();
-    }
-
-    /** @deprecated {@see self::previousDay()} */
-    public function toYesterday(): self
-    {
-        return $this->previousDay();
-    }
-
-    /** @deprecated {@see self::nextDay()} */
-    public function toTomorrow(): self
-    {
-        return $this->nextDay();
-    }
-
     /**
      * Checks if the day of this date is the first day of the year.
      *
@@ -780,18 +720,6 @@ final readonly class Date implements Unit
     public function isBeforeOrEqualTo(self|DateUnit $other): bool
     {
         return $this->compareTo($other)->lessOrEqual();
-    }
-
-    /** @deprecated {@see self::is()} */
-    public function isEqualTo(self|DateUnit $other): bool
-    {
-        return $this->is($other);
-    }
-
-    /** @deprecated {@see self::isNot()} */
-    public function isNotEqualTo(self|DateUnit $other): bool
-    {
-        return $this->isNot($other);
     }
 
     /**

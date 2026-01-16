@@ -13,6 +13,7 @@ All notable changes to `Kronika` will be documented in this file.
 - `Range::each()` return type to `iterable`.
 
 ### Removed
+- Deprecated methods.
 - `DateTimeRange::of()` and `DateTimeRange::around()` methods.
 - `Range::since()` and `Range::till()` methods.
 - The precision options from ranges.

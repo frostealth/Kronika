@@ -210,18 +210,6 @@ final readonly class Hour implements TimeUnit
         return $this->compareTo($other)->lessOrEqual();
     }
 
-    /** @deprecated {@see self::is()} */
-    public function isEqualTo(self $other): bool
-    {
-        return $this->is($other);
-    }
-
-    /** @deprecated {@see self::isNot()} */
-    public function isNotEqualTo(self $other): bool
-    {
-        return $this->isNot($other);
-    }
-
     /**
      * Checks if this hour is after or equal to another one.
      *

@@ -285,18 +285,6 @@ final readonly class LocalDateTime implements DateTime
         return $this->compareTo($other, $precision)->lessOrEqual();
     }
 
-    /** @deprecated {@see self::is()} */
-    public function isEqualTo(DateTime|Unit $other, Precision $precision = Precision::Micro): bool
-    {
-        return $this->is($other, $precision);
-    }
-
-    /** @deprecated {@see self::isNot()} */
-    public function isNotEqualTo(DateTime|Unit $other, Precision $precision = Precision::Micro): bool
-    {
-        return $this->isNot($other, $precision);
-    }
-
     #[\Override]
     public function isAfterOrEqualTo(DateTime|Unit $other, Precision $precision = Precision::Micro): bool
     {
@@ -320,18 +308,6 @@ final readonly class LocalDateTime implements DateTime
     public function format(string $format, ?Formatter $formatter = null): string
     {
         return ($formatter ?? formatter())->format($this, $format);
-    }
-
-    /** @deprecated {@see self::startOfMonth()} */
-    public function toStartOfMonth(): self
-    {
-        return $this->startOfMonth();
-    }
-
-    /** @deprecated {@see self::endOfMonth()} */
-    public function toEndOfMonth(): self
-    {
-        return $this->endOfMonth();
     }
 
     #[\Override]

@@ -317,18 +317,6 @@ final readonly class Instant
         return $this->compareTo($other, $precision)->lessOrEqual();
     }
 
-    /** @deprecated {@see self::is()} */
-    public function isEqualTo(self $other, Precision $precision = Precision::Micro): bool
-    {
-        return $this->is($other, $precision);
-    }
-
-    /** @deprecated {@see self::isNot()} */
-    public function isNotEqualTo(self $other, Precision $precision = Precision::Micro): bool
-    {
-        return $this->isNot($other, $precision);
-    }
-
     /**
      * Checks if this instant is after or equal to another one.
      *

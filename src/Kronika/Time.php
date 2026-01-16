@@ -532,18 +532,6 @@ final readonly class Time implements Unit
         return $this->compareTo($other, $precision)->lessOrEqual();
     }
 
-    /** @deprecated {@see self::is()} */
-    public function isEqualTo(self|TimeUnit $other, Precision $precision = Precision::Micro): bool
-    {
-        return $this->is($other, $precision);
-    }
-
-    /** @deprecated {@see self::isNot()} */
-    public function isNotEqualTo(self|TimeUnit $other, Precision $precision = Precision::Micro): bool
-    {
-        return $this->isNot($other, $precision);
-    }
-
     /**
      * Checks if this time or its unit is after or equal to another one.
      *

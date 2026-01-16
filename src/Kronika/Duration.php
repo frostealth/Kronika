@@ -503,18 +503,6 @@ final readonly class Duration
         return $this->compareTo($other)->lessOrEqual();
     }
 
-    /** @deprecated {@see self::is()} */
-    public function isEqualTo(self $other): bool
-    {
-        return $this->is($other);
-    }
-
-    /** @deprecated {@see self::isNot()} */
-    public function isNotEqualTo(self $other): bool
-    {
-        return $this->isNot($other);
-    }
-
     /**
      * Checks if this duration is greater than or equal to another one.
      *
