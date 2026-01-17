@@ -20,6 +20,7 @@ All notable changes to `Kronika` will be documented in this file.
 - `Range::since()` and `Range::till()` methods.
 - The precision options from ranges.
 - `__toString()` method from ranges.
+- `\DateInterval` support in `Time`.
 
 ### Fixed
 - Microsecond in `LocalDateTime::instant()`.

@@ -44,7 +44,7 @@ final readonly class Number
         }
 
         $number = \sprintf('%.6F', $number);
-        [$integer, $fraction] = \sscanf($number, '%d.%6d');
+        \sscanf($number, '%d.%6d', $integer, $fraction);
         if (\str_starts_with($number, '-')) {
             $fraction = -$fraction;
         }

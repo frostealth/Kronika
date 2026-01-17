@@ -110,7 +110,7 @@ final readonly class Time implements Unit
         }
 
         return self::map($datetime, static function(Native $datetime): self {
-            [$hour, $minute, $second, $micro] = \sscanf($datetime->format('H:i:s.u'), '%u:%u:%u.%u');
+            \sscanf($datetime->format('H:i:s.u'), '%u:%u:%u.%u', $hour, $minute, $second, $micro);
 
             return self::of($hour, $minute, Second::of($second, $micro));
         }, when: static fn(Native $datetime): bool => $datetime instanceof \DateTimeImmutable);
@@ -130,7 +130,7 @@ final readonly class Time implements Unit
     public static function ofInstant(Instant $instant): self
     {
         return self::map($instant, static function (Instant $instant): self {
-            [$hour, $minute, $second] = \sscanf(\gmdate('H:i:s', $instant->second()), '%u:%u:%u');
+            \sscanf(\gmdate('H:i:s', $instant->second()), '%u:%u:%u', $hour, $minute, $second);
 
             return self::of($hour, $minute, Second::of($second, $instant->microsecond()));
         });
@@ -275,12 +275,8 @@ final readonly class Time implements Unit
      * $this->add(Duration::of(minutes: 120));  // 12:15:30
      * ```
      */
-    public function add(Duration|\DateInterval $duration): self
+    public function add(Duration $duration): self
     {
-        if ($duration instanceof \DateInterval) {
-            $duration = Duration::of(hours: $duration->h, minutes: $duration->i, seconds: $duration->s);
-        }
-
         return self::ofInstant($this->instant()->add($duration->dropToHours()));
     }
 
@@ -295,12 +291,8 @@ final readonly class Time implements Unit
      * $this->sub(Duration::of(minutes: 120));  // 08:15:30
      * ```
      */
-    public function sub(Duration|\DateInterval $duration): self
+    public function sub(Duration $duration): self
     {
-        if ($duration instanceof \DateInterval) {
-            $duration = Duration::of(hours: $duration->h, minutes: $duration->i, seconds: $duration->s);
-        }
-
         return self::ofInstant($this->instant()->sub($duration->dropToHours()));
     }
 
