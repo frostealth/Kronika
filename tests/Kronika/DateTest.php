@@ -127,40 +127,6 @@ final class DateTest extends TestCase
         self::assertSame($expected, $date->dayOfYear());
     }
 
-    #[TestWith([2025, 12, 30])]
-    #[TestWith([2000, 01, 30])]
-    #[TestWith([2024, 10, 15])]
-    #[Depends('testBasic')]
-    public function testStartAndEndOfYear(int $year, int $month, int $day): void
-    {
-        $date = Date::of(year: $year, month: $month, day: $day);
-
-        self::assertEquals(Date::of(year: $year, month: Date\Month::January, day: 1), $date->startOfYear());
-        self::assertEquals(Date::of(year: $year, month: Date\Month::December, day: 31), $date->endOfYear());
-    }
-
-    public static function startAndEndOfMonthProvider(): array
-    {
-        return [
-            [Date::of(2025, 1, 15), Date\DayOfMonth::of(31)],
-            [Date::of(2025, 2, 19), Date\DayOfMonth::of(28)],
-            [Date::of(2024, 2, 15), Date\DayOfMonth::of(29)],
-            [Date::of(2025, 3, 10), Date\DayOfMonth::of(31)],
-            [Date::of(2025, 3, 1), Date\DayOfMonth::of(31)],
-            [Date::of(2025, 4, 15), Date\DayOfMonth::of(30)],
-            [Date::of(2025, 5, 15), Date\DayOfMonth::of(31)],
-            [Date::of(2025, 6, 15), Date\DayOfMonth::of(30)],
-            [Date::of(2025, 7, 15), Date\DayOfMonth::of(31)],
-            [Date::of(2025, 8, 15), Date\DayOfMonth::of(31)],
-            [Date::of(2025, 9, 15), Date\DayOfMonth::of(30)],
-            [Date::of(2025, 9, 30), Date\DayOfMonth::of(30)],
-            [Date::of(2025, 10, 15), Date\DayOfMonth::of(31)],
-            [Date::of(2025, 11, 15), Date\DayOfMonth::of(30)],
-            [Date::of(2025, 1, 29), Date\DayOfMonth::of(31)],
-            [Date::of(2025, 1, 31), Date\DayOfMonth::of(31)],
-        ];
-    }
-
     public static function withProvider(): array
     {
         return [
@@ -218,6 +184,40 @@ final class DateTest extends TestCase
         self::assertEquals($expected, $result);
     }
 
+    #[TestWith([2025, 12, 30])]
+    #[TestWith([2000, 01, 30])]
+    #[TestWith([2024, 10, 15])]
+    #[Depends('testBasic')]
+    public function testStartAndEndOfYear(int $year, int $month, int $day): void
+    {
+        $date = Date::of(year: $year, month: $month, day: $day);
+
+        self::assertEquals(Date::of(year: $year, month: Date\Month::January, day: 1), $date->startOfYear());
+        self::assertEquals(Date::of(year: $year, month: Date\Month::December, day: 31), $date->endOfYear());
+    }
+
+    public static function startAndEndOfMonthProvider(): array
+    {
+        return [
+            [Date::of(2025, 1, 15), Date\DayOfMonth::of(31)],
+            [Date::of(2025, 2, 19), Date\DayOfMonth::of(28)],
+            [Date::of(2024, 2, 15), Date\DayOfMonth::of(29)],
+            [Date::of(2025, 3, 10), Date\DayOfMonth::of(31)],
+            [Date::of(2025, 3, 1), Date\DayOfMonth::of(31)],
+            [Date::of(2025, 4, 15), Date\DayOfMonth::of(30)],
+            [Date::of(2025, 5, 15), Date\DayOfMonth::of(31)],
+            [Date::of(2025, 6, 15), Date\DayOfMonth::of(30)],
+            [Date::of(2025, 7, 15), Date\DayOfMonth::of(31)],
+            [Date::of(2025, 8, 15), Date\DayOfMonth::of(31)],
+            [Date::of(2025, 9, 15), Date\DayOfMonth::of(30)],
+            [Date::of(2025, 9, 30), Date\DayOfMonth::of(30)],
+            [Date::of(2025, 10, 15), Date\DayOfMonth::of(31)],
+            [Date::of(2025, 11, 15), Date\DayOfMonth::of(30)],
+            [Date::of(2025, 1, 29), Date\DayOfMonth::of(31)],
+            [Date::of(2025, 1, 31), Date\DayOfMonth::of(31)],
+        ];
+    }
+
     #[Depends('testBasic')]
     #[DataProvider('startAndEndOfMonthProvider')]
     public function testStartAndEndOfMonth(Date $date, Date\DayOfMonth $lastDayOfMonth): void
@@ -225,8 +225,8 @@ final class DateTest extends TestCase
         $startOfMonth = $date->startOfMonth();
         $endOfMonth = $date->endOfMonth();
 
-        self::assertEquals(Date\DayOfMonth::of(1), $startOfMonth->day());
-        $date->day() === Date\DayOfMonth::of(1)
+        self::assertEquals(Date\DayOfMonth::first(), $startOfMonth->day());
+        $date->day() === Date\DayOfMonth::first()
             ? self::assertEquals($date, $startOfMonth)
             : self::assertNotEquals($date, $startOfMonth);
 
@@ -278,7 +278,7 @@ final class DateTest extends TestCase
     #[DependsOnClass(MonthTest::class)]
     #[DependsOnClass(DayOfMonthTest::class)]
     #[Depends('testWith')]
-    public function testToPreviousMonth(array $date, array $expected): void
+    public function testPreviousMonth(array $date, array $expected): void
     {
         $date = Date::of(...$date);
         $expected = Date::of(...$expected);
@@ -303,7 +303,7 @@ final class DateTest extends TestCase
     #[DependsOnClass(MonthTest::class)]
     #[DependsOnClass(DayOfMonthTest::class)]
     #[Depends('testWith')]
-    public function testToNextMonth(array $date, array $expected): void
+    public function testNextMonth(array $date, array $expected): void
     {
         $date = Date::of(...$date);
         $expected = Date::of(...$expected);
@@ -319,7 +319,7 @@ final class DateTest extends TestCase
     #[TestWith([[2024, 3, 4], [2024, 2, 26]])]
     #[DependsOnClass(DurationTest::class)]
     #[Depends('testBasic')]
-    public function testToPreviousWeek(array $date, array $expected): void
+    public function testPreviousWeek(array $date, array $expected): void
     {
         $date = Date::of(...$date);
         $expected = Date::of(...$expected);
@@ -338,7 +338,7 @@ final class DateTest extends TestCase
     #[TestWith([[2024, 12, 27], [2025, 1, 3]])]
     #[DependsOnClass(DurationTest::class)]
     #[Depends('testBasic')]
-    public function testToNextWeek(array $date, array $expected): void
+    public function testNextWeek(array $date, array $expected): void
     {
         $date = Date::of(...$date);
         $expected = Date::of(...$expected);
@@ -355,7 +355,7 @@ final class DateTest extends TestCase
     #[TestWith([[2024, 3, 1], [2024, 2, 29]])]
     #[DependsOnClass(DurationTest::class)]
     #[Depends('testBasic')]
-    public function testToYesterday(array $date, array $expected): void
+    public function testPreviousDay(array $date, array $expected): void
     {
         $date = Date::of(...$date);
         $expected = Date::of(...$expected);
@@ -375,12 +375,94 @@ final class DateTest extends TestCase
     #[TestWith([[2024, 2, 29], [2024, 3, 1]])]
     #[DependsOnClass(DurationTest::class)]
     #[Depends('testBasic')]
-    public function testToTomorrow(array $date, array $expected): void
+    public function testNextDay(array $date, array $expected): void
     {
         $date = Date::of(...$date);
         $expected = Date::of(...$expected);
 
         self::assertEquals($expected, $date->nextDay());
+    }
+
+    #[TestWith([[2026, 1, 2], [2026, 1, 1]])]     // Friday    -> Thursday
+    #[TestWith([[2026, 1, 1], [2025, 12, 31]])]   // Thursday  -> Wednesday - between years
+    #[TestWith([[2025, 12, 31], [2025, 12, 30]])] // Wednesday -> Tuesday
+    #[TestWith([[2025, 12, 30], [2025, 12, 29]])] // Tuesday   -> Monday
+    #[TestWith([[2025, 12, 29], [2025, 12, 26]])] // Monday    -> Friday
+    #[TestWith([[2025, 12, 28], [2025, 12, 26]])] // Sunday    -> Friday
+    #[TestWith([[2025, 12, 27], [2025, 12, 26]])] // Saturday  -> Friday
+    #[TestWith([[2026, 2, 2], [2026, 1, 30]])]    // Monday    -> Friday - between months
+    #[TestWith([[2025, 11, 1], [2025, 10, 31]])]  // Saturday  -> Friday - between months
+    #[TestWith([[2025, 11, 2], [2025, 10, 31]])]  // Sunday    -> Friday - between months
+    #[Depends('testWith')]
+    #[Depends('testPreviousWeek')]
+    #[Depends('testPreviousDay')]
+    public function testPreviousWeekday(array $date, array $expected): void
+    {
+        $date = Date::of(...$date);
+        $expected = Date::of(...$expected);
+
+        self::assertEquals($expected, $date->previousWeekday());
+    }
+
+    #[TestWith([[2025, 12, 29], [2025, 12, 30]])] // Monday    -> Tuesday
+    #[TestWith([[2025, 12, 30], [2025, 12, 31]])] // Tuesday   -> Wednesday
+    #[TestWith([[2025, 12, 31], [2026, 1, 1]])]   // Wednesday -> Thursday - between years
+    #[TestWith([[2026, 1, 1], [2026, 1, 2]])]     // Thursday  -> Friday
+    #[TestWith([[2026, 1, 2], [2026, 1, 5]])]     // Friday    -> Monday
+    #[TestWith([[2026, 1, 3], [2026, 1, 5]])]     // Saturday  -> Monday
+    #[TestWith([[2026, 1, 4], [2026, 1, 5]])]     // Sunday    -> Monday
+    #[TestWith([[2026, 1, 30], [2026, 2, 2]])]    // Friday    -> Monday - between months
+    #[TestWith([[2026, 1, 31], [2026, 2, 2]])]    // Saturday  -> Monday - between months
+    #[TestWith([[2026, 2, 1], [2026, 2, 2]])]     // Sunday    -> Monday - between months
+    #[Depends('testWith')]
+    #[Depends('testNextWeek')]
+    #[Depends('testNextDay')]
+    public function testNextWeekday(array $date, array $expected): void
+    {
+        $date = Date::of(...$date);
+        $expected = Date::of(...$expected);
+
+        self::assertEquals($expected, $date->nextWeekday());
+    }
+
+    #[TestWith([[2026, 1, 4], [2026, 1, 3]])]     // Sunday    -> Saturday
+    #[TestWith([[2026, 1, 3], [2025, 12, 28]])]   // Saturday  -> Sunday - between years
+    #[TestWith([[2026, 1, 2], [2025, 12, 28]])]   // Friday    -> Sunday - between years
+    #[TestWith([[2026, 1, 1], [2025, 12, 28]])]   // Thursday  -> Sunday - between years
+    #[TestWith([[2025, 12, 31], [2025, 12, 28]])] // Wednesday -> Sunday
+    #[TestWith([[2025, 12, 30], [2025, 12, 28]])] // Tuesday   -> Sunday
+    #[TestWith([[2025, 12, 29], [2025, 12, 28]])] // Monday    -> Sunday
+    #[TestWith([[2026, 2, 1], [2026, 1, 31]])]    // Sunday    -> Saturday - between months
+    #[TestWith([[2025, 12, 1], [2025, 11, 30]])]  // Monday    -> Sunday - between months
+    #[Depends('testWith')]
+    #[Depends('testPreviousWeek')]
+    #[Depends('testPreviousDay')]
+    public function testPreviousWeekendDay(array $date, array $expected): void
+    {
+        $date = Date::of(...$date);
+        $expected = Date::of(...$expected);
+
+        self::assertEquals($expected, $date->previousWeekendDay());
+    }
+
+    #[TestWith([[2025, 12, 27], [2025, 12, 28]])] // Saturday  -> Sunday
+    #[TestWith([[2025, 12, 28], [2026, 1, 3]])]   // Sunday    -> Saturday - between years
+    #[TestWith([[2025, 12, 29], [2026, 1, 3]])]   // Monday    -> Saturday - between years
+    #[TestWith([[2025, 12, 30], [2026, 1, 3]])]   // Tuesday   -> Saturday - between years
+    #[TestWith([[2025, 12, 31], [2026, 1, 3]])]   // Wednesday -> Saturday - between years
+    #[TestWith([[2026, 1, 1], [2026, 1, 3]])]     // Thursday  -> Saturday
+    #[TestWith([[2026, 1, 2], [2026, 1, 3]])]     // Friday    -> Saturday
+    #[TestWith([[2026, 1, 31], [2026, 2, 1]])]    // Saturday  -> Sunday - between months
+    #[TestWith([[2025, 10, 31], [2025, 11, 1]])]  // Friday    -> Saturday - between months
+    #[Depends('testWith')]
+    #[Depends('testNextWeek')]
+    #[Depends('testNextDay')]
+    public function testNextWeekendDay(array $date, array $expected): void
+    {
+        $date = Date::of(...$date);
+        $expected = Date::of(...$expected);
+
+        self::assertEquals($expected, $date->nextWeekendDay());
     }
 
     #[TestWith(['Y-m-d', '2025-01-15'])]

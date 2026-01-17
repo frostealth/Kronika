@@ -532,6 +532,74 @@ final readonly class Date implements Unit
     }
 
     /**
+     * Moves backward to the previous weekday.
+     *
+     * ```
+     * // 2025-12-29, Monday
+     * $this->previousWeekday();  // 2025-12-26, Friday
+     * ```
+     */
+    public function previousWeekday(): self
+    {
+        return match ($this->dayOfWeek()) {
+            DayOfWeek::Monday => $this->previousWeek()->with(DayOfWeek::Friday),
+            DayOfWeek::Saturday,
+            DayOfWeek::Sunday => $this->with(DayOfWeek::Friday),
+            default => $this->previousDay(),
+        };
+    }
+
+    /**
+     * Moves forward to the next weekday.
+     *
+     * ```
+     * // 2025-12-26, Friday
+     * $this->nextWeekday();  // 2025-12-29, Monday
+     * ```
+     */
+    public function nextWeekday(): self
+    {
+        if ($this->dayOfWeek()->isBefore(DayOfWeek::Friday)) {
+            return $this->nextDay();
+        }
+
+        return $this->nextWeek()->with(DayOfWeek::Monday);
+    }
+
+    /**
+     * Moves backward to the previous weekend day.
+     *
+     * ```
+     * // 2025-12-27, Saturday
+     * $this->previousWeekendDay();  // 2025-12-21, Sunday
+     * ```
+     */
+    public function previousWeekendDay(): self
+    {
+        return match ($this->dayOfWeek()) {
+            DayOfWeek::Monday,
+            DayOfWeek::Sunday => $this->previousDay(),
+            default => $this->previousWeek()->with(DayOfWeek::Sunday),
+        };
+    }
+    /**
+     * Moves forward to the next weekend day.
+     *
+     * ```
+     * // 2025-12-21, Sunday
+     * $this->previousWeekendDay();  // 2025-12-27, Saturday
+     * ```
+     */
+    public function nextWeekendDay(): self
+    {
+        return match ($this->dayOfWeek()) {
+            DayOfWeek::Saturday => $this->nextDay(),
+            DayOfWeek::Sunday => $this->nextWeek()->with(DayOfWeek::Saturday),
+            default => $this->with(DayOfWeek::Saturday),
+        };
+    }
+
+    /**
      * Moves backward to the previous day.
      *
      * ```

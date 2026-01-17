@@ -120,6 +120,46 @@ trait HasDate
     }
 
     /**
+     * Moves backward to the previous weekday.
+     *
+     * @see \Kronika\Date::previousWeekday()
+     */
+    final public function previousWeekday(): static
+    {
+        return $this->with($this->date()->previousWeekday());
+    }
+
+    /**
+     * Moves forward to the next weekday.
+     *
+     * @see \Kronika\Date::nextWeekday()
+     */
+    final public function nextWeekday(): static
+    {
+        return $this->with($this->date()->nextWeekday());
+    }
+
+    /**
+     * Moves backward to the previous weekend day.
+     *
+     * @see \Kronika\Date::previousWeekendDay()
+     */
+    final public function previousWeekendDay(): static
+    {
+        return $this->with($this->date()->previousWeekendDay());
+    }
+
+    /**
+     * Moves forward to the next weekend day.
+     *
+     * @see \Kronika\Date::nextWeekendDay()
+     */
+    final public function nextWeekendDay(): static
+    {
+        return $this->with($this->date()->nextWeekendDay());
+    }
+
+    /**
      * Moves backward to the previous day.
      *
      * @see \Kronika\Date::previousDay()

@@ -11,6 +11,12 @@ All notable changes to `Kronika` will be documented in this file.
 - `Time::startOfHour()` and `Time::endOfHour()` methods.
 - `LocalDateTime::startOfHour()` and `LocalDateTime::endOfHour()` methods.
 - `ZonedDateTime::startOfHour()` and `ZonedDateTime::endOfHour()` methods.
+- `Date::previousWeekday()` and `Date::nextWeekday()` methods.
+- `LocalDateTime::previousWeekday()` and `LocalDateTime::nextWeekday()` methods.
+- `ZonedDateTime::previousWeekday()` and `ZonedDateTime::nextWeekday()` methods.
+- `Date::previousWeekendDay()` and `Date::nextWeekendDay()` methods.
+- `LocalDateTime::previousWeekendDay()` and `LocalDateTime::nextWeekendDay()` methods.
+- `ZonedDateTime::previousWeekendDay()` and `ZonedDateTime::nextWeekendDay()` methods.
 
 ### Changed
 - `Range::each()` return type to `iterable`.
