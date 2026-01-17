@@ -40,8 +40,6 @@ final readonly class Year implements DateUnit
      * $year = Year::of(1980);
      * ```
      *
-     * @param TYear|self $value
-     *
      * @throws Exception\InvalidYear
      */
     public static function of(int|self $value): self
@@ -269,7 +267,11 @@ final readonly class Year implements DateUnit
         return ['year' => (string)$this];
     }
 
-    /** @throws Exception\InvalidYear */
+    /**
+     * @throws Exception\InvalidYear
+     *
+     * @psalm-assert TYear $value
+     */
     private static function assertValue(int $value): void
     {
         if ($value < self::YEAR_MIN || $value > self::YEAR_MAX) {

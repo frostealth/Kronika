@@ -34,11 +34,11 @@ final readonly class Duration
      * $duration = Duration::of(hours: 24, minutes: 28, seconds: 165);
      * ```
      *
-     * @param non-negative-int $days
-     * @param non-negative-int $hours
-     * @param non-negative-int $minutes
-     * @param non-negative-int $seconds
-     * @param non-negative-int $micros
+     * @param int $days    non-negative number of days (24 hours).
+     * @param int $hours   non-negative number of hours.
+     * @param int $minutes non-negative number of minutes.
+     * @param int $seconds non-negative number of seconds.
+     * @param int $micros  non-negative number of microseconds.
      *
      * @throws Exception\InvalidValue
      */
@@ -588,7 +588,11 @@ final readonly class Duration
         ];
     }
 
-    /** @throws Exception\InvalidValue */
+    /**
+     * @throws Exception\InvalidValue
+     *
+     * @psalm-assert non-negative-int ...$values
+     */
     private static function assertValues(int ...$values): void
     {
         foreach ($values as $name => $value) {

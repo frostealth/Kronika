@@ -31,10 +31,6 @@ use Kronika\Utils\RescueTrait;
  * @method static static|null tryOf(mixed $hour, mixed $minute, mixed $second = 0)
  * @method static static|null tryOfFormat(string $format, ?string $time, ?Formatter $formatter = null)
  * @method static static|null tryParse(?string $time)
- *
- * @psalm-import-type THour from \Kronika\Time\Hour
- * @psalm-import-type TMinute from \Kronika\Time\Minute
- * @psalm-import-type TSecond from \Kronika\Time\Second
  */
 final readonly class Time implements Unit
 {
@@ -52,10 +48,6 @@ final readonly class Time implements Unit
      * // 11:45.55.000999
      * $time = Time::of(hour: 11, minute: 45, second: Second::of(55, 999));
      * ```
-     *
-     * @param Hour|THour $hour
-     * @param Minute|TMinute $minute
-     * @param Second|TSecond $second
      *
      * @throws Exception\InvalidTime
      */

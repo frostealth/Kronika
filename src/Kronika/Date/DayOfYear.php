@@ -37,8 +37,6 @@ final readonly class DayOfYear implements DateUnit
      * $dayOfYear = DayOfYear::of(32);
      * ```
      *
-     * @param TDayOfYear|self $value
-     *
      * @throws Exception\InvalidDayOfYear
      */
     public static function of(int|self $value): self
@@ -274,7 +272,11 @@ final readonly class DayOfYear implements DateUnit
         return ['dayOfYear' => $this->number()];
     }
 
-    /** @throws Exception\InvalidDayOfYear */
+    /**
+     * @throws Exception\InvalidDayOfYear
+     *
+     * @psalm-assert TDayOfYear $number
+     */
     private static function assertNumber(int $number): void
     {
         if ($number < 1 || $number > 366) {

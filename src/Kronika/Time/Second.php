@@ -42,9 +42,6 @@ final readonly class Second implements TimeUnit
      * $second = Second::of(45, 999999);
      * ```
      *
-     * @param TSecond|self $second
-     * @param TMicrosecond|null $micro
-     *
      * @throws Exception\InvalidSecond
      */
     public static function of(int|self $second, ?int $micro = null): self
@@ -278,7 +275,12 @@ final readonly class Second implements TimeUnit
         return ['second' => (string)$this];
     }
 
-    /** @throws Exception\InvalidSecond */
+    /**
+     * @throws Exception\InvalidSecond
+     *
+     * @psalm-assert TSecond      $second
+     * @psalm-assert TMicrosecond $microsecond
+     */
     private static function assertValues(int $second, int $microsecond): void
     {
         if ($second < 0 || $second > 59) {

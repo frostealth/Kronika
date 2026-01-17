@@ -27,7 +27,7 @@ use Kronika\Utils\RescueTrait;
  * @method static static|null tryOf(mixed $second, mixed $micro = 0)
  * @method static static|null tryOfValue(mixed $value)
  *
- * @psalm-type TMicrosecond=int<0,999999>
+ * @psalm-type TMicrosecond=int<0, 999999>
  */
 final readonly class Instant
 {
@@ -37,12 +37,12 @@ final readonly class Instant
     /**
      * Obtains an instance of `Instant` from a second and microsecond.
      *
+     * Microsecond cannot be negative or greater than 999_999.
+     *
      * ```
      * // 1767161730 seconds, 4545 microseconds
      * $instant = Instant::of(1767161730, 4545);
      * ```
-     *
-     * @param TMicrosecond $micro
      *
      * @throws Exception\InvalidValue
      */
@@ -386,7 +386,11 @@ final readonly class Instant
         ];
     }
 
-    /** @throws Exception\InvalidValue */
+    /**
+     * @throws Exception\InvalidValue
+     *
+     * @psalm-assert int<0, 999999> $microsecond
+     */
     private static function assertMicrosecond(int $microsecond): void
     {
         if ($microsecond < 0 || $microsecond > 999_999) {

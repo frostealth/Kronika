@@ -35,8 +35,6 @@ final readonly class Hour implements TimeUnit
      * $hour = Hour::of(12);
      * ```
      *
-     * @param THour|self $value
-     *
      * @throws Exception\InvalidHour
      */
     public static function of(int|self $value): self
@@ -268,7 +266,11 @@ final readonly class Hour implements TimeUnit
         return ['hour' => (string)$this];
     }
 
-    /** @throws Exception\InvalidHour */
+    /**
+     * @throws Exception\InvalidHour
+     *
+     * @psalm-assert THour $value
+     */
     private static function assertValue(int $value): void
     {
         if ($value < 0 || $value > 23) {

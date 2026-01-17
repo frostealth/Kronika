@@ -35,8 +35,6 @@ final readonly class Minute implements TimeUnit
      * $minute = Minute::of(30);
      * ```
      *
-     * @param TMinute|self $value
-     *
      * @throws Exception\InvalidMinute
      */
     public static function of(int|self $value): self
@@ -225,7 +223,11 @@ final readonly class Minute implements TimeUnit
         return ['minute' => (string)$this];
     }
 
-    /** @throws Exception\InvalidMinute */
+    /**
+     * @throws Exception\InvalidMinute
+     *
+     * @psalm-assert TMinute $value
+     */
     private static function assertValue(int $value): void
     {
         if ($value < 0 || $value > 59) {

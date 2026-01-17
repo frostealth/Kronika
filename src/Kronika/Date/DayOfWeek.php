@@ -53,8 +53,6 @@ enum DayOfWeek: int implements DateUnit
      * $dayOfWeek = DayOfWeek::of(0);
      * ```
      *
-     * @psalm-param TDayOfWeek|TDayOfWeekName|TDayOfWeekNative|self $value
-     *
      * @throws Exception\InvalidDayOfWeek
      */
     public static function of(int|string|self $value): self

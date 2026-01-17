@@ -35,8 +35,6 @@ use Kronika\Utils\RescueTrait;
  *
  * @method static static|null tryOfFormat(string $format, ?string $datetime, ?\DateTimeZone $timezone = null, ?Formatter $formatter = null)
  * @method static static|null tryParse(?string $datetime, ?\DateTimeZone $timezone = null)
- *
- * @psalm-import-type TMicrosecond from \Kronika\Time\Second
  */
 final class ZonedDateTime extends \DateTimeImmutable implements DateTime
 {
@@ -267,7 +265,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     /**
      * Returns the microsecond of this date-time.
      *
-     * @return TMicrosecond
+     * @return int<0, 999999>
      */
     public function microsecond(): int
     {

@@ -36,8 +36,6 @@ final readonly class DayOfMonth implements DateUnit
      * $day = DayOfMonth::of(20);
      * ```
      *
-     * @param TDayOfMonth|DayOfMonth $value
-     *
      * @throws Exception\InvalidDayOfMonth
      */
     public static function of(int|self $value): self
@@ -204,7 +202,11 @@ final readonly class DayOfMonth implements DateUnit
         return ['dayOfMonth' => (string)$this];
     }
 
-    /** @throws Exception\InvalidDayOfMonth */
+    /**
+     * @throws Exception\InvalidDayOfMonth
+     *
+     * @psalm-assert TDayOfMonth $number
+     */
     private static function assertNumber(int $number): void
     {
         if ($number < 1 || $number > 31) {

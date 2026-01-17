@@ -34,9 +34,7 @@ use Kronika\Utils\RescueTrait;
  * @method static static|null tryOfFormat(string $format, ?string $date, ?Formatter $formatter = null)
  * @method static static|null tryParse(?string $date)
  *
- * @psalm-import-type TYear from \Kronika\Date\Year
  * @psalm-import-type TMonth from \Kronika\Date\Month
- * @psalm-import-type TDayOfMonth from \Kronika\Date\DayOfMonth
  */
 final readonly class Date implements Unit
 {
@@ -51,10 +49,6 @@ final readonly class Date implements Unit
      * $date = Date::of(year: 2025, month: 12, day: 31);
      * $date = Date::of(Year::of(2025), Month::December, DayOfMonth::of(31));
      * ```
-     *
-     * @param Year|TYear             $year
-     * @param Month|TMonth           $month
-     * @param DayOfMonth|TDayOfMonth $day
      *
      * @throws Exception\InvalidDate
      */

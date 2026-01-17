@@ -51,8 +51,6 @@ enum Month: int implements DateUnit
      * $month = Month::of('january');
      * ```
      *
-     * @psalm-param TMonth|TMonthName|self $value
-     *
      * @throws Exception\InvalidMonth
      */
     public static function of(int|string|self $value): self
