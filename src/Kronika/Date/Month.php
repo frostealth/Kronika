@@ -63,29 +63,6 @@ enum Month: int implements DateUnit
     }
 
     /**
-     * Return the number of days in this month in a given year.
-     *
-     * ```
-     * // February
-     * $this->length(Year::of(2025));  // 28
-     * $this->length(Year::of(2024));  // 29 - leap year
-     * ```
-     *
-     * @return int<1,31>
-     */
-    public function length(Year $year): int
-    {
-        return match ($this) {
-            self::February => $year->isLeap() ? 29 : 28,
-            self::April,
-            self::June,
-            self::September,
-            self::November => 30,
-            default => 31,
-        };
-    }
-
-    /**
      * Returns the number of this month.
      *
      * @return TMonth
@@ -116,7 +93,7 @@ enum Month: int implements DateUnit
      * ```
      * // February
      * $this->lastDay(Year::of(2025));  // DayOfMonth::of(28)
-     * $this->lastDay(Year::of(2024));  // DayOfMonth::of(28) - leap year
+     * $this->lastDay(Year::of(2024));  // DayOfMonth::of(29) - leap year
      * ```
      */
     public function lastDay(Year $year): DayOfMonth
@@ -143,6 +120,8 @@ enum Month: int implements DateUnit
      *
      * ```
      * Month::January->next();  // February
+     * Month::December->next(); // December
+     * Month::December->next(rolling: true); // January
      * ```
      */
     public function next(bool $rolling = false): self
@@ -158,7 +137,9 @@ enum Month: int implements DateUnit
      * Returns the previous month.
      *
      * ```
-     * Month::January->previous();  // December
+     * Month::February->previous();  // January
+     * Month::January->previous();   // January
+     * Month::January->previous(rolling: true);  // December
      * ```
      */
     public function previous(bool $rolling = false): self
@@ -168,6 +149,29 @@ enum Month: int implements DateUnit
         }
 
         return self::of($this->number() - 1);
+    }
+
+    /**
+     * Return the number of days in this month in a given year.
+     *
+     * ```
+     * // February
+     * $this->length(Year::of(2025));  // 28
+     * $this->length(Year::of(2024));  // 29 - leap year
+     * ```
+     *
+     * @return int<1,31>
+     */
+    public function length(Year $year): int
+    {
+        return match ($this) {
+            self::February => $year->isLeap() ? 29 : 28,
+            self::April,
+            self::June,
+            self::September,
+            self::November => 30,
+            default => 31,
+        };
     }
 
     /**

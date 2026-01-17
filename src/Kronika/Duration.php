@@ -41,6 +41,13 @@ final readonly class Duration
      * @param int $micros  non-negative number of microseconds.
      *
      * @throws Exception\InvalidValue
+     *
+     * @see self::zero()
+     * @see self::ofWeek()
+     * @see self::ofDay()
+     * @see self::ofHour()
+     * @see self::ofMinute()
+     * @see self::ofSecond()
      */
     public static function of(int $days = 0, int $hours = 0, int $minutes = 0, int $seconds = 0, int $micros = 0): self
     {
@@ -75,7 +82,7 @@ final readonly class Duration
     }
 
     /**
-     * Obtains an instance of `Duration` equaled to the whole week.
+     * Obtains an instance of `Duration` equaled to the whole week (24 * 7 hours).
      */
     public static function ofWeek(): self
     {
@@ -85,7 +92,7 @@ final readonly class Duration
     }
 
     /**
-     * Obtains an instance of `Duration` equaled to the whole day.
+     * Obtains an instance of `Duration` equaled to the whole day (24 hours).
      */
     public static function ofDay(): self
     {
