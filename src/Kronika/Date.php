@@ -587,7 +587,7 @@ final readonly class Date implements Unit
      *
      * ```
      * // 2025-12-21, Sunday
-     * $this->previousWeekendDay();  // 2025-12-27, Saturday
+     * $this->nextWeekendDay();  // 2025-12-27, Saturday
      * ```
      */
     public function nextWeekendDay(): self
