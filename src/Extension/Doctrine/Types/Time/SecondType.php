@@ -45,9 +45,10 @@ final class SecondType extends Type
 
         try {
             \assert(\is_string($value));
-            [$second, $micro] = \sscanf($value, '%d.%6d');
+            \sscanf($value, '%d.%6d', $second, $micro);
 
-            return Second::of(second: (int) $second, micro: (int) $micro);
+            /** @psalm-suppress InvalidArgument, PossiblyInvalidArgument */
+            return Second::of(second: $second, micro: $micro);
         } catch (\Throwable $e) {
             throw ValueNotConvertible::new($value, $this->getName(), previous: $e);
         }

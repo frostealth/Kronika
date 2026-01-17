@@ -24,6 +24,7 @@ use Kronika\Extension\JmsSerializer\Handlers\DateHandler;
 use Kronika\Extension\JmsSerializer\Handlers\DateTimeHandler;
 use Kronika\Extension\JmsSerializer\Handlers\DayOfMonthHandler;
 use Kronika\Extension\JmsSerializer\Handlers\DayOfWeekHandler;
+use Kronika\Extension\JmsSerializer\Handlers\DayOfYearHandler;
 use Kronika\Extension\JmsSerializer\Handlers\DurationHandler;
 use Kronika\Extension\JmsSerializer\Handlers\Handler;
 use Kronika\Extension\JmsSerializer\Handlers\HourHandler;
@@ -46,10 +47,10 @@ final class KronikaSubscribingHandler implements SubscribingHandlerInterface
     public static array $formats = [
         Date::class => DateHandler::FORMAT,
         Time::class => TimeHandler::FORMAT,
+        // DurationHandler::FORMAT_IN_SECONDS will be replaced with DurationHandler::FORMAT_TIME_INTERVAL
         Duration::class => DurationHandler::FORMAT_IN_SECONDS,
         LocalDateTime::class => DateTimeHandler::FORMAT_LOCAL,
-        // \DateTimeInterface::ATOM will be replaced with DateTimeHandler::FORMAT_ZONED
-        ZonedDateTime::class => \DateTimeInterface::ATOM,
+        ZonedDateTime::class => DateTimeHandler::FORMAT_ZONED,
     ];
 
     /** @var null|array<non-empty-string, Handler> */
@@ -91,11 +92,12 @@ final class KronikaSubscribingHandler implements SubscribingHandlerInterface
         $handlers = [
             new DateHandler(format: self::$formats[Date::class] ?? DateHandler::FORMAT),
             new YearHandler(), new MonthHandler(), new DayOfMonthHandler(), new DayOfWeekHandler(),
+            new DayOfYearHandler(),
 
             new TimeHandler(format: self::$formats[Time::class] ?? TimeHandler::FORMAT),
             new HourHandler(), new MinuteHandler(), new SecondHandler(),
 
-            new DurationHandler(format: self::$formats[Duration::class] ?? DurationHandler::FORMAT_IN_SECONDS),
+            new DurationHandler(format: self::$formats[Duration::class] ?? DurationHandler::FORMAT_TIME_INTERVAL),
             new InstantHandler(),
             new DateTimeHandler(
                 formatLocal: self::$formats[LocalDateTime::class] ?? DateTimeHandler::FORMAT_LOCAL,

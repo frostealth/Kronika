@@ -30,6 +30,7 @@ final readonly class TimeNormalizer implements Normalizer, Denormalizer
     ) {
     }
 
+    /** @psalm-suppress LessSpecificImplementedReturnType */
     #[\Override]
     public function getSupportedTypes(?string $format): array
     {
@@ -73,6 +74,7 @@ final readonly class TimeNormalizer implements Normalizer, Denormalizer
         return Time::ofFormat($this->getFormat($context), $data);
     }
 
+    /** @return non-empty-string */
     private function getFormat(array $context): string
     {
         return $context[self::KEY_FORMAT] ?? $this->format;

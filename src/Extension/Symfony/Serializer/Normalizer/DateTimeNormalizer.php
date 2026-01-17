@@ -38,6 +38,7 @@ final readonly class DateTimeNormalizer implements Normalizer, Denormalizer
     ) {
     }
 
+    /** @psalm-suppress LessSpecificImplementedReturnType */
     #[\Override]
     public function getSupportedTypes(?string $format): array
     {
@@ -57,7 +58,7 @@ final readonly class DateTimeNormalizer implements Normalizer, Denormalizer
     }
 
     #[\Override]
-    public function normalize(mixed $data, ?string $format = null, array $context = []): float|int|string
+    public function normalize(mixed $data, ?string $format = null, array $context = []): int|string
     {
         if (! $data instanceof DateTime) {
             throw new InvalidArgumentException(\sprintf(
@@ -78,26 +79,25 @@ final readonly class DateTimeNormalizer implements Normalizer, Denormalizer
     #[\Override]
     public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): DateTime
     {
-        if (! \is_float($data) && ! \is_string($data) && ! \is_int($data) || \trim($data) === '') {
+        if ((! \is_string($data) || \trim($data) === '') && ! \is_int($data)) {
             throw NotNormalizableValueException::createForUnexpectedDataType(
                 message: 'Unsupported type',
                 data: $data,
-                expectedTypes: ['float', 'integer', 'string'],
+                expectedTypes: ['string', 'integer'],
                 path: $context['deserialization_path'] ?? null,
             );
-        }
-        if (\is_float($data)) {
-            $data = \sprintf('%.06F', $data);
         }
 
         $format = $this->getFormat($type, $context);
 
+        /** @psalm-suppress ArgumentTypeCoercion */
         return match ($type) {
             LocalDateTime::class => LocalDateTime::ofFormat($format, (string)$data),
             ZonedDateTime::class => ZonedDateTime::ofFormat($format, (string)$data),
         };
     }
 
+    /** @return non-empty-string */
     private function getFormat(string $type, array $context): string
     {
         return match ($type) {

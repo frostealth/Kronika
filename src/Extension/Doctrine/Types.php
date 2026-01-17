@@ -24,6 +24,7 @@ final readonly class Types
         DoctrineType::addType(Types\Date\MonthType::NAME, Types\Date\MonthType::class);
         DoctrineType::addType(Types\Date\DayOfMonthType::NAME, Types\Date\DayOfMonthType::class);
         DoctrineType::addType(Types\Date\DayOfWeekType::NAME, Types\Date\DayOfWeekType::class);
+        DoctrineType::addType(Types\Date\DayOfYearType::NAME, Types\Date\DayOfYearType::class);
 
         DoctrineType::addType(Types\TimeType::NAME, Types\TimeType::class);
         DoctrineType::addType(Types\Time\HourType::NAME, Types\Time\HourType::class);

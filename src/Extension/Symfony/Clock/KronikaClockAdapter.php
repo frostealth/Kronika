@@ -51,6 +51,7 @@ final readonly class KronikaClockAdapter implements SymfonyClock
     #[\Override]
     public function withTimeZone(\DateTimeZone|string $timezone): static
     {
+        /** @psalm-suppress ArgumentTypeCoercion */
         $timezone = $timezone instanceof \DateTimeZone ? $timezone : new \DateTimeZone($timezone);
 
         return new self($this->clock, $timezone);

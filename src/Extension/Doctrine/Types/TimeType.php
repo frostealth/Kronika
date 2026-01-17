@@ -44,7 +44,7 @@ final class TimeType extends Type
         }
 
         try {
-            \assert(\is_string($value));
+            \assert(\is_string($value) && $value !== '');
 
             return Time::tryOfFormat($platform->getTimeFormatString(), $value) ?? Time::parse($value);
         } catch (\Throwable $e) {

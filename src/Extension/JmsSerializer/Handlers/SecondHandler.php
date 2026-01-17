@@ -41,6 +41,7 @@ final readonly class SecondHandler implements Handler
             return $visitor->visitNull($value, $type);
         }
 
+        /** @psalm-suppress InvalidArgument, PossiblyInvalidArgument */
         return Second::of(...\sscanf($value, '%d.%6d'));
     }
 }

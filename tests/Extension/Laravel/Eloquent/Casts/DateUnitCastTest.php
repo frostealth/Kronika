@@ -17,10 +17,12 @@ use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Kronika\Date\DateUnit;
 use Kronika\Date\DayOfMonth;
 use Kronika\Date\DayOfWeek;
+use Kronika\Date\DayOfYear;
 use Kronika\Date\Month;
 use Kronika\Date\Year;
 use Kronika\Extension\Laravel\Eloquent\Casts\AsDayOfMonth;
 use Kronika\Extension\Laravel\Eloquent\Casts\AsDayOfWeek;
+use Kronika\Extension\Laravel\Eloquent\Casts\AsDayOfYear;
 use Kronika\Extension\Laravel\Eloquent\Casts\AsMonth;
 use Kronika\Extension\Laravel\Eloquent\Casts\AsYear;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -31,6 +33,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(AsMonth::class)]
 #[CoversClass(AsDayOfMonth::class)]
 #[CoversClass(AsDayOfWeek::class)]
+#[CoversClass(AsDayOfYear::class)]
 final class DateUnitCastTest extends TestCase
 {
     public static function castProvider(): array
@@ -39,6 +42,7 @@ final class DateUnitCastTest extends TestCase
         $asMonth = new AsMonth();
         $asDayOfMonth = new AsDayOfMonth();
         $asDayOfWeek = new AsDayOfWeek();
+        $asDayOfYear = new AsDayOfYear();
 
         return [
             [$asYear, Year::of(2025)],
@@ -52,6 +56,9 @@ final class DateUnitCastTest extends TestCase
 
             [$asDayOfWeek, DayOfWeek::Sunday],
             [$asDayOfWeek, null],
+
+            [$asDayOfYear, DayOfYear::of(245)],
+            [$asDayOfYear, null],
         ];
     }
 

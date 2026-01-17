@@ -19,6 +19,7 @@ use Kronika\Extension\Symfony\Serializer\Normalizer\DateNormalizer;
 use Kronika\Extension\Symfony\Serializer\Normalizer\DateTimeNormalizer;
 use Kronika\Extension\Symfony\Serializer\Normalizer\DayOfMonthNormalizer;
 use Kronika\Extension\Symfony\Serializer\Normalizer\DayOfWeekNormalizer;
+use Kronika\Extension\Symfony\Serializer\Normalizer\DayOfYearNormalizer;
 use Kronika\Extension\Symfony\Serializer\Normalizer\DurationNormalizer;
 use Kronika\Extension\Symfony\Serializer\Normalizer\HourNormalizer;
 use Kronika\Extension\Symfony\Serializer\Normalizer\InstantNormalizer;
@@ -48,6 +49,7 @@ final readonly class KronikaNormalizers
         return [
             new DateNormalizer(format: $formats[Date::class] ?? DateNormalizer::DEFAULT_FORMAT),
             new YearNormalizer(), new MonthNormalizer(), new DayOfMonthNormalizer(), new DayOfWeekNormalizer(),
+            new DayOfYearNormalizer(),
 
             new TimeNormalizer(format: $formats[Time::class] ?? TimeNormalizer::DEFAULT_FORMAT),
             new HourNormalizer(), new MinuteNormalizer(), new SecondNormalizer(),

@@ -111,4 +111,34 @@ final class DurationNormalizerTest extends TestCase
         self::assertInstanceOf(Duration::class, $actual);
         self::assertEquals(self::duration(), $actual);
     }
+
+    public function testNormalizeTimeInterval(): void
+    {
+        $actual = self::$serializer->normalize(self::duration(), context: [
+            DurationNormalizer::KEY_FORMAT => DurationNormalizer::FORMAT_TIME_INTERVAL,
+        ]);
+
+        self::assertIsString($actual);
+        self::assertEquals(\sprintf(
+            '%02d:%02d:%02d.%06d',
+            self::duration()->inHours(),
+            self::duration()->minutes(),
+            self::duration()->seconds(),
+            self::duration()->microseconds(),
+        ), $actual);
+    }
+
+    public function testDenormalizeTimeInterval(): void
+    {
+        $actual = self::$serializer->denormalize(\sprintf(
+            '%02d:%02d:%02d.%06d',
+            self::duration()->inHours(),
+            self::duration()->minutes(),
+            self::duration()->seconds(),
+            self::duration()->microseconds(),
+        ), Duration::class, context: [DurationNormalizer::KEY_FORMAT => DurationNormalizer::FORMAT_TIME_INTERVAL]);
+
+        self::assertInstanceOf(Duration::class, $actual);
+        self::assertEquals(self::duration(), $actual);
+    }
 }

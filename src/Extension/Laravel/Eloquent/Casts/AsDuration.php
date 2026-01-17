@@ -18,10 +18,11 @@ use Illuminate\Database\Eloquent\Model;
 use Kronika\Duration;
 
 /**
- * @implements CastsAttributes<Duration, non-negative-int>
+ * @implements CastsAttributes<Duration, non-negative-int|non-empty-string>
  */
 final readonly class AsDuration implements CastsAttributes
 {
+    final public const string FORMAT_TIME_INTERVAL = 'time_interval';
     final public const string FORMAT_IN_SECONDS = 'in_seconds';
     final public const string FORMAT_IN_MINUTES = 'in_minutes';
     final public const string FORMAT_IN_HOURS = 'in_hours';
@@ -29,7 +30,7 @@ final readonly class AsDuration implements CastsAttributes
 
     /** @param self::FORMAT_* $format */
     public function __construct(
-        private string $format = self::FORMAT_IN_SECONDS,
+        private string $format = self::FORMAT_TIME_INTERVAL,
     ) {
     }
 
@@ -39,11 +40,17 @@ final readonly class AsDuration implements CastsAttributes
         if ($value === null) {
             return null;
         }
-        if (! \is_int($value) || $value < 0) {
+        if ((! \is_int($value) || $value < 0) && (! \is_string($value) || $value === '')) {
             throw new \InvalidArgumentException('Invalid value');
         }
 
         return match($this->format) {
+            self::FORMAT_TIME_INTERVAL => (static function (string $value): Duration {
+                \sscanf($value, '%d:%d:%d.%6d', $hours, $minutes, $seconds, $micros);
+
+                /** @psalm-suppress InvalidScalarArgument */
+                return Duration::of(hours: $hours, minutes: $minutes, seconds: $seconds, micros: $micros);
+            })($value),
             self::FORMAT_IN_SECONDS => Duration::of(seconds: $value),
             self::FORMAT_IN_MINUTES => Duration::of(minutes: $value),
             self::FORMAT_IN_HOURS => Duration::of(hours: $value),
@@ -52,7 +59,7 @@ final readonly class AsDuration implements CastsAttributes
     }
 
     #[\Override]
-    public function set(Model $model, string $key, mixed $value, array $attributes): ?int
+    public function set(Model $model, string $key, mixed $value, array $attributes): null|int|string
     {
         if ($value === null) {
             return null;
@@ -62,6 +69,13 @@ final readonly class AsDuration implements CastsAttributes
         }
 
         return match($this->format) {
+            self::FORMAT_TIME_INTERVAL => \sprintf(
+                '%02d:%02d:%02d.%06d',
+                $value->inHours(),
+                $value->minutes(),
+                $value->seconds(),
+                $value->microseconds(),
+            ),
             self::FORMAT_IN_SECONDS => $value->inSeconds(),
             self::FORMAT_IN_MINUTES => $value->inMinutes(),
             self::FORMAT_IN_HOURS => $value->inHours(),

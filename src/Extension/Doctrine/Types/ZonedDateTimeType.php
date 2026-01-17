@@ -44,7 +44,7 @@ final class ZonedDateTimeType extends Type
         }
 
         try {
-            \assert(\is_string($value));
+            \assert(\is_string($value) && $value !== '');
 
             return ZonedDateTime::tryOfFormat($platform->getDateTimeTzFormatString(), $value)
                 ?? ZonedDateTime::parse($value);

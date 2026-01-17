@@ -23,7 +23,7 @@ use Kronika\Time\TimeUnit;
  * @template TUnit of DateUnit|TimeUnit|Instant
  * @template TValue of numeric
  *
- * @implements CastsAttributes<TUnit, TValue>
+ * @implements CastsAttributes<TValue, TUnit>
  * @internal
  * @psalm-internal Kronika\Extension\Laravel\Eloquent\Casts
  */

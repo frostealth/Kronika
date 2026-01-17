@@ -19,15 +19,15 @@ use Kronika\Duration;
 
 final readonly class DurationHandler implements Handler
 {
+    final public const string FORMAT_TIME_INTERVAL = 'time_interval';
     final public const string FORMAT_IN_SECONDS = 'in_seconds';
     final public const string FORMAT_IN_MINUTES = 'in_minutes';
     final public const string FORMAT_IN_HOURS = 'in_hours';
     final public const string FORMAT_IN_DAYS = 'in_days';
     final public const string FORMAT_ARRAY = 'array';
 
-    /** @param self::FORMAT_* $format */
     public function __construct(
-        private string $format = self::FORMAT_IN_SECONDS,
+        private string $format = self::FORMAT_TIME_INTERVAL,
     ) {
     }
 
@@ -37,13 +37,20 @@ final readonly class DurationHandler implements Handler
         return [Duration::class, 'KronikaDuration'];
     }
 
-    public function serialize(SerializationVisitor $visitor, ?Duration $duration, array $type): null|int|array
+    public function serialize(SerializationVisitor $visitor, ?Duration $duration, array $type): null|array|int|string
     {
         if ($duration === null) {
             return $visitor->visitNull($duration, $type);
         }
 
         return match($this->getFormat($type)) {
+            self::FORMAT_TIME_INTERVAL => $visitor->visitString(\sprintf(
+                '%02d:%02d:%02d.%06d',
+                $duration->inHours(),
+                $duration->minutes(),
+                $duration->seconds(),
+                $duration->microseconds(),
+            ), $type),
             self::FORMAT_IN_SECONDS => $visitor->visitInteger($duration->inSeconds(), $type),
             self::FORMAT_IN_MINUTES => $visitor->visitInteger($duration->inMinutes(), $type),
             self::FORMAT_IN_HOURS => $visitor->visitInteger($duration->inHours(), $type),
@@ -58,7 +65,7 @@ final readonly class DurationHandler implements Handler
         };
     }
 
-    public function deserialize(DeserializationVisitor $visitor, null|int|array $value, array $type): ?Duration
+    public function deserialize(DeserializationVisitor $visitor, null|array|int|string $value, array $type): ?Duration
     {
         if ($value === null) {
             return $visitor->visitNull($value, $type);
@@ -66,15 +73,23 @@ final readonly class DurationHandler implements Handler
 
         $format = $this->getFormat($type);
         $value = match($format) {
+            self::FORMAT_TIME_INTERVAL => $visitor->visitString($value, $type),
             self::FORMAT_ARRAY => $value,
             default => $visitor->visitInteger($value, $type),
         };
 
-        if ($value === null || $value === []) {
+        if ($value === null || $value === '' || $value === []) {
             return $visitor->visitNull($value, $type);
         }
 
+        /** @psalm-suppress InvalidArgument, PossiblyInvalidArgument */
         return match($format) {
+            self::FORMAT_TIME_INTERVAL => (static function (string $value): Duration {
+                \sscanf($value, '%d:%d:%d.%6d', $hours, $minutes, $seconds, $micros);
+
+                /** @psalm-suppress InvalidScalarArgument */
+                return Duration::of(hours: $hours, minutes: $minutes, seconds: $seconds, micros: $micros);
+            })($value),
             self::FORMAT_IN_SECONDS => Duration::of(seconds: $value),
             self::FORMAT_IN_MINUTES => Duration::of(minutes: $value),
             self::FORMAT_IN_HOURS => Duration::of(hours: $value),

@@ -19,7 +19,7 @@ use Kronika\Duration;
 
 /**
  * @psalm-type TValue=non-negative-int
- * @psalm-type TArrayDuration=array{days: TValue, hours: TValue, minutes: TValue, seconds:TValue}
+ * @psalm-type TArrayDuration=array{days: TValue, hours: TValue, minutes: TValue, seconds:TValue, micros:TValue}
  *
  * @implements CastsAttributes<Duration, TArrayDuration>
  */
@@ -53,6 +53,7 @@ final readonly class AsArrayDuration implements CastsAttributes
             'hours' => $value->hours(),
             'minutes' => $value->minutes(),
             'seconds' => $value->seconds(),
+            'micros' => $value->microseconds(),
         ];
     }
 }

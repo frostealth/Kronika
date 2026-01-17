@@ -41,15 +41,16 @@ final class Foo extends ActiveRecord
 ```
 Database column type for:
 - `Date`            -> string
-- `Date\Year`       -> integer (small int)
+- `Date\Year`       -> integer (tiny int)
 - `Date\Month`      -> integer (unsigned tiny int)
 - `Date\DayOfMonth` -> integer (unsigned tiny int)
 - `Date\DayOfWeek`  -> integer (unsigned tiny int)
+- `Date\DayOfYear`  -> integer (unsigned tiny int)
 - `Time`            -> string
 - `Time\Hour`       -> integer (unsigned tiny int)
 - `Time\Minute`     -> integer (unsigned tiny int)
 - `Time\Second`     -> float (unsigned tiny float)
-- `Duration`        -> integer (unsigned int)
+- `Duration`        -> string | integer (unsigned int)
 - `Instant`         -> float
 - `LocalDateTime`   -> string or datetime without time-zone
 - `ZonedDateTime`   -> string or datetime with time-zone

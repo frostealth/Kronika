@@ -48,6 +48,11 @@ final readonly class Foo
         #[Type('KronikaDayOfWeek')]
         public Date\DayOfWeek $dayOfWeekAlias,
 
+        #[Type(Date\DayOfYear::class)]
+        public Date\DayOfYear $dayOfYear,
+        #[Type('KronikaDayOfYear')]
+        public Date\DayOfYear $dayOfYearAlias,
+
         #[Type(Date\DayOfMonth::class)]
         public Date\DayOfMonth $dayOfMonth,
         #[Type('KronikaDayOfMonth')]
@@ -77,12 +82,14 @@ final readonly class Foo
         #[Type('KronikaSecond')]
         public Time\Second $secondAlias,
 
-        #[Type(Duration::class)]
-        public Duration $duration,
+        #[Type(Duration::class . "<'in_seconds'>")]
+        public Duration $durationInSeconds,
         #[Type(Duration::class . "<'in_hours'>")]
         public Duration $durationInHours,
         #[Type(Duration::class . "<'array'>")]
         public Duration $durationArray,
+        #[Type(Duration::class . "<'time_interval'>")]
+        public Duration $durationTimeInterval,
         #[Type('KronikaDuration')]
         public Duration $durationAlias,
 

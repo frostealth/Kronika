@@ -13,16 +13,16 @@ declare(strict_types=1);
 
 namespace Kronika\Extension\Laravel\Eloquent\Casts;
 
-use Kronika\Date\DayOfWeek;
+use Kronika\Date\DayOfYear;
 
 /**
- * @extends CastsSimpleUnit<DayOfWeek, int<1, 7>>
+ * @extends CastsSimpleUnit<DayOfYear, int<1, 366>>
  */
-final readonly class AsDayOfWeek extends CastsSimpleUnit
+final readonly class AsDayOfYear extends CastsSimpleUnit
 {
     #[\Override]
     protected static function factory(): callable
     {
-        return DayOfWeek::of(...);
+        return DayOfYear::of(...);
     }
 }

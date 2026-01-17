@@ -27,8 +27,15 @@ final class DurationCastTest extends TestCase
         $duration = Duration::of(days: 21, hours: 20, minutes: 30, seconds: 45);
 
         return [
-            [new AsDuration(), $duration, $duration->inSeconds(), $duration],
-            [new AsDuration(), null, null, null],
+            [new AsDuration(), $duration, \sprintf(
+                '%02d:%02d:%02d.%06d',
+                $duration->inHours(),
+                $duration->minutes(),
+                $duration->seconds(),
+                $duration->microseconds(),
+            ), $duration],
+            [new AsDuration(format: AsDuration::FORMAT_IN_SECONDS), $duration, $duration->inSeconds(), $duration],
+            [new AsDuration(format: AsDuration::FORMAT_IN_SECONDS), null, null, null],
             [new AsDuration(format: AsDuration::FORMAT_IN_MINUTES), $duration, $duration->inMinutes(), $duration->roundToMinutes()],
             [new AsDuration(format: AsDuration::FORMAT_IN_HOURS), $duration, $duration->inHours(), $duration->roundToHours()],
             [new AsDuration(format: AsDuration::FORMAT_IN_DAYS), $duration, $duration->inDays(), $duration->roundToDays()],
@@ -36,7 +43,7 @@ final class DurationCastTest extends TestCase
     }
 
     #[DataProvider('castProvider')]
-    public function testCast(AsDuration $cast, null|Duration $duration, null|int $value, null|Duration $expected): void
+    public function testCast(AsDuration $cast, null|Duration $duration, null|int|string $value, null|Duration $expected): void
     {
         static $model = new Foo();
         static $key = 'duration';

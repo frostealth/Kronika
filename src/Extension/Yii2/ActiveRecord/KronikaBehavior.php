@@ -79,22 +79,23 @@ use yii\db\BaseActiveRecord;
  *
  * Database column type for:
  * - Date            -> string
- * - Date\Year       -> integer (unsigned tiny int)
+ * - Date\Year       -> integer (tiny int)
  * - Date\Month      -> integer (unsigned tiny int)
  * - Date\DayOfMonth -> integer (unsigned tiny int)
  * - Date\DayOfWeek  -> integer (unsigned tiny int)
+ * - Date\DayOfYear  -> integer (unsigned tiny int)
  * - Time            -> string
  * - Time\Hour       -> integer (unsigned tiny int)
  * - Time\Minute     -> integer (unsigned tiny int)
  * - Time\Second     -> float (unsigned tiny float)
- * - Duration        -> integer (unsigned int)
+ * - Duration        -> string | integer (unsigned int)
  * - Instant         -> float
  * - LocalDateTime   -> string (datetime without time-zone)
  * - ZonedDateTime   -> string (datetime with time-zone)
  * - \DateTimeZone   -> string
  *
  * @psalm-type TAttributeName=non-empty-string
- * @psalm-type TFormattable=Date|Time|LocalDateTime|ZonedDateTime
+ * @psalm-type TFormattable=Date|Time|LocalDateTime|ZonedDateTime|Duration
  * @psalm-type TFormatOptions=array<class-string<TFormattable>, non-empty-string>
  * @psalm-type TForcedTimezone=null|\DateTimeZone|callable(): ?\DateTimeZone
  * @psalm-type TTimezoneOptions=array{store?: bool, suffix?: non-empty-string, force?: TForcedTimezone}
@@ -103,12 +104,16 @@ use yii\db\BaseActiveRecord;
  */
 final class KronikaBehavior extends Behavior
 {
+    public const string DURATION_FORMAT_TIME_INTERVAL = 'time-interval';  // "hhh:mm:ss.sss"
+    public const string DURATION_FORMAT_IN_SECONDS = 'in-seconds';
+
     /** @var TFormatOptions */
     public static array $defaultFormats = [
         Date::class => 'Y-m-d',
         Time::class => 'H:i:s.u',
         LocalDateTime::class => 'Y-m-d\TH:i:s.u',
         ZonedDateTime::class => 'Y-m-d\TH:i:s.uP',
+        Duration::class => self::DURATION_FORMAT_TIME_INTERVAL,
     ];
 
     /** @var TTimezoneOptions */
@@ -236,9 +241,11 @@ final class KronikaBehavior extends Behavior
     private function assertAttributes(BaseActiveRecord $owner): void
     {
         static $supportedTypes = [
-            Date::class, Date\Year::class, Date\Month::class, Date\DayOfMonth::class, Date\DayOfWeek::class,
+            Date::class, Date\Year::class, Date\Month::class, Date\DayOfMonth::class,
+            Date\DayOfWeek::class, Date\DayOfYear::class,
             Time::class, Time\Hour::class, Time\Minute::class, Time\Second::class,
-            Duration::class, Instant::class, LocalDateTime::class, ZonedDateTime::class,
+            Duration::class, Instant::class,
+            LocalDateTime::class, ZonedDateTime::class,
             \DateTimeZone::class,
         ];
 
@@ -307,12 +314,19 @@ final class KronikaBehavior extends Behavior
             $obj instanceof Date\Year,
             $obj instanceof Date\Month,
             $obj instanceof Date\DayOfMonth,
-            $obj instanceof Date\DayOfWeek => $obj->number(),
+            $obj instanceof Date\DayOfWeek,
+            $obj instanceof Date\DayOfYear => $obj->number(),
             $obj instanceof Time => $obj->format($this->getFormatFor(Time::class)),
             $obj instanceof Time\Hour,
             $obj instanceof Time\Minute,
             $obj instanceof Time\Second => $obj->value(),
-            $obj instanceof Duration => $obj->inSeconds(),
+            $obj instanceof Duration => match ($this->getFormatFor(Duration::class)) {
+                self::DURATION_FORMAT_TIME_INTERVAL => \sprintf(
+                    '%02d:%02d:%02d.%06d',
+                    $obj->inHours(), $obj->minutes(), $obj->seconds(), $obj->microseconds(),
+                ),
+                self::DURATION_FORMAT_IN_SECONDS => $obj->inSeconds(),
+            },
             $obj instanceof Instant => $obj->value(),
             $obj instanceof LocalDateTime => $obj->format($this->getFormatFor(LocalDateTime::class)),
             $obj instanceof ZonedDateTime => $obj->format($this->getFormatFor(ZonedDateTime::class)),
@@ -330,6 +344,7 @@ final class KronikaBehavior extends Behavior
      */
     private function toObject(string $attributeName, float|int|string $value): object
     {
+        /** @psalm-suppress InvalidArgument, PossiblyInvalidArgument */
         return match ($this->getTypeOf($attributeName)) {
             Date::class            => Date::tryOfFormat(
                 format: $this->getFormatFor(Date::class),
@@ -339,6 +354,7 @@ final class KronikaBehavior extends Behavior
             Date\Month::class      => Date\Month::of((int)$value),
             Date\DayOfMonth::class => Date\DayOfMonth::of((int)$value),
             Date\DayOfWeek::class  => Date\DayOfWeek::of((int)$value),
+            Date\DayOfYear::class  => Date\DayOfYear::of((int)$value),
             Time::class            => Time::tryOfFormat(
                 format: $this->getFormatFor(Time::class),
                 time: (string)$value,
@@ -346,7 +362,15 @@ final class KronikaBehavior extends Behavior
             Time\Hour::class       => Time\Hour::of((int)$value),
             Time\Minute::class     => Time\Minute::of((int)$value),
             Time\Second::class     => Time\Second::of(...\sscanf((string)$value, '%d.%6d')),
-            Duration::class        => Duration::of(seconds: (int)$value),
+            Duration::class        => match ($this->getFormatFor(Duration::class)) {
+                self::DURATION_FORMAT_TIME_INTERVAL => (static function (string $value): Duration {
+                    \sscanf($value, '%d:%d:%d.%6d', $hours, $minutes, $seconds, $micros);
+
+                    /** @psalm-suppress InvalidScalarArgument */
+                    return Duration::of(hours: $hours, minutes: $minutes, seconds: $seconds, micros: $micros);
+                })((string)$value),
+                self::DURATION_FORMAT_IN_SECONDS => Duration::of((int)$value),
+            },
             Instant::class         => Instant::ofValue($value),
             LocalDateTime::class   => LocalDateTime::tryOfFormat(
                 format: $this->getFormatFor(LocalDateTime::class),

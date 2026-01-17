@@ -41,6 +41,7 @@ final readonly class InstantHandler implements Handler
             return $visitor->visitNull($value, $type);
         }
 
+        /** @psalm-suppress InvalidArgument, PossiblyInvalidArgument */
         return Instant::ofValue($value);
     }
 }

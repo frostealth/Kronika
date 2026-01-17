@@ -24,6 +24,7 @@ final readonly class AsSecond extends CastsSimpleUnit
     #[\Override]
     protected static function factory(): callable
     {
+        /** @psalm-suppress InvalidScalarArgument */
         return static fn (float $value): Second => Second::of(...\sscanf((string)$value, '%d.%6d'));
     }
 }

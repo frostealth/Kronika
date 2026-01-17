@@ -11,43 +11,40 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Kronika\Extension\Doctrine\Types;
+namespace Kronika\Extension\Doctrine\Types\Date;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Exception\InvalidType;
 use Doctrine\DBAL\Types\Exception\ValueNotConvertible;
 use Doctrine\DBAL\Types\Type;
-use Kronika\LocalDateTime;
+use Kronika\Date\DayOfYear;
 
-final class LocalDateTimeType extends Type
+final class DayOfYearType extends Type
 {
-    final public const string NAME = 'kronika.local-datetime';
+    final public const string NAME = 'kronika.day-of-year';
 
     #[\Override]
-    public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): ?string
+    public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): ?int
     {
         if ($value === null) {
             return null;
         }
-        if (! $value instanceof LocalDateTime) {
-            throw InvalidType::new($value, $this->getName(), ['null', LocalDateTime::class]);
+        if (! $value instanceof DayOfYear) {
+            throw InvalidType::new($value, $this->getName(), ['null', DayOfYear::class]);
         }
 
-        return $value->format($platform->getDateTimeFormatString());
+        return $value->number();
     }
 
     #[\Override]
-    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): ?LocalDateTime
+    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): ?DayOfYear
     {
         if ($value === null) {
             return null;
         }
 
         try {
-            \assert(\is_string($value && $value !== ''));
-
-            return LocalDateTime::tryOfFormat($platform->getDateTimeFormatString(), $value)
-                ?? LocalDateTime::parse($value);
+            return DayOfYear::of($value);
         } catch (\Throwable $e) {
             throw ValueNotConvertible::new($value, $this->getName(), previous: $e);
         }
@@ -56,7 +53,7 @@ final class LocalDateTimeType extends Type
     #[\Override]
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getDateTimeTypeDeclarationSQL($column);
+        return $platform->getSmallIntTypeDeclarationSQL($column);
     }
 
     public function getName(): string

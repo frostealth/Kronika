@@ -44,7 +44,7 @@ final class DateType extends Type
         }
 
         try {
-            \assert(\is_string($value));
+            \assert(\is_string($value) && $value !== '');
 
             return Date::tryOfFormat($platform->getDateTimeFormatString(), $value) ?? Date::parse($value);
         } catch (\Throwable $e) {

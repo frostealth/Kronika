@@ -15,10 +15,12 @@ namespace Kronika\Extension\Tests\Symfony\Serializer\Normalizer;
 
 use Kronika\Date\DayOfMonth;
 use Kronika\Date\DayOfWeek;
+use Kronika\Date\DayOfYear;
 use Kronika\Date\Month;
 use Kronika\Date\Year;
 use Kronika\Extension\Symfony\Serializer\Normalizer\DayOfMonthNormalizer;
 use Kronika\Extension\Symfony\Serializer\Normalizer\DayOfWeekNormalizer;
+use Kronika\Extension\Symfony\Serializer\Normalizer\DayOfYearNormalizer;
 use Kronika\Extension\Symfony\Serializer\Normalizer\MonthNormalizer;
 use Kronika\Extension\Symfony\Serializer\Normalizer\YearNormalizer;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -29,6 +31,7 @@ use Symfony\Component\Serializer\Serializer;
 #[CoversClass(MonthNormalizer::class)]
 #[CoversClass(DayOfMonthNormalizer::class)]
 #[CoversClass(DayOfWeekNormalizer::class)]
+#[CoversClass(DayOfYearNormalizer::class)]
 final class DateUnitNormalizersTest extends TestCase
 {
     private static Serializer $serializer;
@@ -36,6 +39,7 @@ final class DateUnitNormalizersTest extends TestCase
     private static Month $month;
     private static DayOfMonth $dayOfMonth;
     private static DayOfWeek $dayOfWeek;
+    private static DayOfYear $dayOfYear;
 
     #[\Override]
     public static function setUpBeforeClass(): void
@@ -44,6 +48,7 @@ final class DateUnitNormalizersTest extends TestCase
         self::$month = Month::April;
         self::$dayOfMonth = DayOfMonth::of(04);
         self::$dayOfWeek = DayOfWeek::Wednesday;
+        self::$dayOfYear = DayOfYear::of(321);
 
         self::$serializer = new Serializer(
             normalizers: [
@@ -51,6 +56,7 @@ final class DateUnitNormalizersTest extends TestCase
                 new MonthNormalizer(),
                 new DayOfMonthNormalizer(),
                 new DayOfWeekNormalizer(),
+                new DayOfYearNormalizer(),
             ],
         );
     }
@@ -117,5 +123,21 @@ final class DateUnitNormalizersTest extends TestCase
 
         self::assertInstanceOf(DayOfWeek::class, $actual);
         self::assertEquals(self::$dayOfWeek, $actual);
+    }
+
+    public function testDayOfYearNormalize(): void
+    {
+        $actual = self::$serializer->normalize(self::$dayOfYear);
+
+        self::assertIsNumeric($actual);
+        self::assertEquals(self::$dayOfYear->number(), $actual);
+    }
+
+    public function testDayOfYearDenormalize(): void
+    {
+        $actual = self::$serializer->denormalize(self::$dayOfYear->number(), DayOfYear::class);
+
+        self::assertInstanceOf(DayOfYear::class, $actual);
+        self::assertEquals(self::$dayOfYear, $actual);
     }
 }

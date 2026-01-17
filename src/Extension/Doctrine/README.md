@@ -23,6 +23,7 @@ doctrine:
       kronika.month: Kronika\Extension\Doctrine\Types\Date\MonthType
       kronika.day-of-month: Kronika\Extension\Doctrine\Types\Date\DayOfMonthType
       kronika.day-of-week: Kronika\Extension\Doctrine\Types\Date\DayOfWeekType
+      kronika.day-of-year: Kronika\Extension\Doctrine\Types\Date\DayOfYearType
       kronika.time: Kronika\Extension\Doctrine\Types\TimeType
       kronika.hour: Kronika\Extension\Doctrine\Types\Time\HourType
       kronika.minute: Kronika\Extension\Doctrine\Types\Time\MinuteType

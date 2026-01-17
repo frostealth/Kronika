@@ -16,7 +16,7 @@ namespace Kronika\Extension\Laravel\Eloquent\Casts;
 use Kronika\Date\DayOfMonth;
 
 /**
- * @extends CastsSimpleUnit<DayOfMonth, non-negative-int>
+ * @extends CastsSimpleUnit<DayOfMonth, int<1, 12>>
  */
 final readonly class AsDayOfMonth extends CastsSimpleUnit
 {

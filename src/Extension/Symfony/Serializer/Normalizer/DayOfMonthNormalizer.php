@@ -21,6 +21,7 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface as Normalizer;
 
 final readonly class DayOfMonthNormalizer implements Normalizer, Denormalizer
 {
+    /** @psalm-suppress LessSpecificImplementedReturnType */
     #[\Override]
     public function getSupportedTypes(?string $format): array
     {
@@ -61,6 +62,7 @@ final readonly class DayOfMonthNormalizer implements Normalizer, Denormalizer
             );
         }
 
+        /** @psalm-suppress InvalidArgument, PossiblyInvalidArgument */
         return DayOfMonth::of($data);
     }
 }

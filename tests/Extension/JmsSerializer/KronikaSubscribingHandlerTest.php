@@ -76,6 +76,8 @@ final class KronikaSubscribingHandlerTest extends TestCase
             dayOfMonthAlias: Date\DayOfMonth::of(24),
             dayOfWeek: Date\DayOfWeek::Sunday,
             dayOfWeekAlias: Date\DayOfWeek::Monday,
+            dayOfYear: Date\DayOfYear::of(245),
+            dayOfYearAlias: Date\DayOfYear::of(302),
             time: Time::of(12, 35, Time\Second::of(55, 999)),
             timeFormatted:Time::of(12, 30, Time\Second::of(50, 555)),
             timeAlias: Time::of(12, 25, Time\Second::of(45, 455)),
@@ -86,9 +88,10 @@ final class KronikaSubscribingHandlerTest extends TestCase
             minuteAlias: Time\Minute::of(50),
             second: Time\Second::of(45, 6789),
             secondAlias: Time\Second::of(40, 5555),
-            duration: Duration::of(days: 1, hours: 2, minutes: 25, seconds: 99),
+            durationInSeconds: Duration::of(days: 1, hours: 2, minutes: 25, seconds: 99),
             durationInHours: Duration::of(days: 1, hours: 2, minutes: 25, seconds: 99),
             durationArray: Duration::of(days: 1, hours: 2, minutes: 25, seconds: 99, micros: 123),
+            durationTimeInterval: Duration::of(days: 1, hours: 2, minutes: 25, seconds: 99, micros: 123),
             durationAlias: Duration::of(days: 1, hours: 1, minutes: 25, seconds: 80),
             instant: Instant::of(123456789, 54321),
             instantAlias: Instant::of(123456780, 54310),
@@ -111,40 +114,50 @@ final class KronikaSubscribingHandlerTest extends TestCase
         $serialized = $this->serializer->toArray($this->entry);
         $unserialized = $this->serializer->fromArray($serialized, Foo::class);
 
-        self::assertSame($this->entry->date, $unserialized->date);
+        self::assertEquals($this->entry->date, $unserialized->date);
         self::assertEquals($this->entry->dateFormatted, $unserialized->dateFormatted);
         self::assertEquals($this->entry->dateFormatted->format('F jS, Y'), $serialized['dateFormatted']);
-        self::assertSame($this->entry->dateAlias, $unserialized->dateAlias);
+        self::assertEquals($this->entry->dateAlias, $unserialized->dateAlias);
         self::assertEquals($this->entry->dateAliasFormatted, $unserialized->dateAliasFormatted);
         self::assertEquals($this->entry->dateAliasFormatted->format('F jS, Y'), $serialized['dateAliasFormatted']);
 
-        self::assertSame($this->entry->year, $unserialized->year);
-        self::assertSame($this->entry->yearAlias, $unserialized->yearAlias);
-        self::assertSame($this->entry->month, $unserialized->month);
-        self::assertSame($this->entry->monthAlias, $unserialized->monthAlias);
-        self::assertSame($this->entry->dayOfMonth, $unserialized->dayOfMonth);
-        self::assertSame($this->entry->dayOfMonthAlias, $unserialized->dayOfMonthAlias);
-        self::assertSame($this->entry->dayOfWeek, $unserialized->dayOfWeek);
-        self::assertSame($this->entry->dayOfWeekAlias, $unserialized->dayOfWeekAlias);
+        self::assertEquals($this->entry->year, $unserialized->year);
+        self::assertEquals($this->entry->yearAlias, $unserialized->yearAlias);
+        self::assertEquals($this->entry->month, $unserialized->month);
+        self::assertEquals($this->entry->monthAlias, $unserialized->monthAlias);
+        self::assertEquals($this->entry->dayOfMonth, $unserialized->dayOfMonth);
+        self::assertEquals($this->entry->dayOfMonthAlias, $unserialized->dayOfMonthAlias);
+        self::assertEquals($this->entry->dayOfWeek, $unserialized->dayOfWeek);
+        self::assertEquals($this->entry->dayOfWeekAlias, $unserialized->dayOfWeekAlias);
+        self::assertEquals($this->entry->dayOfYear, $unserialized->dayOfYear);
+        self::assertEquals($this->entry->dayOfYearAlias, $unserialized->dayOfYearAlias);
 
-        self::assertSame($this->entry->time, $unserialized->time);
+        self::assertEquals($this->entry->time, $unserialized->time);
         self::assertEquals($this->entry->timeFormatted->resetMicro(), $unserialized->timeFormatted);
         self::assertEquals($this->entry->timeFormatted->format('H/i/s'), $serialized['timeFormatted']);
-        self::assertSame($this->entry->timeAlias, $unserialized->timeAlias);
+        self::assertEquals($this->entry->timeAlias, $unserialized->timeAlias);
         self::assertEquals($this->entry->timeAliasFormatted->resetMicro(), $unserialized->timeAliasFormatted);
         self::assertEquals($this->entry->timeAliasFormatted->format('H/i/s'), $serialized['timeAliasFormatted']);
 
-        self::assertSame($this->entry->hour, $unserialized->hour);
-        self::assertSame($this->entry->hourAlias, $unserialized->hourAlias);
-        self::assertSame($this->entry->minute, $unserialized->minute);
-        self::assertSame($this->entry->minuteAlias, $unserialized->minuteAlias);
-        self::assertSame($this->entry->second, $unserialized->second);
-        self::assertSame($this->entry->secondAlias, $unserialized->secondAlias);
+        self::assertEquals($this->entry->hour, $unserialized->hour);
+        self::assertEquals($this->entry->hourAlias, $unserialized->hourAlias);
+        self::assertEquals($this->entry->minute, $unserialized->minute);
+        self::assertEquals($this->entry->minuteAlias, $unserialized->minuteAlias);
+        self::assertEquals($this->entry->second, $unserialized->second);
+        self::assertEquals($this->entry->secondAlias, $unserialized->secondAlias);
 
-        self::assertSame($this->entry->duration, $unserialized->duration);
+        self::assertEquals($this->entry->durationInSeconds, $unserialized->durationInSeconds);
         self::assertEquals($this->entry->durationInHours->roundToHours(), $unserialized->durationInHours);
         self::assertEquals($this->entry->durationInHours->inHours(), $serialized['durationInHours']);
-        self::assertSame($this->entry->durationArray, $unserialized->durationArray);
+        self::assertEquals($this->entry->durationTimeInterval, $unserialized->durationTimeInterval);
+        self::assertEquals(\sprintf(
+            '%02d:%02d:%02d.%06d',
+            $this->entry->durationTimeInterval->inHours(),
+            $this->entry->durationTimeInterval->minutes(),
+            $this->entry->durationTimeInterval->seconds(),
+            $this->entry->durationTimeInterval->microseconds(),
+        ), $serialized['durationTimeInterval']);
+        self::assertEquals($this->entry->durationArray, $unserialized->durationArray);
         self::assertEquals([
             'days' => $this->entry->durationArray->days(),
             'hours' => $this->entry->durationArray->hours(),
@@ -152,25 +165,25 @@ final class KronikaSubscribingHandlerTest extends TestCase
             'seconds' => $this->entry->durationArray->seconds(),
             'micros' => $this->entry->durationArray->microseconds(),
         ], $serialized['durationArray']);
-        self::assertSame($this->entry->durationAlias, $unserialized->durationAlias);
+        self::assertEquals($this->entry->durationAlias, $unserialized->durationAlias);
 
-        self::assertSame($this->entry->instant, $unserialized->instant);
-        self::assertSame($this->entry->instantAlias, $unserialized->instantAlias);
+        self::assertEquals($this->entry->instant, $unserialized->instant);
+        self::assertEquals($this->entry->instantAlias, $unserialized->instantAlias);
 
-        self::assertSame($this->entry->localDateTime, $unserialized->localDateTime);
+        self::assertEquals($this->entry->localDateTime, $unserialized->localDateTime);
         self::assertEquals($this->entry->localDateTimeFormatted, $unserialized->localDateTimeFormatted);
         self::assertEquals(
             $this->entry->localDateTimeFormatted->format('F jS, Y, H:i:s'),
             $serialized['localDateTimeFormatted'],
         );
-        self::assertSame($this->entry->localDateTimeAlias, $unserialized->localDateTimeAlias);
+        self::assertEquals($this->entry->localDateTimeAlias, $unserialized->localDateTimeAlias);
         self::assertEquals($this->entry->localDateTimeAliasFormatted, $unserialized->localDateTimeAliasFormatted);
         self::assertEquals(
             $this->entry->localDateTimeAliasFormatted->format('F jS, Y, H:i'),
             $serialized['localDateTimeAliasFormatted'],
         );
 
-        self::assertSame($this->entry->zonedDateTime, $unserialized->zonedDateTime);
+        self::assertEquals($this->entry->zonedDateTime, $unserialized->zonedDateTime);
         self::assertEquals($this->entry->zonedDateTimeFormatted, $unserialized->zonedDateTimeFormatted);
         self::assertEquals(
             $this->entry->zonedDateTimeFormatted->format(\DateTimeInterface::RSS),
@@ -180,7 +193,7 @@ final class KronikaSubscribingHandlerTest extends TestCase
         self::assertEquals((int)$this->entry->zonedDateTimeTs->format('U'), $serialized['zonedDateTimeTs']);
         self::assertEquals($this->entry->zonedDateTimeTsMicro, $unserialized->zonedDateTimeTsMicro);
         self::assertEquals($this->entry->zonedDateTimeTsMicro->format('U.u'), $serialized['zonedDateTimeTsMicro']);
-        self::assertSame($this->entry->zonedDateTimeAlias, $unserialized->zonedDateTimeAlias);
+        self::assertEquals($this->entry->zonedDateTimeAlias, $unserialized->zonedDateTimeAlias);
         self::assertEquals($this->entry->zonedDateTimeAliasFormatted->resetMicro(), $unserialized->zonedDateTimeAliasFormatted);
         self::assertEquals(
             $this->entry->zonedDateTimeAliasFormatted->format(\DateTimeInterface::RSS),
