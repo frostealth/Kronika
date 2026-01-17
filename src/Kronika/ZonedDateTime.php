@@ -591,13 +591,10 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
 
     private function localize(DateTime|Unit|Native $datetime): DateTime
     {
-        if ($datetime instanceof LocalDateTime) {
-            return $datetime;
-        }
-        if ($datetime instanceof Unit) {
-            return $this->with($datetime);
-        }
-
-        return self::ofDateTime($datetime)->shift($this->timezone());
+        return match (true) {
+            $datetime instanceof Native => self::ofDateTime($datetime)->shift($this->timezone()),
+            $datetime instanceof LocalDateTime => $datetime,
+            $datetime instanceof Unit => $this->with($datetime),
+        };
     }
 }
