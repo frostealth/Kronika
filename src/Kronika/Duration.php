@@ -147,6 +147,8 @@ final readonly class Duration
     /**
      * Returns days of this duration.
      *
+     * The day means 24 hours.
+     *
      * ```
      * // 2 days, 26 hours, 65 minutes, 100 seconds
      * $this->days();  // 3
