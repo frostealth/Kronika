@@ -495,7 +495,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     #[\Override]
     public function __toString(): string
     {
-        return $this->format('Y-m-d\TH:i:s.uP', Format\native());
+        return \sprintf('%s %s', $this->local, $this->timezone()->getName());
     }
 
     /** @alias {@see self::ofDateTime()} */

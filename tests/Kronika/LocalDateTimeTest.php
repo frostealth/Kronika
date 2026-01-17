@@ -35,7 +35,11 @@ final class LocalDateTimeTest extends TestCase
         return [
             [Date::of(2025, 3, 24), Time::midday()],
             [Date::of(1950, 2, 28), Time::endOfDay()],
+            [Date::of(1970, 1, 1), Time::midnight()],
+            [Date::of(1969, 1, 1), Time::midnight()],
+            [Date::of(1969, 12, 31), Time::endOfDay()],
             [Date::of(3000, 12, 10), Time::midnight()],
+            [Date::of(5000, 12, 31), Time::endOfDay()],
             [Date::of(500, 1, 15), Time::of(9, 45, 24)],
             [Date::of(2950, 11, 21), Time::of(23, 45, Time\Second::of(35, 4455))],
         ];
@@ -53,6 +57,7 @@ final class LocalDateTimeTest extends TestCase
         self::assertSame($date->month(), $datetime->month());
         self::assertSame($date->day(), $datetime->day());
         self::assertSame($date->dayOfWeek(), $datetime->dayOfWeek());
+        self::assertSame($date->dayOfYear(), $datetime->dayOfYear());
         self::assertSame($time, $datetime->time());
         self::assertSame($time->hour(), $datetime->hour());
         self::assertSame($time->minute(), $datetime->minute());
@@ -210,6 +215,6 @@ final class LocalDateTimeTest extends TestCase
     {
         $datetime = LocalDateTime::of(Date::of(2025, 3, 24), Time::endOfDay());
 
-        self::assertEquals('2025-03-24T23:59:59.999999', (string)$datetime);
+        self::assertEquals('2025-03-24 23:59:59.999999', (string)$datetime);
     }
 }

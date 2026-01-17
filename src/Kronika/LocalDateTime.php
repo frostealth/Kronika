@@ -313,13 +313,13 @@ final readonly class LocalDateTime implements DateTime
     #[\Override]
     public function toNative(?\DateTimeZone $timezone = null): \DateTimeImmutable
     {
-        return \DateTimeImmutable::createFromFormat('Y-m-d\TH:i:s.u', (string)$this, $timezone);
+        return \DateTimeImmutable::createFromFormat('Y-m-d H:i:s.u', (string)$this, $timezone);
     }
 
     #[\Override]
     public function toNativeMutable(?\DateTimeZone $timezone = null): \DateTime
     {
-        return \DateTime::createFromFormat('Y-m-d\TH:i:s.u', (string)$this, $timezone);
+        return \DateTime::createFromFormat('Y-m-d H:i:s.u', (string)$this, $timezone);
     }
 
     #[\Override]
@@ -336,7 +336,7 @@ final readonly class LocalDateTime implements DateTime
     #[\Override]
     public function __toString(): string
     {
-        return \sprintf('%sT%s', $this->date, $this->time);
+        return \sprintf('%s %s', $this->date, $this->time);
     }
 
     /** @internal */

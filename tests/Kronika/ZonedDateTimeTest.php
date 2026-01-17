@@ -198,10 +198,10 @@ final class ZonedDateTimeTest extends TestCase
         $datetime = ZonedDateTime::of(
             Date::of(2025, 3, 24),
             Time::endOfDay(),
-            new \DateTimeZone('+01:30'),
+            new \DateTimeZone('Europe/Berlin'),
         );
 
-        self::assertEquals('2025-03-24T23:59:59.999999+01:30', (string) $datetime);
+        self::assertEquals('2025-03-24 23:59:59.999999 Europe/Berlin', (string)$datetime);
     }
 
     #[Depends('testBasic')]

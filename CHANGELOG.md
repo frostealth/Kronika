@@ -11,6 +11,8 @@ All notable changes to `Kronika` will be documented in this file.
 
 ### Changed
 - `Range::each()` return type to `iterable`.
+- `LocalDateTime::__toString()` format to 'Y-m-d H:i:s.u'.
+- `ZonedDateTime::__toString()` format to 'Y-m-d H:i:s.u e'.
 
 ### Removed
 - Deprecated methods.
