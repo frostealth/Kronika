@@ -350,6 +350,32 @@ final readonly class Time implements Unit
     }
 
     /**
+     * Moves to the beginning of the current hour.
+     *
+     * ```
+     * // 10:15:30.123456
+     * $this->startOfHour();  // 10:00:00.000000
+     * ```
+     */
+    public function startOfHour(): self
+    {
+        return self::of($this->hour(), Minute::zero(), Second::zero());
+    }
+
+    /**
+     * Moves to the end of the current hour.
+     *
+     * ```
+     * // 10:15:30.123456
+     * $this->endOfHour();  // 10:59:59.999999
+     * ```
+     */
+    public function endOfHour(): self
+    {
+        return self::of($this->hour(), Minute::last(), Second::last());
+    }
+
+    /**
      * Checks if this time is midnight.
      *
      * ```

@@ -104,6 +104,40 @@ final class TimeTest extends TestCase
         self::assertEquals($expected, $result);
     }
 
+    #[TestWith([[10, 15, 45, 123]])]
+    #[TestWith([[0, 45, 15, 999_999]])]
+    #[TestWith([[12, 45, 0, 123456]])]
+    #[TestWith([[23, 59, 59, 999_999]])]
+    #[TestWith([[0, 0, 0, 0]])]
+    #[Depends('testBasic')]
+    public function testStartOfHour(array $time): void
+    {
+        $time = Time::of(hour: $time[0], minute: $time[1], second: Time\Second::of($time[2], $time[3]));
+        $result = $time->startOfHour();
+
+        self::assertEquals($time->hour(), $result->hour());
+        self::assertEquals(Time\Minute::zero(), $result->minute());
+        self::assertEquals(Time\Second::zero(), $result->second());
+    }
+
+    #[TestWith([[10, 15, 45, 123]])]
+    #[TestWith([[0, 45, 15, 999_999]])]
+    #[TestWith([[12, 45, 0, 123456]])]
+    #[TestWith([[23, 58, 58, 123456]])]
+    #[TestWith([[23, 59, 59, 999_999]])]
+    #[TestWith([[23, 59, 59, 0]])]
+    #[TestWith([[0, 0, 0, 0]])]
+    #[Depends('testBasic')]
+    public function testEndOfHour(array $time): void
+    {
+        $time = Time::of(hour: $time[0], minute: $time[1], second: Time\Second::of($time[2], $time[3]));
+        $result = $time->endOfHour();
+
+        self::assertEquals($time->hour(), $result->hour());
+        self::assertEquals(Time\Minute::last(), $result->minute());
+        self::assertEquals(Time\Second::last(), $result->second());
+    }
+
     #[TestWith(['H:i:s.u', '22:07:08.000001'])]
     #[TestWith(['H:i:s', '22:07:08'])]
     #[TestWith(['H i s', '22 07 08'])]

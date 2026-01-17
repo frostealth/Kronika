@@ -8,6 +8,9 @@ All notable changes to `Kronika` will be documented in this file.
 - `Range::from()` and `Range::to()` methods.
 - `split()`, `overlaps()`, `abuts()`, `intersection()` and `gap()` methods for ranges.
 - `is()`, `isNot()`, `isDuring()`, `isBefore()` and `isAfter()` methods for ranges.
+- `Time::startOfHour()` and `Time::endOfHour()` methods.
+- `LocalDateTime::startOfHour()` and `LocalDateTime::endOfHour()` methods.
+- `ZonedDateTime::startOfHour()` and `ZonedDateTime::endOfHour()` methods.
 
 ### Changed
 - `Range::each()` return type to `iterable`.

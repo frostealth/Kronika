@@ -26,6 +26,7 @@ use Kronika\Format\DateTime\Formatter;
 use Kronika\Time\Hour;
 use Kronika\Time\Minute;
 use Kronika\Time\Second;
+use Kronika\Time\Trait\HasTime;
 use Kronika\Utils\Compared;
 use Kronika\Utils\RefTrait;
 use Kronika\Utils\RescueTrait;
@@ -39,6 +40,7 @@ use Kronika\Utils\RescueTrait;
 final class ZonedDateTime extends \DateTimeImmutable implements DateTime
 {
     use HasDate;
+    use HasTime;
     use RefTrait;
     use RescueTrait;
 

@@ -13,11 +13,9 @@ declare(strict_types=1);
 
 namespace Kronika\Date\Trait;
 
-use Kronika\DateTime;
-
 /**
  * @internal
- * @psalm-require-implements DateTime
+ * @psalm-require-implements \Kronika\DateTime
  */
 trait HasDate
 {
