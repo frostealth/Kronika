@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to `Kronika` will be documented in this file.
 
-## [Unreleased]
+## [0.3.0](https://github.com/frostealth/kronika/releases/tag/0.3.0) – 2026-01-18
 ### Added
 - Microseconds support for `Duration`.
 - `LocalDateTimeRange` and `ZonedDateTimeRange`.
