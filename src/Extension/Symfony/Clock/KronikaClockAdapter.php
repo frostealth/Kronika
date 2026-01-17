@@ -42,7 +42,7 @@ final readonly class KronikaClockAdapter implements SymfonyClock
             return;
         }
         if (\is_float($seconds)) {
-            [$seconds, $micro] = \sscanf(\sprintf('%.6f', $seconds), '%d.%6d');
+            \sscanf(\sprintf('%.6f', $seconds), '%d.%6d', $seconds, $micro);
         }
 
         $this->clock->sleep(Duration::of(seconds: $seconds, micros: $micro ?? 0));

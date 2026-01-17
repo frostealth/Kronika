@@ -55,14 +55,8 @@ final class References
     }
 
     /**
-     * @template TType of mixed
-     * @template TArg
-     *
      * @param non-empty-string $key
-     * @param (callable(TArg...): TType)|TType $held
-     * @param TArg ...$args
-     *
-     * @return TType
+     * @param (callable(mixed...): mixed)|mixed $held
      */
     public function map(object $holder, string $key, mixed $held, mixed ...$args): mixed
     {

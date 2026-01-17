@@ -29,6 +29,9 @@ final readonly class Year implements DateUnit
     use Trait\DateUnit;
     use RefTrait;
 
+    private const int YEAR_MIN = -9999;
+    private const int YEAR_MAX = 9999;
+
     /**
      * Obtains an instance of `Year` from a number.
      *
@@ -78,7 +81,7 @@ final readonly class Year implements DateUnit
      */
     public function next(): self
     {
-        return self::of(\min($this->number() + 1, 9999));
+        return self::of(\min($this->number() + 1, self::YEAR_MAX));
     }
 
     /**
@@ -91,7 +94,7 @@ final readonly class Year implements DateUnit
      */
     public function previous(): self
     {
-        return self::of(\max($this->number() - 1, -9999));
+        return self::of(\max($this->number() - 1, self::YEAR_MIN));
     }
 
     /**
@@ -269,8 +272,13 @@ final readonly class Year implements DateUnit
     /** @throws Exception\InvalidYear */
     private static function assertValue(int $value): void
     {
-        if ($value < -9999 || $value > 9999) {
-            throw new Exception\InvalidYear("Year must be between -9999 and 9999, got [$value]");
+        if ($value < self::YEAR_MIN || $value > self::YEAR_MAX) {
+            throw new Exception\InvalidYear(\sprintf(
+                'Year must be between %d and %d, got [%d]',
+                self::YEAR_MIN,
+                self::YEAR_MAX,
+                $value,
+            ));
         }
     }
 

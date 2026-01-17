@@ -316,8 +316,10 @@ final class KronikaBehavior extends Behavior
             $obj instanceof Instant => $obj->value(),
             $obj instanceof LocalDateTime => $obj->format($this->getFormatFor(LocalDateTime::class)),
             $obj instanceof ZonedDateTime => $obj->format($this->getFormatFor(ZonedDateTime::class)),
-            $obj instanceof Native => $obj->format('Y-m-d H:i:s.u P'),
             $obj instanceof \DateTimeZone => $obj->getName(),
+            $obj instanceof Native => ZonedDateTime::ofDateTime($obj)->format(
+                $this->getFormatFor(ZonedDateTime::class),
+            ),
             default => throw new \RuntimeException(\sprintf('Unknown type: [%s]', \get_debug_type($obj))),
         };
     }

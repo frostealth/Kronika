@@ -23,8 +23,6 @@ trait RefTrait
      *
      * @param (callable(TArg...): static)|null $factory
      * @param TArg ...$args
-     *
-     * @return static
      */
     final protected static function ref(?callable $factory = null, mixed ...$args): static
     {
@@ -34,16 +32,9 @@ trait RefTrait
     }
 
     /**
-     * @template THolder of object
-     * @template TArg
-     *
-     * @param THolder $holder
-     * @param static|(callable(THolder, TArg...): static) $held
-     * @param (callable(THolder, TArg...): bool)|null $when
+     * @param mixed|(callable(mixed, mixed...): static) $held
+     * @param (callable(mixed, mixed...): bool)|null $when
      * @param non-empty-string|null $remember
-     * @param TArg ...$args
-     *
-     * @return static
      */
     final protected static function map(
         object $holder,
@@ -75,15 +66,8 @@ trait RefTrait
     }
 
     /**
-     * @template RType of mixed
-     * @template RArg
-     *
-     * @param RType|(callable(static, RArg...): RType) $held
      * @param non-empty-string $key
      * @param (callable(): bool)|null $when
-     * @param RArg ...$args
-     *
-     * @return RType
      */
     final protected function remember(mixed $held, string $key, ?callable $when = null, mixed ...$args): mixed
     {
