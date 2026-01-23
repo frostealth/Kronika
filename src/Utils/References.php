@@ -19,7 +19,7 @@ namespace Kronika\Utils;
  */
 final class References
 {
-    /** @var array<class-string, array<non-empty-string, \WeakReference>> */
+    /** @var array<string, \WeakReference> */
     private array $references = [];
     private \WeakMap $map;
 
@@ -32,24 +32,27 @@ final class References
      * @template TType of object
      * @template TArg
      *
-     * @param class-string<TType> $type
      * @param callable(TArg...): TType $factory
      * @param TArg ...$args
      *
      * @return TType
+     *
+     * @psalm-suppress InvalidReturnType
      */
-    public function ref(string $type, callable $factory, mixed ...$args): object
+    public function ref(callable $factory, mixed ...$args): object
     {
-        $this->references[$type] ??= [];
         $key = self::key(...$args);
 
-        $instance = ($this->references[$type][$key] ?? null)?->get();
-        if ($instance instanceof $type) {
+        $instance = ($this->references[$key] ?? null)?->get();
+        if (\is_object($instance)) {
+            /** @psalm-suppress InvalidReturnStatement */
             return $instance;
         }
 
         $instance = $factory(...$args);
-        $this->references[$type][$key] = \WeakReference::create($instance);
+        $this->references[$key] = \WeakReference::create($instance);
+        /** @psalm-suppress InvalidArrayAssignment */
+        $this->mapFor($instance)['key'] = $key;
 
         return $instance;
     }
@@ -60,46 +63,23 @@ final class References
      */
     public function map(object $holder, string $key, mixed $held, mixed ...$args): mixed
     {
-        $this->map[$holder] ??= [];
-        if (! \array_key_exists($key, $this->map[$holder])) {
+        /** @psalm-suppress UnsupportedReferenceUsage */
+        $values = &$this->mapFor($holder)['values'];
+        if (! \array_key_exists($key, $values)) {
             $value = \is_callable($held) ? $held(...$args) : $held;
-            $this->map[$holder][$key] = $value === $holder ? \WeakReference::create($holder) : $value;
+            $values[$key] = $value === $holder ? \WeakReference::create($holder) : $value;
         }
 
-        $value = $this->map[$holder][$key];
+        $value = $values[$key];
 
         return $value instanceof \WeakReference ? $value->get() : $value;
     }
 
-    public function remove(object $instance): void
+    public function onDestruction(object $instance): void
     {
-        unset($this->map[$instance]);
-        if (! isset($this->references[$instance::class])) {
-            return;
-        }
-
-        foreach ($this->references[$instance::class] ?? [] as $key => $reference) {
-            if ($reference->get() === $instance) {
-                unset($this->references[$instance::class][$key]);
-            }
-        }
-        if ($this->references[$instance::class] === []) {
-            unset($this->references[$instance::class]);
-        }
-    }
-
-    public function cleanUp(): void
-    {
-        foreach ($this->references as $type => $references) {
-            foreach ($references as $key => $reference) {
-                if ($reference->get() === null) {
-                    unset($this->references[$type][$key]);
-                }
-            }
-            if ($this->references[$type] === []) {
-                unset($this->references[$type]);
-            }
-        }
+        $key = $this->map[$instance]['key'] ?? null;
+        /** @psalm-suppress PossiblyNullArrayOffset */
+        unset($this->references[$key], $this->map[$instance]);
     }
 
     public function reset(): void
@@ -108,50 +88,29 @@ final class References
         $this->map = new \WeakMap();
     }
 
-    private static function key(mixed ...$args): string
+    private static function &key(mixed ...$args): string
     {
-        static $hash = static function (int|string $key, mixed $value): string {
-            $prepareValue = static function (mixed $value): string {
-                if (\is_string($value)) {
-                    return $value;
-                }
-                if (\is_numeric($value)) {
-                    return (string)$value;
-                }
-                if (\is_null($value)) {
-                    return 'null';
-                }
-                if (\is_bool($value)) {
-                    return $value ? 'true' : 'false';
-                }
-                if (! \is_object($value)) {
-                    return \var_export($value, true);
-                }
-
-                if ($value instanceof \Stringable) {
-                    return (string)$value;
-                }
-                if ($value instanceof \BackedEnum) {
-                    return (string)$value->value;
-                }
-                if ($value instanceof \UnitEnum) {
-                    return $value->name;
-                }
-                if (\method_exists($value, 'value')) {
-                    return (string)$value->value();
-                }
-                if (\method_exists($value, 'number')) {
-                    return (string)$value->number();
-                }
-
-                return \var_export($value, return: true);
-            };
-
-            return \sprintf('[%s:%s]', $key, $prepareValue($value));
-        };
-
+        $key = '';
         \ksort($args);
+        foreach ($args as $i => $value) {
+            $key .= \sprintf('{%s=%s}', $i, match (true) {
+                \is_scalar($value),
+                    $value instanceof \Stringable => (string)$value,
+                $value instanceof \DateTimeZone => $value->getName(),
+                $value instanceof \BackedEnum => (string)$value->value,
+                $value instanceof \UnitEnum => $value->name,
+                default => \var_export($value, true),
+            });
+        }
 
-        return \implode('||', \array_map($hash, \array_keys($args), \array_values($args)));
+        return $key;
+    }
+
+    private function &mapFor(object $holder): array
+    {
+        $this->map[$holder] ??= ['values' => []];
+
+        /** @psalm-suppress NonVariableReferenceReturn */
+        return $this->map[$holder];
     }
 }

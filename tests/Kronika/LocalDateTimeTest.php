@@ -42,6 +42,10 @@ final class LocalDateTimeTest extends TestCase
             [Date::of(5000, 12, 31), Time::endOfDay()],
             [Date::of(500, 1, 15), Time::of(9, 45, 24)],
             [Date::of(2950, 11, 21), Time::of(23, 45, Time\Second::of(35, 4455))],
+            [Date::of(0, 1, 15), Time::of(9, 45, 24)],
+            [Date::of(9999, 1, 15), Time::of(9, 45, 24)],
+            [Date::of(-99, 1, 15), Time::of(9, 45, 24)],
+            [Date::of(-9999, 1, 15), Time::of(9, 45, 24)],
         ];
     }
 
@@ -63,15 +67,15 @@ final class LocalDateTimeTest extends TestCase
         self::assertSame($time->minute(), $datetime->minute());
         self::assertSame($time->second(), $datetime->second());
         self::assertEquals(\sprintf(
-            '%04d-%02d-%02dT%02d:%02d:%02d.%06d',
-            $date->year()->number(),
+            '%s-%02d-%02dT%02d:%02d:%02d.%06d',
+            $date->year(),
             $date->month()->number(),
             $date->day()->number(),
             $time->hour()->value(),
             $time->minute()->value(),
             $time->second()->second(),
             $time->second()->microsecond(),
-        ), $datetime->format('Y-m-d\TH:i:s.u'));
+        ), $datetime->format('x-m-d\TH:i:s.u'));
         self::assertSame(LocalDateTime::of($date, $time), $datetime);
     }
 
@@ -181,6 +185,12 @@ final class LocalDateTimeTest extends TestCase
     #[TestWith(['15 Jan 25, 12:15:59', [2025, 1, 15, 12, 15, 59]])]
     #[TestWith(['1970-01-01 00:00:00.999999', [1970, 1, 1, 0, 0, 0, 999_999]])]
     #[TestWith(['1969-12-31 23:59:59.999999', [1969, 12, 31, 23, 59, 59, 999_999]])]
+    #[TestWith(['0099-12-31 23:59:59.999999', [99, 12, 31, 23, 59, 59, 999_999]])]
+    #[TestWith(['0000-12-31 23:59:59.999999', [0, 12, 31, 23, 59, 59, 999_999]])]
+    #[TestWith(['9999-12-31 23:59:59.999999', [9999, 12, 31, 23, 59, 59, 999_999]])]
+    #[TestWith(['-0099-12-31 23:59:59.999999', [-99, 12, 31, 23, 59, 59, 999_999]])]
+    #[TestWith(['-0999-12-31 23:59:59.999999', [-999, 12, 31, 23, 59, 59, 999_999]])]
+    #[TestWith(['-9999-12-31 23:59:59.999999', [-9999, 12, 31, 23, 59, 59, 999_999]])]
     #[Depends('testBasic')]
     public function testParse(string $str, array $expected): void
     {

@@ -34,11 +34,19 @@ final class ZonedDateTimeTest extends TestCase
 {
     public static function ofProvider(): array
     {
+        // EST only (not DST)
         return [
             [Date::of(2025, 3, 24), Time::midday(), new \DateTimeZone('-02:30')],
             [Date::of(1950, 2, 28), Time::endOfDay(), new \DateTimeZone('-05:00')],
             [Date::of(3000, 12, 10), Time::midnight(), new \DateTimeZone('-05:00')],
+            [Date::of(2006, 4, 2), Time::of(1, 45, 24), new \DateTimeZone('America/New_York')],
             [Date::of(500, 1, 15), Time::of(9, 45, 24), new \DateTimeZone('+05:00')],
+            [Date::of(9999, 1, 15), Time::of(9, 45, 24), new \DateTimeZone('+05:00')],
+            [Date::of(99, 1, 15), Time::of(9, 45, 24), new \DateTimeZone('+05:00')],
+            [Date::of(0, 1, 15), Time::of(9, 45, 24), new \DateTimeZone('+05:00')],
+            [Date::of(-99, 1, 15), Time::of(9, 45, 24), new \DateTimeZone('+05:00')],
+            [Date::of(-999, 1, 15), Time::of(9, 45, 24), new \DateTimeZone('+05:00')],
+            [Date::of(-9999, 1, 15), Time::of(9, 45, 24), new \DateTimeZone('+05:00')],
         ];
     }
 
@@ -48,6 +56,7 @@ final class ZonedDateTimeTest extends TestCase
     #[DataProvider('ofProvider')]
     public function testBasic(Date $date, Time $time, \DateTimeZone $timezone): void
     {
+        // EST only (not DST)
         $datetime = ZonedDateTime::of(date: $date, time: $time, timezone: $timezone);
 
         self::assertSame($date, $datetime->date());
@@ -63,8 +72,8 @@ final class ZonedDateTimeTest extends TestCase
         self::assertEquals($time->second()->microsecond(), $datetime->microsecond());
         self::assertEquals($timezone->getName(), $datetime->timezone()->getName());
         self::assertEquals(\sprintf(
-            '%04d-%02d-%02dT%02d:%02d:%02d.%06d%s',
-            $date->year()->number(),
+            '%s-%02d-%02d %02d:%02d:%02d.%06d %s',
+            $date->year(),
             $date->month()->number(),
             $date->day()->number(),
             $time->hour()->value(),
@@ -72,8 +81,29 @@ final class ZonedDateTimeTest extends TestCase
             $time->second()->second(),
             $time->second()->microsecond(),
             $timezone->getName(),
-        ), $datetime->format('Y-m-d\TH:i:s.uP'));
+        ), $datetime->format('Y-m-d H:i:s.u e'));
+        self::assertFalse($datetime->isDaylightSavingTime());
         self::assertSame(ZonedDateTime::of($date, $time, $timezone), $datetime);
+    }
+
+    #[Depends('testBasic')]
+    public function testOfAndDst(): void
+    {
+        $datetime = ZonedDateTime::of(
+            date: Date::of(2006, 4, 2),
+            time: Time::of(2, 15, Second::of(45, 500_000)),
+            timezone: new \DateTimeZone('America/New_York'),
+        );
+
+        self::assertEquals(2006, $datetime->year()->number());
+        self::assertEquals(4, $datetime->month()->number());
+        self::assertEquals(2, $datetime->day()->number());
+        self::assertEquals(3, $datetime->hour()->value());
+        self::assertEquals(15, $datetime->minute()->value());
+        self::assertEquals(45, $datetime->second()->second());
+        self::assertEquals(500_000, $datetime->second()->microsecond());
+        self::assertEquals('America/New_York', $datetime->timezone()->getName());
+        self::assertTrue($datetime->isDaylightSavingTime());
     }
 
     #[Depends('testBasic')]
@@ -150,6 +180,14 @@ final class ZonedDateTimeTest extends TestCase
     #[TestWith(['2025-12-31 12:15 +0200', [2025, 12, 31, 12, 15, 0, 0, '+0200']])]
     #[TestWith(['12:15 31-12-2025 +01:00', [2025, 12, 31, 12, 15, 0, 0, '+01:00']])]
     #[TestWith(['15 Jan 25, 12:15:59 GMT', [2025, 1, 15, 12, 15, 59, 0, 'GMT']])]
+    #[TestWith(['2006-04-02 02:15:59.000999 America/New_York', [2006, 4, 2, 3, 15, 59, 999, 'America/New_York']])]
+    #[TestWith(['0099-11-30 12:15 +01:00', [99, 11, 30, 12, 15, 0, 0, '+01:00']])]
+    #[TestWith(['9999-11-30 12:15 +01:00', [9999, 11, 30, 12, 15, 0, 0, '+01:00']])]
+    #[TestWith(['0000-11-30 12:15 +01:00', [0, 11, 30, 12, 15, 0, 0, '+01:00']])]
+    #[TestWith(['-0004-11-30 12:15 +01:00', [-4, 11, 30, 12, 15, 0, 0, '+01:00']])]
+    #[TestWith(['-0032-11-30 12:15 +01:00', [-32, 11, 30, 12, 15, 0, 0, '+01:00']])]
+    #[TestWith(['-0999-11-30 12:15 +01:00', [-999, 11, 30, 12, 15, 0, 0, '+01:00']])]
+    #[TestWith(['-9999-11-30 12:15 +01:00', [-9999, 11, 30, 12, 15, 0, 0, '+01:00']])]
     #[Depends('testBasic')]
     public function testParse(string $str, array $expected): void
     {
@@ -289,8 +327,8 @@ final class ZonedDateTimeTest extends TestCase
         self::assertEquals(0, $datetime->microsecond());
         self::assertEquals(0, $datetime->getMicrosecond());
 
-        self::assertEquals('UTC', $datetime->timezone()->getName());
-        self::assertEquals('UTC', $datetime->getTimezone()->getName());
+        self::assertEquals('+00:00', $datetime->timezone()->getName());
+        self::assertEquals('+00:00', $datetime->getTimezone()->getName());
     }
 
     #[Depends('testBasic')]
@@ -311,8 +349,8 @@ final class ZonedDateTimeTest extends TestCase
         self::assertEquals(999999, $datetime->getMicrosecond());
         self::assertEquals(-0.000001, $datetime->timestamp());
 
-        self::assertEquals('UTC', $datetime->timezone()->getName());
-        self::assertEquals('UTC', $datetime->getTimezone()->getName());
+        self::assertEquals('+00:00', $datetime->timezone()->getName());
+        self::assertEquals('+00:00', $datetime->getTimezone()->getName());
     }
 
     #[Depends('testBasic')]

@@ -106,9 +106,9 @@ final class NumberTest extends TestCase
     #[TestWith([-5.999_999, ['integer' => -6, 'fraction' => 1, 'value' => '-5.999999']])]
     #[TestWith([-1.0e-6, ['integer' => -1, 'fraction' => 999_999, 'value' => '-0.000001']])]
     #[Depends('testBasic')]
-    public function testOfNumber(float|int|string $value, array $expected): void
+    public function testOfDecimal(float|int|string $value, array $expected): void
     {
-        $obj = Number::ofNumber($value);
+        $obj = Number::ofDecimal($value);
 
         self::assertEquals($expected['integer'], $obj->integer());
         self::assertEquals($expected['fraction'], $obj->fraction());

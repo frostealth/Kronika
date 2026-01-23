@@ -53,8 +53,8 @@ final readonly class DateTimeFormatter implements Formatter
         }
 
         [$year, $month, $day, $hour, $minute, $second, $micro, $timezone] = \sscanf(
-            $native->format('Y-m-d H:i:s.u e'),
-            format: '%d-%u-%u %u:%u:%u.%u %s',
+            $native->format('x-m-d H:i:s.u e'),
+            format: '%d-%d-%d %d:%d:%d.%d %s',
         );
 
         return new Parsed(

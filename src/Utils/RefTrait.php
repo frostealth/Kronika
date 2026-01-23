@@ -28,7 +28,7 @@ trait RefTrait
     {
         $factory ??= static fn(mixed ...$args): object => new static(...$args);
 
-        return references()->ref(static::class, $factory, ...$args);
+        return self::references()->ref($factory, ...$args);
     }
 
     /**
@@ -47,22 +47,12 @@ trait RefTrait
             return \is_callable($held) ? $held($holder, ...$args) : $held;
         }
 
-        $instance = references()->map($holder, static::class, $held, $holder, ...$args);
+        $instance = self::references()->map($holder, static::class, $held, $holder, ...$args);
         if ($remember !== null) {
-            $instance->remember($holder, self::method($remember));
+            $instance->remember($holder, $remember);
         }
 
         return $instance;
-    }
-
-    /**
-     * @param non-empty-string $name
-     *
-     * @return non-empty-string
-     */
-    private static function method(string $name): string
-    {
-        return static::class . '::' . $name;
     }
 
     /**
@@ -75,12 +65,20 @@ trait RefTrait
             return \is_callable($held) ? $held($this, ...$args) : $held;
         }
 
-        return references()->map($this, $key, $held, $this, ...$args);
+        return self::references()->map($this, $key, $held, $this, ...$args);
+    }
+
+    private static function references(): References
+    {
+        /** @psalm-suppress InternalClass */
+        static $references = new References();
+
+        return $references;
     }
 
     /** @internal */
     public function __destruct()
     {
-        references()->remove($this);
+        self::references()->onDestruction($this);
     }
 }

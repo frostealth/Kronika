@@ -87,7 +87,7 @@ final readonly class LocalDateTime implements DateTime
     {
         return self::map($instant, static function(Instant $instant): self {
             return self::of(Date::ofInstant($instant), Time::ofInstant($instant));
-        }, remember: 'instant');
+        }, remember: Instant::class);
     }
 
     /**
@@ -128,7 +128,7 @@ final readonly class LocalDateTime implements DateTime
         }
 
         try {
-            return self::ofDateTime(new \DateTimeImmutable($datetime));
+            return self::ofDateTime(new \DateTime($datetime));
         } catch (\DateMalformedStringException $e) {
             throw MalformedString\DateTimeMalformedString::wrap($e);
         }
@@ -254,12 +254,20 @@ final readonly class LocalDateTime implements DateTime
     #[\Override]
     public function until(DateTime|Unit $end, Precision $precision = Precision::Micro): Duration
     {
+        if ($end instanceof ZonedDateTime) {
+            return $this->at($end->timezone())->until($end, $precision);
+        }
+
         return $this->instant()->until($this->normalize($end)->instant(), $precision);
     }
 
     #[\Override]
     public function difference(DateTime|Unit $other, Precision $precision = Precision::Micro): Duration
     {
+        if ($other instanceof ZonedDateTime) {
+            return $this->at($other->timezone())->difference($other, $precision);
+        }
+
         return $this->instant()->difference($this->normalize($other)->instant(), $precision);
     }
 
@@ -302,6 +310,10 @@ final readonly class LocalDateTime implements DateTime
     #[\Override]
     public function compareTo(DateTime|Unit $other, Precision $precision = Precision::Micro): Compared
     {
+        if ($other instanceof ZonedDateTime) {
+            return $this->at($other->timezone())->compareTo($other, $precision);
+        }
+
         return $this->instant()->compareTo($this->normalize($other)->instant(), $precision);
     }
 
@@ -327,12 +339,10 @@ final readonly class LocalDateTime implements DateTime
     #[\Override]
     public function instant(): Instant
     {
-        return $this->remember(static function (self $that): Instant {
-            return Instant::of(
-                second: $that->date->instant()->second() + $that->time->instant()->second(),
-                micro: $that->time->instant()->microsecond(),
-            );
-        }, key: __METHOD__);
+        return $this->remember(static fn(self $that): Instant => Instant::of(
+            second: \strtotime("$that UTC"),
+            micro: $that->second()->microsecond(),
+        ), key: Instant::class);
     }
 
     #[\Override]

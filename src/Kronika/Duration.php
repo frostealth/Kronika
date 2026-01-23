@@ -567,7 +567,17 @@ final readonly class Duration
      */
     public function toDateInterval(): \DateInterval
     {
-        return \DateInterval::createFromDateString((string)$this);
+        $interval = new \DateInterval(\sprintf(
+            'PT%dH%dM%dS',
+            $this->inHours(),
+            $this->minutes(),
+            $this->seconds(),
+        ));
+
+        /** @psalm-suppress InaccessibleProperty */
+        $interval->f = $this->microseconds() / 1_000_000;
+
+        return $interval;
     }
 
     /** @return non-empty-string */
@@ -621,9 +631,6 @@ final readonly class Duration
 
     private function number(): Number
     {
-        return $this->remember(
-            static fn(self $that): Number => Number::of($that->seconds, $that->micro),
-            key: __METHOD__,
-        );
+        return Number::of($this->seconds, $this->micro);
     }
 }

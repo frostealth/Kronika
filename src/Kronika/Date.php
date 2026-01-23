@@ -67,7 +67,7 @@ final readonly class Date implements Unit
         }
 
         return self::map($datetime, static function (Native $datetime): self {
-            return self::of(...\sscanf($datetime->format('Y-m-d'), '%d-%u-%u'));
+            return self::of(...\sscanf($datetime->format('x-m-d'), '%d-%d-%d'));
         }, when: static fn(Native $datetime): bool => $datetime instanceof \DateTimeImmutable);
     }
 
@@ -85,7 +85,7 @@ final readonly class Date implements Unit
     public static function ofInstant(Instant $instant): self
     {
         return self::map($instant, static function (Instant $instant): self {
-            return self::of(...\sscanf(\gmdate('Y-m-d', $instant->second()), '%d-%u-%u'));
+            return self::of(...\sscanf(\gmdate('x-m-d', $instant->second()), '%d-%d-%d'));
         });
     }
 
@@ -175,7 +175,7 @@ final readonly class Date implements Unit
     {
         return $this->remember(static fn(self $date): DayOfWeek => DayOfWeek::of(
             (int)\gmdate('N', $date->instant()->second()),
-        ), key: __METHOD__);
+        ), key: DayOfWeek::class);
     }
 
     /**
@@ -185,7 +185,7 @@ final readonly class Date implements Unit
     {
         return $this->remember(static fn(self $date): DayOfYear => DayOfYear::of(
             $date->startOfYear()->until($date)->add(Duration::ofDay())->inDays(),
-        ), key: __METHOD__);
+        ), key: DayOfYear::class);
     }
 
     /**
@@ -891,14 +891,14 @@ final readonly class Date implements Unit
     {
         return $this->remember(static fn(self $date): Instant => Instant::of(
             \strtotime("$date UTC"),
-        ), key: __METHOD__);
+        ), key: Instant::class);
     }
 
     /** @return non-empty-string */
     #[\Override]
     public function __toString(): string
     {
-        return \sprintf('%04d-%02d-%02d', $this->year()->number(), $this->month()->number(), $this->day()->number());
+        return \sprintf('%s-%02d-%02d', $this->year(), $this->month()->number(), $this->day()->number());
     }
 
     /** @internal */

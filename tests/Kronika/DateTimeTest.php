@@ -25,6 +25,7 @@ use Kronika\Unit;
 use Kronika\ZonedDateTime;
 use PHPUnit\Framework\Attributes\CoversClassesThatImplementInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\Attributes\DependsExternal;
 use PHPUnit\Framework\Attributes\DependsOnClass;
 use PHPUnit\Framework\TestCase;
@@ -165,6 +166,12 @@ final class DateTimeTest extends TestCase
                 self::zonedOf(2026, 10, 30, 12, 15, 45, 4545, '+01:00'),
                 Precision::Micro,
                 self::GREATER,
+            ],
+            'LocalDateTime.Micro.ZonedDateTime.DST.Equal' => [
+                self::localOf(2006, 4, 2, 2, 15, 45, 5555),
+                self::zonedOf(2006, 4, 2, 3, 15, 45, 5555, 'America/New_York'),
+                Precision::Micro,
+                self::EQUAL,
             ],
             // LocalDateTime, Precision::Second
             'LocalDateTime.Second.Equal' => [
@@ -723,6 +730,12 @@ final class DateTimeTest extends TestCase
                 self::localOf(2025, 10, 30, 12, 15, 45, 5555),
                 Precision::Micro,
                 self::GREATER,
+            ],
+            'ZonedDateTime.Micro.LocalDateTime.DST.Equal' => [
+                self::zonedOf(2006, 4, 2, 3, 15, 55, 5555, 'America/New_York'),
+                self::localOf(2006, 4, 2, 2, 15, 55, 5555),
+                Precision::Micro,
+                self::EQUAL,
             ],
             'ZonedDateTime.Micro.Native.Equal' => [
                 self::zonedOf(2025, 10, 30, 12, 15, 45, 4545, '+01:00'),
@@ -1541,6 +1554,31 @@ final class DateTimeTest extends TestCase
                 Time\Hour::of(15),
                 Duration::of(hours: 3),
             ],
+            'ZonedDateTime.Unit.Hour.DST.0' => [
+                self::zonedOf(2006, 4, 2, 1, 45, 55, 5555, 'America/New_York'),
+                Time\Hour::of(2),
+                Duration::of(hours: 1),
+            ],
+            'ZonedDateTime.Unit.Hour.DST.1' => [
+                self::zonedOf(2006, 4, 2, 1, 45, 55, 5555, 'America/New_York'),
+                Time\Hour::of(3),
+                Duration::of(hours: 1),
+            ],
+            'ZonedDateTime.Unit.Hour.DST.3' => [
+                self::zonedOf(2006, 4, 2, 1, 45, 55, 5555, 'America/New_York'),
+                Time\Hour::of(4),
+                Duration::of(hours: 2),
+            ],
+            'ZonedDateTime.Unit.Hour.DST.4' => [
+                self::zonedOf(2006, 4, 2, 3, 45, 55, 5555, 'America/New_York'),
+                Time\Hour::of(4),
+                Duration::of(hours: 1),
+            ],
+            'ZonedDateTime.Unit.Hour.DST.5' => [
+                self::zonedOf(2006, 4, 2, 3, 45, 55, 5555, 'America/New_York'),
+                Time\Hour::of(5),
+                Duration::of(hours: 2),
+            ],
             'ZonedDateTime.Unit.Minute' => [
                 self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
                 Time\Minute::of(50),
@@ -1612,6 +1650,26 @@ final class DateTimeTest extends TestCase
                 self::localOf(2026, 2, 15, 12, 45, 55, 5555),
                 Duration::of(days: 62),
             ],
+            'ZonedDateTime.LocalDateTime.DST.0' => [
+                self::zonedOf(2006, 4, 2, 1, 0, 0, 0, 'America/New_York'),
+                self::localOf(2006, 4, 2, 2, 0, 0, 0),
+                Duration::ofHour(),
+            ],
+            'ZonedDateTime.LocalDateTime.DST.1' => [
+                self::zonedOf(2006, 4, 2, 1, 0, 0, 0, 'America/New_York'),
+                self::localOf(2006, 4, 2, 3, 0, 0, 0),
+                Duration::ofHour(),
+            ],
+            'ZonedDateTime.LocalDateTime.DST.2' => [
+                self::zonedOf(2006, 4, 2, 1, 0, 0, 0, 'America/New_York'),
+                self::localOf(2006, 4, 2, 4, 0, 0, 0),
+                Duration::of(hours: 2),
+            ],
+            'ZonedDateTime.LocalDateTime.DST.3' => [
+                self::zonedOf(2006, 4, 2, 3, 0, 0, 0, 'America/New_York'),
+                self::localOf(2006, 4, 2, 4, 0, 0, 0),
+                Duration::ofHour(),
+            ],
 
             // LocalDateTime vs ZonedDateTime
             'LocalDateTime.ZonedDateTime.Zero' => [
@@ -1652,14 +1710,29 @@ final class DateTimeTest extends TestCase
                 Duration::of(hours: 3),
             ],
             'LocalDateTime.ZonedDateTime.Days' => [
-                self::localOf(2025, 12, 15, 12, 45, 55, 5555,),
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
                 self::zonedOf(2025, 12, 16, 12, 45, 55, 5555, '+01:00'),
                 Duration::of(days: 1),
             ],
             'LocalDateTime.ZonedDateTime.Months' => [
-                self::localOf(2025, 12, 15, 12, 45, 55, 5555,),
-                self::zonedOf(2026, 02, 15, 12, 45, 55, 5555, '+01:00'),
+                self::localOf(2025, 12, 15, 12, 45, 55, 5555),
+                self::zonedOf(2026, 2, 15, 12, 45, 55, 5555, '+01:00'),
                 Duration::of(days: 62),
+            ],
+            'LocalDateTime.ZonedDateTime.DST.0' => [
+                self::localOf(2006, 4, 2, 1, 0, 0, 0),
+                self::zonedOf(2006, 4, 2, 3, 0, 0, 0, 'America/New_York'),
+                Duration::ofHour(),
+            ],
+            'LocalDateTime.ZonedDateTime.DST.1' => [
+                self::localOf(2006, 4, 2, 2, 0, 0, 0),
+                self::zonedOf(2006, 4, 2, 3, 0, 0, 0, 'America/New_York'),
+                Duration::zero(),
+            ],
+            'LocalDateTime.ZonedDateTime.DST.2' => [
+                self::localOf(2006, 4, 2, 3, 0, 0, 0),
+                self::zonedOf(2006, 4, 2, 4, 0, 0, 0, 'America/New_York'),
+                Duration::ofHour(),
             ],
 
             // ZonedDateTime vs \DateTimeInterface
@@ -1913,6 +1986,31 @@ final class DateTimeTest extends TestCase
                 self::zonedOf(2025, 12, 16, 12, 45, 55, 5555, '+01:00'),
                 Duration::of(days: 1),
             ],
+            'ZonedDateTime.ZonedDateTime.DST.0' => [
+                self::zonedOf(2006, 4, 2, 1, 0, 0, 0, 'America/New_York'),
+                self::zonedOf(2006, 4, 2, 3, 0, 0, 0, 'America/New_York'),
+                Duration::ofHour(),
+            ],
+            'ZonedDateTime.ZonedDateTime.DST.1' => [
+                self::zonedOf(2006, 4, 2, 3, 0, 0, 0, 'America/New_York'),
+                self::zonedOf(2006, 4, 2, 4, 0, 0, 0, 'America/New_York'),
+                Duration::ofHour(),
+            ],
+            'ZonedDateTime.ZonedDateTime.DST.2' => [
+                self::zonedOf(2006, 4, 2, 1, 0, 0, 0, 'America/New_York'),
+                self::zonedOf(2006, 4, 2, 4, 0, 0, 0, 'America/New_York'),
+                Duration::of(hours: 2),
+            ],
+            'ZonedDateTime.ZonedDateTime.DST.3' => [
+                self::zonedOf(2006, 4, 2, 4, 0, 0, 0, 'America/New_York'),
+                self::zonedOf(2006, 4, 2, 1, 0, 0, 0, 'America/New_York'),
+                Duration::of(hours: 2),
+            ],
+            'ZonedDateTime.ZonedDateTime.DST.4' => [
+                self::zonedOf(2006, 4, 2, 4, 0, 0, 0, 'America/New_York'),
+                self::zonedOf(2006, 4, 2, 3, 0, 0, 0, 'America/New_York'),
+                Duration::ofHour(),
+            ],
             'ZonedDateTime.Date.Days' => [
                 self::zonedOf(2025, 12, 20, 12, 45, 55, 5555, '+01:00'),
                 Date::of(2025, 12, 15),
@@ -1974,6 +2072,31 @@ final class DateTimeTest extends TestCase
                 self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
                 Time\Hour::of(15),
                 Duration::of(hours: 3),
+            ],
+            'ZonedDateTime.Unit.Hour.DST.0' => [
+                self::zonedOf(2006, 4, 2, 1, 45, 55, 5555, 'America/New_York'),
+                Time\Hour::of(2),
+                Duration::ofHour(),
+            ],
+            'ZonedDateTime.Unit.Hour.DST.1' => [
+                self::zonedOf(2006, 4, 2, 1, 45, 55, 5555, 'America/New_York'),
+                Time\Hour::of(3),
+                Duration::ofHour(),
+            ],
+            'ZonedDateTime.Unit.Hour.DST.2' => [
+                self::zonedOf(2006, 4, 2, 1, 45, 55, 5555, 'America/New_York'),
+                Time\Hour::of(4),
+                Duration::of(hours: 2),
+            ],
+            'ZonedDateTime.Unit.Hour.DST.3' => [
+                self::zonedOf(2006, 4, 2, 4, 45, 55, 5555, 'America/New_York'),
+                Time\Hour::of(1),
+                Duration::of(hours: 2),
+            ],
+            'ZonedDateTime.Unit.Hour.DST.4' => [
+                self::zonedOf(2006, 4, 2, 3, 45, 55, 5555, 'America/New_York'),
+                Time\Hour::of(5),
+                Duration::of(hours: 2),
             ],
             'ZonedDateTime.Unit.Minute' => [
                 self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
@@ -2053,8 +2176,38 @@ final class DateTimeTest extends TestCase
             ],
             'ZonedDateTime.LocalDateTime.Months' => [
                 self::zonedOf(2025, 12, 15, 12, 45, 55, 5555, '+01:00'),
-                self::localOf(2026, 02, 15, 12, 45, 55, 5555),
+                self::localOf(2026, 2, 15, 12, 45, 55, 5555),
                 Duration::of(days: 62),
+            ],
+            'ZonedDateTime.LocalDateTime.DST.0' => [
+                self::zonedOf(2006, 4, 2, 1, 45, 55, 5555, 'America/New_York'),
+                self::localOf(2006, 4, 2, 2, 45, 55, 5555),
+                Duration::ofHour(),
+            ],
+            'ZonedDateTime.LocalDateTime.DST.1' => [
+                self::zonedOf(2006, 4, 2, 1, 45, 55, 5555, 'America/New_York'),
+                self::localOf(2006, 4, 2, 3, 45, 55, 5555),
+                Duration::ofHour(),
+            ],
+            'ZonedDateTime.LocalDateTime.DST.2' => [
+                self::zonedOf(2006, 4, 2, 1, 45, 55, 5555, 'America/New_York'),
+                self::localOf(2006, 4, 2, 4, 45, 55, 5555),
+                Duration::of(hours: 2),
+            ],
+            'ZonedDateTime.LocalDateTime.DST.3' => [
+                self::zonedOf(2006, 4, 2, 3, 45, 55, 5555, 'America/New_York'),
+                self::localOf(2006, 4, 2, 4, 45, 55, 5555),
+                Duration::ofHour(),
+            ],
+            'ZonedDateTime.LocalDateTime.DST.4' => [
+                self::zonedOf(2006, 4, 2, 3, 45, 55, 5555, 'America/New_York'),
+                self::localOf(2006, 4, 2, 2, 45, 55, 5555),
+                Duration::zero(),
+            ],
+            'ZonedDateTime.LocalDateTime.DST.5' => [
+                self::zonedOf(2006, 4, 2, 3, 45, 55, 5555, 'America/New_York'),
+                self::localOf(2006, 4, 2, 1, 45, 55, 5555),
+                Duration::ofHour(),
             ],
 
             // LocalDateTime vs ZonedDateTime
@@ -2099,6 +2252,21 @@ final class DateTimeTest extends TestCase
                 self::localOf(2025, 12, 15, 12, 45, 55, 5555),
                 self::zonedOf(2026, 02, 15, 12, 45, 55, 5555, '+01:00'),
                 Duration::of(days: 62),
+            ],
+            'LocalDateTime.ZonedDateTime.DST.0' => [
+                self::localOf(2006, 4, 2, 2, 45, 55, 5555),
+                self::zonedOf(2006, 4, 2, 3, 45, 55, 5555, 'America/New_York'),
+                Duration::zero(),
+            ],
+            'LocalDateTime.ZonedDateTime.DST.1' => [
+                self::localOf(2006, 4, 2, 1, 45, 55, 5555),
+                self::zonedOf(2006, 4, 2, 3, 45, 55, 5555, 'America/New_York'),
+                Duration::ofHour(),
+            ],
+            'LocalDateTime.ZonedDateTime.DST.2' => [
+                self::localOf(2006, 4, 2, 3, 45, 55, 5555),
+                self::zonedOf(2006, 4, 2, 1, 45, 55, 5555, 'America/New_York'),
+                Duration::ofHour(),
             ],
 
             // ZonedDateTime vs \DateTimeInterface
@@ -2352,6 +2520,49 @@ final class DateTimeTest extends TestCase
         }
     }
 
+    public static function withAndDstProvider(): array
+    {
+        return [
+            'Hour.0' => [
+                self::zonedOf(2006, 4, 2, 1, 59, 59, 999999, 'America/New_York'),
+                Time\Hour::of(2),
+                self::zonedOf(2006, 4, 2, 3, 59, 59, 999999, 'America/New_York'),
+            ],
+            'DayOfMonth.0' => [
+                self::zonedOf(2006, 4, 1, 2, 59, 59, 999999, 'America/New_York'),
+                Date\DayOfMonth::of(2),
+                self::zonedOf(2006, 4, 2, 3, 59, 59, 999999, 'America/New_York'),
+            ],
+            'Month.0' => [
+                self::zonedOf(2006, 3, 2, 2, 59, 59, 999999, 'America/New_York'),
+                Date\Month::of(4),
+                self::zonedOf(2006, 4, 2, 3, 59, 59, 999999, 'America/New_York'),
+            ],
+            'Year.0' => [
+                self::zonedOf(2005, 4, 2, 2, 59, 59, 999999, 'America/New_York'),
+                Date\Year::of(2006),
+                self::zonedOf(2006, 4, 2, 3, 59, 59, 999999, 'America/New_York'),
+            ],
+            'Date.0' => [
+                self::zonedOf(2005, 11, 23, 2, 59, 59, 999999, 'America/New_York'),
+                Date::of(2006, 4, 2),
+                self::zonedOf(2006, 4, 2, 3, 59, 59, 999999, 'America/New_York'),
+            ],
+            'Time.0' => [
+                self::zonedOf(2006, 4, 2, 12, 59, 59, 999999, 'America/New_York'),
+                Time::of(2, 12, 45),
+                self::zonedOf(2006, 4, 2, 3, 12, 45, 0, 'America/New_York'),
+            ],
+        ];
+    }
+
+    #[Depends('testWith')]
+    #[DataProvider('withAndDstProvider')]
+    public function testWithAndDst(DateTime $datetime, Unit|\DateTimeZone $unit, DateTime $expected): void
+    {
+        self::assertEquals($expected, $datetime->with($unit));
+    }
+
     public static function addProvider(): array
     {
         return [
@@ -2376,10 +2587,15 @@ final class DateTimeTest extends TestCase
                 Duration::of(minutes: 65),
                 self::localOf(2025, 12, 30, 13, 20, 30, 5555),
             ],
-            'LocalDateTime.Duration.Hours' => [
+            'LocalDateTime.Duration.Hours.0' => [
                 self::localOf(2025, 12, 30, 12, 15, 30, 5555),
                 Duration::of(hours: 12, minutes: 30),
                 self::localOf(2025, 12, 31, 0, 45, 30, 5555),
+            ],
+            'LocalDateTime.Duration.Hours.1' => [
+                self::localOf(2006, 4, 2, 1, 15, 30, 5555),
+                Duration::of(hours: 1, minutes: 30),
+                self::localOf(2006, 4, 2, 2, 45, 30, 5555),
             ],
             'LocalDateTime.Duration.Days' => [
                 self::localOf(2025, 12, 30, 12, 15, 30, 5555),
@@ -2427,6 +2643,36 @@ final class DateTimeTest extends TestCase
                 self::zonedOf(2025, 12, 30, 12, 15, 30, 5555, '+01:00'),
                 \DateInterval::createFromDateString('1 day, 12 hours, 30 minutes, 0 seconds, 10 microseconds'),
                 self::zonedOf(2026, 1, 1, 0, 45, 30, 5565, '+01:00'),
+            ],
+            'ZonedDateTime.DST.Duration.Microseconds' => [
+                self::zonedOf(2006, 4, 2, 1, 59, 59, 500_000, 'America/New_York'),
+                Duration::of(micros: 500_000),
+                self::zonedOf(2006, 4, 2, 3, 0, 0, 0, 'America/New_York'),
+            ],
+            'ZonedDateTime.DST.Duration.Hours.0' => [
+                self::zonedOf(2006, 4, 2, 1, 59, 59, 500_000, 'America/New_York'),
+                Duration::of(hours: 1),
+                self::zonedOf(2006, 4, 2, 3, 59, 59, 500_000, 'America/New_York'),
+            ],
+            'ZonedDateTime.DST.Duration.Hours.1' => [
+                self::zonedOf(2006, 4, 2, 1, 59, 59, 500_000, 'America/New_York'),
+                Duration::of(hours: 2),
+                self::zonedOf(2006, 4, 2, 4, 59, 59, 500_000, 'America/New_York'),
+            ],
+            'ZonedDateTime.DST.Duration.Hours.2' => [
+                self::zonedOf(2006, 4, 1, 1, 59, 59, 500_000, 'America/New_York'),
+                Duration::of(hours: 26),
+                self::zonedOf(2006, 4, 2, 4, 59, 59, 500_000, 'America/New_York'),
+            ],
+            'ZonedDateTime.DST.Duration.Hours.3' => [
+                self::zonedOf(2006, 4, 2, 0, 59, 59, 500_000, 'America/New_York'),
+                Duration::ofHour(),
+                self::zonedOf(2006, 4, 2, 1, 59, 59, 500_000, 'America/New_York'),
+            ],
+            'ZonedDateTime.DST.Duration.Hours.4' => [
+                self::zonedOf(2006, 4, 2, 3, 59, 59, 500_000, 'America/New_York'),
+                Duration::ofHour(),
+                self::zonedOf(2006, 4, 2, 4, 59, 59, 500_000, 'America/New_York'),
             ],
         ];
     }
@@ -2528,6 +2774,26 @@ final class DateTimeTest extends TestCase
                 \DateInterval::createFromDateString('1 day, 12 hours, 30 minutes, 0 seconds, 10 microseconds'),
                 self::zonedOf(2025, 12, 30, 23, 45, 30, 5545, '+01:00'),
             ],
+            'ZonedDateTime.DST.Duration.Microseconds' => [
+                self::zonedOf(2006, 4, 2, 3, 0, 0, 50_000, 'America/New_York'),
+                Duration::of(micros: 550_000),
+                self::zonedOf(2006, 4, 2, 1, 59, 59, 500_000, 'America/New_York'),
+            ],
+            'ZonedDateTime.DST.Duration.Hours.0' => [
+                self::zonedOf(2006, 4, 2, 4, 0, 0, 500_000, 'America/New_York'),
+                Duration::ofHour(),
+                self::zonedOf(2006, 4, 2, 3, 0, 0, 500_000, 'America/New_York'),
+            ],
+            'ZonedDateTime.DST.Duration.Hours.1' => [
+                self::zonedOf(2006, 4, 2, 3, 0, 0, 500_000, 'America/New_York'),
+                Duration::ofHour(),
+                self::zonedOf(2006, 4, 2, 1, 0, 0, 500_000, 'America/New_York'),
+            ],
+            'ZonedDateTime.DST.Duration.Hours.2' => [
+                self::zonedOf(2006, 4, 2, 4, 0, 0, 500_000, 'America/New_York'),
+                Duration::of(hours: 2),
+                self::zonedOf(2006, 4, 2, 1, 0, 0, 500_000, 'America/New_York'),
+            ],
         ];
     }
 
@@ -2566,24 +2832,44 @@ final class DateTimeTest extends TestCase
                 Instant::of(second: -2, micro: 550_000),
             ],
             'ZonedDateTime.0' => [
-                self::zonedOf(1970, 1, 1, 0, 0, 0, 0, '+01:00'),
+                self::zonedOf(1970, 1, 1, 0, 0, 0, 0, '+00:00'),
                 Instant::of(second: 0),
             ],
             'ZonedDateTime.1' => [
-                self::zonedOf(1970, 1, 1, 0, 0, 0, 1, '+01:00'),
+                self::zonedOf(1970, 1, 1, 0, 0, 0, 1, '+00:00'),
                 Instant::of(second: 0, micro: 1),
             ],
             'ZonedDateTime.2' => [
-                self::zonedOf(1970, 1, 1, 0, 0, 1, 1, '+02:00'),
-                Instant::of(second: 1, micro: 1),
+                self::zonedOf(1970, 1, 1, 0, 0, 0, 0, '+01:00'),
+                Instant::of(second: -3600),
             ],
             'ZonedDateTime.3' => [
-                self::zonedOf(1969, 12, 31, 23, 59, 59, 999_999, '+01:00'),
-                Instant::of(second: -1, micro: 999_999),
+                self::zonedOf(1970, 1, 1, 0, 0, 0, 1, '+01:00'),
+                Instant::of(second: -3600, micro: 1),
             ],
             'ZonedDateTime.4' => [
+                self::zonedOf(1970, 1, 1, 0, 0, 1, 1, '+02:00'),
+                Instant::of(second: -7199, micro: 1),
+            ],
+            'ZonedDateTime.5' => [
+                self::zonedOf(1969, 12, 31, 23, 59, 59, 999_999, '+01:00'),
+                Instant::of(second: -3601, micro: 999_999),
+            ],
+            'ZonedDateTime.6' => [
                 self::zonedOf(1969, 12, 31, 23, 59, 58, 550_000, '+02:00'),
-                Instant::of(second: -2, micro: 550_000),
+                Instant::of(second: -7202, micro: 550_000),
+            ],
+            'ZonedDateTime.DST.0' => [
+                self::zonedOf(2006, 4, 2, 1, 15, 58, 550_000, 'America/New_York'),
+                Instant::of(second: 1143958558, micro: 550_000),
+            ],
+            'ZonedDateTime.DST.1' => [
+                self::zonedOf(2006, 4, 2, 3, 15, 58, 550_000, 'America/New_York'),
+                Instant::of(second: 1143962158, micro: 550_000),
+            ],
+            'ZonedDateTime.DST.2' => [
+                self::zonedOf(2006, 4, 2, 2, 15, 58, 550_000, 'America/New_York'),
+                Instant::of(second: 1143962158, micro: 550_000),
             ],
         ];
     }
@@ -2593,7 +2879,7 @@ final class DateTimeTest extends TestCase
     #[DataProvider('instantProvider')]
     public function testInstant(DateTime $datetime, Instant $expected): void
     {
-        self::assertEquals($datetime->instant(), $expected);
+        self::assertEquals($expected, $datetime->instant());
     }
 
     private static function localOf(

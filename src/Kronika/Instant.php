@@ -19,10 +19,7 @@ use Kronika\Utils\RefTrait;
 use Kronika\Utils\RescueTrait;
 
 /**
- * Represents the number of seconds counted from epoch of
- * "1970-01-01 00:00:00" in local time excluding the timezone.
- *
- * This is not the unix timestamp due to the representation of local time without a timezone.
+ * Represents the number of seconds counted from epoch of "1970-01-01 00:00:00.000000".
  *
  * @method static static|null tryOf(mixed $second, mixed $micro = 0)
  * @method static static|null tryOfValue(mixed $value)
@@ -65,13 +62,13 @@ final readonly class Instant
      * $instant = Instant::ofValue('-0.996565');
      * ```
      *
-     * @param numeric $value
+     * @param numeric $decimal
      *
      * @throws Exception\InvalidValue
      */
-    public static function ofValue(float|int|string $value): self
+    public static function ofValue(float|int|string $decimal): self
     {
-        return self::ofNumber(Number::ofNumber($value));
+        return self::ofNumber(Number::ofDecimal($decimal));
     }
 
     /**
@@ -122,7 +119,7 @@ final readonly class Instant
      */
     public function resetMicro(): self
     {
-        return $this->remember(static fn(self $that): self => self::of(second: $that->second), key: __METHOD__);
+        return $this->remember(static fn(self $that): self => self::of(second: $that->second), key: 'resetMicro');
     }
 
     /**
@@ -130,10 +127,9 @@ final readonly class Instant
      */
     public function resetSecond(): self
     {
-        return $this->remember(
-            static fn(self $that): self => self::of(second: $that->second - ($that->second % 60)),
-            key: __METHOD__,
-        );
+        return $this->remember(static fn(self $that): self => self::of(
+            second: $that->second - ($that->second % 60),
+        ), key: 'resetSecond');
     }
 
     /**
@@ -141,10 +137,9 @@ final readonly class Instant
      */
     public function resetMinute(): self
     {
-        return $this->remember(
-            static fn(self $that): self => self::of(second: $that->second - ($that->second % 3600)),
-            key: __METHOD__,
-        );
+        return $this->remember(static fn(self $that): self => self::of(
+            second: $that->second - ($that->second % 3600),
+        ), key: 'resetMinute');
     }
 
     /**
@@ -156,7 +151,7 @@ final readonly class Instant
      */
     public function value(): float
     {
-        return $this->remember(static fn(self $that): float => $that->number()->toFloat(), key: __METHOD__);
+        return $this->remember(static fn(self $that): float => $that->number()->toFloat(), key: 'value');
     }
 
     /**
@@ -414,9 +409,6 @@ final readonly class Instant
 
     private function number(): Number
     {
-        return $this->remember(
-            static fn(self $that): Number => Number::of($that->second, $that->microsecond),
-            key: __METHOD__,
-        );
+        return Number::of($this->second, $this->microsecond);
     }
 }

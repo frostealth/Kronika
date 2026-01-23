@@ -20,7 +20,6 @@ use Kronika\Date\DayOfYear;
 use Kronika\Date\Month;
 use Kronika\Date\Trait\HasDate;
 use Kronika\Date\Year;
-use Kronika\Exception\MalformedString;
 use Kronika\Format\DateTime\FormattedZoned as Formatted;
 use Kronika\Format\DateTime\Formatter;
 use Kronika\Time\Hour;
@@ -65,7 +64,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      */
     public static function of(Date $date, Time $time, \DateTimeZone $timezone): self
     {
-        return self::ofLocal(LocalDateTime::of($date, $time), $timezone);
+        return self::ofStr(\sprintf('%s %s', $date, $time), $timezone);
     }
 
     /**
@@ -97,7 +96,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      */
     public static function ofLocal(LocalDateTime $local, \DateTimeZone $timezone): self
     {
-        return self::ref(local: $local, timezone: $timezone);
+        return self::ofStr((string)$local, $timezone);
     }
 
     /**
@@ -112,7 +111,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      */
     public static function midnightOf(Date $date, \DateTimeZone $timezone): self
     {
-        return self::ofLocal($date->at(Time::midnight()), $timezone);
+        return self::of($date, Time::midnight(), $timezone);
     }
 
     /**
@@ -124,9 +123,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
             return $datetime;
         }
 
-        return self::map($datetime, static function(Native $datetime): self {
-            return self::ofLocal(LocalDateTime::ofDateTime($datetime), $datetime->getTimezone());
-        }, when: static fn(Native $datetime): bool => $datetime instanceof \DateTimeImmutable);
+        return self::createFromInterface($datetime);
     }
 
     /**
@@ -134,7 +131,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      */
     public static function ofTimestamp(float|int $timestamp): self
     {
-        return self::ofInstant(Instant::ofValue($timestamp), timezone_utc());
+        return self::ofNative(\DateTimeImmutable::createFromTimestamp($timestamp), timezone_utc());
     }
 
     /**
@@ -142,7 +139,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      */
     public static function ofInstant(Instant $instant, \DateTimeZone $timezone): self
     {
-        return self::ofLocal(LocalDateTime::ofInstant($instant), $timezone);
+        return self::ofNative(\DateTimeImmutable::createFromTimestamp($instant->value())->setTimezone($timezone));
     }
 
     /**
@@ -182,32 +179,31 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      *
      * @param non-empty-string $datetime
      *
-     * @throws MalformedString
+     * @throws Exception\MalformedString
      */
     public static function parse(string $datetime, ?\DateTimeZone $timezone = null): self
     {
         if ($datetime === '' || \in_array(\strtolower($datetime), ['now', 'today'], strict: true)) {
-            throw new MalformedString\DateTimeMalformedString('Invalid date-time string');
+            throw new Exception\MalformedString\DateTimeMalformedString('Invalid date-time string');
         }
 
-        try {
-            return self::ofDateTime(new \DateTimeImmutable($datetime, $timezone));
-        } catch (\DateMalformedStringException $e) {
-            throw MalformedString\DateTimeMalformedString::wrap($e);
-        }
+        return new self($datetime, timezone: $timezone ?? timezone_system())->reference();
     }
 
-    private function __construct(
-        private readonly LocalDateTime $local,
-        \DateTimeZone $timezone,
-    ){
-        parent::__construct((string)$local, $timezone);
+    /** @throws Exception\MalformedString\DateTimeMalformedString */
+    private function __construct(string $datetime, \DateTimeZone $timezone)
+    {
+        try {
+            parent::__construct($datetime, $timezone);
+        } catch (\DateMalformedStringException $e) {
+            throw Exception\MalformedString\DateTimeMalformedString::wrap($e);
+        }
     }
 
     #[\Override]
     public function date(): Date
     {
-        return $this->local->date();
+        return $this->local()->date();
     }
 
     #[\Override]
@@ -243,7 +239,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     #[\Override]
     public function time(): Time
     {
-        return $this->local->time();
+        return $this->local()->time();
     }
 
     #[\Override]
@@ -268,10 +264,13 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      * Returns the microsecond of this date-time.
      *
      * @return int<0, 999999>
+     *
+     * @psalm-suppress MoreSpecificReturnType
      */
     public function microsecond(): int
     {
-        return $this->second()->microsecond();
+        /** @psalm-suppress LessSpecificReturnStatement */
+        return $this->getMicrosecond();
     }
 
     /**
@@ -288,10 +287,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      */
     public function timestamp(): float
     {
-        return $this->remember(
-            fn(): float => Instant::of(parent::getTimestamp(), $this->microsecond())->value(),
-            key: __METHOD__,
-        );
+        return $this->instant()->value();
     }
 
     /**
@@ -306,7 +302,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      */
     public function shift(\DateTimeZone $to): static
     {
-        return $this->isInTimezone($to) ? $this : self::ofDateTime($this->toNative()->setTimezone($to));
+        return $this->isInTimezone($to) ? $this : $this->setTimezone($to);
     }
 
     /**
@@ -317,52 +313,60 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      * $this->with(new \DateTimeZone('+02:30'));  // 2025-12-31 12:15:30 +02:30
      * ```
      *
-     * @see self::shift() – change time-zone and shifts time
+     * @see self::shift() – change time-zone and shift time
      */
     #[\Override]
     public function with(Unit|\DateTimeZone $unit, bool $rolling = false): static
     {
         if ($unit instanceof \DateTimeZone) {
-            return self::ofLocal($this->local, timezone: $unit);
+            return self::ofLocal($this->local(), timezone: $unit);
         }
 
-        return self::ofLocal($this->local->with($unit, $rolling), $this->timezone());
+        return self::ofLocal($this->local()->with($unit, $rolling), $this->timezone());
     }
 
     #[\Override]
     public function resetMicro(): static
     {
-        return $this->with($this->second()->resetMicro());
+        return $this->setMicrosecond(0);
     }
 
     #[\Override]
     public function resetSecond(): static
     {
-        return $this->with(Second::zero());
+        return self::ofInstant($this->instant()->resetSecond(), $this->timezone());
     }
 
     #[\Override]
     public function until(DateTime|Unit|Native $end, Precision $precision = Precision::Micro): Duration
     {
-        return $this->local->until($this->localize($end), $precision);
+        return $this->instant()->until($this->normalize($end)->instant(), $precision);
     }
 
     #[\Override]
     public function difference(DateTime|Unit|Native $other, Precision $precision = Precision::Micro): Duration
     {
-        return $this->local->difference($this->localize($other), $precision);
+        return $this->instant()->difference($this->normalize($other)->instant(), $precision);
     }
 
     #[\Override]
     public function add(Duration|\DateInterval $interval): static
     {
-        return self::ofLocal($this->local->add($interval), $this->timezone());
+        if ($interval instanceof \DateInterval) {
+            return parent::add($interval)->reference();
+        }
+
+        return self::ofInstant($this->instant()->add($interval), $this->timezone());
     }
 
     #[\Override]
     public function sub(Duration|\DateInterval $interval): static
     {
-        return self::ofLocal($this->local->sub($interval), $this->timezone());
+        if ($interval instanceof \DateInterval) {
+            return parent::sub($interval)->reference();
+        }
+
+        return self::ofInstant($this->instant()->sub($interval), $this->timezone());
     }
 
     /**
@@ -409,6 +413,19 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         return $this->timezone()->getName() === $timezone->getName();
     }
 
+    /**
+     * Checks if this date-time is DST.
+     *
+     * ```
+     * // 2006-04-02 03:00:00 America/New_York
+     * $this->isDaylightSavingTime();  // true
+     * ```
+     */
+    public function isDaylightSavingTime(): bool
+    {
+        return parent::format('I') === '1';
+    }
+
     #[\Override]
     public function is(DateTime|Unit|Native $other, Precision $precision = Precision::Micro): bool
     {
@@ -448,7 +465,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     #[\Override]
     public function compareTo(DateTime|Unit|Native $other, Precision $precision = Precision::Micro): Compared
     {
-        return $this->local->compareTo($this->localize($other), $precision);
+        return $this->instant()->compareTo($this->normalize($other)->instant(), $precision);
     }
 
     /** @throws Exception\FormatError */
@@ -468,7 +485,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      */
     public function toLocalDateTime(): LocalDateTime
     {
-        return $this->local;
+        return $this->local();
     }
 
     #[\Override]
@@ -476,7 +493,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     {
         return $this->remember(
             static fn(self $that): \DateTimeImmutable => \DateTimeImmutable::createFromInterface($that),
-            key: __METHOD__,
+            key: \DateTimeImmutable::class,
         );
     }
 
@@ -489,34 +506,37 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     #[\Override]
     public function instant(): Instant
     {
-        return $this->local->instant();
+        return $this->remember(static fn(self $that): Instant => Instant::of(
+            second: $that->getTimestamp(),
+            micro: $that->getMicrosecond(),
+        ), key: Instant::class);
     }
 
     #[\Override]
     public function __toString(): string
     {
-        return \sprintf('%s %s', $this->local, $this->timezone()->getName());
+        return parent::format('x-m-d H:i:s.u e');
     }
 
     /** @alias {@see self::ofDateTime()} */
     #[\Override]
     public static function createFromMutable(\DateTime $object): static
     {
-        return self::ofDateTime($object);
+        return parent::createFromMutable($object)->reference();
     }
 
     /** @alias {@see self::ofDateTime()} */
     #[\Override]
     public static function createFromInterface(Native $object): static
     {
-        return self::ofDateTime($object);
+        return parent::createFromInterface($object)->reference();
     }
 
     /** @see self::ofTimestamp() */
     #[\Override]
     public static function createFromTimestamp(float|int $timestamp): static
     {
-        return self::ofDateTime(\DateTimeImmutable::createFromTimestamp($timestamp)->setTimezone(timezone_utc()));
+        return parent::createFromTimestamp($timestamp)->reference();
     }
 
     /** @see self::ofFormat() */
@@ -526,13 +546,13 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         string $datetime,
         ?\DateTimeZone $timezone = null,
     ): static|false {
-        $native = \DateTimeImmutable::createFromFormat($format, $datetime, $timezone);
+        $instance = parent::createFromFormat($format, $datetime, $timezone);
 
-        return $native instanceof Native ? self::ofDateTime($native) : false;
+        return $instance instanceof self ? $instance->reference() : false;
     }
 
     /**
-     * @throws MalformedString\DateTimeMalformedString
+     * @throws Exception\MalformedString\DateTimeMalformedString
      *
      * @see self::with()
      * @see self::add()
@@ -542,9 +562,10 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     public function modify(string $modifier): static
     {
         try {
-            return self::ofDateTime($this->toNative()->modify($modifier));
+            /** @psalm-suppress PossiblyFalseReference */
+            return parent::modify($modifier)->reference();
         } catch (\DateMalformedStringException $e) {
-            throw MalformedString\DateTimeMalformedString::wrap($e);
+            throw Exception\MalformedString\DateTimeMalformedString::wrap($e);
         }
     }
 
@@ -552,49 +573,76 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     #[\Override]
     public function setDate(int $year, int $month, int $day): static
     {
-        return self::ofDateTime($this->toNative()->setDate($year, $month, $day));
+        return parent::setDate($year, $month, $day)->reference();
     }
 
     #[\Override]
     public function setISODate(int $year, int $week, int $dayOfWeek = 1): static
     {
-        return self::ofDateTime($this->toNative()->setISODate($year, $week, $dayOfWeek));
+        return parent::setISODate($year, $week, $dayOfWeek)->reference();
     }
 
     /** @see self::with() */
     #[\Override]
     public function setTime(int $hour, int $minute, int $second = 0, int $microsecond = 0): static
     {
-        return self::ofDateTime($this->toNative()->setTime($hour, $minute, $second, $microsecond));
+        return parent::setTime($hour, $minute, $second, $microsecond)->reference();
     }
 
     /** @see self::ofTimestamp() */
     #[\Override]
     public function setTimestamp(int $timestamp): static
     {
-        return self::ofDateTime($this->toNative()->setTimestamp($timestamp));
+        return parent::setTimestamp($timestamp)->reference();
     }
 
     /** @see self::shift() */
     #[\Override]
     public function setTimezone(\DateTimeZone $timezone): static
     {
-        return self::ofDateTime($this->toNative()->setTimezone($timezone));
+        return parent::setTimezone($timezone)->reference();
     }
 
     /** @see self::with() */
     #[\Override]
     public function setMicrosecond(int $microsecond): static
     {
-        return self::ofDateTime($this->toNative()->setMicrosecond($microsecond));
+        return parent::setMicrosecond($microsecond)->reference();
     }
 
-    private function localize(DateTime|Unit|Native $datetime): DateTime
+    private static function ofNative(Native $datetime, ?\DateTimeZone $timezone = null): static
+    {
+        return self::ofStr($datetime->format('x-m-d H:i:s.u'), timezone: $timezone ?? $datetime->getTimezone());
+    }
+
+    /** @param string $datetime "x-m-d H:i:s.u" */
+    private static function ofStr(string $datetime, \DateTimeZone $timezone): static
+    {
+        return self::ref(datetime: $datetime, timezone: $timezone);
+    }
+
+    private function local(): LocalDateTime
+    {
+        return $this->remember(static fn(self $that): LocalDateTime => LocalDateTime::ofDateTime(
+            $that->toNativeMutable(),
+        ), key: LocalDateTime::class);
+    }
+
+    private function normalize(DateTime|Unit|Native $datetime): self
     {
         return match (true) {
-            $datetime instanceof Native => self::ofDateTime($datetime)->shift($this->timezone()),
-            $datetime instanceof LocalDateTime => $datetime,
+            $datetime instanceof Native => self::ofDateTime($datetime),
             $datetime instanceof Unit => $this->with($datetime),
+            $datetime instanceof LocalDateTime => self::ofLocal($datetime, $this->timezone()),
         };
+    }
+
+    private function reference(): self  // @todo: rename
+    {
+        return self::ref(
+            fn(...$args): self => $this,
+            datetime: parent::format('x-m-d H:i:s.u'),
+            timezone: parent::getTimezone(),
+        );
     }
 }

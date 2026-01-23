@@ -258,7 +258,11 @@ final readonly class Year implements DateUnit
     #[\Override]
     public function __toString(): string
     {
-        return \sprintf('%04d', $this->number());
+        if ($this->number >= 0 && $this->number < 10_000) {
+            return \sprintf('%04d', $this->number);
+        }
+
+        return \sprintf('%+05d', $this->number);
     }
 
     /** @internal */

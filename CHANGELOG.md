@@ -1,14 +1,17 @@
 # Changelog
 All notable changes to `Kronika` will be documented in this file.
 
-## [Unreleased]
+## [Unreleased] 0.4.0
 ### Added
+- Daylight Saving Time support.
+- `ZonedDateTime::isDaylightSavingTime()`.
 
 ### Removed
 
 ### Deprecated
 
 ### Changed
+- `ZonedDateTime::instant()` now in UTC.
 
 ### Fixed
 

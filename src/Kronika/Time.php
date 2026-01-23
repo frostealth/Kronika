@@ -102,7 +102,7 @@ final readonly class Time implements Unit
         }
 
         return self::map($datetime, static function(Native $datetime): self {
-            \sscanf($datetime->format('H:i:s.u'), '%u:%u:%u.%u', $hour, $minute, $second, $micro);
+            \sscanf($datetime->format('H:i:s.u'), '%d:%d:%d.%d', $hour, $minute, $second, $micro);
 
             return self::of($hour, $minute, Second::of($second, $micro));
         }, when: static fn(Native $datetime): bool => $datetime instanceof \DateTimeImmutable);
@@ -122,7 +122,7 @@ final readonly class Time implements Unit
     public static function ofInstant(Instant $instant): self
     {
         return self::map($instant, static function (Instant $instant): self {
-            \sscanf(\gmdate('H:i:s', $instant->second()), '%u:%u:%u', $hour, $minute, $second);
+            \sscanf(\gmdate('H:i:s', $instant->second()), '%d:%d:%d', $hour, $minute, $second);
 
             return self::of($hour, $minute, Second::of($second, $instant->microsecond()));
         });
@@ -648,7 +648,7 @@ final readonly class Time implements Unit
         return $this->remember(static fn(self $time): Instant => Instant::of(
             second: ($time->hour()->value() * 3600) + ($time->minute()->value() * 60) + $time->second()->second(),
             micro: $time->second()->microsecond(),
-        ), key: __METHOD__);
+        ), key: Instant::class);
     }
 
     /** @return non-empty-string */

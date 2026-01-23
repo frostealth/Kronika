@@ -25,14 +25,23 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(Year::class)]
 final class YearTest extends TestCase
 {
-    public function testBasic(): void
+    #[TestWith([2025, '2025'])]
+    #[TestWith([3521, '3521'])]
+    #[TestWith([25, '0025'])]
+    #[TestWith([7, '0007'])]
+    #[TestWith([0, '0000'])]
+    #[TestWith([-3, '-0003'])]
+    #[TestWith([-999, '-0999'])]
+    #[TestWith([-9999, '-9999'])]
+    public function testBasic(int $number, string $str): void
     {
-        $year = Year::of(2025);
+        $year = Year::of($number);
 
-        self::assertEquals(2025, $year->number());
-        self::assertNotSame($year, Year::of(2024));
+        self::assertEquals($number, $year->number());
+        self::assertEquals($str, (string)$year);
+        self::assertNotSame($year, Year::of(\abs($number) - 1));
         self::assertSame($year, Year::of($year));
-        self::assertSame($year, Year::of(2025));
+        self::assertSame($year, Year::of($number));
     }
 
     #[TestWith([10_000])]

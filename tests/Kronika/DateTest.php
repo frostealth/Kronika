@@ -49,6 +49,10 @@ final class DateTest extends TestCase
             [Date\Year::of(2025), Date\Month::of(12), Date\DayOfMonth::of(31)],
             [Date\Year::of(2030), Date\Month::of(12), Date\DayOfMonth::of(31)],
             [Date\Year::of(1961), Date\Month::of(5), Date\DayOfMonth::of(18)],
+            [Date\Year::of(9999), Date\Month::of(12), Date\DayOfMonth::of(31)],
+            [Date\Year::of(0), Date\Month::of(1), Date\DayOfMonth::of(1)],
+            [Date\Year::of(-99), Date\Month::of(12), Date\DayOfMonth::of(31)],
+            [Date\Year::of(-9999), Date\Month::of(12), Date\DayOfMonth::of(31)],
         ];
     }
 
@@ -65,7 +69,7 @@ final class DateTest extends TestCase
         self::assertEquals($month, $date->month());
         self::assertEquals($day, $date->day());
         self::assertSame($date, Date::of(year: $year->number(), month: $month->number(), day: $day->number()));
-        self::assertNotSame($date, Date::of(year: $year->number() + 1, month: $month->number(), day: $day->number()));
+        self::assertNotSame($date, Date::of(year: \abs($year->number()) - 1, month: $month->number(), day: $day->number()));
     }
 
     #[TestWith([100_000, 01, 01])]
@@ -215,6 +219,10 @@ final class DateTest extends TestCase
             [Date::of(2025, 11, 15), Date\DayOfMonth::of(30)],
             [Date::of(2025, 1, 29), Date\DayOfMonth::of(31)],
             [Date::of(2025, 1, 31), Date\DayOfMonth::of(31)],
+            [Date::of(225, 11, 15), Date\DayOfMonth::of(30)],
+            [Date::of(0, 11, 15), Date\DayOfMonth::of(30)],
+            [Date::of(-225, 11, 15), Date\DayOfMonth::of(30)],
+            [Date::of(-2025, 11, 15), Date\DayOfMonth::of(30)],
         ];
     }
 
@@ -570,11 +578,20 @@ final class DateTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
+    /** @param array{int, int, int} $date */
+    #[TestWith([[2030, 5, 24], '2030-05-24'])]
+    #[TestWith([[9999, 12, 4], '9999-12-04'])]
+    #[TestWith([[999, 12, 4], '0999-12-04'])]
+    #[TestWith([[99, 12, 4], '0099-12-04'])]
+    #[TestWith([[0, 12, 4], '0000-12-04'])]
+    #[TestWith([[-99, 12, 14], '-0099-12-14'])]
+    #[TestWith([[-999, 12, 14], '-0999-12-14'])]
+    #[TestWith([[-9999, 12, 14], '-9999-12-14'])]
     #[Depends('testBasic')]
-    public function testToString(): void
+    public function testToString(array $date, string $expected): void
     {
-        $date = Date::of(2030, 5, 24);
+        $date = Date::of(...$date);
 
-        self::assertEquals('2030-05-24', (string)$date);
+        self::assertEquals($expected, (string)$date);
     }
 }

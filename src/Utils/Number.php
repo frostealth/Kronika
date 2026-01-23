@@ -33,22 +33,23 @@ final readonly class Number
     }
 
     /**
-     * @param numeric $number
+     * @param numeric $decimal
      *
      * @no-named-arguments
      */
-    public static function ofNumber(float|int|string $number): self
+    public static function ofDecimal(float|int|string $decimal): self
     {
-        if (\is_int($number)) {
-            return self::of($number, fraction: 0);
+        if (\is_int($decimal)) {
+            return self::of($decimal, fraction: 0);
         }
 
-        $number = \sprintf('%.6F', $number);
-        \sscanf($number, '%d.%6d', $integer, $fraction);
-        if (\str_starts_with($number, '-')) {
+        $decimal = \sprintf('%.6F', $decimal);
+        \sscanf($decimal, '%d.%6d', $integer, $fraction);
+        if (\str_starts_with($decimal, '-')) {
             $fraction = -$fraction;
         }
 
+        /** @psalm-suppress PossiblyInvalidArgument */
         return self::of($integer, $fraction);
     }
 
@@ -121,12 +122,15 @@ final readonly class Number
 
     public function toFloat(): float
     {
-        return (float)(string)$this;
+        return (float)$this->toDecimal();
     }
 
-    /** @return non-empty-string */
-    #[\Override]
-    public function __toString(): string
+    /**
+     * @return non-empty-string
+     *
+     * @psalm-suppress MoreSpecificReturnType
+     */
+    public function toDecimal(): string
     {
         $sign = $this->isNegative() ? '-' : '';
         $integer = $this->integer;
@@ -136,6 +140,14 @@ final readonly class Number
             $fraction = self::DENOMINATOR - $fraction;
         }
 
+        /** @psalm-suppress LessSpecificReturnStatement */
         return \sprintf("%s%d.%06d", $sign, \abs($integer), $fraction);
+    }
+
+    /** @return non-empty-string */
+    #[\Override]
+    public function __toString(): string
+    {
+        return $this->toDecimal();
     }
 }
