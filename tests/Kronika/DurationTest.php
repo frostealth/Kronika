@@ -464,4 +464,21 @@ final class DurationTest extends TestCase
         self::assertEquals(Duration::of(seconds: 1), Duration::ofSecond());
         self::assertSame(Duration::of(seconds: 1), Duration::ofSecond());
     }
+
+    #[Depends('testBasic')]
+    public function testToDateInterval(): void
+    {
+        $duration = Duration::of(days: 1, hours: 2, minutes: 35, seconds: 45, micros: 5_123);
+        $interval = $duration->toDateInterval();
+
+        self::assertEquals(0, $interval->invert);
+        self::assertEquals(0, $interval->y);
+        self::assertEquals(0, $interval->m);
+        self::assertEquals(0, $interval->d);
+        self::assertEquals(0, $interval->days);
+        self::assertEquals(26, $interval->h);
+        self::assertEquals(35, $interval->i);
+        self::assertEquals(45, $interval->s);
+        self::assertEquals(0.005123, $interval->f);
+    }
 }

@@ -20,7 +20,6 @@ use Kronika\Date\DayOfYear;
 use Kronika\Date\Month;
 use Kronika\Date\Trait\HasDate;
 use Kronika\Date\Year;
-use Kronika\Exception\MalformedString;
 use Kronika\Format\DateTime\FormattedLocal as Formatted;
 use Kronika\Format\DateTime\Formatter;
 use Kronika\Time\Hour;
@@ -119,18 +118,18 @@ final readonly class LocalDateTime implements DateTime
      *
      * @param non-empty-string $datetime
      *
-     * @throws MalformedString
+     * @throws Exception\MalformedString
      */
     public static function parse(string $datetime): self
     {
         if ($datetime === '' || \in_array(\strtolower($datetime), ['now', 'today'], strict: true)) {
-            throw new MalformedString\DateTimeMalformedString('Invalid date-time string');
+            throw new Exception\MalformedString\DateTimeMalformedString('Invalid date-time string');
         }
 
         try {
             return self::ofDateTime(new \DateTime($datetime));
         } catch (\DateMalformedStringException $e) {
-            throw MalformedString\DateTimeMalformedString::wrap($e);
+            throw Exception\MalformedString\DateTimeMalformedString::wrap($e);
         }
     }
 
@@ -348,7 +347,11 @@ final readonly class LocalDateTime implements DateTime
     #[\Override]
     public function __toString(): string
     {
-        return \sprintf('%s %s', $this->date, $this->time);
+        return $this->remember(static fn(self $that): string => \sprintf(
+            '%s %s',
+            $that->date,
+            $that->time,
+        ), key: __FUNCTION__);
     }
 
     /** @internal */

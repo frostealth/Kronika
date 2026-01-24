@@ -64,7 +64,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      */
     public static function of(Date $date, Time $time, \DateTimeZone $timezone): self
     {
-        return self::ofStr(\sprintf('%s %s', $date, $time), $timezone);
+        return self::ofLocal($date->at($time), $timezone);
     }
 
     /**
@@ -96,7 +96,16 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      */
     public static function ofLocal(LocalDateTime $local, \DateTimeZone $timezone): self
     {
-        return self::ofStr((string)$local, $timezone);
+        return self::ref(static function (LocalDateTime $datetime, \DateTimeZone $timezone): self {
+            $instance = new self($str = (string)$datetime, $timezone);
+            if ($instance->isDaylightSavingTime() && ! \str_starts_with((string)$instance, $str)) {
+                return $instance->reference();
+            }
+
+            $instance->remember($datetime, key: LocalDateTime::class);
+
+            return $instance;
+        }, datetime: $local, timezone: $timezone);
     }
 
     /**
@@ -139,7 +148,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      */
     public static function ofInstant(Instant $instant, \DateTimeZone $timezone): self
     {
-        return self::ofNative(\DateTimeImmutable::createFromTimestamp($instant->value())->setTimezone($timezone));
+        return parent::createFromTimestamp($instant->value())->shift($timezone);
     }
 
     /**
@@ -612,13 +621,10 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
 
     private static function ofNative(Native $datetime, ?\DateTimeZone $timezone = null): static
     {
-        return self::ofStr($datetime->format('x-m-d H:i:s.u'), timezone: $timezone ?? $datetime->getTimezone());
-    }
-
-    /** @param string $datetime "x-m-d H:i:s.u" */
-    private static function ofStr(string $datetime, \DateTimeZone $timezone): static
-    {
-        return self::ref(datetime: $datetime, timezone: $timezone);
+        return self::ref(
+            datetime: $datetime->format('x-m-d H:i:s.u'),
+            timezone: $timezone ?? $datetime->getTimezone(),
+        );
     }
 
     private function local(): LocalDateTime
@@ -637,7 +643,8 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         };
     }
 
-    private function reference(): self  // @todo: rename
+    /** Looks for a reference to a similar instance. */
+    private function reference(): self
     {
         return self::ref(
             fn(...$args): self => $this,

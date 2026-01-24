@@ -52,7 +52,7 @@ final class References
         $instance = $factory(...$args);
         $this->references[$key] = \WeakReference::create($instance);
         /** @psalm-suppress InvalidArrayAssignment */
-        $this->mapFor($instance)['key'] = $key;
+        $this->mapFor($instance)['keys'][] = $key;
 
         return $instance;
     }
@@ -77,9 +77,10 @@ final class References
 
     public function onDestruction(object $instance): void
     {
-        $key = $this->map[$instance]['key'] ?? null;
-        /** @psalm-suppress PossiblyNullArrayOffset */
-        unset($this->references[$key], $this->map[$instance]);
+        foreach ($this->map[$instance]['keys'] ?? [] as $key) {
+            unset($this->references[$key]);
+        }
+        unset($this->map[$instance]);
     }
 
     public function reset(): void
@@ -108,7 +109,7 @@ final class References
 
     private function &mapFor(object $holder): array
     {
-        $this->map[$holder] ??= ['values' => []];
+        $this->map[$holder] ??= ['keys' => [], 'values' => []];
 
         /** @psalm-suppress NonVariableReferenceReturn */
         return $this->map[$holder];

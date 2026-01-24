@@ -54,7 +54,7 @@ final readonly class Number
     }
 
     /** @param non-negative-int $fraction */
-    public function __construct(
+    private function __construct(
         private int $integer,
         private int $fraction,
     ) {

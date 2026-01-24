@@ -59,7 +59,7 @@ enum Month: int implements DateUnit
             return $value;
         }
 
-        return \is_int($value) ? self::ofValue($value) : self::ofName($value);
+        return \is_int($value) ? self::ofNumber($value) : self::ofName($value);
     }
 
     /**
@@ -304,12 +304,12 @@ enum Month: int implements DateUnit
     }
 
     /** @throws Exception\InvalidMonth */
-    private static function ofValue(int $value): self
+    private static function ofNumber(int $number): self
     {
         try {
-            return self::from($value);
+            return self::from($number);
         } catch (\ValueError $e) {
-            throw new Exception\InvalidMonth("Invalid month value [$value]", previous: $e);
+            throw new Exception\InvalidMonth("Invalid month number [$number]", previous: $e);
         }
     }
 

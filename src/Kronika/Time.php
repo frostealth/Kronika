@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Kronika;
 
 use DateTimeInterface as Native;
-use Kronika\Exception\MalformedString;
 use Kronika\Format\Time\Formatted as Formatted;
 use Kronika\Format\Time\Formatter;
 use Kronika\Time\Hour;
@@ -152,18 +151,18 @@ final readonly class Time implements Unit
      *
      * @param non-empty-string $time
      *
-     * @throws MalformedString
+     * @throws Exception\MalformedString
      */
     public static function parse(string $time): self
     {
         if ($time === '' || \in_array(\strtolower($time), ['now', 'today'], strict: true)) {
-            throw new MalformedString\TimeMalformedString('Invalid time string');
+            throw new Exception\MalformedString\TimeMalformedString('Invalid time string');
         }
 
         try {
             return self::ofDateTime(new \DateTimeImmutable($time));
         } catch (\DateMalformedStringException $e) {
-            throw MalformedString\TimeMalformedString::wrap($e);
+            throw Exception\MalformedString\TimeMalformedString::wrap($e);
         }
     }
 

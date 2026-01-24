@@ -20,7 +20,6 @@ use Kronika\Date\DayOfWeek;
 use Kronika\Date\DayOfYear;
 use Kronika\Date\Month;
 use Kronika\Date\Year;
-use Kronika\Exception\MalformedString;
 use Kronika\Format\Date\Formatted;
 use Kronika\Format\Date\Formatter;
 use Kronika\Utils\Compared;
@@ -113,18 +112,18 @@ final readonly class Date implements Unit
      *
      * @param non-empty-string $date
      *
-     * @throws MalformedString
+     * @throws Exception\MalformedString
      */
     public static function parse(string $date): self
     {
         if ($date === '' || \in_array(\strtolower($date), ['now', 'today'], strict: true)) {
-            throw new MalformedString\DateMalformedString('Invalid date string');
+            throw new Exception\MalformedString\DateMalformedString('Invalid date string');
         }
 
         try {
             return self::ofDateTime(new \DateTimeImmutable($date));
         } catch (\DateMalformedStringException $e) {
-            throw MalformedString\DateMalformedString::wrap($e);
+            throw Exception\MalformedString\DateMalformedString::wrap($e);
         }
     }
 
