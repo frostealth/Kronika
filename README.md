@@ -1,5 +1,6 @@
 # Kronika
-The library provides date-time value objects such as "Date", "Time", "LocalDateTime", etc.
+Kronika is a PHP library that provides date-time value objects such as "Date", "Time",
+"LocalDateTime", "ZonedDateTime", etc.
 
 ## Installation
 The recommended way to install Kronika is through
