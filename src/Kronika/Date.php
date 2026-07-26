@@ -188,8 +188,8 @@ final readonly class Date implements Unit
      * ```
      * ```
      * // 2025-11-29 vs DayOfMonth::of(31)
-     * $this->with($day, rolling: false); // 2025-11-30
-     * $this->with($day, rolling: true);  // 2025-12-01
+     * $this->with($day, OverflowMode::Clamp); // 2025-11-30
+     * $this->with($day, OverflowMode::Roll);  // 2025-12-01
      * ```
      *
      * @see \Kronika\Date\Year – change only year
@@ -198,9 +198,9 @@ final readonly class Date implements Unit
      * @see \Kronika\Date\DayOfWeek – change/shift only day of week
      * @see \Kronika\Date\DayOfYear - change/shift only day of year
      */
-    public function with(DateUnit $unit, bool $rolling = false): self
+    public function with(DateUnit $unit, OverflowMode $mode = OverflowMode::Clamp): self
     {
-        return $unit->_withinDate($this, $rolling);
+        return $unit->_withinDate($this, $mode);
     }
 
     /**
@@ -885,7 +885,7 @@ final readonly class Date implements Unit
 
     /** @internal {@see DateTime::with()} */
     #[\Override]
-    public function _withinDateTime(LocalDateTime $datetime, bool $rolling): LocalDateTime
+    public function _withinDateTime(LocalDateTime $datetime, OverflowMode $mode): LocalDateTime
     {
         return $this->at($datetime->time());
     }

@@ -103,8 +103,8 @@ interface DateTime
      * ```
      * ```
      * // 2025-11-29 12:15:30 vs DayOfMonth::of(31)
-     * $this->with($day, rolling: false); // 2025-11-30 12:15:30
-     * $this->with($day, rolling: true);  // 2025-12-01 12:15:30
+     * $this->with($day, OverflowMode::Clamp); // 2025-11-30 12:15:30
+     * $this->with($day, OverflowMode::Roll);  // 2025-12-01 12:15:30
      * ```
      *
      * @see \Kronika\Date – change only date
@@ -118,7 +118,7 @@ interface DateTime
      * @see \Kronika\Time\Minute – change only minute
      * @see \Kronika\Time\Second – change only second with microsecond
      */
-    public function with(Unit $unit, bool $rolling = false): static;
+    public function with(Unit $unit, OverflowMode $mode = OverflowMode::Clamp): static;
 
     /**
      * Resets the microsecond to 0.

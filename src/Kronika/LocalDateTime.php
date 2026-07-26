@@ -191,9 +191,9 @@ final readonly class LocalDateTime implements DateTime
     }
 
     #[\Override]
-    public function with(Unit $unit, bool $rolling = false): static
+    public function with(Unit $unit, OverflowMode $mode = OverflowMode::Clamp): static
     {
-        return $unit->_withinDateTime($this, $rolling);
+        return $unit->_withinDateTime($this, $mode);
     }
 
     /**

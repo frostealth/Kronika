@@ -15,6 +15,7 @@ namespace Kronika\Date;
 
 use Kronika\Date;
 use Kronika\Duration;
+use Kronika\OverflowMode;
 use Kronika\Utils\Compared;
 
 /**
@@ -121,13 +122,17 @@ enum Month: int implements DateUnit
      * ```
      * Month::January->next();  // February
      * Month::December->next(); // December
-     * Month::December->next(rolling: true); // January
+     * Month::December->next(OverflowMode::Roll); // January
      * ```
      */
-    public function next(bool $rolling = false): self
+    public function next(OverflowMode $mode = OverflowMode::Clamp): self
     {
         if ($this->is(self::December)) {
-            return $rolling ? self::January : $this;
+            return match ($mode) {
+                OverflowMode::Roll => self::January,
+                OverflowMode::Strict => throw new \OutOfBoundsException(),
+                OverflowMode::Clamp => $this,
+            };
         }
 
         return self::of($this->number() + 1);
@@ -139,13 +144,17 @@ enum Month: int implements DateUnit
      * ```
      * Month::February->previous();  // January
      * Month::January->previous();   // January
-     * Month::January->previous(rolling: true);  // December
+     * Month::January->previous(OverflowMode::Roll);  // December
      * ```
      */
-    public function previous(bool $rolling = false): self
+    public function previous(OverflowMode $mode = OverflowMode::Clamp): self
     {
         if ($this->is(self::January)) {
-            return $rolling ? self::December : $this;
+            return match ($mode) {
+                OverflowMode::Roll => self::December,
+                OverflowMode::Strict => throw new \OutOfBoundsException(),
+                OverflowMode::Clamp => $this,
+            };
         }
 
         return self::of($this->number() - 1);
@@ -315,8 +324,8 @@ enum Month: int implements DateUnit
 
     /** @internal {@see \Kronika\Date::with()} */
     #[\Override]
-    public function _withinDate(Date $date, bool $rolling): Date
+    public function _withinDate(Date $date, OverflowMode $mode): Date
     {
-        return Date::of($date->year(), $this, DayOfMonth::first())->with($date->day(), $rolling);
+        return Date::of($date->year(), $this, DayOfMonth::first())->with($date->day(), $mode);
     }
 }

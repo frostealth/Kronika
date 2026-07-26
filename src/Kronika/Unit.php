@@ -21,5 +21,5 @@ namespace Kronika;
 interface Unit
 {
     /** @internal {@see \Kronika\DateTime::with()} */
-    public function _withinDateTime(LocalDateTime $datetime, bool $rolling): LocalDateTime;
+    public function _withinDateTime(LocalDateTime $datetime, OverflowMode $mode): LocalDateTime;
 }

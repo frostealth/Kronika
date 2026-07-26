@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Kronika\Date;
 
 use Kronika\Date;
+use Kronika\OverflowMode;
 use Kronika\Unit;
 
 /**
@@ -32,5 +33,5 @@ interface DateUnit extends Unit
     public function number(): int;
 
     /** @internal {@see \Kronika\Date::with()} */
-    public function _withinDate(Date $date, bool $rolling): Date;
+    public function _withinDate(Date $date, OverflowMode $mode): Date;
 }

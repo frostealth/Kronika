@@ -16,6 +16,7 @@ namespace Kronika\Tests\Date;
 use Kronika\Date\DayOfYear;
 use Kronika\Date\Exception\InvalidDayOfYear;
 use Kronika\Date\Year;
+use Kronika\OverflowMode;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Depends;
@@ -92,28 +93,32 @@ final class DayOfYearTest extends TestCase
             [DayOfYear::of(364), DayOfYear::of(365)],
             [DayOfYear::of(365), DayOfYear::of(366)],
             [DayOfYear::of(366), DayOfYear::of(366)],
-            [DayOfYear::of(364), DayOfYear::of(365), 'rolling' => true],
-            [DayOfYear::of(365), DayOfYear::of(366), 'rolling' => true],
-            [DayOfYear::of(366), DayOfYear::of(1), 'rolling' => true],
+            [DayOfYear::of(364), DayOfYear::of(365), 'mode' => OverflowMode::Roll],
+            [DayOfYear::of(365), DayOfYear::of(366), 'mode' => OverflowMode::Roll],
+            [DayOfYear::of(366), DayOfYear::of(1), 'mode' => OverflowMode::Roll],
             [DayOfYear::of(364), DayOfYear::of(365), Year::of(2024)],
             [DayOfYear::of(365), DayOfYear::of(366), Year::of(2024)],
             [DayOfYear::of(366), DayOfYear::of(366), Year::of(2024)],
-            [DayOfYear::of(364), DayOfYear::of(365), Year::of(2024), 'rolling' => true],
-            [DayOfYear::of(365), DayOfYear::of(366), Year::of(2024), 'rolling' => true],
-            [DayOfYear::of(366), DayOfYear::of(1), Year::of(2024), 'rolling' => true],
-            [DayOfYear::of(364), DayOfYear::of(365), Year::of(2025), 'rolling' => true],
-            [DayOfYear::of(365), DayOfYear::of(1), Year::of(2025), 'rolling' => true],
-            [DayOfYear::of(366), DayOfYear::of(1), Year::of(2025), 'rolling' => true],
+            [DayOfYear::of(364), DayOfYear::of(365), Year::of(2024), OverflowMode::Roll],
+            [DayOfYear::of(365), DayOfYear::of(366), Year::of(2024), OverflowMode::Roll],
+            [DayOfYear::of(366), DayOfYear::of(1), Year::of(2024), OverflowMode::Roll],
+            [DayOfYear::of(364), DayOfYear::of(365), Year::of(2025), OverflowMode::Roll],
+            [DayOfYear::of(365), DayOfYear::of(1), Year::of(2025), OverflowMode::Roll],
+            [DayOfYear::of(366), DayOfYear::of(1), Year::of(2025), OverflowMode::Roll],
         ];
     }
 
     #[DependsOnClass(YearTest::class)]
     #[Depends('testBasic')]
     #[DataProvider('nextProvider')]
-    public function testNext(DayOfYear $day, DayOfYear $expected, ?Year $year = null, bool $rolling = false): void
-    {
-        self::assertEquals($expected, $day->next($year, $rolling));
-        self::assertSame($expected, $day->next($year, $rolling));
+    public function testNext(
+        DayOfYear $day,
+        DayOfYear $expected,
+        ?Year $year = null,
+        OverflowMode $mode = OverflowMode::Clamp,
+    ): void {
+        self::assertEquals($expected, $day->next($year, mode: $mode));
+        self::assertSame($expected, $day->next($year, mode: $mode));
     }
 
     public static function previousProvider(): array
@@ -126,15 +131,15 @@ final class DayOfYearTest extends TestCase
             [DayOfYear::of(364), DayOfYear::of(363)],
             [DayOfYear::of(365), DayOfYear::of(364)],
             [DayOfYear::of(366), DayOfYear::of(365)],
-            [DayOfYear::of(364), DayOfYear::of(363), 'rolling' => true],
-            [DayOfYear::of(365), DayOfYear::of(364), 'rolling' => true],
-            [DayOfYear::of(366), DayOfYear::of(365), 'rolling' => true],
+            [DayOfYear::of(364), DayOfYear::of(363), 'mode' => OverflowMode::Roll],
+            [DayOfYear::of(365), DayOfYear::of(364), 'mode' => OverflowMode::Roll],
+            [DayOfYear::of(366), DayOfYear::of(365), 'mode' => OverflowMode::Roll],
             [DayOfYear::of(1), DayOfYear::of(1), Year::of(2024)],
-            [DayOfYear::of(2), DayOfYear::of(1), Year::of(2024), 'rolling' => true],
-            [DayOfYear::of(1), DayOfYear::of(365), Year::of(2024), 'rolling' => true],
+            [DayOfYear::of(2), DayOfYear::of(1), Year::of(2024), OverflowMode::Roll],
+            [DayOfYear::of(1), DayOfYear::of(365), Year::of(2024), OverflowMode::Roll],
             [DayOfYear::of(1), DayOfYear::of(1), Year::of(2025)],
-            [DayOfYear::of(2), DayOfYear::of(1), Year::of(2025), 'rolling' => true],
-            [DayOfYear::of(1), DayOfYear::of(366), Year::of(2025), 'rolling' => true],
+            [DayOfYear::of(2), DayOfYear::of(1), Year::of(2025), OverflowMode::Roll],
+            [DayOfYear::of(1), DayOfYear::of(366), Year::of(2025), OverflowMode::Roll],
             [DayOfYear::of(364), DayOfYear::of(363), Year::of(2024)],
             [DayOfYear::of(365), DayOfYear::of(364), Year::of(2024)],
             [DayOfYear::of(366), DayOfYear::of(365), Year::of(2024)],
@@ -147,28 +152,32 @@ final class DayOfYearTest extends TestCase
             [DayOfYear::of(364), DayOfYear::of(363), Year::of(2025)],
             [DayOfYear::of(365), DayOfYear::of(364), Year::of(2025)],
             [DayOfYear::of(366), DayOfYear::of(364), Year::of(2025)],
-            [DayOfYear::of(364), DayOfYear::of(363), Year::of(2024), 'rolling' => true],
-            [DayOfYear::of(365), DayOfYear::of(364), Year::of(2024), 'rolling' => true],
-            [DayOfYear::of(366), DayOfYear::of(365), Year::of(2024), 'rolling' => true],
-            [DayOfYear::of(364), DayOfYear::of(363), Year::of(2025), 'rolling' => true],
-            [DayOfYear::of(365), DayOfYear::of(364), Year::of(2025), 'rolling' => true],
-            [DayOfYear::of(366), DayOfYear::of(364), Year::of(2025), 'rolling' => true],
-            [DayOfYear::of(364), DayOfYear::of(363), Year::of(2024), 'rolling' => true],
-            [DayOfYear::of(365), DayOfYear::of(364), Year::of(2024), 'rolling' => true],
-            [DayOfYear::of(366), DayOfYear::of(365), Year::of(2024), 'rolling' => true],
-            [DayOfYear::of(364), DayOfYear::of(363), Year::of(2025), 'rolling' => true],
-            [DayOfYear::of(365), DayOfYear::of(364), Year::of(2025), 'rolling' => true],
-            [DayOfYear::of(366), DayOfYear::of(364), Year::of(2025), 'rolling' => true],
+            [DayOfYear::of(364), DayOfYear::of(363), Year::of(2024), OverflowMode::Roll],
+            [DayOfYear::of(365), DayOfYear::of(364), Year::of(2024), OverflowMode::Roll],
+            [DayOfYear::of(366), DayOfYear::of(365), Year::of(2024), OverflowMode::Roll],
+            [DayOfYear::of(364), DayOfYear::of(363), Year::of(2025), OverflowMode::Roll],
+            [DayOfYear::of(365), DayOfYear::of(364), Year::of(2025), OverflowMode::Roll],
+            [DayOfYear::of(366), DayOfYear::of(364), Year::of(2025), OverflowMode::Roll],
+            [DayOfYear::of(364), DayOfYear::of(363), Year::of(2024), OverflowMode::Roll],
+            [DayOfYear::of(365), DayOfYear::of(364), Year::of(2024), OverflowMode::Roll],
+            [DayOfYear::of(366), DayOfYear::of(365), Year::of(2024), OverflowMode::Roll],
+            [DayOfYear::of(364), DayOfYear::of(363), Year::of(2025), OverflowMode::Roll],
+            [DayOfYear::of(365), DayOfYear::of(364), Year::of(2025), OverflowMode::Roll],
+            [DayOfYear::of(366), DayOfYear::of(364), Year::of(2025), OverflowMode::Roll],
         ];
     }
 
     #[DependsOnClass(YearTest::class)]
     #[Depends('testBasic')]
     #[DataProvider('previousProvider')]
-    public function testPrevious(DayOfYear $day, DayOfYear $expected, ?Year $year = null, bool $rolling = false): void
-    {
-        self::assertEquals($expected, $day->previous($year, $rolling));
-        self::assertSame($expected, $day->previous($year, $rolling));
+    public function testPrevious(
+        DayOfYear $day,
+        DayOfYear $expected,
+        ?Year $year = null,
+        OverflowMode $mode = OverflowMode::Clamp,
+    ): void {
+        self::assertEquals($expected, $day->previous($year, mode: $mode));
+        self::assertSame($expected, $day->previous($year, mode: $mode));
     }
 
     public static function comparisonProvider(): array

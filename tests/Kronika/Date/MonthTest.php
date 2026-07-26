@@ -18,6 +18,7 @@ use Kronika\Date\Exception\InvalidMonth;
 use Kronika\Date\Month;
 use Kronika\Date\Year;
 use Kronika\Duration;
+use Kronika\OverflowMode;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Depends;
@@ -121,15 +122,15 @@ final class MonthTest extends TestCase
             [Month::October, Month::November],
             [Month::November, Month::December],
             [Month::December, Month::January],
-            [Month::December, Month::December, 'rolling' => false],
+            [Month::December, Month::December, OverflowMode::Clamp],
         ];
     }
 
     #[Depends('testBasic')]
     #[DataProvider('nextProvider')]
-    public function testNext(Month $current, Month $expected, bool $rolling = true): void
+    public function testNext(Month $current, Month $expected, OverflowMode $mode = OverflowMode::Roll): void
     {
-        self::assertSame($expected, $current->next(rolling: $rolling));
+        self::assertSame($expected, $current->next(mode: $mode));
     }
 
     public static function previousProvider(): array
@@ -147,15 +148,15 @@ final class MonthTest extends TestCase
             [Month::March, Month::February],
             [Month::February, Month::January],
             [Month::January, Month::December],
-            [Month::January, Month::January, 'rolling' => false],
+            [Month::January, Month::January, OverflowMode::Clamp],
         ];
     }
 
     #[Depends('testBasic')]
     #[DataProvider('previousProvider')]
-    public function testPrevious(Month $current, Month $expected, bool $rolling = true): void
+    public function testPrevious(Month $current, Month $expected, OverflowMode $mode = OverflowMode::Roll): void
     {
-        self::assertSame($expected, $current->previous(rolling: $rolling));
+        self::assertSame($expected, $current->previous(mode: $mode));
     }
 
     public static function lastDayProvider(): array

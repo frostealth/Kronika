@@ -326,13 +326,13 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      * @see self::shift() – change time-zone and shift time
      */
     #[\Override]
-    public function with(Unit|\DateTimeZone $unit, bool $rolling = false): static
+    public function with(Unit|\DateTimeZone $unit, OverflowMode $mode = OverflowMode::Clamp): static
     {
         if ($unit instanceof \DateTimeZone) {
             return self::fromLocal($this->local(), timezone: $unit);
         }
 
-        return self::fromLocal($this->local()->with($unit, $rolling), $this->timezone());
+        return self::fromLocal($this->local()->with($unit, $mode), $this->timezone());
     }
 
     #[\Override]

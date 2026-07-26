@@ -15,6 +15,7 @@ namespace Kronika\Date;
 
 use Kronika\Date;
 use Kronika\Duration;
+use Kronika\OverflowMode;
 use Kronika\Utils\Compared;
 use Kronika\Utils\RefTrait;
 
@@ -114,16 +115,20 @@ final readonly class DayOfYear implements DateUnit
      * ```
      * ```
      * // 1
-     * $this->previous();  // 366
-     * $this->previous(rolling: false);  // 1
-     * $this->previous(Year::of(2026));  // 365
+     * $this->previous();  // 1
+     * $this->previous(mode: OverflowMode::Roll);  // 366
+     * $this->previous(Year::of(2026), OverflowMode::Roll);  // 365
      * ```
      */
-    public function previous(?Year $ofYear = null, bool $rolling = false): self
+    public function previous(?Year $ofYear = null, OverflowMode $mode = OverflowMode::Clamp): self
     {
         $number = $this->adjust($ofYear)->number() - 1;
         if ($number < 1) {
-            return $rolling ? self::last($ofYear?->previous()) : self::first();
+            return match ($mode) {
+                OverflowMode::Roll => self::last($ofYear?->previous()),
+                OverflowMode::Strict => throw new \OutOfBoundsException(),
+                OverflowMode::Clamp => self::first(),
+            };
         }
 
         return self::of($number);
@@ -140,14 +145,18 @@ final readonly class DayOfYear implements DateUnit
      * // 365
      * $this->next();  // 366
      * $this->next(Year::of(2025));  // 365
-     * $this->next(Year::of(2025), rolling: true);  // 1
+     * $this->next(Year::of(2025), OverflowMode::Roll);  // 1
      * ```
      */
-    public function next(?Year $ofYear = null, bool $rolling = false): self
+    public function next(?Year $ofYear = null, OverflowMode $mode = OverflowMode::Clamp): self
     {
         $number = $this->number() + 1;
         if ($number > self::last($ofYear)->number()) {
-            return $rolling ? self::first() : self::last($ofYear);
+            return match ($mode) {
+                OverflowMode::Roll => self::first(),
+                OverflowMode::Strict => throw new \OutOfBoundsException(),
+                OverflowMode::Clamp => self::last($ofYear),
+            };
         }
 
         return self::of($number);
@@ -294,11 +303,6 @@ final readonly class DayOfYear implements DateUnit
         return $this->is(self::first());
     }
 
-    private function isLast(?Year $ofYear): bool
-    {
-        return $this->adjust($ofYear)->is(self::last($ofYear));
-    }
-
     private function adjust(?Year $year): self
     {
         return $this->number() <= 365 ? $this : self::last($year);
@@ -306,16 +310,28 @@ final readonly class DayOfYear implements DateUnit
 
     /** @internal {@see \Kronika\Date::with()} */
     #[\Override]
-    public function _withinDate(Date $date, bool $rolling): Date
+    public function _withinDate(Date $date, OverflowMode $mode): Date
     {
         if ($this->isFirst()) {
             return $date->startOfYear();
         }
-        if (! $rolling && $this->isLast($date->year())) {
-            return $date->endOfYear();
+        if ($this->isAfter(self::last($date->year()))) {
+            return match ($mode) {
+                OverflowMode::Roll => $date->add($this->difference($date->dayOfYear())),
+                OverflowMode::Clamp => $date->endOfYear(),
+                OverflowMode::Strict => throw new \Kronika\Exception\InvalidDate(\sprintf(
+                    'Invalid date [%s-%02d-%02d]',
+                    $date->year(),
+                    $date->month()->number(),
+                    $this->number(),
+                )),
+            };
+        }
+        if ($this->is($date->dayOfYear())) {
+            return $date;
         }
         if ($this->isBefore($date->dayOfYear())) {
-            return $date->sub($this->adjust($date->year())->difference($date->dayOfYear()));
+            return $date->sub($this->difference($date->dayOfYear()));
         }
 
         return $date->add($this->difference($date->dayOfYear()));

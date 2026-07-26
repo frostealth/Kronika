@@ -15,6 +15,7 @@ namespace Kronika\Tests\Date;
 
 use Kronika\Date\DayOfWeek;
 use Kronika\Date\Exception\InvalidDayOfWeek;
+use Kronika\OverflowMode;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Depends;
@@ -90,16 +91,16 @@ final class DayOfWeekTest extends TestCase
             [DayOfWeek::Friday, DayOfWeek::Saturday],
             [DayOfWeek::Saturday, DayOfWeek::Sunday],
             [DayOfWeek::Sunday, DayOfWeek::Monday],
-            [DayOfWeek::Sunday, DayOfWeek::Sunday, 'rolling' => false],
+            [DayOfWeek::Sunday, DayOfWeek::Sunday, OverflowMode::Clamp],
         ];
     }
 
     #[Depends('testBasic')]
     #[DataProvider('nextProvider')]
-    public function testNext(DayOfWeek $day, DayOfWeek $expected, bool $rolling = true): void
+    public function testNext(DayOfWeek $day, DayOfWeek $expected, OverflowMode $mode = OverflowMode::Roll): void
     {
-        self::assertEquals($expected, $day->next(rolling: $rolling));
-        self::assertSame($expected, $day->next(rolling: $rolling));
+        self::assertEquals($expected, $day->next(mode: $mode));
+        self::assertSame($expected, $day->next(mode: $mode));
     }
 
     public static function previousProvider(): array
@@ -112,16 +113,16 @@ final class DayOfWeekTest extends TestCase
             [DayOfWeek::Wednesday, DayOfWeek::Tuesday],
             [DayOfWeek::Tuesday, DayOfWeek::Monday],
             [DayOfWeek::Monday, DayOfWeek::Sunday],
-            [DayOfWeek::Monday, DayOfWeek::Monday, 'rolling' => false],
+            [DayOfWeek::Monday, DayOfWeek::Monday, OverflowMode::Clamp],
         ];
     }
 
     #[Depends('testBasic')]
     #[DataProvider('previousProvider')]
-    public function testPrevious(DayOfWeek $day, DayOfWeek $expected, bool $rolling = true): void
+    public function testPrevious(DayOfWeek $day, DayOfWeek $expected, OverflowMode $mode = OverflowMode::Roll): void
     {
-        self::assertEquals($expected, $day->previous(rolling: $rolling));
-        self::assertSame($expected, $day->previous(rolling: $rolling));
+        self::assertEquals($expected, $day->previous(mode: $mode));
+        self::assertSame($expected, $day->previous(mode: $mode));
     }
 
     public static function comparisonProvider(): array

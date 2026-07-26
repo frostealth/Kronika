@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Kronika\Tests\Time;
 
+use Kronika\OverflowMode;
 use Kronika\Time\Exception\InvalidHour;
 use Kronika\Time\Hour;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -131,34 +132,30 @@ final class HourTest extends TestCase
     }
 
     #[TestWith([1, 0])]
-    #[TestWith([1, 0, 'rolling' => false])]
-    #[TestWith([1, 0, 'rolling' => true])]
+    #[TestWith([1, 0, OverflowMode::Roll])]
     #[TestWith([9, 8])]
     #[TestWith([15, 14])]
     #[TestWith([20, 19])]
     #[TestWith([22, 21])]
     #[TestWith([23, 22])]
-    #[TestWith([23, 22, 'rolling' => false])]
-    #[TestWith([23, 22, 'rolling' => true])]
+    #[TestWith([23, 22, OverflowMode::Roll])]
     #[Depends('testBasic')]
-    public function testPrevious(int $hour, int $expected, bool $rolling = false): void
+    public function testPrevious(int $hour, int $expected, OverflowMode $mode = OverflowMode::Clamp): void
     {
-        self::assertEquals(Hour::of($expected), Hour::of($hour)->previous(rolling: $rolling));
+        self::assertEquals(Hour::of($expected), Hour::of($hour)->previous(mode: $mode));
     }
 
     #[TestWith([1, 2])]
-    #[TestWith([1, 2, 'rolling' => false])]
-    #[TestWith([1, 2, 'rolling' => true])]
+    #[TestWith([1, 2, OverflowMode::Roll])]
     #[TestWith([9, 10])]
     #[TestWith([15, 16])]
     #[TestWith([20, 21])]
     #[TestWith([22, 23])]
     #[TestWith([23, 23])]
-    #[TestWith([23, 23, 'rolling' => false])]
-    #[TestWith([23, 0, 'rolling' => true])]
+    #[TestWith([23, 0, OverflowMode::Roll])]
     #[Depends('testBasic')]
-    public function testNext(int $hour, int $expected, bool $rolling = false): void
+    public function testNext(int $hour, int $expected, OverflowMode $mode = OverflowMode::Clamp): void
     {
-        self::assertEquals(Hour::of($expected), Hour::of($hour)->next(rolling: $rolling));
+        self::assertEquals(Hour::of($expected), Hour::of($hour)->next(mode: $mode));
     }
 }

@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Kronika\Time\Trait;
 
 use Kronika\LocalDateTime;
+use Kronika\OverflowMode;
 use Kronika\Time\TimeUnit as Unit;
 use Kronika\Utils\RescueTrait;
 
@@ -31,8 +32,8 @@ trait TimeUnit
 
     /** @internal {@see \Kronika\DateTime::with()} */
     #[\Override]
-    final public function _withinDateTime(LocalDateTime $datetime, bool $rolling): LocalDateTime
+    final public function _withinDateTime(LocalDateTime $datetime, OverflowMode $mode): LocalDateTime
     {
-        return $datetime->with($datetime->time()->with($this), $rolling);
+        return $datetime->with($datetime->time()->with($this), $mode);
     }
 }

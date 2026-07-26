@@ -15,6 +15,7 @@ namespace Kronika\Date;
 
 use Kronika\Date;
 use Kronika\Duration;
+use Kronika\OverflowMode;
 use Kronika\Utils\Compared;
 use Kronika\Utils\RefTrait;
 
@@ -216,16 +217,25 @@ final readonly class DayOfMonth implements DateUnit
 
     /** @internal {@see \Kronika\Date::with()} */
     #[\Override]
-    public function _withinDate(Date $date, bool $rolling): Date
+    public function _withinDate(Date $date, OverflowMode $mode): Date
     {
         if ($date->month()->containsDay($this, $date->year())) {
             return Date::of(year: $date->year(), month: $date->month(), day: $this);
         }
 
-        return $rolling ? $date->add($this->difference($date->day())) : Date::of(
-            year: $year = $date->year(),
-            month: $month = $date->month(),
-            day: $month->lastDay($year),
-        );
+        return match($mode) {
+            OverflowMode::Roll => $date->add($this->difference($date->day())),
+            OverflowMode::Clamp => Date::of(
+                year: $year = $date->year(),
+                month: $month = $date->month(),
+                day: $month->lastDay($year),
+            ),
+            OverflowMode::Strict => throw new \Kronika\Exception\InvalidDate(\sprintf(
+                'Invalid date [%s-%02d-%02d]',
+                $date->year(),
+                $date->month()->number(),
+                $this->number(),
+            )),
+        };
     }
 }

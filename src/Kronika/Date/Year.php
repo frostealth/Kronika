@@ -15,6 +15,7 @@ namespace Kronika\Date;
 
 use Kronika\Date;
 use Kronika\Duration;
+use Kronika\OverflowMode;
 use Kronika\Utils\Compared;
 use Kronika\Utils\RefTrait;
 
@@ -290,8 +291,8 @@ final readonly class Year implements DateUnit
 
     /** @internal {@see \Kronika\Date::with()} */
     #[\Override]
-    public function _withinDate(Date $date, bool $rolling): Date
+    public function _withinDate(Date $date, OverflowMode $mode): Date
     {
-        return Date::of($this, $date->month(), DayOfMonth::first())->with($date->day(), $rolling);
+        return Date::of($this, $date->month(), DayOfMonth::first())->with($date->day(), $mode);
     }
 }

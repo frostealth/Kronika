@@ -15,6 +15,7 @@ namespace Kronika\Date;
 
 use Kronika\Date;
 use Kronika\Duration;
+use Kronika\OverflowMode;
 use Kronika\Utils\Compared;
 
 /**
@@ -105,10 +106,14 @@ enum DayOfWeek: int implements DateUnit
      * DayOfWeek::Monday->next();  // Tuesday
      * ```
      */
-    public function next(bool $rolling = false): self
+    public function next(OverflowMode $mode = OverflowMode::Clamp): self
     {
         if ($this->is(self::Sunday)) {
-            return $rolling ? self::Monday : $this;
+            return match ($mode) {
+                OverflowMode::Roll => self::Monday,
+                OverflowMode::Strict => throw new \OutOfBoundsException(),
+                OverflowMode::Clamp => $this,
+            };
         }
 
         return self::of($this->number() + 1);
@@ -118,14 +123,18 @@ enum DayOfWeek: int implements DateUnit
      * Returns the previous day of week.
      *
      * ```
-     * DayOfWeek::Monday->previous(rolling: false); // Monday
-     * DayOfWeek::Monday->previous(rolling: true);  // Sunday
+     * DayOfWeek::Monday->previous(OverflowMode::Clamp); // Monday
+     * DayOfWeek::Monday->previous(OverflowMode::Roll);  // Sunday
      * ```
      */
-    public function previous(bool $rolling = false): self
+    public function previous(OverflowMode $mode = OverflowMode::Clamp): self
     {
         if ($this->is(self::Monday)) {
-            return $rolling ? self::Sunday : $this;
+            return match ($mode) {
+                OverflowMode::Roll => self::Sunday,
+                OverflowMode::Strict => throw new \OutOfBoundsException(),
+                OverflowMode::Clamp => $this,
+            };
         }
 
         return self::of($this->number() - 1);
@@ -288,7 +297,7 @@ enum DayOfWeek: int implements DateUnit
 
     /** @internal {@see \Kronika\Date::with()} */
     #[\Override]
-    public function _withinDate(Date $date, bool $rolling): Date
+    public function _withinDate(Date $date, OverflowMode $mode): Date
     {
         $diff = Duration::of(days: \abs($this->number() - $date->dayOfWeek()->number()));
 

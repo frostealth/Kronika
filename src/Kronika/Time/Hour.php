@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Kronika\Time;
 
+use Kronika\OverflowMode;
 use Kronika\Time;
 use Kronika\Utils\Compared;
 use Kronika\Utils\RefTrait;
@@ -96,13 +97,17 @@ final readonly class Hour implements TimeUnit
      * ```
      * ```
      * // 00
-     * $this->previous(rolling: false);  // 00
-     * $this->previous(rolling: true);   // 23
+     * $this->previous(OverflowMode::Clamp);  // 00
+     * $this->previous(OverflowMode::Roll);   // 23
      */
-    public function previous(bool $rolling = false): self
+    public function previous(OverflowMode $mode = OverflowMode::Clamp): self
     {
         if ($this->isZero()) {
-            return $rolling ? self::last() : self::zero();
+            return match ($mode) {
+                OverflowMode::Roll => self::last(),
+                OverflowMode::Strict => throw new \OutOfBoundsException(),
+                OverflowMode::Clamp => $this,
+            };
         }
 
         return self::of($this->value() - 1);
@@ -117,14 +122,18 @@ final readonly class Hour implements TimeUnit
      * ```
      * ```
      * // 23
-     * $this->next(rolling: false);  // 23
-     * $this->next(rolling: true);   // 00
+     * $this->next(OverflowMode::Clamp);  // 23
+     * $this->next(OverflowMode::Roll);   // 00
      * ```
      */
-    public function next(bool $rolling = false): self
+    public function next(OverflowMode $mode = OverflowMode::Clamp): self
     {
         if ($this->isLast()) {
-            return $rolling ? self::zero() : self::last();
+            return match ($mode) {
+                OverflowMode::Roll => self::zero(),
+                OverflowMode::Strict => throw new \OutOfBoundsException(),
+                OverflowMode::Clamp => $this,
+            };
         }
 
         return self::of($this->value() + 1);

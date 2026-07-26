@@ -37,6 +37,7 @@ All notable changes to `Kronika` will be documented in this file.
 - `ZonedDateTime` and `LocalDateTime` are incompatible now.
 - `Range\ZonedDateTimeRange` and `Range\LocalDateTimeRange` are incompatible now.
 - `LocalDateTime::toNative()` and `LocalDateTime::toNativeMutable()` methods now require passing a timezone.
+- `bool $rolling` option in `*::with()`, `*::next()` and `*::previous()` methods is replaced with `OverflowMode $mode`.
 
 ### Fixed
 
