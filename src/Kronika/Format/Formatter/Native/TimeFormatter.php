@@ -26,9 +26,7 @@ final readonly class TimeFormatter implements Formatter
     {
         $this->assertNotEmpty($format, 'Format');
 
-        return \DateTimeImmutable::createFromTimestamp(
-            $formattable->instant()->value(),
-        )->format($this->sanitize($format));
+        return new \DateTimeImmutable((string)$formattable)->format($this->sanitize($format));
     }
 
     #[\Override]
@@ -46,7 +44,7 @@ final readonly class TimeFormatter implements Formatter
     /** @return non-empty-string */
     private function sanitize(string $format): string
     {
-        $sanitized = \preg_replace('/(?<!\\\\)([^AaBGgHhisuv:\\\\\s\d-])/', '\\\\$1', $format);
+        $sanitized = \preg_replace('/(?<!\\\\)([^AaGgHhisuv:\\\\\s\d-])/', '\\\\$1', $format);
         if (! \is_string($sanitized) || $sanitized === '') {
             throw new FormatterError("Invalid time format string [$format]");
         }

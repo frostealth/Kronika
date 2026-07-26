@@ -157,7 +157,7 @@ final readonly class DateRange implements Range
     {
         if ($date instanceof self) {
             return $this->contains($date->from())
-                && $this->contains($date->to());
+                && $this->to()->isAfterOrEqualTo($date->to());
         }
         if ($this->isZero()) {
             return $this->from()->is($date);

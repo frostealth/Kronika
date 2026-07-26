@@ -137,7 +137,7 @@ final readonly class TimeRange implements Range
     {
         if ($time instanceof self) {
             return $this->contains($time->from())
-                && $this->contains($time->to());
+                && $this->to()->isAfterOrEqualTo($time->to());
         }
         if ($this->isZero()) {
             return $this->from()->is($time);

@@ -27,7 +27,7 @@ final readonly class DateFormatter implements Formatter
     {
         $this->assertNotEmpty($format, 'Format');
 
-        return $formattable->at(Time::midnight())->toNative()->format($this->sanitize($format));
+        return new \DateTimeImmutable((string)$formattable)->format($this->sanitize($format));
     }
 
     #[\Override]

@@ -71,24 +71,6 @@ final readonly class Date implements Unit
     }
 
     /**
-     * Obtains an instance of `Date` from a timestamp.
-     */
-    public static function ofTimestamp(float|int $timestamp): self
-    {
-        return self::ofInstant(Instant::ofValue($timestamp));
-    }
-
-    /**
-     * Obtains an instance of `Date` from a "Kronika\Instant".
-     */
-    public static function ofInstant(Instant $instant): self
-    {
-        return self::map($instant, static function (Instant $instant): self {
-            return self::of(...\sscanf(\gmdate('x-m-d', $instant->second()), '%d-%d-%d'));
-        });
-    }
-
-    /**
      * Obtains an instance of `Date` from a given format and date string.
      *
      * @param non-empty-string $format
@@ -292,13 +274,9 @@ final readonly class Date implements Unit
      * $this->add(Duration::of(hours: 24));  // 2026-01-01
      * ```
      */
-    public function add(Duration|\DateInterval $duration): self
+    public function add(Duration $duration): self
     {
-        if ($duration instanceof \DateInterval) {
-            return self::ofDateTime($this->atMidnight()->add($duration));
-        }
-
-        return self::ofInstant($this->instant()->add($duration->roundToDays()));
+        return self::fromInstant($this->instant()->add($duration->roundToDays()));
     }
 
     /**
@@ -312,13 +290,9 @@ final readonly class Date implements Unit
      * $this->sub(Duration::of(hours: 24));  // 2025-12-30
      * ```
      */
-    public function sub(Duration|\DateInterval $duration): self
+    public function sub(Duration $duration): self
     {
-        if ($duration instanceof \DateInterval) {
-            return self::ofDateTime($this->atEndOfDay()->sub($duration));
-        }
-
-        return self::ofInstant($this->instant()->sub($duration->roundToDays()));
+        return self::fromInstant($this->instant()->sub($duration->roundToDays()));
     }
 
     /**
@@ -883,16 +857,6 @@ final readonly class Date implements Unit
         return ($formatter ?? formatter())->format($this, $format);
     }
 
-    /**
-     * Obtains an instance of `Instant` with this date.
-     */
-    public function instant(): Instant
-    {
-        return $this->remember(static fn(self $date): Instant => Instant::of(
-            \strtotime("$date UTC"),
-        ), key: Instant::class);
-    }
-
     /** @return non-empty-string */
     #[\Override]
     public function __toString(): string
@@ -911,6 +875,20 @@ final readonly class Date implements Unit
     public function _withinDateTime(LocalDateTime $datetime, bool $rolling): LocalDateTime
     {
         return $this->at($datetime->time());
+    }
+
+    private static function fromInstant(Instant $instant): self
+    {
+        return self::map($instant, static function (Instant $instant): self {
+            return self::of(...\sscanf(\gmdate('x-m-d', $instant->second()), '%d-%d-%d'));
+        });
+    }
+
+    private function instant(): Instant
+    {
+        return $this->remember(static fn(self $date): Instant => Instant::of(
+            \strtotime("$date UTC"),
+        ), key: Instant::class);
     }
 
     private function normalize(self|DateUnit $date): self

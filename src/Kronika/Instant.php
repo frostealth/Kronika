@@ -19,7 +19,7 @@ use Kronika\Utils\RefTrait;
 use Kronika\Utils\RescueTrait;
 
 /**
- * Represents the number of seconds counted from epoch of "1970-01-01 00:00:00.000000".
+ * Represents the number of seconds counted from epoch of "1970-01-01 00:00:00.000000Z".
  *
  * @method static static|null tryOf(mixed $second, mixed $micro = 0)
  * @method static static|null tryOfValue(mixed $value)
@@ -68,7 +68,7 @@ final readonly class Instant
      */
     public static function ofValue(float|int|string $decimal): self
     {
-        return self::ofNumber(Number::ofDecimal($decimal));
+        return self::fromNumber(Number::ofDecimal($decimal));
     }
 
     /**
@@ -168,7 +168,7 @@ final readonly class Instant
             return $this;
         }
 
-        return self::ofNumber($this->number()->add(Number::of($duration->inSeconds(), $duration->microseconds())));
+        return self::fromNumber($this->number()->add(Number::of($duration->inSeconds(), $duration->microseconds())));
     }
 
     /**
@@ -185,7 +185,7 @@ final readonly class Instant
             return $this;
         }
 
-        return self::ofNumber($this->number()->sub(Number::of($duration->inSeconds(), $duration->microseconds())));
+        return self::fromNumber($this->number()->sub(Number::of($duration->inSeconds(), $duration->microseconds())));
     }
 
     /**
@@ -393,7 +393,7 @@ final readonly class Instant
         }
     }
 
-    private static function ofNumber(Number $number): self
+    private static function fromNumber(Number $number): self
     {
         return self::of(second: $number->integer(), micro: $number->fraction());
     }

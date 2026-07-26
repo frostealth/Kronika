@@ -18,7 +18,7 @@ use Kronika\Utils\Number;
 use Kronika\Utils\RefTrait;
 
 /**
- * Represents a duration/interval in days, hours, minutes and seconds.
+ * Represents a fixed length of time (calendar-independent).
  * A duration cannot be negative.
  */
 final readonly class Duration
@@ -296,7 +296,7 @@ final readonly class Duration
      */
     public function format(string $format): string
     {
-        return $this->toDateInterval()->format($format);
+        return $this->toNative()->format($format);
     }
 
     /**
@@ -565,7 +565,7 @@ final readonly class Duration
      * $this->toDateInterval();  // \DateInterval('P2DT12H30M45S')
      * ```
      */
-    public function toDateInterval(): \DateInterval
+    public function toNative(): \DateInterval
     {
         $interval = new \DateInterval(\sprintf(
             'PT%dH%dM%dS',
@@ -578,6 +578,12 @@ final readonly class Duration
         $interval->f = $this->microseconds() / 1_000_000;
 
         return $interval;
+    }
+
+    #[\Deprecated('Use toNative() instead.', since: '0.4')]
+    public function toDateInterval(): \DateInterval
+    {
+        return $this->toNative();
     }
 
     /** @return non-empty-string */

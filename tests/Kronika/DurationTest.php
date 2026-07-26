@@ -466,10 +466,10 @@ final class DurationTest extends TestCase
     }
 
     #[Depends('testBasic')]
-    public function testToDateInterval(): void
+    public function testToNative(): void
     {
         $duration = Duration::of(days: 1, hours: 2, minutes: 35, seconds: 45, micros: 5_123);
-        $interval = $duration->toDateInterval();
+        $interval = $duration->toNative();
 
         self::assertEquals(0, $interval->invert);
         self::assertEquals(0, $interval->y);

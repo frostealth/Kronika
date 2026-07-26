@@ -328,7 +328,7 @@ final class DateRangeTest extends TestCase
                     from: Date::of(2025, 12, 28),
                     to: Date::of(2025, 12, 30),
                 ),
-                'contains' => false,
+                'contains' => true,
             ],
             'Range.Range.5' => [
                 'range' => DateRange::of(

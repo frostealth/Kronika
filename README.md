@@ -25,6 +25,7 @@ composer require frostealth/kronika
 - [Time](#time)
 - [LocalDateTime](#localdatetime)
 - [ZonedDateTime](#zoneddatetime)
+- [Duration](#duration)
 - [Clock](#clock)
 - Range:
   - [TimeRange](#timerange)
@@ -293,6 +294,49 @@ $immutable = $datetime->toNative();         // "\DateTimeImmutable"
 $mutable   = $datetime->toNativeMutable();  // "\DateTime"
 ```
 
+### Duration
+
+`Kronika\Duration` represents a fixed length of time (non-negative and calendar-independent).
+
+```php
+// creating "Duration"
+$duration = Duration::of(hours: 1, minutes: 60, seconds: 30);
+echo $duration->days();          // 0
+echo $duration->hours();         // 2
+echo $duration->minutes();       // 0
+echo $duration->seconds();       // 30
+echo $duration->microseconds();  // 0
+
+// rounding
+$rounded = $duration->roundToMinutes()
+echo $rounded->days();          // 0
+echo $rounded->hours();         // 2
+echo $rounded->minutes();       // 0
+echo $rounded->seconds();       // 0
+echo $rounded->microseconds();  // 0
+
+$rounded = $duration->roundToMinutes(\RoundingMode::HalfAwayFromZero)
+echo $rounded->days();          // 0
+echo $rounded->hours();         // 2
+echo $rounded->minutes();       // 1
+echo $rounded->seconds();       // 0
+echo $rounded->microseconds();  // 0
+
+$rounded = $duration->roundToHours(\RoundingMode::HalfAwayFromZero)
+echo $rounded->days();          // 0
+echo $rounded->hours();         // 2
+echo $rounded->minutes();       // 0
+echo $rounded->seconds();       // 0
+echo $rounded->microseconds();  // 0
+
+$rounded = $duration->roundToHours(\RoundingMode::AwayFromZero)
+echo $rounded->days();          // 0
+echo $rounded->hours();         // 3
+echo $rounded->minutes();       // 0
+echo $rounded->seconds();       // 0
+echo $rounded->microseconds();  // 0
+```
+
 ### Clock
 `Kronika\Clock` decouples your code from the system clock
 and has the following implementations:
@@ -303,7 +347,7 @@ and has the following implementations:
 - `MutableClock` allows to manipulate with clock, useful in tests.
 
 ### TimeRange
-`Kronika\Range\TimeRange` represents a range between two moments of day.
+`Kronika\Range\TimeRange` represents a range between two times of day.
 
 ```php
 // creating "TimeRange"
@@ -318,8 +362,8 @@ echo $range->contains(Time::midday());    // true
 echo $range->contains(Time::of(13, 30));  // false
 
 // getting each item of this range with the specified step
-foreach ($range->each(Duration::of(minutes: 30)) as $item) {
-    echo $item->format('H:i:s');
+foreach ($range->each(Duration::of(minutes: 30)) as $time) {
+    echo $time->format('H:i:s');
 }
 // 12:00:00
 // 12:30:00
@@ -405,9 +449,8 @@ echo $range->contains(ZonedDateTime::parse('2025-12-15 12:30:45 +01:00'));  // t
 echo $range->contains(ZonedDateTime::parse('2025-12-18 10:00:30 +01:00'));  // false
 
 // getting each item of this range with the specified step
-// the type of each item will be the same as "since"
-foreach ($range->each(Duration::ofDay()) as $item) {
-    echo $item->format('Y-m-d H:i:s P');
+foreach ($range->each(Duration::ofDay()) as $datetime) {
+    echo $datetime->format('Y-m-d H:i:s P');
 }
 // 2025-12-15 12:30:45 +01:00
 // 2025-12-16 12:30:45 +01:00

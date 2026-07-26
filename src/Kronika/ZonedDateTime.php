@@ -140,7 +140,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      */
     public static function ofTimestamp(float|int $timestamp): self
     {
-        return self::ofNative(\DateTimeImmutable::createFromTimestamp($timestamp), timezone_utc());
+        return self::fromNative(\DateTimeImmutable::createFromTimestamp($timestamp), timezone_utc());
     }
 
     /**
@@ -347,18 +347,6 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     #[\Override]
-    public function until(DateTime|Unit|Native $end, Precision $precision = Precision::Micro): Duration
-    {
-        return $this->instant()->until($this->normalize($end)->instant(), $precision);
-    }
-
-    #[\Override]
-    public function difference(DateTime|Unit|Native $other, Precision $precision = Precision::Micro): Duration
-    {
-        return $this->instant()->difference($this->normalize($other)->instant(), $precision);
-    }
-
-    #[\Override]
     public function add(Duration|\DateInterval $interval): static
     {
         if ($interval instanceof \DateInterval) {
@@ -376,6 +364,96 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         }
 
         return self::ofInstant($this->instant()->sub($interval), $this->timezone());
+    }
+
+    /**
+     * Calculates the duration from this date-time or its unit to another one.
+     *
+     * ```
+     * // 2025-12-10 10:15:30 vs 2025-12-20 12:30:45
+     * $duration = $this->until($other);
+     * $duration->days();    // 10
+     * $duration->hours();   // 2
+     * $duration->minutes(); // 15
+     * $duration->seconds(); // 15
+     * ```
+     * ```
+     * // 2025-12-10 10:15:30 vs 2025-11-01 00:00:00
+     * $duration = $this->until($other);
+     * $duration->days();    // 0
+     * $duration->hours();   // 0
+     * $duration->minutes(); // 0
+     * $duration->seconds(); // 0
+     * ```
+     * ```
+     * // DateTime vs Date
+     * // 2025-12-10 10:15:30 vs Date::of(2025, 12, 20)
+     * $duration = $this->until($other);
+     * $duration->days();    // 10
+     * $duration->hours();   // 0
+     * $duration->minutes(); // 0
+     * $duration->seconds(); // 0
+     * ```
+     *
+     * @see \Kronika\Date
+     * @see \Kronika\Date\Year
+     * @see \Kronika\Date\Month
+     * @see \Kronika\Date\DayOfMonth
+     * @see \Kronika\Date\DayOfWeek
+     * @see \Kronika\Date\DayOfYear
+     * @see \Kronika\Time
+     * @see \Kronika\Time\Hour
+     * @see \Kronika\Time\Minute
+     * @see \Kronika\Time\Second
+     */
+    public function until(self|Unit|Native $end, Precision $precision = Precision::Micro): Duration
+    {
+        return $this->instant()->until($this->normalize($end)->instant(), $precision);
+    }
+
+    /**
+     * Calculates the duration between this date-time or its unit and another one.
+     *
+     * ```
+     * // 2025-12-10 10:15:30 vs 2025-12-20 12:30:45
+     * $duration = $this->difference($other);
+     * $duration->days();    // 10
+     * $duration->hours();   // 2
+     * $duration->minutes(); // 15
+     * $duration->seconds(); // 15
+     * ```
+     * ```
+     * // 2025-12-10 10:15:30 vs 2025-11-01 00:00:00
+     * $duration = $this->difference($other);
+     * $duration->days();    // 0
+     * $duration->hours();   // 0
+     * $duration->minutes(); // 0
+     * $duration->seconds(); // 0
+     * ```
+     * ```
+     * // DateTime vs Date
+     * // 2025-12-10 10:15:30 vs Date::of(2025, 12, 20)
+     * $duration = $this->difference($other);
+     * $duration->days();    // 10
+     * $duration->hours();   // 0
+     * $duration->minutes(); // 0
+     * $duration->seconds(); // 0
+     * ```
+     *
+     * @see \Kronika\Date
+     * @see \Kronika\Date\Year
+     * @see \Kronika\Date\Month
+     * @see \Kronika\Date\DayOfMonth
+     * @see \Kronika\Date\DayOfWeek
+     * @see \Kronika\Date\DayOfYear
+     * @see \Kronika\Time
+     * @see \Kronika\Time\Hour
+     * @see \Kronika\Time\Minute
+     * @see \Kronika\Time\Second
+     */
+    public function difference(self|Unit|Native $other, Precision $precision = Precision::Micro): Duration
+    {
+        return $this->instant()->difference($this->normalize($other)->instant(), $precision);
     }
 
     /**
@@ -435,44 +513,254 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         return parent::format('I') === '1';
     }
 
-    #[\Override]
-    public function is(DateTime|Unit|Native $other, Precision $precision = Precision::Micro): bool
+    /**
+     * Checks if this date-time or its unit is equal to another one.
+     *
+     * ```
+     * // 2025-12-31 10:15:30.000000 vs 2025-12-31 10:15:30.000000
+     * $this->is($other);  // true
+     *
+     * // 2025-12-31 10:15:30.000000 vs 2025-12-31 10:15:30.999999
+     * $this->is($other);  // false
+     * $this->is($other, Precision::Second);  // true
+     *
+     * // 2025-12-31 10:15:30.000000 vs 2025-12-31 10:15:59.999999
+     * $this->is($other, Precision::Second);  // false
+     * $this->is($other, Precision::Minute);  // true
+     *
+     * // 2025-12-31 10:30:00.000000 vs 2025-12-31 10:15:59.999999
+     * $this->is($other, Precision::Minute);  // false
+     *
+     * // 2025-12-31 10:30:00.000000 vs Date::of(2025, 12, 31)
+     * $this->is($other);  // true
+     * ```
+     *
+     * @see \Kronika\Date – compare to a date
+     * @see \Kronika\Date\Year – compare to a year
+     * @see \Kronika\Date\Month – compare to a month
+     * @see \Kronika\Date\DayOfMonth – compare to a day
+     * @see \Kronika\Date\DayOfWeek – compare to a day of week
+     * @see \Kronika\Date\DayOfYear – compare to a day of year
+     * @see \Kronika\Time – compare to a time
+     * @see \Kronika\Time\Hour – compare to an hour
+     * @see \Kronika\Time\Minute – compare to a minute
+     * @see \Kronika\Time\Second – compare to a second
+     */
+    public function is(self|Unit|Native $other, Precision $precision = Precision::Micro): bool
     {
         return $this->compareTo($other, $precision)->equal();
     }
 
-    #[\Override]
-    public function isNot(DateTime|Unit|Native $other, Precision $precision = Precision::Micro): bool
+    /**
+     * Checks if this date-time or its unit is not equal to another one.
+     *
+     * ```
+     * // 2025-12-31 10:15:30.000000 vs 2025-12-31 10:15:30.999999
+     * $this->isNot($other);  // true
+     * $this->isNot($other, Precision::Second);  // false
+     *
+     * // 2025-12-31 10:15:30.000000 vs 2025-12-31 10:15:59.999999
+     * $this->isNot($other, Precision::Second);  // true
+     * $this->isNot($other, Precision::Minute);  // false
+     *
+     * // 2026-01-01 00:00:00.000000 vs 2025-12-31 10:15:59.999999
+     * $this->isNot($other, Precision::Minute);  // true
+     *
+     * // 2026-01-01 00:00:00.000000 vs Date::of(2025, 12, 31)
+     * $this->isNot($other);  // true
+     * ```
+     *
+     * @see \Kronika\Date – compare to a date
+     * @see \Kronika\Date\Year – compare to a year
+     * @see \Kronika\Date\Month – compare to a month
+     * @see \Kronika\Date\DayOfMonth – compare to a day
+     * @see \Kronika\Date\DayOfWeek – compare to a day of week
+     * @see \Kronika\Date\DayOfYear – compare to a day of year
+     * @see \Kronika\Time – compare to a time
+     * @see \Kronika\Time\Hour – compare to an hour
+     * @see \Kronika\Time\Minute – compare to a minute
+     * @see \Kronika\Time\Second – compare to a second
+     */
+    public function isNot(self|Unit|Native $other, Precision $precision = Precision::Micro): bool
     {
         return $this->compareTo($other, $precision)->notEqual();
     }
 
-    #[\Override]
-    public function isBefore(DateTime|Unit|Native $other, Precision $precision = Precision::Micro): bool
+    /**
+     * Checks if this date-time or its unit is before another one.
+     *
+     * ```
+     * // 2025-12-31 10:15:30.000000 vs 2025-12-31 10:15:30.999999
+     * $this->isBefore($other);  // true
+     * $this->isBefore($other, Precision::Second);  // false
+     *
+     * // 2025-12-31 10:15:30.000000 vs 2025-12-31 10:15:59.999999
+     * $this->isBefore($other, Precision::Second);  // true
+     * $this->isBefore($other, Precision::Minute);  // false
+     *
+     * // 2026-01-01 00:00:00.000000 vs 2025-12-31 10:15:59.999999
+     * $this->isBefore($other, Precision::Minute);  // false
+     *
+     * // 2026-01-01 00:00:00.000000 vs Date::of(2025, 12, 31)
+     * $this->isBefore($other);  // false
+     * ```
+     *
+     * @see \Kronika\Date – compare to a date
+     * @see \Kronika\Date\Year – compare to a year
+     * @see \Kronika\Date\Month – compare to a month
+     * @see \Kronika\Date\DayOfMonth – compare to a day
+     * @see \Kronika\Date\DayOfWeek – compare to a day of week
+     * @see \Kronika\Date\DayOfYear – compare to a day of year
+     * @see \Kronika\Time – compare to a time
+     * @see \Kronika\Time\Hour – compare to an hour
+     * @see \Kronika\Time\Minute – compare to a minute
+     * @see \Kronika\Time\Second – compare to a second
+     */
+    public function isBefore(self|Unit|Native $other, Precision $precision = Precision::Micro): bool
     {
         return $this->compareTo($other, $precision)->less();
     }
 
-    #[\Override]
-    public function isBeforeOrEqualTo(DateTime|Unit|Native $other, Precision $precision = Precision::Micro): bool
+    /**
+     * Checks if this date-time or its unit is before or equal to another one.
+     *
+     * ```
+     * // 2025-12-31 10:15:30.000000 vs 2025-12-31 10:15:30.000000
+     * $this->isBeforeOrEqualTo($other);  // true
+     *
+     * // 2025-12-31 10:15:30.999999 vs 2025-12-31 10:15:30.000000
+     * $this->isBeforeOrEqualTo($other);  // false
+     * $this->isBeforeOrEqualTo($other, Precision::Second);  // true
+     *
+     * // 2025-12-31 10:15:59.999999 vs 2025-12-31 10:15:00.000000
+     * $this->isBeforeOrEqualTo($other, Precision::Second);  // false
+     * $this->isBeforeOrEqualTo($other, Precision::Minute);  // true
+     *
+     * // 2026-01-01 00:00:00.000000 vs 2025-12-31 10:15:00.000000
+     * $this->isBeforeOrEqualTo($other, Precision::Minute);  // false
+     *
+     * // 2026-01-01 00:00:00.000000 vs Date::of(2025, 12, 31)
+     * $this->isBeforeOrEqualTo($other);  // false
+     * ```
+     *
+     * @see \Kronika\Date – compare to a date
+     * @see \Kronika\Date\Year – compare to a year
+     * @see \Kronika\Date\Month – compare to a month
+     * @see \Kronika\Date\DayOfMonth – compare to a day
+     * @see \Kronika\Date\DayOfWeek – compare to a day of week
+     * @see \Kronika\Date\DayOfYear – compare to a day of year
+     * @see \Kronika\Time – compare to a time
+     * @see \Kronika\Time\Hour – compare to an hour
+     * @see \Kronika\Time\Minute – compare to a minute
+     * @see \Kronika\Time\Second – compare to a second
+     */
+    public function isBeforeOrEqualTo(self|Unit|Native $other, Precision $precision = Precision::Micro): bool
     {
         return $this->compareTo($other, $precision)->lessOrEqual();
     }
 
-    #[\Override]
-    public function isAfterOrEqualTo(DateTime|Unit|Native $other, Precision $precision = Precision::Micro): bool
+    /**
+     * Checks if this date-time or its unit is after or equal to another one.
+     *
+     * ```
+     * // 2025-12-31 10:15:30.000000 vs 2025-12-31 10:15:30.000000
+     * $this->isAfterOrEqualTo($other);  // true
+     *
+     * // 2025-12-31 10:15:30.000000 vs 2025-12-31 10:15:30.999999
+     * $this->isAfterOrEqualTo($other);  // false
+     * $this->isAfterOrEqualTo($other, Precision::Second);  // true
+     *
+     * // 2025-12-31 10:15:30.000000 vs 2025-12-31 10:15:59.000000
+     * $this->isAfterOrEqualTo($other, Precision::Second);  // false
+     * $this->isAfterOrEqualTo($other, Precision::Minute);  // true
+     *
+     * // 1990-01-01 23:59:59.999999 vs 2025-12-31 10:15:59.000000
+     * $this->isAfterOrEqualTo($other, Precision::Minute);  // false
+     *
+     * // 1990-01-01 23:59:59.999999 vs 2025-12-31 10:15:59.000000
+     * $this->isAfterOrEqualTo($other, Precision::Minute);  // false
+     *
+     * // 1990-01-01 23:59:59.999999 vs Time::of(23, 59, 59)
+     * $this->isAfterOrEqualTo($other);  // true
+     * ```
+     *
+     * @see \Kronika\Date – compare to a date
+     * @see \Kronika\Date\Year – compare to a year
+     * @see \Kronika\Date\Month – compare to a month
+     * @see \Kronika\Date\DayOfMonth – compare to a day
+     * @see \Kronika\Date\DayOfWeek – compare to a day of week
+     * @see \Kronika\Date\DayOfYear – compare to a day of year
+     * @see \Kronika\Time – compare to a time
+     * @see \Kronika\Time\Hour – compare to an hour
+     * @see \Kronika\Time\Minute – compare to a minute
+     * @see \Kronika\Time\Second – compare to a second
+     */
+    public function isAfterOrEqualTo(self|Unit|Native $other, Precision $precision = Precision::Micro): bool
     {
         return $this->compareTo($other, $precision)->greaterOrEqual();
     }
 
-    #[\Override]
-    public function isAfter(DateTime|Unit|Native $other, Precision $precision = Precision::Micro): bool
+    /**
+     * Checks if this date-time or its unit is after another one.
+     *
+     * ```
+     * // 2025-12-31 10:15:30.999999 vs 2025-12-31 10:15:30.000000
+     * $this->isAfter($other);  // true
+     * $this->isAfter($other, Precision::Second);  // false
+     *
+     * // 2025-12-31 10:15:59.999999 vs 2025-12-31 10:15:30.000000
+     * $this->isAfter($other, Precision::Second);  // true
+     * $this->isAfter($other, Precision::Minute);  // false
+     *
+     * // 2026-01-01 00:00:00.000000 vs 2025-12-31 10:15:30.000000
+     * $this->isAfter($other, Precision::Minute);  // true
+     *
+     * // 2026-01-01 10:15:55.000000 vs Time::of(10, 15, 30)
+     * $this->isAfter($other);  // true
+     * ```
+     *
+     * @see \Kronika\Date – compare to a date
+     * @see \Kronika\Date\Year – compare to a year
+     * @see \Kronika\Date\Month – compare to a month
+     * @see \Kronika\Date\DayOfMonth – compare to a day
+     * @see \Kronika\Date\DayOfWeek – compare to a day of week
+     * @see \Kronika\Date\DayOfYear – compare to a day of year
+     * @see \Kronika\Time – compare to a time
+     * @see \Kronika\Time\Hour – compare to an hour
+     * @see \Kronika\Time\Minute – compare to a minute
+     * @see \Kronika\Time\Second – compare to a second
+     */
+    public function isAfter(self|Unit|Native $other, Precision $precision = Precision::Micro): bool
     {
         return $this->compareTo($other, $precision)->greater();
     }
 
-    #[\Override]
-    public function compareTo(DateTime|Unit|Native $other, Precision $precision = Precision::Micro): Compared
+    /**
+     * Compares this date-time or its unit to another one.
+     *
+     * ```
+     * // 2025-12-31 12:15:30 vs 2025-12-31 12:15:45
+     * $this->compareTo($other)->equal();  // false
+     * $this->compareTo($other)->less();   // true
+     * $this->compareTo($other, Precision::Minute)->equal();  // true
+     *
+     * // 2025-12-31 12:15:30 vs Date::of(2025, 12, 31)
+     * $this->compareTo($other)->equal();  // true
+     * $this->compareTo($other)->less();   // false
+     * ```
+     *
+     * @see \Kronika\Date – compare to a date
+     * @see \Kronika\Date\Year – compare to a year
+     * @see \Kronika\Date\Month – compare to a month
+     * @see \Kronika\Date\DayOfMonth – compare to a day
+     * @see \Kronika\Date\DayOfWeek – compare to a day of week
+     * @see \Kronika\Date\DayOfYear – compare to a day of year
+     * @see \Kronika\Time – compare to a time
+     * @see \Kronika\Time\Hour – compare to an hour
+     * @see \Kronika\Time\Minute – compare to a minute
+     * @see \Kronika\Time\Second – compare to a second
+     */
+    public function compareTo(self|Unit|Native $other, Precision $precision = Precision::Micro): Compared
     {
         return $this->instant()->compareTo($this->normalize($other)->instant(), $precision);
     }
@@ -497,7 +785,9 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         return $this->local();
     }
 
-    #[\Override]
+    /**
+     * Obtains an instance of `\DateTimeImmutable` from this date-time.
+     */
     public function toNative(): \DateTimeImmutable
     {
         return $this->remember(
@@ -506,13 +796,17 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         );
     }
 
-    #[\Override]
+    /**
+     * Obtains an instance of `\DateTime` from this date-time.
+     */
     public function toNativeMutable(): \DateTime
     {
         return \DateTime::createFromImmutable($this);
     }
 
-    #[\Override]
+    /**
+     * Obtains an instance of `\Kronika\Instant` from this date-time.
+     */
     public function instant(): Instant
     {
         return $this->remember(static fn(self $that): Instant => Instant::of(
@@ -619,7 +913,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         return parent::setMicrosecond($microsecond)->reference();
     }
 
-    private static function ofNative(Native $datetime, ?\DateTimeZone $timezone = null): static
+    private static function fromNative(Native $datetime, ?\DateTimeZone $timezone = null): static
     {
         return self::ref(
             datetime: $datetime->format('x-m-d H:i:s.u'),
@@ -634,13 +928,9 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         ), key: LocalDateTime::class);
     }
 
-    private function normalize(DateTime|Unit|Native $datetime): self
+    private function normalize(self|Unit|Native $datetime): self
     {
-        return match (true) {
-            $datetime instanceof Native => self::ofDateTime($datetime),
-            $datetime instanceof Unit => $this->with($datetime),
-            $datetime instanceof LocalDateTime => self::ofLocal($datetime, $this->timezone()),
-        };
+        return $datetime instanceof Unit ? $this->with($datetime) : self::ofDateTime($datetime);
     }
 
     /** Looks for a reference to a similar instance. */

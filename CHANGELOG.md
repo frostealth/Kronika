@@ -5,13 +5,23 @@ All notable changes to `Kronika` will be documented in this file.
 ### Added
 - Daylight Saving Time support.
 - `ZonedDateTime::isDaylightSavingTime()`.
+- `Range\LocalDateTimeRange::toNative()` and `Range\ZonedDateTimeRange::toNative()` methods.
 
 ### Removed
+- `DateTime::is*()` and `DateTime::compareTo()` methods.
+- `DateTime::until()` and `DateTime::difference()` methods.
+- `DateTime::instant()` method.
+- `\DateInterval` support for `Date::add()` and `Date::sub()`.
+- `Range\DateTimeRange`.
 
 ### Deprecated
+- `Duration::toDateInterval()` method. Use `Duration::toNative()` instead.
 
 ### Changed
-- `ZonedDateTime::instant()` now in UTC.
+- `ZonedDateTime::instant()` in UTC now.
+- `ZonedDateTime` and `LocalDateTime` are incompatible now.
+- `Range\ZonedDateTimeRange` and `Range\LocalDateTimeRange` are incompatible now.
+- `LocalDateTime::toNative()` and `LocalDateTime::toNativeMutable()` methods now require passing a timezone.
 
 ### Fixed
 

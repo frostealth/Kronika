@@ -492,7 +492,7 @@ final class TimeRangeTest extends TestCase
                     Time::midday(),
                     Time::of(14, 25, Second::of(35, 123)),
                 ),
-                'contains' => false,
+                'contains' => true,
             ],
             'Range.Range.4' => [
                 'range' => TimeRange::of(

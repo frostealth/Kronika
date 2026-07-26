@@ -108,26 +108,6 @@ final readonly class Time implements Unit
     }
 
     /**
-     * Obtains an instance of `Time` from a timestamp.
-     */
-    public static function ofTimestamp(float|int $timestamp): self
-    {
-        return self::ofInstant(Instant::ofValue($timestamp));
-    }
-
-    /**
-     * Obtains an instance of `Time` from a `Kronika\Instant`.
-     */
-    public static function ofInstant(Instant $instant): self
-    {
-        return self::map($instant, static function (Instant $instant): self {
-            \sscanf(\gmdate('H:i:s', $instant->second()), '%d:%d:%d', $hour, $minute, $second);
-
-            return self::of($hour, $minute, Second::of($second, $instant->microsecond()));
-        });
-    }
-
-    /**
      * Obtains an instance of `Time` from a given format and time string.
      *
      * @param non-empty-string $format
@@ -268,7 +248,7 @@ final readonly class Time implements Unit
      */
     public function add(Duration $duration): self
     {
-        return self::ofInstant($this->instant()->add($duration->dropToHours()));
+        return self::fromInstant($this->instant()->add($duration->dropToHours()));
     }
 
     /**
@@ -284,7 +264,7 @@ final readonly class Time implements Unit
      */
     public function sub(Duration $duration): self
     {
-        return self::ofInstant($this->instant()->sub($duration->dropToHours()));
+        return self::fromInstant($this->instant()->sub($duration->dropToHours()));
     }
 
     /**
@@ -639,17 +619,6 @@ final readonly class Time implements Unit
         return ($formatter ?? formatter())->format($this, $format);
     }
 
-    /**
-     * Obtains an instance of `Instant` with this time.
-     */
-    public function instant(): Instant
-    {
-        return $this->remember(static fn(self $time): Instant => Instant::of(
-            second: ($time->hour()->value() * 3600) + ($time->minute()->value() * 60) + $time->second()->second(),
-            micro: $time->second()->microsecond(),
-        ), key: Instant::class);
-    }
-
     /** @return non-empty-string */
     #[\Override]
     public function __toString(): string
@@ -668,6 +637,23 @@ final readonly class Time implements Unit
     public function _withinDateTime(LocalDateTime $datetime, bool $rolling): LocalDateTime
     {
         return $this->at($datetime->date());
+    }
+
+    private static function fromInstant(Instant $instant): self
+    {
+        return self::map($instant, static function (Instant $instant): self {
+            \sscanf(\gmdate('H:i:s', $instant->second()), '%d:%d:%d', $hour, $minute, $second);
+
+            return self::of($hour, $minute, Second::of($second, $instant->microsecond()));
+        });
+    }
+
+    private function instant(): Instant
+    {
+        return $this->remember(static fn(self $time): Instant => Instant::of(
+            second: ($time->hour()->value() * 3600) + ($time->minute()->value() * 60) + $time->second()->second(),
+            micro: $time->second()->microsecond(),
+        ), key: Instant::class);
     }
 
     private function normalize(self|TimeUnit $time): self

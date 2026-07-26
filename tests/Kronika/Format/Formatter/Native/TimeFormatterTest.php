@@ -41,7 +41,6 @@ final class TimeFormatterTest extends TestCase
     #[TestWith(['H:i:\s.u\P', '09:05:s.000222P'])]
     #[TestWith(['a', 'am'])]
     #[TestWith(['A', 'AM'])]
-    #[TestWith(['B', '420'])]
     #[TestWith(['g', '9'])]
     #[TestWith(['G', '9'])]
     #[TestWith(['h', '09'])]
