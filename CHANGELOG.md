@@ -1,7 +1,18 @@
 # Changelog
 All notable changes to `Kronika` will be documented in this file.
 
-## 0.4.0 (https://github.com/frostealth/kronika/releases/tag/0.4.0) – 2026-07-26
+## [Unreleased]
+### Added
+
+### Removed
+
+### Deprecated
+
+### Changed
+
+### Fixed
+
+## [0.4.0](https://github.com/frostealth/kronika/releases/tag/0.4.0) – 2026-07-26
 ### Added
 - Daylight Saving Time support.
 - `ZonedDateTime::isDaylightSavingTime()`.
@@ -49,8 +60,6 @@ Use `DURATION_FORMAT_TOTAL_SECONDS` instead.
 - `bool $rolling` option in `*::with()`, `*::next()` and `*::previous()` methods is replaced with `OverflowMode $mode`.
 - Default format for `Duration` in JmsSerializer extension is replaced with `DurationHandler::FORMAT_TIME_INTERVAL`.
 Previous format is `FORMAT_IN_SECONDS`.
-
-### Fixed
 
 ## [0.3.0](https://github.com/frostealth/kronika/releases/tag/0.3.0) – 2026-01-18
 ### Added
