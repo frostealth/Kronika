@@ -323,7 +323,7 @@ final class DateTimeTest extends TestCase
         int $micro,
         string $timezone,
     ): ZonedDateTime {
-        return ZonedDateTime::ofLocal(
+        return ZonedDateTime::fromLocal(
             self::localOf($year, $month, $day, $hour, $minute, $second, $micro),
             new \DateTimeZone($timezone),
         );

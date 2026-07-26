@@ -30,8 +30,9 @@ use Kronika\Utils\RescueTrait;
  * Represents a date.
  *
  * @method static static|null tryOf(mixed $year, mixed $month, mixed $day)
- * @method static static|null tryOfFormat(string $format, ?string $date, ?Formatter $formatter = null)
  * @method static static|null tryParse(?string $date)
+ * @method static static|null tryFromFormat(string $format, ?string $date, ?Formatter $formatter = null)
+ * @method static static|null tryOfFormat(string $format, ?string $date, ?Formatter $formatter = null) deprecated
  *
  * @psalm-import-type TMonth from \Kronika\Date\Month
  */
@@ -59,7 +60,7 @@ final readonly class Date implements Unit
     /**
      * Obtains an instance of `Date` from a date-time.
      */
-    public static function ofDateTime(DateTime|Native $datetime): self
+    public static function fromDateTime(DateTime|Native $datetime): self
     {
         if ($datetime instanceof DateTime) {
             return $datetime->date();
@@ -78,7 +79,7 @@ final readonly class Date implements Unit
      *
      * @throws Exception\FormatError
      */
-    public static function ofFormat(string $format, string $date, ?Formatter $formatter = null): self
+    public static function fromFormat(string $format, string $date, ?Formatter $formatter = null): self
     {
         $parsed = ($formatter ?? formatter())->parse(new Formatted($format, $date));
 
@@ -103,7 +104,7 @@ final readonly class Date implements Unit
         }
 
         try {
-            return self::ofDateTime(new \DateTimeImmutable($date));
+            return self::fromDateTime(new \DateTime($date));
         } catch (\DateMalformedStringException $e) {
             throw Exception\MalformedString\DateMalformedString::wrap($e);
         }
@@ -868,6 +869,18 @@ final readonly class Date implements Unit
     public function __debugInfo(): array
     {
         return ['date' => (string)$this];
+    }
+
+    #[\Deprecated('use fromDateTime() instead.', since: '0.4.0')]
+    public static function ofDateTime(DateTime|Native $datetime): self
+    {
+        return self::fromDateTime($datetime);
+    }
+
+    #[\Deprecated('use fromFormat() instead.', since: '0.4.0')]
+    public static function ofFormat(string $format, string $date, ?Formatter $formatter = null): self
+    {
+        return self::fromFormat($format, $date, $formatter);
     }
 
     /** @internal {@see DateTime::with()} */

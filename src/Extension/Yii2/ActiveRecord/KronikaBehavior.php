@@ -331,7 +331,7 @@ final class KronikaBehavior extends Behavior
             $obj instanceof LocalDateTime => $obj->format($this->getFormatFor(LocalDateTime::class)),
             $obj instanceof ZonedDateTime => $obj->format($this->getFormatFor(ZonedDateTime::class)),
             $obj instanceof \DateTimeZone => $obj->getName(),
-            $obj instanceof Native => ZonedDateTime::ofDateTime($obj)->format(
+            $obj instanceof Native => ZonedDateTime::fromDateTime($obj)->format(
                 $this->getFormatFor(ZonedDateTime::class),
             ),
             default => throw new \RuntimeException(\sprintf('Unknown type: [%s]', \get_debug_type($obj))),
@@ -346,7 +346,7 @@ final class KronikaBehavior extends Behavior
     {
         /** @psalm-suppress InvalidArgument, PossiblyInvalidArgument */
         return match ($this->getTypeOf($attributeName)) {
-            Date::class            => Date::tryOfFormat(
+            Date::class            => Date::tryFromFormat(
                 format: $this->getFormatFor(Date::class),
                 date: (string)$value,
             ) ?? Date::parse((string)$value),
@@ -355,7 +355,7 @@ final class KronikaBehavior extends Behavior
             Date\DayOfMonth::class => Date\DayOfMonth::of((int)$value),
             Date\DayOfWeek::class  => Date\DayOfWeek::of((int)$value),
             Date\DayOfYear::class  => Date\DayOfYear::of((int)$value),
-            Time::class            => Time::tryOfFormat(
+            Time::class            => Time::tryFromFormat(
                 format: $this->getFormatFor(Time::class),
                 time: (string)$value,
             ) ?? Time::parse((string)$value),
@@ -372,11 +372,11 @@ final class KronikaBehavior extends Behavior
                 self::DURATION_FORMAT_IN_SECONDS => Duration::of((int)$value),
             },
             Instant::class         => Instant::ofValue($value),
-            LocalDateTime::class   => LocalDateTime::tryOfFormat(
+            LocalDateTime::class   => LocalDateTime::tryFromFormat(
                 format: $this->getFormatFor(LocalDateTime::class),
                 datetime: (string)$value,
             ) ?? LocalDateTime::parse((string)$value),
-            ZonedDateTime::class   => $this->adjustTimezone($attributeName, ZonedDateTime::tryOfFormat(
+            ZonedDateTime::class   => $this->adjustTimezone($attributeName, ZonedDateTime::tryFromFormat(
                 format: $this->getFormatFor(ZonedDateTime::class),
                 datetime: (string)$value,
             ) ?? ZonedDateTime::parse((string)$value)),
@@ -395,7 +395,7 @@ final class KronikaBehavior extends Behavior
             $datetime = $this->owner->getAttribute($name);
             $oldDatetime = $this->owner->getOldAttribute($name);
             if ($datetime instanceof Native) {
-                $datetime = ZonedDateTime::ofDateTime($datetime);
+                $datetime = ZonedDateTime::fromDateTime($datetime);
             }
             if (! $datetime instanceof ZonedDateTime) {
                 continue;
@@ -416,7 +416,7 @@ final class KronikaBehavior extends Behavior
 
         foreach ($this->zonedAttributeNames() as $name) {
             $datetime = $this->owner->getAttribute($name);
-            $datetime = $datetime instanceof Native ? ZonedDateTime::ofDateTime($datetime) : $datetime;
+            $datetime = $datetime instanceof Native ? ZonedDateTime::fromDateTime($datetime) : $datetime;
             $timezone = $datetime instanceof ZonedDateTime ? $datetime->timezone() : null;
 
             $this->owner->setAttribute($this->timezoneAttributeNameFor($name), $timezone);

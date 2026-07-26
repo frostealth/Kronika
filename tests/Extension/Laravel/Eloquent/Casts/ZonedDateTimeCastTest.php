@@ -43,7 +43,7 @@ final class ZonedDateTimeCastTest extends TestCase
         static $attributes = [];
 
         $value = $datetime?->format($format);
-        $expected = $value === null ? null : ZonedDateTime::ofFormat($format, $value);
+        $expected = $value === null ? null : ZonedDateTime::fromFormat($format, $value);
 
         self::assertEquals($expected, $cast->get($model, $key, $value, $attributes));
         self::assertEquals($value, $cast->set($model, $key, $datetime, $attributes));

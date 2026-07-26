@@ -68,8 +68,8 @@ final readonly class DateTimeHandler implements Handler
         $format = $this->getFormat($type);
 
         return match ($this->normalizeType($type)) {
-            LocalDateTime::class => LocalDateTime::ofFormat($format, $value),
-            ZonedDateTime::class => ZonedDateTime::ofFormat($format, $value),
+            LocalDateTime::class => LocalDateTime::fromFormat($format, $value),
+            ZonedDateTime::class => ZonedDateTime::fromFormat($format, $value),
         };
     }
 

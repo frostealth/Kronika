@@ -30,7 +30,7 @@ final readonly class AsDate extends CastsFormattableUnit
     #[\Override]
     protected static function factory(): callable
     {
-        return static fn(string $format, string $value): Date => Date::tryOfFormat(
+        return static fn(string $format, string $value): Date => Date::tryFromFormat(
             format: $format,
             date: $value,
         ) ?? Date::parse($value);

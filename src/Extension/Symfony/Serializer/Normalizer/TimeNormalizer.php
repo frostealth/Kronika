@@ -71,7 +71,7 @@ final readonly class TimeNormalizer implements Normalizer, Denormalizer
             );
         }
 
-        return Time::ofFormat($this->getFormat($context), $data);
+        return Time::fromFormat($this->getFormat($context), $data);
     }
 
     /** @return non-empty-string */

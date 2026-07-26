@@ -46,7 +46,7 @@ final class TimeType extends Type
         try {
             \assert(\is_string($value) && $value !== '');
 
-            return Time::tryOfFormat($platform->getTimeFormatString(), $value) ?? Time::parse($value);
+            return Time::tryFromFormat($platform->getTimeFormatString(), $value) ?? Time::parse($value);
         } catch (\Throwable $e) {
             throw ValueNotConvertible::new($value, $this->getName(), previous: $e);
         }

@@ -32,7 +32,7 @@ final class FrozenClockTest extends TestCase
     #[\Override]
     protected function setUp(): void
     {
-        $this->time = ZonedDateTime::ofDateTime(new \DateTimeImmutable('2025-12-31 12:15:30.999999 +01:00'));
+        $this->time = ZonedDateTime::fromDateTime(new \DateTime('2025-12-31 12:15:30.999999 +01:00'));
         $this->clock = new FrozenClock($this->time);
     }
 

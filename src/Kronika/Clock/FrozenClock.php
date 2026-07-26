@@ -42,7 +42,7 @@ final class FrozenClock implements Clock
 
     public function __construct(?\DateTimeInterface $time = null)
     {
-        $this->time = ZonedDateTime::ofDateTime($time ?? new \DateTimeImmutable('now'));
+        $this->time = ZonedDateTime::fromDateTime($time ?? new \DateTime('now'));
     }
 
     #[\Override]

@@ -93,7 +93,7 @@ final readonly class Instant
      */
     public function at(\DateTimeZone $timezone): ZonedDateTime
     {
-        return ZonedDateTime::ofInstant($this, $timezone);
+        return ZonedDateTime::fromInstant($this, $timezone);
     }
 
     /**

@@ -49,7 +49,7 @@ final readonly class TimeHandler implements Handler
             return $visitor->visitNull($value, $type);
         }
 
-        return Time::ofFormat($this->getFormat($type), $value);
+        return Time::fromFormat($this->getFormat($type), $value);
     }
 
     /** @return non-empty-string */

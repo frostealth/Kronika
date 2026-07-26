@@ -72,7 +72,7 @@ final readonly class DateNormalizer implements Normalizer, Denormalizer
         }
 
         /** @psalm-suppress ArgumentTypeCoercion */
-        return Date::ofFormat($this->getFormat($context), $data);
+        return Date::fromFormat($this->getFormat($context), $data);
     }
 
     /** @return non-empty-string */

@@ -171,9 +171,9 @@ final class TimeTest extends TestCase
         'Time: "10 hours, 07 minutes, 08 seconds"',
     ])]
     #[Depends('testFormat')]
-    public function testOfFormat(string $format, string $str): void
+    public function testFromFormat(string $format, string $str): void
     {
-        $time = Time::ofFormat($format, $str);
+        $time = Time::fromFormat($format, $str);
 
         self::assertEquals($str, $time->format($format));
     }
@@ -184,11 +184,11 @@ final class TimeTest extends TestCase
     #[TestWith(['H i s', ''])]
     #[TestWith(['', '22:12:08'])]
     #[TestWith(['', ''])]
-    #[Depends('testOfFormat')]
-    public function testOfFormatFail(string $format, string $str): void
+    #[Depends('testFromFormat')]
+    public function testFromFormatFail(string $format, string $str): void
     {
         $this->expectException(FormatError::class);
-        Time::ofFormat($format, $str);
+        Time::fromFormat($format, $str);
     }
 
     #[TestWith(['12:15:30.000999', [12, 15, 30, 999]])]
@@ -223,7 +223,7 @@ final class TimeTest extends TestCase
         Time::parse($str);
     }
 
-    public static function ofDateTimeProvider(): array
+    public static function fromDateTimeProvider(): array
     {
         return [
             [
@@ -256,10 +256,10 @@ final class TimeTest extends TestCase
     }
 
     #[Depends('testBasic')]
-    #[DataProvider('ofDateTimeProvider')]
-    public function ofDateTime(\DateTimeInterface|Time $input, Time $expected): void
+    #[DataProvider('fromDateTimeProvider')]
+    public function fromDateTime(\DateTimeInterface|Time $input, Time $expected): void
     {
-        $actual = Time::ofDateTime($input);
+        $actual = Time::fromDateTime($input);
 
         self::assertEquals($expected, $actual);
     }

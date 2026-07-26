@@ -92,8 +92,8 @@ final readonly class DateTimeNormalizer implements Normalizer, Denormalizer
 
         /** @psalm-suppress ArgumentTypeCoercion */
         return match ($type) {
-            LocalDateTime::class => LocalDateTime::ofFormat($format, (string)$data),
-            ZonedDateTime::class => ZonedDateTime::ofFormat($format, (string)$data),
+            LocalDateTime::class => LocalDateTime::fromFormat($format, (string)$data),
+            ZonedDateTime::class => ZonedDateTime::fromFormat($format, (string)$data),
         };
     }
 

@@ -50,7 +50,7 @@ final readonly class DateHandler implements Handler
             return $visitor->visitNull($value, $type);
         }
 
-        return Date::ofFormat($this->getFormat($type), $value);
+        return Date::fromFormat($this->getFormat($type), $value);
     }
 
     /** @return non-empty-string */

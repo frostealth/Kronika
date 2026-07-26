@@ -46,7 +46,7 @@ final class LocalDateTimeType extends Type
         try {
             \assert(\is_string($value && $value !== ''));
 
-            return LocalDateTime::tryOfFormat($platform->getDateTimeFormatString(), $value)
+            return LocalDateTime::tryFromFormat($platform->getDateTimeFormatString(), $value)
                 ?? LocalDateTime::parse($value);
         } catch (\Throwable $e) {
             throw ValueNotConvertible::new($value, $this->getName(), previous: $e);

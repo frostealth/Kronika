@@ -88,11 +88,11 @@ final class LocalDateTimeTest extends TestCase
     }
 
     #[Depends('testBasic')]
-    public function testOfNative(): void
+    public function testFromNative(): void
     {
         $native = new \DateTimeImmutable('2025-12-31T12:15:30.000999+01:00');
 
-        $actual = LocalDateTime::ofDateTime($native);
+        $actual = LocalDateTime::fromDateTime($native);
 
         self::assertEquals(2025, $actual->year()->number());
         self::assertEquals(12, $actual->month()->number());
@@ -102,11 +102,11 @@ final class LocalDateTimeTest extends TestCase
         self::assertEquals(15, $actual->minute()->value());
         self::assertEquals(30, $actual->second()->second());
         self::assertEquals(999, $actual->second()->microsecond());
-        self::assertSame($actual, LocalDateTime::ofDateTime($native));
+        self::assertSame($actual, LocalDateTime::fromDateTime($native));
     }
 
     #[Depends('testBasic')]
-    public function testOfZoned(): void
+    public function testFromZoned(): void
     {
         $zoned = ZonedDateTime::of(
             date: Date::of(2025, 12, 31),
@@ -114,7 +114,7 @@ final class LocalDateTimeTest extends TestCase
             timezone: new \DateTimeZone('+01:00'),
         );
 
-        $actual = LocalDateTime::ofDateTime($zoned);
+        $actual = LocalDateTime::fromDateTime($zoned);
 
         self::assertEquals(2025, $actual->year()->number());
         self::assertEquals(12, $actual->month()->number());
@@ -125,7 +125,7 @@ final class LocalDateTimeTest extends TestCase
         self::assertEquals(15, $actual->minute()->value());
         self::assertEquals(30, $actual->second()->second());
         self::assertEquals(999, $actual->second()->microsecond());
-        self::assertSame($actual, LocalDateTime::ofDateTime($zoned));
+        self::assertSame($actual, LocalDateTime::fromDateTime($zoned));
     }
 
     #[TestWith(['Y-m-d', '2025-12-31'])]
@@ -161,9 +161,9 @@ final class LocalDateTimeTest extends TestCase
         'Date: "Wednesday, 31 Dec 25", Time: "12 hours, 15 minutes, 59 seconds"',
     ])]
     #[Depends('testFormat')]
-    public function testOfFormat(string $format, string $str): void
+    public function testFromFormat(string $format, string $str): void
     {
-        $datetime = LocalDateTime::ofFormat($format, $str);
+        $datetime = LocalDateTime::fromFormat($format, $str);
 
         self::assertEquals($str, $datetime->format($format));
     }
@@ -177,11 +177,11 @@ final class LocalDateTimeTest extends TestCase
     #[TestWith(['Y-m-d\TH:i:s.u', ''])]
     #[TestWith(['', '2025-12-31T12:15:59.999999'])]
     #[TestWith(['', ''])]
-    #[Depends('testOfFormat')]
-    public function testOfFormatFail(string $format, string $str): void
+    #[Depends('testFromFormat')]
+    public function testFromFormatFail(string $format, string $str): void
     {
         $this->expectException(FormatterError::class);
-        LocalDateTime::ofFormat($format, $str);
+        LocalDateTime::fromFormat($format, $str);
     }
 
     #[TestWith(['2025-12-31T12:15:59.000999', [2025, 12, 31, 12, 15, 59, 999]])]

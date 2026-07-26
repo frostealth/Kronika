@@ -160,9 +160,9 @@ final class ZonedDateTimeTest extends TestCase
         'Date: "Wednesday, 31 Dec 25", Time: "12 hours, 15 minutes, 59 seconds"',
     ])]
     #[Depends('testFormat')]
-    public function testOfFormat(string $format, string $str): void
+    public function testFromFormat(string $format, string $str): void
     {
-        $datetime = ZonedDateTime::ofFormat($format, $str);
+        $datetime = ZonedDateTime::fromFormat($format, $str);
 
         self::assertEquals($str, $datetime->format($format));
     }
@@ -173,11 +173,11 @@ final class ZonedDateTimeTest extends TestCase
     #[TestWith(['Y-m-d\TH:i:s.uO', ''])]
     #[TestWith(['', '2025-12-31T12:15:59+01:00'])]
     #[TestWith(['', ''])]
-    #[Depends('testOfFormat')]
-    public function testOfFormatFail(string $format, string $str): void
+    #[Depends('testFromFormat')]
+    public function testFromFormatFail(string $format, string $str): void
     {
         $this->expectException(FormatError::class);
-        ZonedDateTime::ofFormat($format, $str);
+        ZonedDateTime::fromFormat($format, $str);
     }
 
     #[TestWith(['2025-12-31T12:15:59.000999+01:30', [2025, 12, 31, 12, 15, 59, 999, '+01:30']])]
@@ -1524,7 +1524,7 @@ final class ZonedDateTimeTest extends TestCase
     public function testToLocalDateTime(): void
     {
         $local = LocalDateTime::of(Date::of(2025, 3, 24), Time::of(14, 8, 47));
-        $zoned = ZonedDateTime::ofLocal($local, new \DateTimeZone('-02:30'));
+        $zoned = ZonedDateTime::fromLocal($local, new \DateTimeZone('-02:30'));
 
         self::assertInstanceOf(LocalDateTime::class, $zoned->toLocalDateTime());
         self::assertSame($local, $zoned->toLocalDateTime());
@@ -1755,7 +1755,7 @@ final class ZonedDateTimeTest extends TestCase
         int $micro,
         string $timezone,
     ): ZonedDateTime {
-        return ZonedDateTime::ofLocal(
+        return ZonedDateTime::fromLocal(
             LocalDateTime::of(Date::of($year, $month, $day), Time::of($hour, $minute, Second::of($second, $micro))),
             new \DateTimeZone($timezone),
         );

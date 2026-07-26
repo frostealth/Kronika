@@ -16,6 +16,21 @@ All notable changes to `Kronika` will be documented in this file.
 
 ### Deprecated
 - `Duration::toDateInterval()` method. Use `Duration::toNative()` instead.
+- `Date::ofDateTime()` method. Use `Date::fromDateTime()` instead.
+- `Date::ofFormat()` method. Use `Date::fromFormat()` instead.
+- `Date::tryOfFormat()` method. Use `Date::tryFromFormat()` instead.
+- `Time::ofDateTime()` method. Use `Time::fromDateTime()` instead.
+- `Time::ofFormat()` method. Use `Time::fromFormat()` instead.
+- `Time::tryOfFormat()` method. Use `Time::tryFromFormat()` instead.
+- `LocalDateTime::ofDateTime()` method. Use `LocalDateTime::fromDateTime()` instead.
+- `LocalDateTime::ofFormat()` method. Use `LocalDateTime::fromFormat()` instead.
+- `LocalDateTime::tryOfFormat()` method. Use `LocalDateTime::tryFromFormat()` instead.
+- `ZonedDateTime::ofDateTime()` method. Use `ZonedDateTime::fromDateTime()` instead.
+- `ZonedDateTime::ofFormat()` method. Use `ZonedDateTime::fromFormat()` instead.
+- `ZonedDateTime::ofLocal()` method. Use `ZonedDateTime::fromLocal()` instead.
+- `ZonedDateTime::ofTimestamp()` method. Use `ZonedDateTime::fromTimestamp()` instead.
+- `ZonedDateTime::ofInstant()` method. Use `ZonedDateTime::fromInstant()` instead.
+- `ZonedDateTime::tryOfFormat()` method. Use `ZonedDateTime::tryFromFormat()` instead.
 
 ### Changed
 - `ZonedDateTime::instant()` in UTC now.

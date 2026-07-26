@@ -42,7 +42,7 @@ final class LocalDateTimeCastTest extends TestCase
         static $attributes = [];
 
         $value = $datetime?->format($format);
-        $expected = $value === null ? null : LocalDateTime::ofFormat($format, $value);
+        $expected = $value === null ? null : LocalDateTime::fromFormat($format, $value);
 
         self::assertEquals($expected, $cast->get($model, $key, $value, $attributes));
         self::assertEquals($value, $cast->set($model, $key, $datetime, $attributes));

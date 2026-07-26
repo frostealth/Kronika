@@ -33,8 +33,9 @@ use Kronika\Utils\RescueTrait;
 /**
  * Represents a local date-time without time-zone.
  *
- * @method static static|null tryOfFormat(string $format, ?string $datetime, ?Formatter $formatter = null)
  * @method static static|null tryParse(?string $datetime)
+ * @method static static|null tryFromFormat(string $format, ?string $datetime, ?Formatter $formatter = null)
+ * @method static static|null tryOfFormat(string $format, ?string $datetime, ?Formatter $formatter = null) deprecated
  */
 final readonly class LocalDateTime implements DateTime
 {
@@ -65,7 +66,7 @@ final readonly class LocalDateTime implements DateTime
     /**
      * Obtains an instance of `LocalDateTime` from a given date-time.
      */
-    public static function ofDateTime(DateTime|Native $datetime): self
+    public static function fromDateTime(DateTime|Native $datetime): self
     {
         if ($datetime instanceof self) {
             return $datetime;
@@ -75,7 +76,7 @@ final readonly class LocalDateTime implements DateTime
         }
 
         return self::map($datetime, static function(Native $datetime): self {
-            return self::of(Date::ofDateTime($datetime), Time::ofDateTime($datetime));
+            return self::of(Date::fromDateTime($datetime), Time::fromDateTime($datetime));
         }, when: static fn(Native $datetime): bool => $datetime instanceof \DateTimeImmutable);
     }
 
@@ -87,7 +88,7 @@ final readonly class LocalDateTime implements DateTime
      *
      * @throws Exception\FormatError
      */
-    public static function ofFormat(string $format, string $datetime, ?Formatter $formatter = null): self
+    public static function fromFormat(string $format, string $datetime, ?Formatter $formatter = null): self
     {
         $parsed = ($formatter ?? formatter())->parse(new Formatted($format, $datetime));
 
@@ -117,7 +118,7 @@ final readonly class LocalDateTime implements DateTime
         }
 
         try {
-            return self::ofDateTime(new \DateTime($datetime));
+            return self::fromDateTime(new \DateTime($datetime));
         } catch (\DateMalformedStringException $e) {
             throw Exception\MalformedString\DateTimeMalformedString::wrap($e);
         }
@@ -205,7 +206,7 @@ final readonly class LocalDateTime implements DateTime
      */
     public function at(\DateTimeZone $timezone): ZonedDateTime
     {
-        return ZonedDateTime::ofLocal($this, $timezone);
+        return ZonedDateTime::fromLocal($this, $timezone);
     }
 
     #[\Override]
@@ -224,7 +225,7 @@ final readonly class LocalDateTime implements DateTime
     public function add(Duration|\DateInterval $interval): static
     {
         if ($interval instanceof \DateInterval) {
-            return self::ofDateTime($this->toNative(timezone_utc())->add($interval));
+            return self::fromDateTime($this->toNative(timezone_utc())->add($interval));
         }
 
         return self::fromInstant($this->instant()->add($interval));
@@ -234,7 +235,7 @@ final readonly class LocalDateTime implements DateTime
     public function sub(Duration|\DateInterval $interval): static
     {
         if ($interval instanceof \DateInterval) {
-            return self::ofDateTime($this->toNative(timezone_utc())->sub($interval));
+            return self::fromDateTime($this->toNative(timezone_utc())->sub($interval));
         }
 
         return self::fromInstant($this->instant()->sub($interval));
@@ -622,6 +623,18 @@ final readonly class LocalDateTime implements DateTime
             'date' => (string)$this->date,
             'time' => (string)$this->time,
         ];
+    }
+
+    #[\Deprecated('use fromDateTime() instead.', since: '0.4.0')]
+    public static function ofDateTime(DateTime|Native $datetime): self
+    {
+        return self::fromDateTime($datetime);
+    }
+
+    #[\Deprecated('use fromFormat() instead.', since: '0.4.0')]
+    public static function ofFormat(string $format, string $datetime, ?Formatter $formatter = null): self
+    {
+        return self::fromFormat($format, $datetime, $formatter);
     }
 
     private static function fromInstant(Instant $instant): self

@@ -33,8 +33,9 @@ use Kronika\Utils\RescueTrait;
 /**
  * Represents a date-time with time-zone.
  *
- * @method static static|null tryOfFormat(string $format, ?string $datetime, ?\DateTimeZone $timezone = null, ?Formatter $formatter = null)
  * @method static static|null tryParse(?string $datetime, ?\DateTimeZone $timezone = null)
+ * @method static static|null tryFromFormat(string $format, ?string $datetime, ?\DateTimeZone $timezone = null, ?Formatter $formatter = null)
+ * @method static static|null tryOfFormat(string $format, ?string $datetime, ?\DateTimeZone $timezone = null, ?Formatter $formatter = null) deprecated
  */
 final class ZonedDateTime extends \DateTimeImmutable implements DateTime
 {
@@ -64,7 +65,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      */
     public static function of(Date $date, Time $time, \DateTimeZone $timezone): self
     {
-        return self::ofLocal($date->at($time), $timezone);
+        return self::fromLocal($date->at($time), $timezone);
     }
 
     /**
@@ -84,31 +85,6 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     /**
-     * Obtains an instance of `ZonedDateTime` from a local date-time and time-zone.
-     *
-     * ```
-     * // 2025-12-31 12:15:30 +01:00
-     * $datetime = ZonedDateTime::of(
-     *     LocalDateTime::of(Date::of(2025, 12, 31), Time::of(12, 15, 30)),
-     *     new \DateTimeZone('+01:00'),
-     * );
-     * ```
-     */
-    public static function ofLocal(LocalDateTime $local, \DateTimeZone $timezone): self
-    {
-        return self::ref(static function (LocalDateTime $datetime, \DateTimeZone $timezone): self {
-            $instance = new self($str = (string)$datetime, $timezone);
-            if ($instance->isDaylightSavingTime() && ! \str_starts_with((string)$instance, $str)) {
-                return $instance->reference();
-            }
-
-            $instance->remember($datetime, key: LocalDateTime::class);
-
-            return $instance;
-        }, datetime: $local, timezone: $timezone);
-    }
-
-    /**
      * Obtains an instance of `ZonedDateTime` from a given date and time-zone with midnight time.
      *
      * ```
@@ -124,9 +100,34 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     }
 
     /**
+     * Obtains an instance of `ZonedDateTime` from a local date-time and time-zone.
+     *
+     * ```
+     * // 2025-12-31 12:15:30 +01:00
+     * $datetime = ZonedDateTime::of(
+     *     LocalDateTime::of(Date::of(2025, 12, 31), Time::of(12, 15, 30)),
+     *     new \DateTimeZone('+01:00'),
+     * );
+     * ```
+     */
+    public static function fromLocal(LocalDateTime $local, \DateTimeZone $timezone): self
+    {
+        return self::ref(static function (LocalDateTime $datetime, \DateTimeZone $timezone): self {
+            $instance = new self($str = (string)$datetime, $timezone);
+            if ($instance->isDaylightSavingTime() && ! \str_starts_with((string)$instance, $str)) {
+                return $instance->reference();
+            }
+
+            $instance->remember($datetime, key: LocalDateTime::class);
+
+            return $instance;
+        }, datetime: $local, timezone: $timezone);
+    }
+
+    /**
      * Obtains an instance of `ZonedDateTime` from a date-time with time-zone.
      */
-    public static function ofDateTime(Native $datetime): self
+    public static function fromDateTime(Native $datetime): self
     {
         if ($datetime instanceof self) {
             return $datetime;
@@ -138,7 +139,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     /**
      * Obtains an instance of `ZonedDateTime` with UTC time-zone from a given timestamp.
      */
-    public static function ofTimestamp(float|int $timestamp): self
+    public static function fromTimestamp(float|int $timestamp): self
     {
         return self::fromNative(\DateTimeImmutable::createFromTimestamp($timestamp), timezone_utc());
     }
@@ -146,7 +147,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     /**
      * Obtains an instance of `ZonedDateTime` from a given `Kronika\Instant` and time-zone.
      */
-    public static function ofInstant(Instant $instant, \DateTimeZone $timezone): self
+    public static function fromInstant(Instant $instant, \DateTimeZone $timezone): self
     {
         return parent::createFromTimestamp($instant->value())->shift($timezone);
     }
@@ -162,7 +163,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      *
      * @throws Exception\FormatError
      */
-    public static function ofFormat(
+    public static function fromFormat(
         string $format,
         string $datetime,
         ?\DateTimeZone $timezone = null,
@@ -328,10 +329,10 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     public function with(Unit|\DateTimeZone $unit, bool $rolling = false): static
     {
         if ($unit instanceof \DateTimeZone) {
-            return self::ofLocal($this->local(), timezone: $unit);
+            return self::fromLocal($this->local(), timezone: $unit);
         }
 
-        return self::ofLocal($this->local()->with($unit, $rolling), $this->timezone());
+        return self::fromLocal($this->local()->with($unit, $rolling), $this->timezone());
     }
 
     #[\Override]
@@ -343,7 +344,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
     #[\Override]
     public function resetSecond(): static
     {
-        return self::ofInstant($this->instant()->resetSecond(), $this->timezone());
+        return self::fromInstant($this->instant()->resetSecond(), $this->timezone());
     }
 
     #[\Override]
@@ -353,7 +354,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
             return parent::add($interval)->reference();
         }
 
-        return self::ofInstant($this->instant()->add($interval), $this->timezone());
+        return self::fromInstant($this->instant()->add($interval), $this->timezone());
     }
 
     #[\Override]
@@ -363,7 +364,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
             return parent::sub($interval)->reference();
         }
 
-        return self::ofInstant($this->instant()->sub($interval), $this->timezone());
+        return self::fromInstant($this->instant()->sub($interval), $this->timezone());
     }
 
     /**
@@ -821,28 +822,62 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         return parent::format('x-m-d H:i:s.u e');
     }
 
-    /** @alias {@see self::ofDateTime()} */
+    #[\Deprecated('use fromLocal() instead.', since: '0.4.0')]
+    public static function ofLocal(LocalDateTime $local, \DateTimeZone $timezone): self
+    {
+        return self::fromLocal($local, $timezone);
+    }
+
+    #[\Deprecated('use fromDateTime() instead.', since: '0.4.0')]
+    public static function ofDateTime(Native $datetime): self
+    {
+        return self::fromDateTime($datetime);
+    }
+
+    #[\Deprecated('use fromTimestamp() instead.', since: '0.4.0')]
+    public static function ofTimestamp(float|int $timestamp): self
+    {
+        return self::fromTimestamp($timestamp);
+    }
+
+    #[\Deprecated('use fromInstant() instead.', since: '0.4.0')]
+    public static function ofInstant(Instant $instant, \DateTimeZone $timezone): self
+    {
+        return self::fromInstant($instant, $timezone);
+    }
+
+    #[\Deprecated('use fromFormat() instead.', since: '0.4.0')]
+    public static function ofFormat(
+        string $format,
+        string $datetime,
+        ?\DateTimeZone $timezone = null,
+        ?Formatter $formatter = null,
+    ): self {
+        return self::fromFormat($format, $datetime, $timezone, $formatter);
+    }
+
+    /** @alias {@see self::fromDateTime()} */
     #[\Override]
     public static function createFromMutable(\DateTime $object): static
     {
         return parent::createFromMutable($object)->reference();
     }
 
-    /** @alias {@see self::ofDateTime()} */
+    /** @alias {@see self::fromDateTime()} */
     #[\Override]
     public static function createFromInterface(Native $object): static
     {
         return parent::createFromInterface($object)->reference();
     }
 
-    /** @see self::ofTimestamp() */
+    /** @see self::fromTimestamp() */
     #[\Override]
     public static function createFromTimestamp(float|int $timestamp): static
     {
         return parent::createFromTimestamp($timestamp)->reference();
     }
 
-    /** @see self::ofFormat() */
+    /** @see self::fromFormat() */
     #[\Override]
     public static function createFromFormat(
         string $format,
@@ -892,7 +927,7 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
         return parent::setTime($hour, $minute, $second, $microsecond)->reference();
     }
 
-    /** @see self::ofTimestamp() */
+    /** @see self::fromTimestamp() */
     #[\Override]
     public function setTimestamp(int $timestamp): static
     {
@@ -923,14 +958,14 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
 
     private function local(): LocalDateTime
     {
-        return $this->remember(static fn(self $that): LocalDateTime => LocalDateTime::ofDateTime(
+        return $this->remember(static fn(self $that): LocalDateTime => LocalDateTime::fromDateTime(
             $that->toNativeMutable(),
         ), key: LocalDateTime::class);
     }
 
     private function normalize(self|Unit|Native $datetime): self
     {
-        return $datetime instanceof Unit ? $this->with($datetime) : self::ofDateTime($datetime);
+        return $datetime instanceof Unit ? $this->with($datetime) : self::fromDateTime($datetime);
     }
 
     /** Looks for a reference to a similar instance. */

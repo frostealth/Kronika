@@ -580,7 +580,7 @@ final readonly class Duration
         return $interval;
     }
 
-    #[\Deprecated('Use toNative() instead.', since: '0.4')]
+    #[\Deprecated('Use toNative() instead.', since: '0.4.0')]
     public function toDateInterval(): \DateInterval
     {
         return $this->toNative();

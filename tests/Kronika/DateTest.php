@@ -499,9 +499,9 @@ final class DateTest extends TestCase
     #[TestWith(['\Y/m/d', 'Y/01/15'])]
     #[TestWith(['\D\a\t\e: "l, d M y"', 'Date: "Wednesday, 15 Jan 25"'])]
     #[Depends('testFormat')]
-    public function testOfFormat(string $format, string $str): void
+    public function testFromFormat(string $format, string $str): void
     {
-        $date = Date::ofFormat($format, $str);
+        $date = Date::fromFormat($format, $str);
 
         self::assertEquals($str, $date->format($format));
     }
@@ -511,11 +511,11 @@ final class DateTest extends TestCase
     #[TestWith(['H:i:s', ''])]
     #[TestWith(['', '2025-01-31'])]
     #[TestWith(['', ''])]
-    #[Depends('testOfFormat')]
-    public function testOfFormatFail(string $format, string $str): void
+    #[Depends('testFromFormat')]
+    public function testFromFormatFail(string $format, string $str): void
     {
         $this->expectException(FormatError::class);
-        Date::ofFormat($format, $str);
+        Date::fromFormat($format, $str);
     }
 
     #[TestWith(['2025-01-15', [2025, 01, 15]])]
@@ -543,7 +543,7 @@ final class DateTest extends TestCase
         Date::parse($str);
     }
 
-    public static function ofDateTimeProvider(): array
+    public static function fromDateTimeProvider(): array
     {
         return [
             [new \DateTime('1985-04-28 12:46:12.123456 UTC'), Date::of(year: 1985, month: 4, day: 28)],
@@ -570,10 +570,10 @@ final class DateTest extends TestCase
     }
 
     #[Depends('testBasic')]
-    #[DataProvider('ofDateTimeProvider')]
-    public function testOfDateTime(DateTime|\DateTimeInterface $input, Date $expected): void
+    #[DataProvider('fromDateTimeProvider')]
+    public function testFromDateTime(DateTime|\DateTimeInterface $input, Date $expected): void
     {
-        $actual = Date::ofDateTime($input);
+        $actual = Date::fromDateTime($input);
 
         self::assertEquals($expected, $actual);
     }
