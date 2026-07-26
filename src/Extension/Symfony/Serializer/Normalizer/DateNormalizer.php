@@ -71,8 +71,18 @@ final readonly class DateNormalizer implements Normalizer, Denormalizer
             );
         }
 
-        /** @psalm-suppress ArgumentTypeCoercion */
-        return Date::fromFormat($this->getFormat($context), $data);
+        try {
+            /** @psalm-suppress ArgumentTypeCoercion */
+            return Date::fromFormat($this->getFormat($context), $data);
+        } catch (\Throwable $e) {
+            throw NotNormalizableValueException::createForUnexpectedDataType(
+                message: $e->getMessage(),
+                data: $data,
+                expectedTypes: ['string'],
+                path: $context['deserialization_path'] ?? null,
+                code: $e->getCode(),
+            );
+        }
     }
 
     /** @return non-empty-string */

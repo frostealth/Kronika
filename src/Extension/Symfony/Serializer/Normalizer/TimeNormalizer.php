@@ -71,7 +71,17 @@ final readonly class TimeNormalizer implements Normalizer, Denormalizer
             );
         }
 
-        return Time::fromFormat($this->getFormat($context), $data);
+        try {
+            return Time::fromFormat($this->getFormat($context), $data);
+        } catch (\Throwable $e) {
+            throw NotNormalizableValueException::createForUnexpectedDataType(
+                message: $e->getMessage(),
+                data: $data,
+                expectedTypes: ['string'],
+                path: $context['deserialization_path'] ?? null,
+                code: $e->getCode(),
+            );
+        }
     }
 
     /** @return non-empty-string */

@@ -62,7 +62,17 @@ final readonly class DayOfWeekNormalizer implements Normalizer, Denormalizer
             );
         }
 
-        /** @psalm-suppress InvalidArgument, PossiblyInvalidArgument */
-        return DayOfWeek::of($data);
+        try {
+            /** @psalm-suppress InvalidArgument, PossiblyInvalidArgument */
+            return DayOfWeek::of($data);
+        } catch (\Throwable $e) {
+            throw NotNormalizableValueException::createForUnexpectedDataType(
+                message: $e->getMessage(),
+                data: $data,
+                expectedTypes: ['integer'],
+                path: $context['deserialization_path'] ?? null,
+                code: $e->getCode(),
+            );
+        }
     }
 }

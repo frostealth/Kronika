@@ -90,11 +90,21 @@ final readonly class DateTimeNormalizer implements Normalizer, Denormalizer
 
         $format = $this->getFormat($type, $context);
 
-        /** @psalm-suppress ArgumentTypeCoercion */
-        return match ($type) {
-            LocalDateTime::class => LocalDateTime::fromFormat($format, (string)$data),
-            ZonedDateTime::class => ZonedDateTime::fromFormat($format, (string)$data),
-        };
+        try {
+            /** @psalm-suppress ArgumentTypeCoercion */
+            return match ($type) {
+                LocalDateTime::class => LocalDateTime::fromFormat($format, (string)$data),
+                ZonedDateTime::class => ZonedDateTime::fromFormat($format, (string)$data),
+            };
+        } catch (\Throwable $e) {
+            throw NotNormalizableValueException::createForUnexpectedDataType(
+                message: $e->getMessage(),
+                data: $data,
+                expectedTypes: ['string', 'integer'],
+                path: $context['deserialization_path'] ?? null,
+                code: $e->getCode(),
+            );
+        }
     }
 
     /** @return non-empty-string */

@@ -62,7 +62,17 @@ final readonly class InstantNormalizer implements Normalizer, Denormalizer
             );
         }
 
-        /** @psalm-suppress InvalidArgument, PossiblyInvalidArgument */
-        return Instant::ofValue($data);
+        try {
+            /** @psalm-suppress InvalidArgument, PossiblyInvalidArgument */
+            return Instant::ofValue($data);
+        } catch (\Throwable $e) {
+            throw NotNormalizableValueException::createForUnexpectedDataType(
+                message: $e->getMessage(),
+                data: $data,
+                expectedTypes: ['float', 'integer', 'string'],
+                path: $context['deserialization_path'] ?? null,
+                code: $e->getCode(),
+            );
+        }
     }
 }

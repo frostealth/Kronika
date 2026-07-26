@@ -113,7 +113,13 @@ final readonly class DurationNormalizer implements Normalizer, Denormalizer
                 self::FORMAT_ARRAY => Duration::of(...$data),
             };
         } catch (\Throwable $e) {
-            throw new NotNormalizableValueException('Not a valid type', previous: $e);
+            throw throw NotNormalizableValueException::createForUnexpectedDataType(
+                message: $e->getMessage(),
+                data: $data,
+                expectedTypes: ['array', 'string', 'integer'],
+                path: $context['deserialization_path'] ?? null,
+                code: $e->getCode(),
+            );
         }
     }
 

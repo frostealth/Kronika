@@ -62,7 +62,17 @@ final readonly class SecondNormalizer implements Normalizer, Denormalizer
             );
         }
 
-        /** @psalm-suppress InvalidArgument, PossiblyInvalidArgument */
-        return Second::of(...\sscanf((string)$data, '%d.%6d'));
+        try {
+            /** @psalm-suppress InvalidArgument, PossiblyInvalidArgument */
+            return Second::of(...\sscanf((string)$data, '%d.%6d'));
+        } catch (\Throwable $e) {
+            throw NotNormalizableValueException::createForUnexpectedDataType(
+                message: $e->getMessage(),
+                data: $data,
+                expectedTypes: ['float'],
+                path: $context['deserialization_path'] ?? null,
+                code: $e->getCode(),
+            );
+        }
     }
 }
