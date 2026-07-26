@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to `Kronika` will be documented in this file.
 
-## [Unreleased] 0.4.0
+## 0.4.0 (https://github.com/frostealth/kronika/releases/tag/0.4.0) – 2026-07-26
 ### Added
 - Daylight Saving Time support.
 - `ZonedDateTime::isDaylightSavingTime()`.
