@@ -47,8 +47,7 @@ final class KronikaSubscribingHandler implements SubscribingHandlerInterface
     public static array $formats = [
         Date::class => DateHandler::FORMAT,
         Time::class => TimeHandler::FORMAT,
-        // DurationHandler::FORMAT_IN_SECONDS will be replaced with DurationHandler::FORMAT_TIME_INTERVAL
-        Duration::class => DurationHandler::FORMAT_IN_SECONDS,
+        Duration::class => DurationHandler::FORMAT_TIME_INTERVAL,
         LocalDateTime::class => DateTimeHandler::FORMAT_LOCAL,
         ZonedDateTime::class => DateTimeHandler::FORMAT_ZONED,
     ];

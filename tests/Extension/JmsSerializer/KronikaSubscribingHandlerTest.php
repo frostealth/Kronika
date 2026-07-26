@@ -148,11 +148,11 @@ final class KronikaSubscribingHandlerTest extends TestCase
 
         self::assertEquals($this->entry->durationInSeconds, $unserialized->durationInSeconds);
         self::assertEquals($this->entry->durationInHours->roundToHours(), $unserialized->durationInHours);
-        self::assertEquals($this->entry->durationInHours->inHours(), $serialized['durationInHours']);
+        self::assertEquals($this->entry->durationInHours->totalHours(), $serialized['durationInHours']);
         self::assertEquals($this->entry->durationTimeInterval, $unserialized->durationTimeInterval);
         self::assertEquals(\sprintf(
             '%02d:%02d:%02d.%06d',
-            $this->entry->durationTimeInterval->inHours(),
+            $this->entry->durationTimeInterval->totalHours(),
             $this->entry->durationTimeInterval->minutes(),
             $this->entry->durationTimeInterval->seconds(),
             $this->entry->durationTimeInterval->microseconds(),

@@ -45,7 +45,7 @@ final readonly class SystemClock implements Clock
     #[\Override]
     public function sleep(Duration $duration): void
     {
-        \sleep($duration->inSeconds());
+        \sleep($duration->totalSeconds());
         \usleep($duration->microseconds());
     }
 

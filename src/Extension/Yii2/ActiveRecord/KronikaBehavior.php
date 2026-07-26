@@ -105,6 +105,8 @@ use yii\db\BaseActiveRecord;
 final class KronikaBehavior extends Behavior
 {
     public const string DURATION_FORMAT_TIME_INTERVAL = 'time-interval';  // "hhh:mm:ss.sss"
+    public const string DURATION_FORMAT_TOTAL_SECONDS = 'total-seconds';
+    #[\Deprecated('use DURATION_FORMAT_TOTAL_SECONDS instead', since: '0.4.0')]
     public const string DURATION_FORMAT_IN_SECONDS = 'in-seconds';
 
     /** @var TFormatOptions */
@@ -323,9 +325,9 @@ final class KronikaBehavior extends Behavior
             $obj instanceof Duration => match ($this->getFormatFor(Duration::class)) {
                 self::DURATION_FORMAT_TIME_INTERVAL => \sprintf(
                     '%02d:%02d:%02d.%06d',
-                    $obj->inHours(), $obj->minutes(), $obj->seconds(), $obj->microseconds(),
+                    $obj->totalHours(), $obj->minutes(), $obj->seconds(), $obj->microseconds(),
                 ),
-                self::DURATION_FORMAT_IN_SECONDS => $obj->inSeconds(),
+                self::DURATION_FORMAT_TOTAL_SECONDS, self::DURATION_FORMAT_IN_SECONDS => $obj->totalSeconds(),
             },
             $obj instanceof Instant => $obj->value(),
             $obj instanceof LocalDateTime => $obj->format($this->getFormatFor(LocalDateTime::class)),
@@ -369,7 +371,7 @@ final class KronikaBehavior extends Behavior
                     /** @psalm-suppress InvalidScalarArgument */
                     return Duration::of(hours: $hours, minutes: $minutes, seconds: $seconds, micros: $micros);
                 })((string)$value),
-                self::DURATION_FORMAT_IN_SECONDS => Duration::of((int)$value),
+                self::DURATION_FORMAT_TOTAL_SECONDS, self::DURATION_FORMAT_IN_SECONDS => Duration::of((int)$value),
             },
             Instant::class         => Instant::ofValue($value),
             LocalDateTime::class   => LocalDateTime::tryFromFormat(

@@ -43,10 +43,10 @@ final class DurationNormalizerTest extends TestCase
     public static function normalizeIntegerProvider(): array
     {
         return [
-            [DurationNormalizer::FORMAT_IN_SECONDS, self::duration()->inSeconds()],
-            [DurationNormalizer::FORMAT_IN_MINUTES, self::duration()->inMinutes()],
-            [DurationNormalizer::FORMAT_IN_HOURS, self::duration()->inHours()],
-            [DurationNormalizer::FORMAT_IN_DAYS, self::duration()->inDays()],
+            [DurationNormalizer::FORMAT_TOTAL_SECONDS, self::duration()->totalSeconds()],
+            [DurationNormalizer::FORMAT_TOTAL_MINUTES, self::duration()->totalMinutes()],
+            [DurationNormalizer::FORMAT_TOTAL_HOURS, self::duration()->totalHours()],
+            [DurationNormalizer::FORMAT_TOTAL_DAYS, self::duration()->totalDays()],
         ];
     }
 
@@ -64,10 +64,10 @@ final class DurationNormalizerTest extends TestCase
     public static function denormalizeIntegerProvider(): array
     {
         return [
-            [DurationNormalizer::FORMAT_IN_SECONDS, self::duration()->inSeconds(), self::duration()->roundToSeconds()],
-            [DurationNormalizer::FORMAT_IN_MINUTES, self::duration()->inMinutes(), self::duration()->roundToMinutes()],
-            [DurationNormalizer::FORMAT_IN_HOURS,   self::duration()->inHours(),   self::duration()->roundToHours()],
-            [DurationNormalizer::FORMAT_IN_DAYS,    self::duration()->inDays(),    self::duration()->roundToDays()],
+            [DurationNormalizer::FORMAT_TOTAL_SECONDS, self::duration()->totalSeconds(), self::duration()->roundToSeconds()],
+            [DurationNormalizer::FORMAT_TOTAL_MINUTES, self::duration()->totalMinutes(), self::duration()->roundToMinutes()],
+            [DurationNormalizer::FORMAT_TOTAL_HOURS,   self::duration()->totalHours(),   self::duration()->roundToHours()],
+            [DurationNormalizer::FORMAT_TOTAL_DAYS,    self::duration()->totalDays(),    self::duration()->roundToDays()],
         ];
     }
 
@@ -121,7 +121,7 @@ final class DurationNormalizerTest extends TestCase
         self::assertIsString($actual);
         self::assertEquals(\sprintf(
             '%02d:%02d:%02d.%06d',
-            self::duration()->inHours(),
+            self::duration()->totalHours(),
             self::duration()->minutes(),
             self::duration()->seconds(),
             self::duration()->microseconds(),
@@ -132,7 +132,7 @@ final class DurationNormalizerTest extends TestCase
     {
         $actual = self::$serializer->denormalize(\sprintf(
             '%02d:%02d:%02d.%06d',
-            self::duration()->inHours(),
+            self::duration()->totalHours(),
             self::duration()->minutes(),
             self::duration()->seconds(),
             self::duration()->microseconds(),

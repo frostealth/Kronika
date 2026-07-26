@@ -24,11 +24,20 @@ final readonly class DurationNormalizer implements Normalizer, Denormalizer
     final public const string KEY_FORMAT = 'kronika_duration_format';
     final public const string DEFAULT_FORMAT = self::FORMAT_TIME_INTERVAL;
     final public const string FORMAT_TIME_INTERVAL = 'time_interval';
-    final public const string FORMAT_IN_SECONDS = 'in_seconds';
-    final public const string FORMAT_IN_MINUTES = 'in_minutes';
-    final public const string FORMAT_IN_HOURS = 'in_hours';
-    final public const string FORMAT_IN_DAYS = 'in_days';
+    final public const string FORMAT_TOTAL_SECONDS = 'total_seconds';
+    final public const string FORMAT_TOTAL_MINUTES = 'total_minutes';
+    final public const string FORMAT_TOTAL_HOURS = 'total_hours';
+    final public const string FORMAT_TOTAL_DAYS = 'total_days';
     final public const string FORMAT_ARRAY = 'array';
+
+    #[\Deprecated('use FORMAT_TOTAL_SECONDS instead.', since: '0.4.0')]
+    final public const string FORMAT_IN_SECONDS = 'in_seconds';
+    #[\Deprecated('use FORMAT_TOTAL_MINUTES instead.', since: '0.4.0')]
+    final public const string FORMAT_IN_MINUTES = 'in_minutes';
+    #[\Deprecated('use FORMAT_TOTAL_HOURS instead.', since: '0.4.0')]
+    final public const string FORMAT_IN_HOURS = 'in_hours';
+    #[\Deprecated('use FORMAT_TOTAL_DAYS instead.', since: '0.4.0')]
+    final public const string FORMAT_IN_DAYS = 'in_days';
 
     public function __construct(
         private string $format,
@@ -64,15 +73,15 @@ final readonly class DurationNormalizer implements Normalizer, Denormalizer
         return match($this->getFormat($context)) {
             self::FORMAT_TIME_INTERVAL => \sprintf(
                 '%02d:%02d:%02d.%06d',
-                $data->inHours(),
+                $data->totalHours(),
                 $data->minutes(),
                 $data->seconds(),
                 $data->microseconds(),
             ),
-            self::FORMAT_IN_SECONDS => $data->inSeconds(),
-            self::FORMAT_IN_MINUTES => $data->inMinutes(),
-            self::FORMAT_IN_HOURS => $data->inHours(),
-            self::FORMAT_IN_DAYS => $data->inDays(),
+            self::FORMAT_TOTAL_SECONDS, self::FORMAT_IN_SECONDS => $data->totalSeconds(),
+            self::FORMAT_TOTAL_MINUTES, self::FORMAT_IN_MINUTES => $data->totalMinutes(),
+            self::FORMAT_TOTAL_HOURS, self::FORMAT_IN_HOURS => $data->totalHours(),
+            self::FORMAT_TOTAL_DAYS, self::FORMAT_IN_DAYS => $data->totalDays(),
             self::FORMAT_ARRAY => [
                 'days' => $data->days(),
                 'hours' => $data->hours(),
@@ -106,10 +115,10 @@ final readonly class DurationNormalizer implements Normalizer, Denormalizer
                     /** @psalm-suppress InvalidScalarArgument */
                     return Duration::of(hours: $hours, minutes: $minutes, seconds: $seconds, micros: $micros);
                 })($data),
-                self::FORMAT_IN_SECONDS => Duration::of(seconds: $data),
-                self::FORMAT_IN_MINUTES => Duration::of(minutes: $data),
-                self::FORMAT_IN_HOURS => Duration::of(hours: $data),
-                self::FORMAT_IN_DAYS => Duration::of(days: $data),
+                self::FORMAT_TOTAL_SECONDS, self::FORMAT_IN_SECONDS => Duration::of(seconds: $data),
+                self::FORMAT_TOTAL_MINUTES, self::FORMAT_IN_MINUTES => Duration::of(minutes: $data),
+                self::FORMAT_TOTAL_HOURS, self::FORMAT_IN_HOURS => Duration::of(hours: $data),
+                self::FORMAT_TOTAL_DAYS, self::FORMAT_IN_DAYS => Duration::of(days: $data),
                 self::FORMAT_ARRAY => Duration::of(...$data),
             };
         } catch (\Throwable $e) {

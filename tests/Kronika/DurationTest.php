@@ -154,10 +154,10 @@ final class DurationTest extends TestCase
         $inMinutes = ($expected['minutes'] ?? 0) + $inHours * 60;
         $inSeconds = ($expected['seconds'] ?? 0) + $inMinutes * 60;
 
-        self::assertEquals($inDays, $duration->inDays());
-        self::assertEquals($inHours, $duration->inHours());
-        self::assertEquals($inMinutes, $duration->inMinutes());
-        self::assertEquals($inSeconds, $duration->inSeconds());
+        self::assertEquals($inDays, $duration->totalDays());
+        self::assertEquals($inHours, $duration->totalHours());
+        self::assertEquals($inMinutes, $duration->totalMinutes());
+        self::assertEquals($inSeconds, $duration->totalSeconds());
     }
 
     /**

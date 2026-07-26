@@ -168,7 +168,7 @@ final readonly class Instant
             return $this;
         }
 
-        return self::fromNumber($this->number()->add(Number::of($duration->inSeconds(), $duration->microseconds())));
+        return self::fromNumber($this->number()->add(Number::of($duration->totalSeconds(), $duration->microseconds())));
     }
 
     /**
@@ -185,7 +185,7 @@ final readonly class Instant
             return $this;
         }
 
-        return self::fromNumber($this->number()->sub(Number::of($duration->inSeconds(), $duration->microseconds())));
+        return self::fromNumber($this->number()->sub(Number::of($duration->totalSeconds(), $duration->microseconds())));
     }
 
     /**

@@ -82,9 +82,9 @@ final readonly class Foo
         #[Type('KronikaSecond')]
         public Time\Second $secondAlias,
 
-        #[Type(Duration::class . "<'in_seconds'>")]
+        #[Type(Duration::class . "<'total_seconds'>")]
         public Duration $durationInSeconds,
-        #[Type(Duration::class . "<'in_hours'>")]
+        #[Type(Duration::class . "<'total_hours'>")]
         public Duration $durationInHours,
         #[Type(Duration::class . "<'array'>")]
         public Duration $durationArray,

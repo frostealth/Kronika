@@ -157,7 +157,7 @@ $duration = $time->until(Time::of(hour: 18, minute: 30, second: 30));
 echo $duration->hours();      // 6
 echo $duration->minutes();    // 30
 echo $duration->second();     // 30
-echo $duration->inMinutes();  // 390
+echo $duration->totalMinutes();  // 390
 ```
 
 ### LocalDateTime
@@ -208,7 +208,7 @@ echo $duration->days();     // 13
 echo $duration->hours();    // 12
 echo $duration->minutes();  // 0
 echo $duration->second();   // 0
-echo $duration->inHours();  // 324
+echo $duration->totalHours();  // 324
 
 // getting "\DateTimeImmutable" and "\DateTime"
 $immutable = $datetime->toNative(new \DateTimeZone('UTC'));         // "\DateTimeImmutable"
@@ -287,7 +287,7 @@ $days     = $duration->days();     // 14
 $hours    = $duration->hours();    // 0
 $minutes  = $duration->minutes();  // 30
 $seconds  = $duration->second();   // 15
-$inHours  = $duration->inHours();  // 336
+$inHours  = $duration->totalHours();  // 336
 
 // getting "\DateTimeImmutable" and "\DateTime"
 $immutable = $datetime->toNative();         // "\DateTimeImmutable"
@@ -306,6 +306,11 @@ echo $duration->hours();         // 2
 echo $duration->minutes();       // 0
 echo $duration->seconds();       // 30
 echo $duration->microseconds();  // 0
+
+echo $duration->totalDays();     // 0
+echo $duration->totalHours();    // 2
+echo $duration->totalMinutes();  // 120
+echo $duration->totalSeconds();  // 7230
 
 // rounding
 $rounded = $duration->roundToMinutes()

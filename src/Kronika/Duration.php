@@ -158,7 +158,7 @@ final readonly class Duration
      */
     public function days(): int
     {
-        return $this->inDays();
+        return $this->totalDays();
     }
 
     /**
@@ -173,7 +173,7 @@ final readonly class Duration
      */
     public function hours(): int
     {
-        return $this->inHours() - ($this->inDays() * 24);
+        return $this->totalHours() - ($this->totalDays() * 24);
     }
 
     /**
@@ -188,7 +188,7 @@ final readonly class Duration
      */
     public function minutes(): int
     {
-        return $this->inMinutes() - ($this->inHours() * 60);
+        return $this->totalMinutes() - ($this->totalHours() * 60);
     }
 
     /**
@@ -203,7 +203,7 @@ final readonly class Duration
      */
     public function seconds(): int
     {
-        return $this->inSeconds() - ($this->inMinutes() * 60);
+        return $this->totalSeconds() - ($this->totalMinutes() * 60);
     }
 
     /**
@@ -226,15 +226,15 @@ final readonly class Duration
      *
      * ```
      * // 2 days, 12 hours, 30 minutes, 45 second
-     * $this->inDays();  // 2
-     * $this->inDays(\RoundingMode::AwayFromZero);  // 3
+     * $this->totalDays();  // 2
+     * $this->totalDays(\RoundingMode::AwayFromZero);  // 3
      * ```
      *
      * @return non-negative-int
      */
-    public function inDays(\RoundingMode $mode = \RoundingMode::TowardsZero): int
+    public function totalDays(\RoundingMode $mode = \RoundingMode::TowardsZero): int
     {
-        return (int)\round($this->inHours(mode: $mode) / 24, mode: $mode);
+        return (int)\round($this->totalHours(mode: $mode) / 24, mode: $mode);
     }
 
     /**
@@ -242,15 +242,15 @@ final readonly class Duration
      *
      * ```
      * // 2 days, 12 hours, 30 minutes, 45 second
-     * $this->inHours();  // 60
-     * $this->inHours(\RoundingMode::AwayFromZero);  // 61
+     * $this->totalHours();  // 60
+     * $this->totalHours(\RoundingMode::AwayFromZero);  // 61
      * ```
      *
      * @return non-negative-int
      */
-    public function inHours(\RoundingMode $mode = \RoundingMode::TowardsZero): int
+    public function totalHours(\RoundingMode $mode = \RoundingMode::TowardsZero): int
     {
-        return (int)\round($this->inMinutes(mode: $mode) / 60, mode: $mode);
+        return (int)\round($this->totalMinutes(mode: $mode) / 60, mode: $mode);
     }
 
     /**
@@ -258,15 +258,15 @@ final readonly class Duration
      *
      * ```
      * // 2 days, 12 hours, 30 minutes, 45 second
-     * $this->inMinutes();  // 3630
-     * $this->inMinutes(\RoundingMode::AwayFromZero);  // 3631
+     * $this->totalMinutes();  // 3630
+     * $this->totalMinutes(\RoundingMode::AwayFromZero);  // 3631
      * ```
      *
      * @return non-negative-int
      */
-    public function inMinutes(\RoundingMode $mode = \RoundingMode::TowardsZero): int
+    public function totalMinutes(\RoundingMode $mode = \RoundingMode::TowardsZero): int
     {
-        return (int)\round($this->inSeconds(mode: $mode) / 60, mode: $mode);
+        return (int)\round($this->totalSeconds(mode: $mode) / 60, mode: $mode);
     }
 
     /**
@@ -274,13 +274,13 @@ final readonly class Duration
      *
      * ```
      * // 2 days, 12 hours, 30 minutes, 45 seconds, 3 microseconds
-     * $this->inSeconds();  // 217845
-     * $this->inSeconds(\RoundingMode::AwayFromZero);  // 217846
+     * $this->totalSeconds();  // 217845
+     * $this->totalSeconds(\RoundingMode::AwayFromZero);  // 217846
      * ```
      *
      * @return non-negative-int
      */
-    public function inSeconds(\RoundingMode $mode = \RoundingMode::TowardsZero): int
+    public function totalSeconds(\RoundingMode $mode = \RoundingMode::TowardsZero): int
     {
         if ($mode === \RoundingMode::TowardsZero) {
             return $this->seconds;
@@ -350,41 +350,41 @@ final readonly class Duration
     /**
      * Returns an instance of `Duration` with rounded amount of days in this duration.
      *
-     * @see self::inDays()
+     * @see self::totalDays()
      */
     public function roundToDays(\RoundingMode $mode = \RoundingMode::TowardsZero): self
     {
-        return self::of(days: $this->inDays(mode: $mode));
+        return self::of(days: $this->totalDays(mode: $mode));
     }
 
     /**
      * Returns an instance of `Duration` with rounded amount of hours in this duration.
      *
-     * @see self::inHours()
+     * @see self::totalHours()
      */
     public function roundToHours(\RoundingMode $mode = \RoundingMode::TowardsZero): self
     {
-        return self::of(hours: $this->inHours(mode: $mode));
+        return self::of(hours: $this->totalHours(mode: $mode));
     }
 
     /**
      * Returns an instance of `Duration` with rounded amount of minutes in this duration.
      *
-     * @see self::inMinutes()
+     * @see self::totalMinutes()
      */
     public function roundToMinutes(\RoundingMode $mode = \RoundingMode::TowardsZero): self
     {
-        return self::of(minutes: $this->inMinutes(mode: $mode));
+        return self::of(minutes: $this->totalMinutes(mode: $mode));
     }
 
     /**
      * Returns an instance of `Duration` with rounded amount of seconds in this duration.
      *
-     * @see self::inSeconds()
+     * @see self::totalSeconds()
      */
     public function roundToSeconds(\RoundingMode $mode = \RoundingMode::TowardsZero): self
     {
-        return self::of(seconds: $this->inSeconds(mode: $mode));
+        return self::of(seconds: $this->totalSeconds(mode: $mode));
     }
 
     /**
@@ -569,7 +569,7 @@ final readonly class Duration
     {
         $interval = new \DateInterval(\sprintf(
             'PT%dH%dM%dS',
-            $this->inHours(),
+            $this->totalHours(),
             $this->minutes(),
             $this->seconds(),
         ));
@@ -578,12 +578,6 @@ final readonly class Duration
         $interval->f = $this->microseconds() / 1_000_000;
 
         return $interval;
-    }
-
-    #[\Deprecated('Use toNative() instead.', since: '0.4.0')]
-    public function toDateInterval(): \DateInterval
-    {
-        return $this->toNative();
     }
 
     /** @return non-empty-string */
@@ -609,8 +603,38 @@ final readonly class Duration
             'minutes' => $this->minutes(),
             'seconds' => $this->seconds(),
             'microseconds' => $this->microseconds(),
-            'inSeconds' => $this->inSeconds(),
+            'totalSeconds' => $this->totalSeconds(),
         ];
+    }
+
+    #[\Deprecated('use totalDays() instead.', since: '0.4.0')]
+    public function inDays(\RoundingMode $mode = \RoundingMode::TowardsZero): int
+    {
+        return $this->totalDays($mode);
+    }
+
+    #[\Deprecated('use totalHours() instead.', since: '0.4.0')]
+    public function inHours(\RoundingMode $mode = \RoundingMode::TowardsZero): int
+    {
+        return $this->totalHours($mode);
+    }
+
+    #[\Deprecated('use totalMinutes() instead.', since: '0.4.0')]
+    public function inMinutes(\RoundingMode $mode = \RoundingMode::TowardsZero): int
+    {
+        return $this->totalMinutes($mode);
+    }
+
+    #[\Deprecated('use totalSeconds() instead.', since: '0.4.0')]
+    public function inSeconds(\RoundingMode $mode = \RoundingMode::TowardsZero): int
+    {
+        return $this->totalSeconds($mode);
+    }
+
+    #[\Deprecated('Use toNative() instead.', since: '0.4.0')]
+    public function toDateInterval(): \DateInterval
+    {
+        return $this->toNative();
     }
 
     /**

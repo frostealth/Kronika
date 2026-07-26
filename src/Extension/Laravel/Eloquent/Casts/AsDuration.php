@@ -23,9 +23,18 @@ use Kronika\Duration;
 final readonly class AsDuration implements CastsAttributes
 {
     final public const string FORMAT_TIME_INTERVAL = 'time_interval';
+    final public const string FORMAT_TOTAL_SECONDS = 'total_seconds';
+    final public const string FORMAT_TOTAL_MINUTES = 'total_minutes';
+    final public const string FORMAT_TOTAL_HOURS = 'total_hours';
+    final public const string FORMAT_TOTAL_DAYS = 'total_days';
+
+    #[\Deprecated('use FORMAT_TOTAL_SECONDS instead.', since: '0.4.0')]
     final public const string FORMAT_IN_SECONDS = 'in_seconds';
+    #[\Deprecated('use FORMAT_TOTAL_MINUTES instead.', since: '0.4.0')]
     final public const string FORMAT_IN_MINUTES = 'in_minutes';
+    #[\Deprecated('use FORMAT_TOTAL_HOURS instead.', since: '0.4.0')]
     final public const string FORMAT_IN_HOURS = 'in_hours';
+    #[\Deprecated('use FORMAT_TOTAL_DAYS instead.', since: '0.4.0')]
     final public const string FORMAT_IN_DAYS = 'in_days';
 
     /** @param self::FORMAT_* $format */
@@ -51,10 +60,10 @@ final readonly class AsDuration implements CastsAttributes
                 /** @psalm-suppress InvalidScalarArgument */
                 return Duration::of(hours: $hours, minutes: $minutes, seconds: $seconds, micros: $micros);
             })($value),
-            self::FORMAT_IN_SECONDS => Duration::of(seconds: $value),
-            self::FORMAT_IN_MINUTES => Duration::of(minutes: $value),
-            self::FORMAT_IN_HOURS => Duration::of(hours: $value),
-            self::FORMAT_IN_DAYS => Duration::of(days: $value),
+            self::FORMAT_TOTAL_SECONDS, self::FORMAT_IN_SECONDS => Duration::of(seconds: $value),
+            self::FORMAT_TOTAL_MINUTES, self::FORMAT_IN_MINUTES => Duration::of(minutes: $value),
+            self::FORMAT_TOTAL_HOURS, self::FORMAT_IN_HOURS => Duration::of(hours: $value),
+            self::FORMAT_TOTAL_DAYS, self::FORMAT_IN_DAYS => Duration::of(days: $value),
         };
     }
 
@@ -71,15 +80,15 @@ final readonly class AsDuration implements CastsAttributes
         return match($this->format) {
             self::FORMAT_TIME_INTERVAL => \sprintf(
                 '%02d:%02d:%02d.%06d',
-                $value->inHours(),
+                $value->totalHours(),
                 $value->minutes(),
                 $value->seconds(),
                 $value->microseconds(),
             ),
-            self::FORMAT_IN_SECONDS => $value->inSeconds(),
-            self::FORMAT_IN_MINUTES => $value->inMinutes(),
-            self::FORMAT_IN_HOURS => $value->inHours(),
-            self::FORMAT_IN_DAYS => $value->inDays(),
+            self::FORMAT_TOTAL_SECONDS, self::FORMAT_IN_SECONDS => $value->totalSeconds(),
+            self::FORMAT_TOTAL_MINUTES, self::FORMAT_IN_MINUTES => $value->totalMinutes(),
+            self::FORMAT_TOTAL_HOURS, self::FORMAT_IN_HOURS => $value->totalHours(),
+            self::FORMAT_TOTAL_DAYS, self::FORMAT_IN_DAYS => $value->totalDays(),
         };
     }
 }

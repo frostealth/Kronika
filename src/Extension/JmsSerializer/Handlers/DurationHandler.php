@@ -20,11 +20,20 @@ use Kronika\Duration;
 final readonly class DurationHandler implements Handler
 {
     final public const string FORMAT_TIME_INTERVAL = 'time_interval';
-    final public const string FORMAT_IN_SECONDS = 'in_seconds';
-    final public const string FORMAT_IN_MINUTES = 'in_minutes';
-    final public const string FORMAT_IN_HOURS = 'in_hours';
-    final public const string FORMAT_IN_DAYS = 'in_days';
+    final public const string FORMAT_TOTAL_SECONDS = 'total_seconds';
+    final public const string FORMAT_TOTAL_MINUTES = 'total_minutes';
+    final public const string FORMAT_TOTAL_HOURS = 'total_hours';
+    final public const string FORMAT_TOTAL_DAYS = 'total_days';
     final public const string FORMAT_ARRAY = 'array';
+
+    #[\Deprecated('use FORMAT_TOTAL_SECONDS instead.', since: '0.4.0')]
+    final public const string FORMAT_IN_SECONDS = 'in_seconds';
+    #[\Deprecated('use FORMAT_TOTAL_MINUTES instead.', since: '0.4.0')]
+    final public const string FORMAT_IN_MINUTES = 'in_minutes';
+    #[\Deprecated('use FORMAT_TOTAL_HOURS instead.', since: '0.4.0')]
+    final public const string FORMAT_IN_HOURS = 'in_hours';
+    #[\Deprecated('use FORMAT_TOTAL_DAYS instead.', since: '0.4.0')]
+    final public const string FORMAT_IN_DAYS = 'in_days';
 
     public function __construct(
         private string $format = self::FORMAT_TIME_INTERVAL,
@@ -46,15 +55,15 @@ final readonly class DurationHandler implements Handler
         return match($this->getFormat($type)) {
             self::FORMAT_TIME_INTERVAL => $visitor->visitString(\sprintf(
                 '%02d:%02d:%02d.%06d',
-                $duration->inHours(),
+                $duration->totalHours(),
                 $duration->minutes(),
                 $duration->seconds(),
                 $duration->microseconds(),
             ), $type),
-            self::FORMAT_IN_SECONDS => $visitor->visitInteger($duration->inSeconds(), $type),
-            self::FORMAT_IN_MINUTES => $visitor->visitInteger($duration->inMinutes(), $type),
-            self::FORMAT_IN_HOURS => $visitor->visitInteger($duration->inHours(), $type),
-            self::FORMAT_IN_DAYS => $visitor->visitInteger($duration->inDays(), $type),
+            self::FORMAT_TOTAL_SECONDS, self::FORMAT_IN_SECONDS => $visitor->visitInteger($duration->totalSeconds(), $type),
+            self::FORMAT_TOTAL_MINUTES, self::FORMAT_IN_MINUTES => $visitor->visitInteger($duration->totalMinutes(), $type),
+            self::FORMAT_TOTAL_HOURS, self::FORMAT_IN_HOURS => $visitor->visitInteger($duration->totalHours(), $type),
+            self::FORMAT_TOTAL_DAYS, self::FORMAT_IN_DAYS => $visitor->visitInteger($duration->totalDays(), $type),
             self::FORMAT_ARRAY => [
                 'days' => $duration->days(),
                 'hours' => $duration->hours(),
@@ -90,10 +99,10 @@ final readonly class DurationHandler implements Handler
                 /** @psalm-suppress InvalidScalarArgument */
                 return Duration::of(hours: $hours, minutes: $minutes, seconds: $seconds, micros: $micros);
             })($value),
-            self::FORMAT_IN_SECONDS => Duration::of(seconds: $value),
-            self::FORMAT_IN_MINUTES => Duration::of(minutes: $value),
-            self::FORMAT_IN_HOURS => Duration::of(hours: $value),
-            self::FORMAT_IN_DAYS => Duration::of(days: $value),
+            self::FORMAT_TOTAL_SECONDS, self::FORMAT_IN_SECONDS => Duration::of(seconds: $value),
+            self::FORMAT_TOTAL_MINUTES, self::FORMAT_IN_MINUTES => Duration::of(minutes: $value),
+            self::FORMAT_TOTAL_HOURS, self::FORMAT_IN_HOURS => Duration::of(hours: $value),
+            self::FORMAT_TOTAL_DAYS, self::FORMAT_IN_DAYS => Duration::of(days: $value),
             self::FORMAT_ARRAY => Duration::of(...$value),
         };
     }

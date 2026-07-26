@@ -33,7 +33,7 @@ final class DurationType extends Type
             throw InvalidType::new($value, $this->getName(), ['null', Duration::class]);
         }
 
-        return $value->inSeconds();
+        return $value->totalSeconds();
     }
 
     #[\Override]

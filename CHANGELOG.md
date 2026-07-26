@@ -16,6 +16,10 @@ All notable changes to `Kronika` will be documented in this file.
 
 ### Deprecated
 - `Duration::toDateInterval()` method. Use `Duration::toNative()` instead.
+- `Duration::inDays()` methods. Use `Duration::totalDays()` instead.
+- `Duration::inHours()` methods. Use `Duration::totalHours()` instead.
+- `Duration::inMinutes()` methods. Use `Duration::totalMinutes()` instead.
+- `Duration::inSeconds()` methods. Use `Duration::totalSeconds()` instead.
 - `Date::ofDateTime()` method. Use `Date::fromDateTime()` instead.
 - `Date::ofFormat()` method. Use `Date::fromFormat()` instead.
 - `Date::tryOfFormat()` method. Use `Date::tryFromFormat()` instead.
@@ -31,6 +35,11 @@ All notable changes to `Kronika` will be documented in this file.
 - `ZonedDateTime::ofTimestamp()` method. Use `ZonedDateTime::fromTimestamp()` instead.
 - `ZonedDateTime::ofInstant()` method. Use `ZonedDateTime::fromInstant()` instead.
 - `ZonedDateTime::tryOfFormat()` method. Use `ZonedDateTime::tryFromFormat()` instead.
+- `Extension\JmsSerializer\Handlers\DurationHandler::FORMAT_IN_*` constants. Use `FORMAT_TOTAL_*` instead.
+- `Extension\Laravel\Eloquent\Casts\AsDuration::FORMAT_IN_*` constants. Use `FORMAT_TOTAL_*` instead.
+- `Extension\Symfony\Serializer\Normalizer\DurationNormalizer::FORMAT_IN_*` constants. Use `FORMAT_TOTAL_*` instead.
+- `Extension\Yii2\ActiveRecord\KronikaBehavior::DURATION_FORMAT_IN_SECONDS` constants.
+Use `DURATION_FORMAT_TOTAL_SECONDS` instead.
 
 ### Changed
 - `ZonedDateTime::instant()` in UTC now.
@@ -38,6 +47,8 @@ All notable changes to `Kronika` will be documented in this file.
 - `Range\ZonedDateTimeRange` and `Range\LocalDateTimeRange` are incompatible now.
 - `LocalDateTime::toNative()` and `LocalDateTime::toNativeMutable()` methods now require passing a timezone.
 - `bool $rolling` option in `*::with()`, `*::next()` and `*::previous()` methods is replaced with `OverflowMode $mode`.
+- Default format for `Duration` in JmsSerializer extension is replaced with `DurationHandler::FORMAT_TIME_INTERVAL`.
+Previous format is `FORMAT_IN_SECONDS`.
 
 ### Fixed
 

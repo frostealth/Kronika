@@ -29,16 +29,16 @@ final class DurationCastTest extends TestCase
         return [
             [new AsDuration(), $duration, \sprintf(
                 '%02d:%02d:%02d.%06d',
-                $duration->inHours(),
+                $duration->totalHours(),
                 $duration->minutes(),
                 $duration->seconds(),
                 $duration->microseconds(),
             ), $duration],
-            [new AsDuration(format: AsDuration::FORMAT_IN_SECONDS), $duration, $duration->inSeconds(), $duration],
-            [new AsDuration(format: AsDuration::FORMAT_IN_SECONDS), null, null, null],
-            [new AsDuration(format: AsDuration::FORMAT_IN_MINUTES), $duration, $duration->inMinutes(), $duration->roundToMinutes()],
-            [new AsDuration(format: AsDuration::FORMAT_IN_HOURS), $duration, $duration->inHours(), $duration->roundToHours()],
-            [new AsDuration(format: AsDuration::FORMAT_IN_DAYS), $duration, $duration->inDays(), $duration->roundToDays()],
+            [new AsDuration(format: AsDuration::FORMAT_TOTAL_SECONDS), $duration, $duration->totalSeconds(), $duration],
+            [new AsDuration(format: AsDuration::FORMAT_TOTAL_SECONDS), null, null, null],
+            [new AsDuration(format: AsDuration::FORMAT_TOTAL_MINUTES), $duration, $duration->totalMinutes(), $duration->roundToMinutes()],
+            [new AsDuration(format: AsDuration::FORMAT_TOTAL_HOURS), $duration, $duration->totalHours(), $duration->roundToHours()],
+            [new AsDuration(format: AsDuration::FORMAT_TOTAL_DAYS), $duration, $duration->totalDays(), $duration->roundToDays()],
         ];
     }
 
