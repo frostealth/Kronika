@@ -106,7 +106,8 @@ final class KronikaBehavior extends Behavior
 {
     public const string DURATION_FORMAT_TIME_INTERVAL = 'time-interval';  // "hhh:mm:ss.sss"
     public const string DURATION_FORMAT_TOTAL_SECONDS = 'total-seconds';
-    #[\Deprecated('use DURATION_FORMAT_TOTAL_SECONDS instead', since: '0.4.0')]
+
+    /** @deprecated {@use self::DURATION_FORMAT_TOTAL_SECONDS} */
     public const string DURATION_FORMAT_IN_SECONDS = 'in-seconds';
 
     /** @var TFormatOptions */

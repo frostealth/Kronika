@@ -26,13 +26,13 @@ final readonly class DurationHandler implements Handler
     final public const string FORMAT_TOTAL_DAYS = 'total_days';
     final public const string FORMAT_ARRAY = 'array';
 
-    #[\Deprecated('use FORMAT_TOTAL_SECONDS instead.', since: '0.4.0')]
+    /** @deprecated {@see self::FORMAT_TOTAL_SECONDS} */
     final public const string FORMAT_IN_SECONDS = 'in_seconds';
-    #[\Deprecated('use FORMAT_TOTAL_MINUTES instead.', since: '0.4.0')]
+    /** @deprecated {@see self::FORMAT_TOTAL_MINUTES} */
     final public const string FORMAT_IN_MINUTES = 'in_minutes';
-    #[\Deprecated('use FORMAT_TOTAL_HOURS instead.', since: '0.4.0')]
+    /** @deprecated {@see self::FORMAT_TOTAL_HOURS} */
     final public const string FORMAT_IN_HOURS = 'in_hours';
-    #[\Deprecated('use FORMAT_TOTAL_DAYS instead.', since: '0.4.0')]
+    /** @deprecated {@see self::FORMAT_TOTAL_DAYS} */
     final public const string FORMAT_IN_DAYS = 'in_days';
 
     public function __construct(

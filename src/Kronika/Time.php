@@ -202,10 +202,10 @@ final readonly class Time implements Unit
      *
      * ```
      * // 12:15:30
-     * $this->at(Date::of(2025, 12, 31));  // 2025-12-31 12:15:30
+     * $this->on(Date::of(2025, 12, 31));  // 2025-12-31 12:15:30
      * ```
      */
-    public function at(Date $date): LocalDateTime
+    public function on(Date $date): LocalDateTime
     {
         return $date->at($this);
     }
@@ -645,11 +645,17 @@ final readonly class Time implements Unit
         return self::fromFormat($format, $time, $formatter);
     }
 
+    #[\Deprecated('use on() instead.', since: '0.4.1')]
+    public function at(Date $date): LocalDateTime
+    {
+        return $this->on($date);
+    }
+
     /** @internal {@see DateTime::with()} */
     #[\Override]
     public function _withinDateTime(LocalDateTime $datetime, OverflowMode $mode): LocalDateTime
     {
-        return $this->at($datetime->date());
+        return $this->on($datetime->date());
     }
 
     private static function fromInstant(Instant $instant): self

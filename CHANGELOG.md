@@ -1,12 +1,13 @@
 # Changelog
 All notable changes to `Kronika` will be documented in this file.
 
-## [Unreleased]
+## 0.4.1 [Unreleased]
 ### Added
 
 ### Removed
 
 ### Deprecated
+- `Time::at()` method. Use `Time::on()` instead.
 
 ### Changed
 
