@@ -312,28 +312,28 @@ echo $duration->totalMinutes();  // 120
 echo $duration->totalSeconds();  // 7230
 
 // rounding
-$rounded = $duration->roundToMinutes()
+$rounded = $duration->roundToMinutes();
 echo $rounded->days();          // 0
 echo $rounded->hours();         // 2
 echo $rounded->minutes();       // 0
 echo $rounded->seconds();       // 0
 echo $rounded->microseconds();  // 0
 
-$rounded = $duration->roundToMinutes(\RoundingMode::HalfAwayFromZero)
+$rounded = $duration->roundToMinutes(\RoundingMode::HalfAwayFromZero);
 echo $rounded->days();          // 0
 echo $rounded->hours();         // 2
 echo $rounded->minutes();       // 1
 echo $rounded->seconds();       // 0
 echo $rounded->microseconds();  // 0
 
-$rounded = $duration->roundToHours(\RoundingMode::HalfAwayFromZero)
+$rounded = $duration->roundToHours(\RoundingMode::HalfAwayFromZero);
 echo $rounded->days();          // 0
 echo $rounded->hours();         // 2
 echo $rounded->minutes();       // 0
 echo $rounded->seconds();       // 0
 echo $rounded->microseconds();  // 0
 
-$rounded = $duration->roundToHours(\RoundingMode::AwayFromZero)
+$rounded = $duration->roundToHours(\RoundingMode::AwayFromZero);
 echo $rounded->days();          // 0
 echo $rounded->hours();         // 3
 echo $rounded->minutes();       // 0
