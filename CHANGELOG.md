@@ -1,17 +1,12 @@
 # Changelog
 All notable changes to `Kronika` will be documented in this file.
 
-## 0.4.1 [Unreleased]
+## [0.4.1](https://github.com/frostealth/kronika/releases/tag/0.4.1) – 2026-07-27
 ### Added
-
-### Removed
+- `Time::on()`
 
 ### Deprecated
 - `Time::at()` method. Use `Time::on()` instead.
-
-### Changed
-
-### Fixed
 
 ## [0.4.0](https://github.com/frostealth/kronika/releases/tag/0.4.0) – 2026-07-26
 ### Added

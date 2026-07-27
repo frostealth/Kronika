@@ -13,7 +13,6 @@ composer require frostealth/kronika
 | Version | Status |      Branch       | PHP Version |
 |:-------:|:-------|:-----------------:|:-----------:|
 |   0.4   | Latest | [0.x][branch-0.x] |    ^8.4     |
-|   0.3   | EOL    |         -         |    ^8.4     |
 |   0.1   | EOL    | [0.1][branch-0.1] | >=8.3,<=8.5 |
 
 [branch-0.x]: https://github.com/frostealth/kronika/tree/0.x
