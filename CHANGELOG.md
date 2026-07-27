@@ -1,6 +1,17 @@
 # Changelog
 All notable changes to `Kronika` will be documented in this file.
 
+## [Unreleased]
+### Added
+
+### Removed
+
+### Deprecated
+
+### Changed
+
+### Fixed
+
 ## [0.4.1](https://github.com/frostealth/kronika/releases/tag/0.4.1) – 2026-07-27
 ### Added
 - `Time::on()`
