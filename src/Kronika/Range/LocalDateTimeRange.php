@@ -427,10 +427,6 @@ final readonly class LocalDateTimeRange implements Range
      */
     public function toNative(Duration|\DateInterval $step, \DateTimeZone $timezone): \DatePeriod
     {
-        return new \DatePeriod(
-            start: $this->from()->in($timezone),
-            interval: $step instanceof Duration ? $step->toNative() : $step,
-            end: $this->to()->in($timezone),
-        );
+        return $this->in($timezone)->toNative($step);
     }
 }
