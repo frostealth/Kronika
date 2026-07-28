@@ -1777,6 +1777,6 @@ final class LocalDateTimeRangeTest extends TestCase
 
         $actual = $range->in($timezone);
 
-        self::assertEquals(ZonedDateTimeRange::of($from->at($timezone), $to->at($timezone)), $actual);
+        self::assertEquals(ZonedDateTimeRange::of($from->in($timezone), $to->in($timezone)), $actual);
     }
 }

@@ -201,10 +201,10 @@ final readonly class LocalDateTime implements DateTime
      *
      * ```
      * // 2025-12-31 12:15:30
-     * $this->at(new \DateTimeZone('UTC'));  // 2025-12-31 12:15:30 UTC
+     * $this->in(new \DateTimeZone('UTC'));  // 2025-12-31 12:15:30 UTC
      * ```
      */
-    public function at(\DateTimeZone $timezone): ZonedDateTime
+    public function in(\DateTimeZone $timezone): ZonedDateTime
     {
         return ZonedDateTime::fromLocal($this, $timezone);
     }
@@ -635,6 +635,12 @@ final readonly class LocalDateTime implements DateTime
     public static function ofFormat(string $format, string $datetime, ?Formatter $formatter = null): self
     {
         return self::fromFormat($format, $datetime, $formatter);
+    }
+
+    #[\Deprecated('use in() instead.', since: '0.4.2')]
+    public function at(\DateTimeZone $timezone): ZonedDateTime
+    {
+        return $this->in($timezone);
     }
 
     private static function fromInstant(Instant $instant): self

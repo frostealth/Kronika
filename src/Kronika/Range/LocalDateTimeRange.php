@@ -406,8 +406,8 @@ final readonly class LocalDateTimeRange implements Range
     public function in(\DateTimeZone $timezone): ZonedDateTimeRange
     {
         return ZonedDateTimeRange::of(
-            from: $this->from()->at($timezone),
-            to: $this->to()->at($timezone),
+            from: $this->from()->in($timezone),
+            to: $this->to()->in($timezone),
         );
     }
 
@@ -428,9 +428,9 @@ final readonly class LocalDateTimeRange implements Range
     public function toNative(Duration|\DateInterval $step, \DateTimeZone $timezone): \DatePeriod
     {
         return new \DatePeriod(
-            start: $this->from()->at($timezone),
+            start: $this->from()->in($timezone),
             interval: $step instanceof Duration ? $step->toNative() : $step,
-            end: $this->to()->at($timezone),
+            end: $this->to()->in($timezone),
         );
     }
 }

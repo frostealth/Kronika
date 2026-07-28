@@ -3,10 +3,14 @@ All notable changes to `Kronika` will be documented in this file.
 
 ## [Unreleased]
 ### Added
+- `LocalDateTime::in(\DateTimeZone)`.
+- `Instant::in(\DateTimeZone)`.
 
 ### Removed
 
 ### Deprecated
+- `LocalDateTime::at(\DateTimeZone)`. Use `LocalDateTime::in()` instead.
+- `Instant::at(\DateTimeZone)`. Use `Instant::in()` instead.
 
 ### Changed
 
