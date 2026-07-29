@@ -228,11 +228,11 @@ $time     = Time::midday();
 $timezone = new \DateTimeZone('UTC')
 $datetime = ZonedDateTime::of($date, $time, $timezone);
 // or
-$datetime = $date->at($time)->at($timezone);
+$datetime = $date->at($time)->in($timezone);
 // or
 $datetime = ZonedDateTime::fromLocal(LocalDateTime::of($date, $time), $timezone);
 // or
-$datetime = LocalDateTime::of($date, $time)->at($timezone);
+$datetime = LocalDateTime::of($date, $time)->in($timezone);
 // or
 $datetime = ZonedDateTime::utcOf($date, $time);
 // or with current time and specified time-zone
