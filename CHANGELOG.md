@@ -1,18 +1,14 @@
 # Changelog
 All notable changes to `Kronika` will be documented in this file.
 
-## [Unreleased]
+## [0.4.2](https://github.com/frostealth/kronika/releases/tag/0.4.2) – 2026-08-13
 ### Added
 - `LocalDateTime::in(\DateTimeZone)`.
 - `Instant::in(\DateTimeZone)`.
 
-### Removed
-
 ### Deprecated
 - `LocalDateTime::at(\DateTimeZone)`. Use `LocalDateTime::in()` instead.
 - `Instant::at(\DateTimeZone)`. Use `Instant::in()` instead.
-
-### Changed
 
 ### Fixed
 - XML Serialization/Deserialization in JMS Serializer extension.
