@@ -46,7 +46,7 @@ final readonly class DurationHandler implements Handler
         return [Duration::class, 'KronikaDuration'];
     }
 
-    public function serialize(SerializationVisitor $visitor, ?Duration $duration, array $type): null|array|int|string
+    public function serialize(SerializationVisitor $visitor, ?Duration $duration, array $type): mixed
     {
         if ($duration === null) {
             return $visitor->visitNull($duration, $type);
@@ -74,7 +74,7 @@ final readonly class DurationHandler implements Handler
         };
     }
 
-    public function deserialize(DeserializationVisitor $visitor, null|array|int|string $value, array $type): ?Duration
+    public function deserialize(DeserializationVisitor $visitor, mixed $value, array $type): ?Duration
     {
         if ($value === null) {
             return $visitor->visitNull($value, $type);

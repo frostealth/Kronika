@@ -25,7 +25,7 @@ final readonly class DayOfMonthHandler implements Handler
         return [DayOfMonth::class, 'KronikaDayOfMonth'];
     }
 
-    public function serialize(SerializationVisitor $visitor, ?DayOfMonth $dayOfMonth, array $type): ?int
+    public function serialize(SerializationVisitor $visitor, ?DayOfMonth $dayOfMonth, array $type): mixed
     {
         if ($dayOfMonth === null) {
             return $visitor->visitNull($dayOfMonth, $type);
@@ -34,7 +34,7 @@ final readonly class DayOfMonthHandler implements Handler
         return $visitor->visitInteger($dayOfMonth->number(), $type);
     }
 
-    public function deserialize(DeserializationVisitor $visitor, ?int $value, array $type): ?DayOfMonth
+    public function deserialize(DeserializationVisitor $visitor, mixed $value, array $type): ?DayOfMonth
     {
         $value = $visitor->visitInteger($value, $type);
         if ($value === null) {

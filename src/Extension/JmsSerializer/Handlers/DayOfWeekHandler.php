@@ -25,7 +25,7 @@ final readonly class DayOfWeekHandler implements Handler
         return [DayOfWeek::class, 'KronikaDayOfWeek'];
     }
 
-    public function serialize(SerializationVisitor $visitor, ?DayOfWeek $dayOfWeek, array $type): ?int
+    public function serialize(SerializationVisitor $visitor, ?DayOfWeek $dayOfWeek, array $type): mixed
     {
         if ($dayOfWeek === null) {
             return $visitor->visitNull($dayOfWeek, $type);
@@ -34,7 +34,7 @@ final readonly class DayOfWeekHandler implements Handler
         return $visitor->visitInteger($dayOfWeek->number(), $type);
     }
 
-    public function deserialize(DeserializationVisitor $visitor, ?int $value, array $type): ?DayOfWeek
+    public function deserialize(DeserializationVisitor $visitor, mixed $value, array $type): ?DayOfWeek
     {
         $value = $visitor->visitInteger($value, $type);
         if ($value === null) {

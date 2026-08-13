@@ -33,7 +33,7 @@ final readonly class TimeHandler implements Handler
         return [Time::class, 'KronikaTime'];
     }
 
-    public function serialize(SerializationVisitor $visitor, ?Time $time, array $type): ?string
+    public function serialize(SerializationVisitor $visitor, ?Time $time, array $type): mixed
     {
         if ($time === null) {
             return $visitor->visitNull($time, $type);
@@ -42,7 +42,7 @@ final readonly class TimeHandler implements Handler
         return $visitor->visitString($time->format($this->getFormat($type)), $type);
     }
 
-    public function deserialize(DeserializationVisitor $visitor, ?string $value, array $type): ?Time
+    public function deserialize(DeserializationVisitor $visitor, mixed $value, array $type): ?Time
     {
         $value = $visitor->visitString($value, $type);
         if ($value === null || $value === '') {

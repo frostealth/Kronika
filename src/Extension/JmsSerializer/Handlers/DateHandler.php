@@ -34,7 +34,7 @@ final readonly class DateHandler implements Handler
         return [Date::class, 'KronikaDate'];
     }
 
-    public function serialize(SerializationVisitor $visitor, ?Date $date, array $type, Context $context): ?string
+    public function serialize(SerializationVisitor $visitor, ?Date $date, array $type, Context $context): mixed
     {
         if ($date === null) {
             return $visitor->visitNull($date, $type);
@@ -43,7 +43,7 @@ final readonly class DateHandler implements Handler
         return $visitor->visitString($date->format($this->getFormat($type)), $type);
     }
 
-    public function deserialize(DeserializationVisitor $visitor, ?string $value, array $type, Context $context): ?Date
+    public function deserialize(DeserializationVisitor $visitor, mixed $value, array $type, Context $context): ?Date
     {
         $value = $visitor->visitString($value, $type);
         if ($value === null || $value === '') {

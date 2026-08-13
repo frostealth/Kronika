@@ -43,7 +43,7 @@ final readonly class DateTimeHandler implements Handler
         return [...self::LOCAL, ...self::ZONED];
     }
 
-    public function serialize(SerializationVisitor $visitor, ?DateTime $datetime, array $type): null|float|int|string
+    public function serialize(SerializationVisitor $visitor, ?DateTime $datetime, array $type): mixed
     {
         if ($datetime === null) {
             return $visitor->visitNull($datetime, $type);
@@ -58,7 +58,7 @@ final readonly class DateTimeHandler implements Handler
         };
     }
 
-    public function deserialize(DeserializationVisitor $visitor, null|float|int|string $value, array $type): ?DateTime
+    public function deserialize(DeserializationVisitor $visitor, mixed $value, array $type): ?DateTime
     {
         $value = $visitor->visitString($value, $type);
         if ($value === null || $value === '') {

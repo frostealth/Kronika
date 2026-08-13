@@ -25,7 +25,7 @@ final readonly class SecondHandler implements Handler
         return [Second::class, 'KronikaSecond'];
     }
 
-    public function serialize(SerializationVisitor $visitor, ?Second $second, array $type): ?string
+    public function serialize(SerializationVisitor $visitor, ?Second $second, array $type): mixed
     {
         if ($second === null) {
             return $visitor->visitNull($second, $type);
@@ -34,7 +34,7 @@ final readonly class SecondHandler implements Handler
         return $visitor->visitString(\sprintf('%02d.%06d', $second->second(), $second->microsecond()), $type);
     }
 
-    public function deserialize(DeserializationVisitor $visitor, ?string $value, array $type): ?Second
+    public function deserialize(DeserializationVisitor $visitor, mixed $value, array $type): ?Second
     {
         $value = $visitor->visitString($value, $type);
         if ($value === null || $value === '') {

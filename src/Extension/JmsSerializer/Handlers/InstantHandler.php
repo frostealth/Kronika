@@ -25,7 +25,7 @@ final readonly class InstantHandler implements Handler
         return [Instant::class, 'KronikaInstant'];
     }
 
-    public function serialize(SerializationVisitor $visitor, ?Instant $instant, array $type): ?string
+    public function serialize(SerializationVisitor $visitor, ?Instant $instant, array $type): mixed
     {
         if ($instant === null) {
             return $visitor->visitNull($instant, $type);
@@ -34,7 +34,7 @@ final readonly class InstantHandler implements Handler
         return $visitor->visitString((string)$instant, $type);
     }
 
-    public function deserialize(DeserializationVisitor $visitor, ?string $value, array $type): ?Instant
+    public function deserialize(DeserializationVisitor $visitor, mixed $value, array $type): ?Instant
     {
         $value = $visitor->visitString($value, $type);
         if ($value === null || $value === '') {

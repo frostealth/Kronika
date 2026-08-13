@@ -25,7 +25,7 @@ final readonly class HourHandler implements Handler
         return [Hour::class, 'KronikaHour'];
     }
 
-    public function serialize(SerializationVisitor $visitor, ?Hour $hour, array $type): ?int
+    public function serialize(SerializationVisitor $visitor, ?Hour $hour, array $type): mixed
     {
         if ($hour === null) {
             return $visitor->visitNull($hour, $type);
@@ -34,7 +34,7 @@ final readonly class HourHandler implements Handler
         return $visitor->visitInteger($hour->value(), $type);
     }
 
-    public function deserialize(DeserializationVisitor $visitor, ?int $value, array $type): ?Hour
+    public function deserialize(DeserializationVisitor $visitor, mixed $value, array $type): ?Hour
     {
         $value = $visitor->visitInteger($value, $type);
         if ($value === null) {

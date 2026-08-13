@@ -25,7 +25,7 @@ final readonly class YearHandler implements Handler
         return [Year::class, 'KronikaYear'];
     }
 
-    public function serialize(SerializationVisitor $visitor, ?Year $year, array $type): ?int
+    public function serialize(SerializationVisitor $visitor, ?Year $year, array $type): mixed
     {
         if ($year === null) {
             return $visitor->visitNull($year, $type);
@@ -34,7 +34,7 @@ final readonly class YearHandler implements Handler
         return $visitor->visitInteger($year->number(), $type);
     }
 
-    public function deserialize(DeserializationVisitorInterface $visitor, ?int $value, array $type): ?Year
+    public function deserialize(DeserializationVisitorInterface $visitor, mixed $value, array $type): ?Year
     {
         $value = $visitor->visitInteger($value, $type);
         if ($value === null) {
