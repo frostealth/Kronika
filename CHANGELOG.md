@@ -15,6 +15,7 @@ All notable changes to `Kronika` will be documented in this file.
 ### Changed
 
 ### Fixed
+- XML Serialization/Deserialization in JMS Serializer extension.
 
 ## [0.4.1](https://github.com/frostealth/kronika/releases/tag/0.4.1) – 2026-07-27
 ### Added
