@@ -159,7 +159,6 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      * otherwise the system's time-zone will be used.
      *
      * @param non-empty-string $format
-     * @param non-empty-string $datetime
      *
      * @throws Exception\FormatError
      */
@@ -186,8 +185,6 @@ final class ZonedDateTime extends \DateTimeImmutable implements DateTime
      *     '2025-12-31 12:15:30.000999 +01:30',
      * );
      * ```
-     *
-     * @param non-empty-string $datetime
      *
      * @throws Exception\MalformedString
      */

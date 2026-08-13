@@ -75,7 +75,6 @@ final readonly class Date implements Unit
      * Obtains an instance of `Date` from a given format and date string.
      *
      * @param non-empty-string $format
-     * @param non-empty-string $date
      *
      * @throws Exception\FormatError
      */
@@ -92,8 +91,6 @@ final readonly class Date implements Unit
      * ```
      * $date = Date::parse('2025-12-31');
      * ```
-     *
-     * @param non-empty-string $date
      *
      * @throws Exception\MalformedString
      */

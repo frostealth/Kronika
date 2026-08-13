@@ -84,7 +84,6 @@ final readonly class LocalDateTime implements DateTime
      * Obtains an instance of `LocalDateTime` from a given format and date-time string.
      *
      * @param non-empty-string $format
-     * @param non-empty-string $datetime
      *
      * @throws Exception\FormatError
      */
@@ -106,8 +105,6 @@ final readonly class LocalDateTime implements DateTime
      *     '2025-12-31 12:15:30.000999',
      * );
      * ```
-     *
-     * @param non-empty-string $datetime
      *
      * @throws Exception\MalformedString
      */

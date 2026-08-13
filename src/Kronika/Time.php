@@ -112,7 +112,6 @@ final readonly class Time implements Unit
      * Obtains an instance of `Time` from a given format and time string.
      *
      * @param non-empty-string $format
-     * @param non-empty-string $time
      *
      * @throws Exception\FormatError
      */
@@ -129,8 +128,6 @@ final readonly class Time implements Unit
      * ```
      * $time = Time::parse('12:15:30.000999');
      * ```
-     *
-     * @param non-empty-string $time
      *
      * @throws Exception\MalformedString
      */

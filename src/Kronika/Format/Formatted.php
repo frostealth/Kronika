@@ -17,7 +17,6 @@ abstract readonly class Formatted
 {
     /**
      * @param non-empty-string $format
-     * @param non-empty-string $value
      */
     public function __construct(
         private string $format,
@@ -31,7 +30,6 @@ abstract readonly class Formatted
         return $this->format;
     }
 
-    /** @return non-empty-string */
     final public function value(): string
     {
         return $this->value;
